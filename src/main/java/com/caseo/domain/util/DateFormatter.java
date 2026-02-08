@@ -3,28 +3,26 @@ package com.caseo.domain.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.caseo.domain.model.AsfCertificate;
-
 public class DateFormatter {
 
     static DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     static DateTimeFormatter outputFormatter;
 
-    public static String dotDate(AsfCertificate cert){
+    public static String dotDate(String inputData){
 
-        if (cert == null) return "";
+        if (inputData == null) return "";
 
-        LocalDate date = LocalDate.parse(cert.getIssueDate(), inputFormatter);
+        LocalDate date = LocalDate.parse(inputData, inputFormatter);
 
         outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return date.format(outputFormatter);
     }
 
-    public static String RussDate(AsfCertificate cert){
+    public static String russDate(String cert){
 
         if (cert == null) return "";
         // Читаем исходный формат
-        LocalDate date = LocalDate.parse(cert.getValidUntil(), inputFormatter);
+        LocalDate date = LocalDate.parse(cert, inputFormatter);
 
         // Преобразуем в новый формат
         outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");

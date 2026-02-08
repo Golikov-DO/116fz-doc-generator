@@ -4,12 +4,6 @@ public final class RussianPlural {
 
     private RussianPlural() {}
 
-    /**
-     * Возвращает строку вида:
-     * 1 технологический блок
-     * 2 технологических блока
-     * 5 технологических блоков
-     */
     public static String technologicalBlock(int count) {
 
         if (count % 10 == 1 && count % 100 != 11) {

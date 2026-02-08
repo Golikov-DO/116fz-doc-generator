@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class ObjectService {
 
-    private ObjectRepository objectRepository;
+    private final ObjectRepository objectRepository;
 
     public ObjectService(ObjectRepository objectRepository) {
         this.objectRepository = objectRepository;

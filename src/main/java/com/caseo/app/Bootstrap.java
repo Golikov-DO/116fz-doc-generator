@@ -1,174 +1,119 @@
 package com.caseo.app;
 
-import com.caseo.document.DocumentGenerator;
 import com.caseo.domain.repository.*;
 import com.caseo.domain.service.*;
-import com.caseo.domain.util.DocumentPathUtil;
 import com.caseo.infrastructure.db.repository.*;
 import com.caseo.word.blocks.text.TextPlaceholderService;
 import com.caseo.word.factory.*;
 import com.caseo.word.layout.HazardTableLayoutService;
-import com.caseo.word.strategy.TagFillStrategyDocx4j;
-import com.caseo.word.tag.ObjectSchemeImageTagBuilder;
-import com.caseo.word.tag.ObjectStructureListTagBuilder;
-import com.caseo.word.tag.Table1TagDataBuilder;
-import com.caseo.word.tag.TechnologicalBlockListTagBuilder;
+import com.caseo.word.pipeline.PipelineConfiguration;
+
+import com.caseo.word.strategy.PlaceholderFillStrategy;
 
 public class Bootstrap {
 
     public static ApplicationContext init() {
+        // 1. Инфраструктура (Репозитории)
+        var repos = initRepositories();
 
-        // ---------- REPOSITORIES ----------
-        AsfRepository asfRepository = new JdbcAsfRepository();
-        AsfSignerRepository asfSignerRepository = new JdbcAsfSignerRepository();
-        DocumentSetRepository documentSetRepository = new JdbcDocumentSetRepository();
-        HazardousParamRepository hazardousParamRepository = new JdbcHazardousParamRepository();
-        HazardousParamValueRepository hazardousParamValueRepository = new JdbcHazardousParamValueRepository();
-        HazardousSubstanceRepository hazardousSubstanceRepository = new JdbcHazardousSubstanceRepository();
-        ObjectRepository objectRepository = new JdbcObjectRepository();
-        ObjectStructureRepository objectStructureRepository = new JdbcObjectStructureRepository();
-        ObjectCityRepository objectCityRepository = new JdbcObjectCityRepository();
-        ObjectAddressRepository objectAddressRepository = new JdbcObjectAddressRepository();
-        OrganizationRepository organizationRepository = new JdbcOrganizationRepository();
-        OrgSignerRepository orgSignerRepository = new JdbcOrgSignerRepository();
-        Table1Repository table1Repository = new JdbcTable1Repository();
-        TechnologicalBlockRepository technologicalBlockRepository = new JdbcTechnologicalBlockRepository();
+        // 2. Бизнес-логика (Сервисы)
+        var services = initServices(repos);
 
-        // ---------- SERVICES ----------
-        AsfService asfService = new AsfService(asfRepository);
-        AsfSignerService asfSignerService = new AsfSignerService(asfSignerRepository);
-        DocumentSetService documentSetService = new DocumentSetService(documentSetRepository);
-        HazardousSubstanceService hazardousSubstanceService = new HazardousSubstanceService(hazardousSubstanceRepository);
-        HazardService hazardService = new HazardService(hazardousParamRepository, hazardousParamValueRepository);
-        ObjectService objectService = new ObjectService(objectRepository);
-        ObjectStructureService objectStructureService = new ObjectStructureService(objectStructureRepository);
-        ObjectCityService objectCityService = new ObjectCityService(objectCityRepository);
-        ObjectAddressService objectAddressService = new ObjectAddressService(objectAddressRepository);
-        OrganizationService organizationService = new OrganizationService(organizationRepository);
-        OrgSignerService orgSignerService = new OrgSignerService(orgSignerRepository);
-        Table1Service table1Service = new Table1Service(table1Repository);
-        TechnologicalBlockService technologicalBlockService = new TechnologicalBlockService(technologicalBlockRepository);
+        // 3. Генератор документов
+        var wordService = initWordService(services);
 
-// ---------- SERVICES ----------
-        TextPlaceholderService textPlaceholderService =
-                new TextPlaceholderService(
-                        organizationService,
-                        orgSignerService,
-                        objectService,
-                        objectStructureService,
-                        objectAddressService,
-                        objectCityService,
-                        technologicalBlockService,
-                        hazardousSubstanceService,
-                        asfService,
-                        asfSignerService
-                );
+        return new ApplicationContext(
+                repos.asfSignerRepository(),
+                wordService,
+                services.documentSetService(),
+                services.organizationService()
+        );
+    }
 
-// ---------- LAYOUT ----------
-        HazardTableLayoutService hazardTableLayoutService =
-                new HazardTableLayoutService();
+    private static RepositoryContext initRepositories() {
+        return new RepositoryContext(
+                new JdbcAsfRepository(),
+                new JdbcAsfSignerRepository(),
+                new JdbcAsfWorkTypeRepository(),
+                new JdbcDocumentSetRepository(),
+                new JdbcHazardousParamRepository(),
+                new JdbcHazardousParamValueRepository(),
+                new JdbcHazardousSubstanceRepository(),
+                new JdbcObjectRepository(),
+                new JdbcObjectStructureRepository(),
+                new JdbcObjectCityRepository(),
+                new JdbcObjectAddressRepository(),
+                new JdbcObjectTypeRepository(),
+                new JdbcObjectInsurancePolicyRepository(),
+                new JdbcObjectOrderMinimumBalanceRepository(),
+                new JdbcOrganizationRepository(),
+                new JdbcOrganizationSignerRepository(),
+                new JdbcTechnologicalEquipmentRepository(),
+                new JdbcTechnologicalBlockRepository()
+        );
+    }
 
-// ---------- FACTORIES ----------
-        TextBlockFactory placeholderTextBlockFactory =
-                new TextBlockFactory(textPlaceholderService);
+    private static InternalServices initServices(RepositoryContext repositoryContext) {
 
-        TagFillStrategyDocx4j tagFillStrategy =
-                new TagFillStrategyDocx4j(
-                        organizationService,
-                        textPlaceholderService,
-                        new Table1TagDataBuilder(
-                                organizationService,
-                                objectService,
-                                table1Service
-                        ),
-                        new ObjectStructureListTagBuilder(
-                                objectService,
-                                objectStructureService
-                        ),
-                        new TechnologicalBlockListTagBuilder(
-                                objectService,
-                                technologicalBlockService
-                        ),
-                        new ObjectSchemeImageTagBuilder(
-                                objectService
-                        ),
-                        DocumentPathUtil.TAG_TEMPLATE_PATH
-                );
+        var hazardService = new HazardService(repositoryContext.hazardousParamRepository(), repositoryContext.hazardousParamValueRepository());
+        var objectService = new ObjectService(repositoryContext.objectRepository());
 
+        var hazardTableLayoutService = new HazardTableLayoutService(objectService, hazardService);
+        return new InternalServices(
+                new AsfService(repositoryContext.asfRepository()),
+                new AsfSignerService(repositoryContext.asfSignerRepository()),
+                new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
+                new DocumentSetService(repositoryContext.documentSetRepository()),
+                new HazardousSubstanceService(repositoryContext.hazardousSubstanceRepository()),
+                hazardService,
+                hazardTableLayoutService,
+                new ObjectAddressService(repositoryContext.objectAddressRepository()),
+                new ObjectCityService(repositoryContext.objectCityRepository()),
+                new ObjectInsurancePolicyService(repositoryContext.objectInsurancePolicyRepository()),
+                new ObjectOrderMinimumBalanceService(repositoryContext.objectOrderMinimumBalanceRepository()),
+                objectService,
+                new ObjectStructureService(repositoryContext.objectStructureRepository()),
+                new ObjectTypeService(repositoryContext.objectTypeRepository()),
+                new OrganizationService(repositoryContext.organizationRepository()),
+                new OrganizationSignerService(repositoryContext.organizationSignerRepository()),
+                new TechnologicalBlockService(repositoryContext.technologicalBlockRepository()),
+                new TechnologicalEquipmentService(repositoryContext.technologicalEquipmentRepository())
+        );
+    }
 
-        ListBlockFactory listBlockFactory =
-                new ListBlockFactory(
-                        objectService,
-                        objectStructureService,
-                        technologicalBlockService
-                );
-
-        SimpleTableBlockFactory simpleTableBlockFactory =
-                new SimpleTableBlockFactory(
-                        organizationService,
-                        objectService,
-                        table1Service
-                );
-
-        HazardTableBlockFactory hazardTableBlockFactory =
-                new HazardTableBlockFactory(
-                        objectService,
-                        hazardService,
-                        hazardTableLayoutService
-                );
-
-        ImageBlockFactory imageBlockFactory =
-                new ImageBlockFactory(objectService);
-
-// ---------- WORD GENERATOR ----------
-        DocumentGenerator placeholderDocumentGenerator = new DocumentGenerator(
-                organizationService,
-                placeholderTextBlockFactory,
-                listBlockFactory,
-                hazardTableBlockFactory,
-                imageBlockFactory,
-                simpleTableBlockFactory
+    private static WordGenerationService initWordService(InternalServices internalServices) {
+        var textPlaceholderService = new TextPlaceholderService(
+                internalServices.organizationService(),
+                internalServices.organizationSignerService(),
+                internalServices.objectService(),
+                internalServices.objectAddressService(),
+                internalServices.objectCityService(),
+                internalServices.objectTypeService(),
+                internalServices.objectInsurancePolicyService(),
+                internalServices.objectOrderMinimumBalanceService(),
+                internalServices.technologicalBlockService(),
+                internalServices.hazardousSubstanceService(),
+                internalServices.asfService(),
+                internalServices.asfSignerService(),
+                internalServices.asfWorkTypeService()
         );
 
-// ---------- WORD GENERATION SERVICE ----------
-        WordGenerationService wordGenerationService =
-                new WordGenerationService(
-                        documentSetService,
-                        placeholderDocumentGenerator,
-                        tagFillStrategy
-                );
+        var unifiedFactory = initUnifiedFactory(internalServices, textPlaceholderService);
 
-// ---------- CONTEXT ----------
-        return new ApplicationContext(
-                // repositories
-                asfRepository,
-                asfSignerRepository,
-                documentSetRepository,
-                hazardousParamRepository,
-                hazardousParamValueRepository,
-                hazardousSubstanceRepository,
-                objectRepository,
-                objectStructureRepository,
-                organizationRepository,
-                orgSignerRepository,
-                table1Repository,
-                technologicalBlockRepository,
+        return new WordGenerationService(
+                PipelineConfiguration.createDocumentBuilder(),
+                PipelineConfiguration.createTagStrategy(unifiedFactory),
+                PipelineConfiguration.createPlaceholderStrategy(unifiedFactory)
+        );
+    }
 
-                // services
-                asfService,
-                asfSignerService,
-                documentSetService,
-                hazardousSubstanceService,
-                hazardService,
-                objectService,
-                objectStructureService,
-                organizationService,
-                orgSignerService,
-                table1Service,
-                technologicalBlockService,
-
-                // word
-                wordGenerationService
+    private static UnifiedBlockFactory initUnifiedFactory(InternalServices s, TextPlaceholderService textService) {
+        return new UnifiedBlockFactory(
+                new TableBlockFactory(s.organizationService(), s.objectService(), s.technologicalEquipmentService()),
+                new PlaceholderFillStrategy(textService),
+                new ImageBlockFactory(s.objectService()),
+                new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService()),
+                s.hazardTableLayoutService()
         );
     }
 }

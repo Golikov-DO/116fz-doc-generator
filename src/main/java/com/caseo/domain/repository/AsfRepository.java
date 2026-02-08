@@ -4,6 +4,6 @@ import com.caseo.domain.model.Asf;
 
 public interface AsfRepository {
 
-    Asf findByDocumentSet(int documentSetId);
+    Asf findByOrganizationId(int organizationId);
 
 }

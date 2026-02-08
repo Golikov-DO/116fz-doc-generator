@@ -18,7 +18,7 @@ public class DocumentPathUtil {
 
     // ===== FILE NAME =====
     public static String buildFileName(Organization org) {
-        return org.getOrganizationShortName() + " ПМЛЛПА.docx";
+        return org.organizationShortName() + " ПМЛЛПА.docx";
     }
 
     // ===== OUTPUT FILE =====

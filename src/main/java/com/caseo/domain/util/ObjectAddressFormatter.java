@@ -9,23 +9,16 @@ public class ObjectAddressFormatter {
 
     public static String format(ObjectAddress address, ObjectCity city) {
 
-        StringBuilder sb = new StringBuilder();
 
-        // индекс
-        sb.append(address.getIndex()).append(", ");
-
-        // субъект
-        sb.append(address.getConstituentEntity()).append(", ");
-
-        // город
-        sb.append("г. ").append(city.getName()).append(", ");
-
-        // улица
-        sb.append("ул. ").append(address.getStreet()).append(", ");
-
-        // дом
-        sb.append(address.getHouse());
-
-        return sb.toString();
+                // индекс
+        return address.index() + ", " +
+                // субъект
+                address.constituentEntity() + ", " +
+                // город
+                "г. " + city.name() + ", " +
+                // улица
+                "ул. " + address.street() + ", " +
+                // дом
+                address.house();
     }
 }

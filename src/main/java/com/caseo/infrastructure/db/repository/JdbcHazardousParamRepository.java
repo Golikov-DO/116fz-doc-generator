@@ -2,34 +2,28 @@ package com.caseo.infrastructure.db.repository;
 
 import com.caseo.domain.model.HazardousParam;
 import com.caseo.domain.repository.HazardousParamRepository;
-import com.caseo.infrastructure.db.DbUtils;
 
 import java.util.List;
 
-public class JdbcHazardousParamRepository implements HazardousParamRepository {
-
-    // --- mapper ---
-    private final RowMapper<HazardousParam> mapper = rs -> {
-        HazardousParam p = new HazardousParam();
-        p.setId(rs.getInt("id"));
-        p.setCode(rs.getString("code"));
-        p.setSectionNo(rs.getString("section_no"));
-        p.setTitle(rs.getString("title"));
-        p.setSubtitle(rs.getString("subtitle"));
-        p.setRowOrder(rs.getInt("row_order"));
-        return p;
-    };
+public class JdbcHazardousParamRepository extends BaseJdbcRepository<HazardousParam> implements HazardousParamRepository {
 
     @Override
-    public List<HazardousParam> findAllOrdered() {
+    protected String table() {
+        return "hazardous_param";
+    }
 
-        String sql = """
-            SELECT  id, code, section_no,
-                    title, subtitle, row_order
-            FROM hazardous_param
-            ORDER BY row_order
-        """;
+    protected RowMapper<HazardousParam> mapper () {
+        return rs -> new HazardousParam(
+        rs.getInt("id"),
+        rs.getInt("substance_id"),
+        rs.getString("section_no"),
+        rs.getString("title"),
+        rs.getString("subtitle")
+        );
+    }
 
-        return DbUtils.queryMany(sql, mapper);
+    @Override
+    public List<HazardousParam> findParamBySubstanceId(int substanceId) {
+        return findList("substance_id = ?","ORDER BY id", substanceId);
     }
 }

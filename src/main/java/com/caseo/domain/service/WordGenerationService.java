@@ -1,33 +1,44 @@
 package com.caseo.domain.service;
 
-import com.caseo.document.DocumentGenerator;
 import com.caseo.domain.model.DocumentSet;
-import com.caseo.word.strategy.TagFillStrategyDocx4j;
+import com.caseo.word.document.DocumentBuilder;
+import com.caseo.word.pipeline.OpenResult;
+import com.caseo.word.pipeline.OpenStrategy;
+import com.caseo.word.strategy.FillStrategy;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 public class WordGenerationService {
 
-    private final DocumentSetService documentSetService;
-    private final DocumentGenerator placeholderGenerator;
-    private final TagFillStrategyDocx4j tagStrategy;
+    private final DocumentBuilder documentBuilder;
+    private final OpenStrategy tagOpenStrategy;
+    private final OpenStrategy placeholderOpenStrategy;
 
     public WordGenerationService(
-            DocumentSetService documentSetService,
-            DocumentGenerator placeholderGenerator,
-            TagFillStrategyDocx4j tagStrategy
+            DocumentBuilder documentBuilder,
+            OpenStrategy tagOpenStrategy,
+            OpenStrategy placeholderOpenStrategy
     ) {
-        this.documentSetService = documentSetService;
-        this.placeholderGenerator = placeholderGenerator;
-        this.tagStrategy = tagStrategy;
+        this.documentBuilder = documentBuilder;
+        this.tagOpenStrategy = tagOpenStrategy;
+        this.placeholderOpenStrategy = placeholderOpenStrategy;
     }
 
+    public WordprocessingMLPackage generate(FillStrategy strategy, byte[] templateBytes, DocumentSet documentSet) throws Exception {
 
-    public void tagGenerate(int documentSetId) throws Exception {
-        DocumentSet documentSet = documentSetService.getById(documentSetId);
-        tagStrategy.generate(documentSet);   // ← прямой TAG (docx4j)
+        OpenStrategy openStrategy = resolve(strategy);
+        OpenResult openResult = openStrategy.open(templateBytes, documentSet);
+        return documentBuilder.build(openResult);
     }
 
-    public void placeholderGenerate(int documentSetId) throws Exception {
-        DocumentSet documentSet = documentSetService.getById(documentSetId);
-        placeholderGenerator.generate(documentSet);  // poi pipeline
+    private OpenStrategy resolve(FillStrategy strategy) {
+
+        switch (strategy) {
+            case TAG:
+                return tagOpenStrategy;
+            case PLACEHOLDER:
+                return placeholderOpenStrategy;
+            default:
+                throw new IllegalArgumentException("Unknown strategy: " + strategy);
+        }
     }
 }

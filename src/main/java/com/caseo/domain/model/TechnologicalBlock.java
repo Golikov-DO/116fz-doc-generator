@@ -1,27 +1,5 @@
 package com.caseo.domain.model;
 
-public class TechnologicalBlock implements NumberedItem {
-    private int num;
-    private String name;
+public record TechnologicalBlock(int num, String name) implements NumberedItem {
 
-    public TechnologicalBlock(int num, String name) {
-        this.num = num;
-        this.name = name;
-    }
-
-    public int getNum() {
-        return num;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -11,7 +11,7 @@ public class AsfService {
         this.repository = repository;
     }
 
-    public Asf getByDocumentSet(int documentSetId) {
-        return repository.findByDocumentSet(documentSetId);
+    public Asf getOrganizationId(int organizationId) {
+        return repository.findByOrganizationId(organizationId);
     }
 }

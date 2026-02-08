@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class OrganizationService {
 
-    private OrganizationRepository organizationRepository;
+    private final OrganizationRepository organizationRepository;
 
     public OrganizationService(OrganizationRepository organizationRepository) {
         this.organizationRepository = organizationRepository;

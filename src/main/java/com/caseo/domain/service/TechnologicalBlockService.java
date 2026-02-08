@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TechnologicalBlockService {
 
-    private TechnologicalBlockRepository technologicalBlockRepository;
+    private final TechnologicalBlockRepository technologicalBlockRepository;
 
     public TechnologicalBlockService(TechnologicalBlockRepository technologicalBlockRepository) {
         this.technologicalBlockRepository = technologicalBlockRepository;

@@ -3,141 +3,116 @@ package com.caseo.word.blocks.text;
 import com.caseo.domain.model.*;
 import com.caseo.domain.service.*;
 import com.caseo.domain.util.*;
-import com.caseo.word.ListFormat;
-import com.caseo.word.WordListBuilder;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TextPlaceholderService {
 
     private final OrganizationService organizationService;
-    private final OrgSignerService orgSignerService;
+    private final OrganizationSignerService organizationSignerService;
     private final ObjectService objectService;
-    private final ObjectStructureService objectStructureService;
     private final ObjectAddressService objectAddressService;
     private final ObjectCityService objectCityService;
+    private final ObjectTypeService objectTypeService;
+    private final ObjectInsurancePolicyService objectInsurancePolicyService;
+    private final ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService;
     private final TechnologicalBlockService technologicalBlockService;
     private final HazardousSubstanceService hazardousSubstanceService;
     private final AsfService asfService;
     private final AsfSignerService asfSignerService;
+    private final AsfWorkTypeService asfWorkTypeService;
 
     public TextPlaceholderService(
             OrganizationService organizationService,
-            OrgSignerService orgSignerService,
+            OrganizationSignerService organizationSignerService,
             ObjectService objectService,
-            ObjectStructureService objectStructureService,
             ObjectAddressService objectAddressService,
             ObjectCityService objectCityService,
+            ObjectTypeService objectTypeService,
+            ObjectInsurancePolicyService objectInsurancePolicyService,
+            ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService,
             TechnologicalBlockService technologicalBlockService,
             HazardousSubstanceService hazardousSubstanceService,
             AsfService asfService,
-            AsfSignerService asfSignerService
+            AsfSignerService asfSignerService,
+            AsfWorkTypeService asfWorkTypeService
     ) {
         this.organizationService = organizationService;
-        this.orgSignerService = orgSignerService;
+        this.organizationSignerService = organizationSignerService;
         this.objectService = objectService;
-        this.objectStructureService = objectStructureService;
         this.objectAddressService = objectAddressService;
         this.objectCityService = objectCityService;
+        this.objectTypeService = objectTypeService;
+        this.objectInsurancePolicyService = objectInsurancePolicyService;
+        this.objectOrderMinimumBalanceService = objectOrderMinimumBalanceService;
         this.technologicalBlockService = technologicalBlockService;
         this.hazardousSubstanceService = hazardousSubstanceService;
         this.asfService = asfService;
         this.asfSignerService = asfSignerService;
+        this.asfWorkTypeService = asfWorkTypeService;
     }
 
-    public Map<String, String> build(DocumentSet d) throws SQLException {
+    public Map<String, String> build(DocumentSet document) throws SQLException {
 
         Map<String, String> map = new HashMap<>();
 
-        Organization org = organizationService.getById(d.getOrgId());
-        OrgSigner orgSigner = orgSignerService.getByOrganizationId(org.getOrganizationId());
-        ObjectModel objectModel = objectService.getByOrgId(org.getOrganizationId());
+        Organization org = organizationService.getById(document.orgId());
+        OrganizationSigner organizationSigner = organizationSignerService.getByOrganizationId(org.organizationId());
+        ObjectModel objectModel = objectService.getByOrgId(org.organizationId());
+        ObjectType objectType = objectTypeService.getObjectType(objectModel.id());
+        ObjectInsurancePolicy objectInsurancePolicy = objectInsurancePolicyService.getByObjectId(objectModel.id());
+        ObjectOrderMinimumBalance objectOrderMinimumBalance = objectOrderMinimumBalanceService.getByObjectId(objectModel.id());
+        HazardousSubstance hazardousSubstance = hazardousSubstanceService.getById(objectModel.id());
+        Asf asf = asfService.getOrganizationId (document.orgId());
+        AsfSigner asfSigner = asfSignerService.getByAsfId(asf.id());
+        //AsfWorkType asfWorkType = asfWorkTypeService.getByAsfId(asf.id());
 
-        List<ObjectStructureP1> objectStructureP1 =
-                objectStructureService.getByObject(objectModel.getId());
+        // ---------- ORGANIZATION TEXT BLOCK ----------
+        map.put("ORG_NAME", org.organizationName());
+        map.put("ORG_SHORT_NAME", org.organizationShortName());
+        map.put("ORG_ADDRESS", org.organizationAddress());
+        map.put("ORG_SIGNER_POSITION", organizationSigner.position());
+        map.put("ORG_SIGNER_NAME", organizationSigner.name());
 
-        List<TechnologicalBlock> technologicalBlock =
-                technologicalBlockService.getByObject(objectModel.getId());
+        // ---------- ASF TEXT BLOCK ----------
+        map.put("ASF_FULL_NAME", asf.fullName());
+        map.put("ASF_FULL_NAME_GEN", asf.fullNameGen());
+        map.put("ASF_SHORT_NAME", asf.shortName());
+        map.put("ASF_STATUS", asf.status());
+        map.put("ASF_STATUS_SHORT", asf.statusShort());
+        map.put("ASF_SIGNER_POSITION", asfSigner.position());
+        map.put("ASF_SIGNER_NAME", asfSigner.name());
+        //map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(Certificate.certificate()));
+        //map.put("ASF_WORK_TYPES",asfWorkType);
+        map.put("ASF_ARRIVAL_TIME", asf.arrivalTime());
+        map.put("ASF_CONTACT_NUMBER", asf.telethonNumber());
 
-        HazardousSubstance hazardousSubstance =
-                hazardousSubstanceService.getById(objectModel.getId());
+        // ---------- OBJECT TEXT BLOCK ----------
 
-        Asf asf = asfService.getByDocumentSet(d.getId());
-        AsfSigner asfSigner = asfSignerService.getByAsfId(asf.getId());
+        ObjectAddress address = objectAddressService.getByObjectId(objectModel.id());
+        ObjectCity city = objectCityService.getByObjectId(address.id());
+        String objectAddressText = ObjectAddressFormatter.format(address, city);
+        String cityText = ObjectCityTextBuilder.buildFullDescription(city);
+        int count = technologicalBlockService.countByObjectId(objectModel.id());
 
-        map.put("ORG_NAME", org.getOrganizationName());
-        map.put("ORG_SHORT", org.getOrganizationShortName());
-        map.put("ORG_ADDRESS", org.getOrganizationAddress());
-        map.put("ORG_SIGNER_POSITION", orgSigner.getPosition());
-        map.put("ORG_SIGNER_NAME", orgSigner.getName());
-
-        map.put("ASF_SIGNER_POSITION", asfSigner.getPosition());
-        map.put("ASF_SHORT", asf.getShortName());
-        map.put("ASF_SIGNER_NAME", asfSigner.getName());
-
-// ---------- ASF TEXT BLOCK ----------
-
-        map.put("ASF_FULL_NAME", asf.getFullName());
-        map.put("ASF_STATUS", asf.getStatus());
-        map.put("ASF_HEADER", AsfHeaderBuilder.build(asf));
-
-        map.put(
-                "ASF_CERTIFICATE_TEXT",
-                AsfCertificateTextBuilder.build(asf.getCertificate())
-        );
-
-        map.put(
-                "ASF_WORK_TYPES",
-                asf.getWorkTypes()
-                        .stream()
-                        .map(AsfWorkType::getName)
-                        .reduce((a,b) -> a + ", " + b)
-                        .orElse("")
-        );
-
-        map.put("OBJECT_NAME", objectModel.getObjectName());
-        ObjectAddress address =
-                objectAddressService.getByObjectId(objectModel.getId());
-
-        ObjectCity city =
-                objectCityService.getById(address.getId()); // связь по id
-
-        String objectAddressText =
-                ObjectAddressFormatter.format(address, city);
-
-        map.put("OBJECT_ADDRESS", objectAddressText);
-
-
-        map.put(
-                "OBJECT_STRUCTURE_LIST",
-                WordListBuilder.build(objectStructureP1, ListFormat.DOT)
-        );
-
-        map.put("HAZARD_CLASS", HazardUtils.toRoman(String.valueOf(objectModel.getHazardClass())));
-        map.put("HAZARDOUS_SUBSTANCE", hazardousSubstance.getName());
-        map.put("AMOUNT_HAZARDOUS_SUBSTANCE", objectModel.getAmountOfHazardousSubstance());
-        map.put("HAZARDOUS_SUBSTANCE_GEN", hazardousSubstance.getName_gen());
-
-        int count =
-                technologicalBlockService.countByObjectId(objectModel.getId());
-
-        map.put(
-                "AMOUNT_TECHNOLOGICAL_BLOCK",
-                RussianPlural.technologicalBlock(count)
-        );
-
-        map.put(
-                "TECHNO_BLOCK_LIST",
-                WordListBuilder.build(technologicalBlock, ListFormat.NO_SIGN)
-        );
-
-        String cityText =
-                ObjectCityTextBuilder.buildFullDescription(city);
-
-        map.put("OBJECT_CITY_FULL", cityText);
+        map.put("OBJ_NAME", objectModel.objectFullName());
+        map.put("OBJ_SHORT_NAME", objectModel.objectShortName());
+        map.put("OBJ_ADDRESS", objectAddressText);
+        map.put("OBJ_TYPE_DIFINITION", objectType.typeDefinition());
+        map.put("OBJ_HAZARD_CLASS", HazardUtils.toRoman(String.valueOf(objectModel.hazardClass())));
+        map.put("OBJ_HAZARDOUS_SUBSTANCE", hazardousSubstance.name());
+        map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", objectModel.amountOfHazardousSubstance());
+        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", hazardousSubstance.name_gen());
+        map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", RussianPlural.technologicalBlock(count));
+        map.put("OBJ_CITY_FULL", cityText);
+        map.put("OBJ_ORDER_MINIMUM_BALANCE_NUMBER", String.valueOf(objectOrderMinimumBalance.number()));
+        map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DateFormatter.russDate(objectOrderMinimumBalance.date()));
+        map.put("OBJ_INSURANCE_POLICY_NUMBER", String.valueOf(objectInsurancePolicy.number()));
+        map.put("OBJ_INSURANCE_POLICY_DATE", DateFormatter.russDate(objectInsurancePolicy.validUntil()));
+        map.put("OBJ_NEAREST_FIRE_STATION", objectModel.nearestFireStation());
+        map.put("OBJ_DEPARTMENT_GOCHS_CITY", objectModel.departmentGoChsCity());
 
         return map;
     }

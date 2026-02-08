@@ -3,10 +3,10 @@ package com.caseo.word.factory;
 import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.service.ObjectService;
-import com.caseo.word.blocks.image.ImageBlock;
-import org.apache.poi.xwpf.usermodel.Document;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageBlockFactory {
 
@@ -16,23 +16,20 @@ public class ImageBlockFactory {
         this.objectService = objectService;
     }
 
-    public ImageBlock build(DocumentSet documentSet) throws SQLException {
+    public Map<String,Object> build(DocumentSet documentSet) throws SQLException {
+
+        Map<String,Object> data = new HashMap<>();
 
         ObjectModel obj =
-                objectService.getByOrgId(documentSet.getOrgId());
+                objectService.getByOrgId(documentSet.orgId());
 
-        byte[] blob = obj.getPlanAndDiagram();
+        byte[] blob = obj.planAndDiagram();
 
-        if (blob == null || blob.length == 0) {
-            return null;
+        if (blob != null && blob.length > 0) {
+            data.put("OBJ_SCHEME_IMAGE", blob);
         }
+        //data.put("OBJ_SHEME_ EQUIPMENT_IMAGE", null);
 
-        return new ImageBlock(
-                "OBJECT_SCHEME",          // placeholder в шаблоне
-                blob,
-                500,                      // ширина
-                350,                      // высота
-                Document.PICTURE_TYPE_PNG // или JPEG — зависит от БД
-        );
+        return data;
     }
 }

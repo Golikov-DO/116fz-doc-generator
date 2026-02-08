@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface HazardousParamValueRepository {
 
-    List<HazardousParamValue> findBySubstanceId(int substanceId) throws SQLException;
+    List<HazardousParamValue> findByParamId(int paramId) throws SQLException;
 
 }
 

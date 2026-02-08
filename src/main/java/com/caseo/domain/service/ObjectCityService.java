@@ -13,7 +13,7 @@ public class ObjectCityService {
         this.objectCityRepository = objectCityRepository;
     }
 
-    public ObjectCity getById(int id) throws SQLException {
-        return objectCityRepository.findById(id);
+    public ObjectCity getByObjectId(int id) {
+        return objectCityRepository.findByObjectId(id);
     }
 }

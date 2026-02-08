@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface HazardousParamRepository {
 
-    List<HazardousParam> findAllOrdered() throws SQLException;
+    List<HazardousParam> findParamBySubstanceId(int substanceId) throws SQLException;
 
 }

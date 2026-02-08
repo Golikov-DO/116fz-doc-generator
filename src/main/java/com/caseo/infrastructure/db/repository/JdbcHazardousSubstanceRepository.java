@@ -2,29 +2,27 @@ package com.caseo.infrastructure.db.repository;
 
 import com.caseo.domain.model.HazardousSubstance;
 import com.caseo.domain.repository.HazardousSubstanceRepository;
-import com.caseo.infrastructure.db.DbUtils;
 
-public class JdbcHazardousSubstanceRepository implements HazardousSubstanceRepository {
-
-    // --- mapper ---
-    private final RowMapper<HazardousSubstance> mapper = rs -> {
-        HazardousSubstance s = new HazardousSubstance();
-        s.setId(rs.getInt("id"));
-        s.setCode(rs.getString("code"));
-        s.setName(rs.getString("name"));
-        s.setName_gen(rs.getString("name_gen"));
-        return s;
-    };
+public class JdbcHazardousSubstanceRepository extends BaseJdbcRepository<HazardousSubstance> implements HazardousSubstanceRepository {
 
     @Override
-    public HazardousSubstance findById(int id) {
+    protected String table() {
+        return "hazardous_substance";
+    }
 
-        String sql = """
-            SELECT id, code, name, name_gen
-            FROM hazardous_substance
-            WHERE id = ?
-        """;
+    protected RowMapper<HazardousSubstance> mapper() {
+        return rs -> new HazardousSubstance(
+        rs.getInt("id"),
+        rs.getInt("object_id"),
+        rs.getString("name"),
+        rs.getString("name_gen")
+        );
+    }
 
-        return DbUtils.queryOne(sql, mapper, id);
+    @Override
+    public HazardousSubstance findById(int objectId) {
+
+        return  findOne("object_id = ?", objectId).orElse(null);
+
     }
 }

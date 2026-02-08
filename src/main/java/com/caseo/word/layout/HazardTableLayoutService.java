@@ -1,70 +1,90 @@
 package com.caseo.word.layout;
 
 import com.caseo.domain.model.*;
-import com.caseo.word.model.TableRowModel;
+import com.caseo.domain.service.HazardService;
+import com.caseo.domain.service.ObjectService;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.caseo.word.util.LayoutUtils.calcLines;
-import static com.caseo.word.util.LayoutUtils.rootSection;
+import static com.caseo.word.util.LayoutUtil.calcLines;
+import static com.caseo.word.util.LayoutUtil.rootSection;
 
 public class HazardTableLayoutService {
-
+    private final ObjectService objectService;
+    private final HazardService hazardService;
     private static final int NAME_LIMIT  = 26;
     private static final int VALUE_LIMIT = 20;
     private static final int SECTION_LIMIT = 5;
 
-    public List<Map<String,String>> buildVisualRows(
-            List<HazardousParam> params,
-            Map<Integer, HazardousParamValue> values
-    ) {
+    public HazardTableLayoutService(ObjectService objectService, HazardService hazardService) {
+        this.objectService = objectService;
+        this.hazardService = hazardService;
+    }
+
+    public List<String[]> getHazardTableData(DocumentSet documentSet) throws SQLException {
+        // 2. Сбор данных (переехало из HazardTableBlockFactory)
+        ObjectModel obj = objectService.getByOrgId(documentSet.orgId());
+        List<HazardousParam> params = hazardService.getAllParamsOrdered(obj.hazardousSubstanceId());
+
+        Map<Integer, HazardousParamValue> values = new HashMap<>();
+        for (HazardousParam param : params) {
+            values.putAll(hazardService.getValuesByParam(param.id()));
+        }
+
+        // 3. Вызов твоей логики расчета (существующий метод)
+        // Но теперь пусть он сразу возвращает List<String[]>
+        return buildVisualRowsAsArray(params, values);
+    }
+
+    private List<String[]> buildVisualRowsAsArray(List<HazardousParam> params, Map<Integer, HazardousParamValue> values) {
 
         Map<Integer, List<HazardousParam>> grouped =
                 params.stream()
                         .collect(Collectors.groupingBy(
-                                p -> rootSection(p.getSectionNo()),
+                                p -> rootSection(p.sectionNo()),
                                 TreeMap::new,
                                 Collectors.toList()
                         ));
 
-        List<Map<String,String>> result = new ArrayList<>();
+        List<String[]> tableRows = new ArrayList<>();
 
         for (List<HazardousParam> group : grouped.values()) {
 
             List<TableRowModel> rows = new ArrayList<>();
 
             // ---------- ШАГ 1 ----------
-            for (HazardousParam p : group) {
+            for (HazardousParam hazardousParam : group) {
 
-                TableRowModel r = new TableRowModel();
+                TableRowModel tableRow = new TableRowModel();
 
-                r.isRoot = !p.getSectionNo().contains(".");
-                r.section = p.getSectionNo();
-                r.name = (p.getSubtitle() != null)
-                        ? p.getSubtitle()
-                        : p.getTitle() + ":";
+                tableRow.isRoot = !hazardousParam.sectionNo().contains(".");
+                tableRow.section = hazardousParam.sectionNo();
+                tableRow.name = (hazardousParam.subtitle() != null)
+                        ? hazardousParam.subtitle()
+                        : hazardousParam.title() + ":";
 
-                HazardousParamValue v = values.get(p.getId());
+                HazardousParamValue hazardousParamValue = values.get(hazardousParam.id());
 
-                r.value = (v != null && v.getValueText() != null)
-                        ? v.getValueText()
+                tableRow.value = (hazardousParamValue != null && hazardousParamValue.valueText() != null)
+                        ? hazardousParamValue.valueText()
                         : "";
 
-                r.source = (v != null && v.getSourceInfo() != null)
-                        ? v.getSourceInfo()
+                tableRow.source = (hazardousParamValue != null && hazardousParamValue.sourceInfo() != null)
+                        ? hazardousParamValue.sourceInfo()
                         : "";
 
-                rows.add(r);
+                rows.add(tableRow);
             }
 
             // ---------- ШАГ 2 ----------
-            for (TableRowModel r : rows) {
-                r.nameLines  = calcLines(r.name, NAME_LIMIT);
-                r.valueLines = calcLines(r.value, VALUE_LIMIT);
+            for (TableRowModel tableRowModel : rows) {
+                tableRowModel.nameLines  = calcLines(tableRowModel.name, NAME_LIMIT);
+                tableRowModel.valueLines = calcLines(tableRowModel.value, VALUE_LIMIT);
 
-                int secLines = calcLines(r.section, SECTION_LIMIT);
-                r.visualLines = Math.max(Math.max(r.nameLines, r.valueLines), secLines);
+                int secLines = calcLines(tableRowModel.section, SECTION_LIMIT);
+                tableRowModel.visualLines = Math.max(Math.max(tableRowModel.nameLines, tableRowModel.valueLines), secLines);
             }
 
             // ---------- ШАГ 3 ----------
@@ -73,23 +93,23 @@ public class HazardTableLayoutService {
             StringBuilder valueBuf = new StringBuilder();
 
             for (int i = 0; i < rows.size(); i++) {
-                TableRowModel r = rows.get(i);
+                TableRowModel tableRowModel = rows.get(i);
 
-                secBuf.append(r.section);
-                nameBuf.append(r.name);
-                valueBuf.append(r.value);
+                secBuf.append(tableRowModel.section);
+                nameBuf.append(tableRowModel.name);
+                valueBuf.append(tableRowModel.value);
 
-                int currentSecLines = calcLines(r.section, SECTION_LIMIT);
-                if (currentSecLines < r.visualLines) {
-                    for (int j = 0; j < r.visualLines - currentSecLines; j++) secBuf.append("\n");
+                int currentSecLines = calcLines(tableRowModel.section, SECTION_LIMIT);
+                if (currentSecLines < tableRowModel.visualLines) {
+                    secBuf.append("\n".repeat(Math.max(0, tableRowModel.visualLines - currentSecLines)));
                 }
 
-                if (r.nameLines < r.visualLines) {
-                    for (int j = 0; j < r.visualLines - r.nameLines; j++) nameBuf.append("\n");
+                if (tableRowModel.nameLines < tableRowModel.visualLines) {
+                    nameBuf.append("\n".repeat(Math.max(0, tableRowModel.visualLines - tableRowModel.nameLines)));
                 }
 
-                if (r.valueLines < r.visualLines) {
-                    for (int j = 0; j < r.visualLines - r.valueLines; j++) valueBuf.append("\n");
+                if (tableRowModel.valueLines < tableRowModel.visualLines) {
+                    valueBuf.append("\n".repeat(Math.max(0, tableRowModel.visualLines - tableRowModel.valueLines)));
                 }
 
                 if (i < rows.size() - 1) {
@@ -104,19 +124,13 @@ public class HazardTableLayoutService {
             String valueText = valueBuf.toString().replaceAll("\\n+$", "");
 
             String sourceText = rows.stream()
-                    .map(x -> x.source)
-                    .filter(s -> s != null && !s.isBlank())
+                    .map(rowModel -> rowModel.source)
+                    .filter(string -> string != null && !string.isBlank())
                     .collect(Collectors.joining("\n"));
 
-            Map<String,String> row = new HashMap<>();
-            row.put("section", secText);
-            row.put("name", nameText);
-            row.put("value", valueText);
-            row.put("source", sourceText);
-
-            result.add(row);
+            tableRows.add(new String[]{ secText, nameText, valueText, sourceText });
         }
 
-        return result;
+        return tableRows;
     }
 }

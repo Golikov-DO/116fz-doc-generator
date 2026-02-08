@@ -12,63 +12,63 @@ public class ObjectCityTextBuilder {
 
         // основной текст
         sb.append("г. ")
-                .append(c.getName())
+                .append(c.name())
                 .append(", город на ")
-                .append(c.getCountryPart())
+                .append(c.countryPart())
                 .append(", в ")
-                .append(c.getRegion())
+                .append(c.region())
                 .append(". ");
 
-        if (c.getAdminCenter() != null)
-            sb.append(c.getAdminCenter()).append(". ");
+        if (c.adminCenter() != null)
+            sb.append(c.adminCenter()).append(". ");
 
-        if (c.getStatus() != null)
-            sb.append(c.getStatus()).append(". ");
+        if (c.status() != null)
+            sb.append(c.status()).append(". ");
 
-        if (c.getFoundedYear() > 0)
+        if (c.foundedYear() > 0)
             sb.append("Основан в ")
-                    .append(c.getFoundedYear())
+                    .append(c.foundedYear())
                     .append(" году.");
 
         // ⬇ новая строка + отступ
-        if (c.getGeography() != null || c.getDistanceInfo() != null || c.getTransport() != null) {
+        if (c.geography() != null || c.distanceInfo() != null || c.transport() != null) {
             sb.append("\n\t");
         }
 
         // с отступом
-        if (c.getGeography() != null)
+        if (c.geography() != null)
             sb.append("Город расположен ")
-                    .append(c.getGeography())
+                    .append(c.geography())
                     .append(". ");
 
-        if (c.getDistanceInfo() != null)
-            sb.append(c.getDistanceInfo()).append(". ");
+        if (c.distanceInfo() != null)
+            sb.append(c.distanceInfo()).append(". ");
 
-        if (c.getTransport() != null)
-            sb.append(c.getTransport()).append(".");
+        if (c.transport() != null)
+            sb.append(c.transport()).append(".");
 
         // ⬇ новая строка + отступ
-        if (c.getResortZone() != null) {
+        if (c.resortZone() != null) {
             sb.append("\n\t");
         }
 
-        if (c.getResortZone() != null)
+        if (c.resortZone() != null)
             sb.append("В окрестностях ")
-                    .append(c.getName())
+                    .append(c.name())
                     .append(" — ")
-                    .append(c.getResortZone())
+                    .append(c.resortZone())
                     .append(".");
 
         // ⬇ новая строка + отступ
-        if (c.getClimate() != null) {
+        if (c.climate() != null) {
             sb.append("\n\t");
         }
 
-        if (c.getClimate() != null)
+        if (c.climate() != null)
             sb.append("Климат ")
-                    .append(c.getName())
+                    .append(c.name())
                     .append(" ")
-                    .append(c.getClimate())
+                    .append(c.climate())
                     .append(".");
 
         return sb.toString().trim();

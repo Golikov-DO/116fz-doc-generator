@@ -8,29 +8,31 @@ import com.caseo.domain.repository.HazardousParamValueRepository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HazardService {
 
-    private HazardousParamValueRepository hazardousParamValueRepository;
-    private HazardousParamRepository hazardousParamRepository;
+    private final HazardousParamValueRepository hazardousParamValueRepository;
+    private final HazardousParamRepository hazardousParamRepository;
 
     public HazardService(HazardousParamRepository hazardousParamRepository, HazardousParamValueRepository hazardousParamValueRepository) {
         this.hazardousParamValueRepository = hazardousParamValueRepository;
         this.hazardousParamRepository = hazardousParamRepository;
     }
 
-    public List<HazardousParam> getAllParamsOrdered() throws SQLException {
-        return hazardousParamRepository.findAllOrdered();
+    public List<HazardousParam> getAllParamsOrdered(int substanceId) throws SQLException {
+        return hazardousParamRepository.findParamBySubstanceId(substanceId);
     }
 
-    public Map<Integer, HazardousParamValue> getValuesBySubstance(int substanceId) throws SQLException {
-        return hazardousParamValueRepository.findBySubstanceId(substanceId)
+    public Map<Integer, HazardousParamValue> getValuesByParam(int paramId) throws SQLException {
+        return hazardousParamValueRepository.findByParamId(paramId)
                 .stream()
                 .collect(Collectors.toMap(
-                        HazardousParamValue::getParamId,
-                        v -> v,
-                        (a, b) -> a
+                        HazardousParamValue::paramId,
+//                        v -> v,
+//                        (a, b) -> a
+                        Function.identity()
                 ));
     }
 }

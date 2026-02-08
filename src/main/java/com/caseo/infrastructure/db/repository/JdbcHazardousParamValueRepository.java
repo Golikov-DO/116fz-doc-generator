@@ -2,33 +2,27 @@ package com.caseo.infrastructure.db.repository;
 
 import com.caseo.domain.model.HazardousParamValue;
 import com.caseo.domain.repository.HazardousParamValueRepository;
-import com.caseo.infrastructure.db.DbUtils;
 
 import java.util.List;
 
-public class JdbcHazardousParamValueRepository implements HazardousParamValueRepository {
-
-    // --- mapper ---
-    private final RowMapper<HazardousParamValue> mapper = rs -> {
-        HazardousParamValue v = new HazardousParamValue();
-        v.setId(rs.getInt("id"));
-        v.setSubstanceId(rs.getInt("substance_id"));
-        v.setParamId(rs.getInt("param_id"));
-        v.setValueText(rs.getString("value_text"));
-        v.setSourceInfo(rs.getString("source_info"));
-        return v;
-    };
+public class JdbcHazardousParamValueRepository extends BaseJdbcRepository<HazardousParamValue> implements HazardousParamValueRepository {
 
     @Override
-    public List<HazardousParamValue> findBySubstanceId(int substanceId) {
+    protected String table() {
+        return "hazardous_param_value";
+    }
 
-        String sql = """
-            SELECT  id, substance_id, param_id,
-                    value_text, source_info
-            FROM hazardous_param_value
-            WHERE substance_id = ?
-        """;
+    protected RowMapper<HazardousParamValue> mapper() {
+        return  rs -> new HazardousParamValue(
+        rs.getInt("id"),
+        rs.getInt("param_id"),
+        rs.getString("value_text"),
+        rs.getString("source_info")
+        );
+    }
 
-        return DbUtils.queryMany(sql, mapper, substanceId);
+    @Override
+    public List<HazardousParamValue> findByParamId(int paramId) {
+        return findList("param_id = ?", paramId);
     }
 }

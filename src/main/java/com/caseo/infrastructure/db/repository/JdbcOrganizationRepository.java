@@ -3,8 +3,9 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.repository.OrganizationRepository;
 
-public class JdbcOrganizationRepository
-        extends BaseJdbcRepository<Organization>
+import java.sql.SQLException;
+
+public class JdbcOrganizationRepository extends BaseJdbcRepository<Organization>
         implements OrganizationRepository {
 
     @Override
@@ -13,23 +14,18 @@ public class JdbcOrganizationRepository
     }
 
     @Override
-    protected String idColumn() {
-        return "id";
-    }
-
-    @Override
     protected RowMapper<Organization> mapper() {
         return rs -> new Organization(
+                rs.getInt("id"),
                 rs.getString("organization_full_name"),
                 rs.getString("organization_short_name"),
                 rs.getString("organization_address"),
-                rs.getInt("id")
+                rs.getInt("asf_id")
         );
     }
 
-    // кастомные методы
     @Override
     public Organization findById(int id) {
-        return super.findOptionalById(id).orElse(null);
+        return findOne("id = ?", id).orElse(null);
     }
 }
