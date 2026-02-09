@@ -1,20 +1,20 @@
 package com.caseo.infrastructure.db.repository;
 
-import com.caseo.domain.model.ObjectAddress;
-import com.caseo.domain.repository.ObjectAddressRepository;
+import com.caseo.domain.model.OrganizationAddress;
+import com.caseo.domain.repository.OrganizationAddressRepository;
 
-public class JdbcObjectAddressRepository extends BaseJdbcRepository<ObjectAddress> implements ObjectAddressRepository {
+public class JdbcOrganizationAddressRepository extends BaseJdbcRepository<OrganizationAddress> implements OrganizationAddressRepository {
 
     @Override
     protected String table() {
-        return "object_address";
+        return "organization_address";
     }
 
     @Override
-    protected RowMapper<ObjectAddress> mapper() {
-        return rs -> new ObjectAddress(
+    protected RowMapper<OrganizationAddress> mapper() {
+        return rs -> new OrganizationAddress(
                 rs.getInt("id"),
-                rs.getLong("object_id"),
+                rs.getLong("organization_id"),
                 rs.getObject("index") != null ? rs.getInt("index") : 0, // Безопасное получение int
                 rs.getString("constituent_entity"),
                 rs.getString("area_hierarchy"),
@@ -27,7 +27,7 @@ public class JdbcObjectAddressRepository extends BaseJdbcRepository<ObjectAddres
     }
 
     @Override
-    public ObjectAddress findByObjectId(int objectId){
-        return findOne("object_id = ?", objectId).orElse(null);
+    public OrganizationAddress findByOrganizationId(int organizationId) {
+        return findOne("organization_id = ?", organizationId).orElse(null);
     }
 }

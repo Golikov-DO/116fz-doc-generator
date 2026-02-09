@@ -14,6 +14,6 @@ public class AsfCertificateTextBuilder {
                 " г., выданное на основании протокола заседания " +
                 cert.issuedBy() + " " + cert.issueBasis() +
                 ", сроком действия до " + DateFormatter.russDate(cert.validUntil()) +
-                "г.";
+                "г";
     }
 }

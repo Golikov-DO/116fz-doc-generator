@@ -21,7 +21,6 @@ public class TagOpenStrategy implements OpenStrategy {
         try {
             WordprocessingMLPackage pkg = WordprocessingMLPackage.load(new ByteArrayInputStream(templateBytes));
 
-            // ВОТ ЗДЕСЬ главная фишка ТЭГОВ:
             VariablePrepare.prepare(pkg);
 
             List<Block> blocks = blockFactory.buildBlocks(documentSet);

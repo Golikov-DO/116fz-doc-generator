@@ -3,14 +3,15 @@ package com.caseo.app;
 import com.caseo.domain.service.*;
 import com.caseo.word.layout.HazardTableLayoutService;
 
-record InternalServices(
+public record InternalServices(
+        AsfCertificateService asfCertificateService,
         AsfService asfService,
         AsfSignerService asfSignerService,
         AsfWorkTypeService asfWorkTypeService,
         DocumentSetService documentSetService,
-        HazardousSubstanceService hazardousSubstanceService,
         HazardService hazardService,
         HazardTableLayoutService hazardTableLayoutService,
+        HazardousSubstanceService hazardousSubstanceService,
         ObjectAddressService objectAddressService,
         ObjectCityService objectCityService,
         ObjectInsurancePolicyService objectInsurancePolicyService,
@@ -18,8 +19,10 @@ record InternalServices(
         ObjectService objectService,
         ObjectStructureService objectStructureService,
         ObjectTypeService objectTypeService,
+        OrganizationAddressService organizationAddressService,
         OrganizationService organizationService,
         OrganizationSignerService organizationSignerService,
         TechnologicalBlockService technologicalBlockService,
         TechnologicalEquipmentService technologicalEquipmentService
-) {}
+) {
+}

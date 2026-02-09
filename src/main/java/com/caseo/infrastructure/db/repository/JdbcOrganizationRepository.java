@@ -19,8 +19,8 @@ public class JdbcOrganizationRepository extends BaseJdbcRepository<Organization>
                 rs.getInt("id"),
                 rs.getString("organization_full_name"),
                 rs.getString("organization_short_name"),
-                rs.getString("organization_address"),
-                rs.getInt("asf_id")
+                rs.getInt("asf_id"),
+                rs.getString("organization_type_activity")
         );
     }
 

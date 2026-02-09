@@ -11,9 +11,7 @@ public class DateFormatter {
     public static String dotDate(String inputData){
 
         if (inputData == null) return "";
-
         LocalDate date = LocalDate.parse(inputData, inputFormatter);
-
         outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return date.format(outputFormatter);
     }

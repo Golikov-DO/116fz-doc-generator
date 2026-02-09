@@ -32,6 +32,7 @@ public class Bootstrap {
 
     private static RepositoryContext initRepositories() {
         return new RepositoryContext(
+                new JdbcAsfCertificateRepository(),
                 new JdbcAsfRepository(),
                 new JdbcAsfSignerRepository(),
                 new JdbcAsfWorkTypeRepository(),
@@ -46,6 +47,7 @@ public class Bootstrap {
                 new JdbcObjectTypeRepository(),
                 new JdbcObjectInsurancePolicyRepository(),
                 new JdbcObjectOrderMinimumBalanceRepository(),
+                new JdbcOrganizationAddressRepository(),
                 new JdbcOrganizationRepository(),
                 new JdbcOrganizationSignerRepository(),
                 new JdbcTechnologicalEquipmentRepository(),
@@ -55,18 +57,18 @@ public class Bootstrap {
 
     private static InternalServices initServices(RepositoryContext repositoryContext) {
 
-        var hazardService = new HazardService(repositoryContext.hazardousParamRepository(), repositoryContext.hazardousParamValueRepository());
-        var objectService = new ObjectService(repositoryContext.objectRepository());
-
-        var hazardTableLayoutService = new HazardTableLayoutService(objectService, hazardService);
+        HazardService hazardService = new HazardService(repositoryContext.hazardousParamRepository(), repositoryContext.hazardousParamValueRepository());
+        ObjectService objectService = new ObjectService(repositoryContext.objectRepository());
+        HazardTableLayoutService hazardTableLayoutService = new HazardTableLayoutService(objectService, hazardService);
         return new InternalServices(
+                new AsfCertificateService(repositoryContext.asfCertificateRepository()),
                 new AsfService(repositoryContext.asfRepository()),
                 new AsfSignerService(repositoryContext.asfSignerRepository()),
                 new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
                 new DocumentSetService(repositoryContext.documentSetRepository()),
-                new HazardousSubstanceService(repositoryContext.hazardousSubstanceRepository()),
                 hazardService,
                 hazardTableLayoutService,
+                new HazardousSubstanceService(repositoryContext.hazardousSubstanceRepository()),
                 new ObjectAddressService(repositoryContext.objectAddressRepository()),
                 new ObjectCityService(repositoryContext.objectCityRepository()),
                 new ObjectInsurancePolicyService(repositoryContext.objectInsurancePolicyRepository()),
@@ -74,31 +76,18 @@ public class Bootstrap {
                 objectService,
                 new ObjectStructureService(repositoryContext.objectStructureRepository()),
                 new ObjectTypeService(repositoryContext.objectTypeRepository()),
+                new OrganizationAddressService(repositoryContext.organizationAddressRepository()),
                 new OrganizationService(repositoryContext.organizationRepository()),
                 new OrganizationSignerService(repositoryContext.organizationSignerRepository()),
                 new TechnologicalBlockService(repositoryContext.technologicalBlockRepository()),
                 new TechnologicalEquipmentService(repositoryContext.technologicalEquipmentRepository())
+
         );
     }
 
     private static WordGenerationService initWordService(InternalServices internalServices) {
-        var textPlaceholderService = new TextPlaceholderService(
-                internalServices.organizationService(),
-                internalServices.organizationSignerService(),
-                internalServices.objectService(),
-                internalServices.objectAddressService(),
-                internalServices.objectCityService(),
-                internalServices.objectTypeService(),
-                internalServices.objectInsurancePolicyService(),
-                internalServices.objectOrderMinimumBalanceService(),
-                internalServices.technologicalBlockService(),
-                internalServices.hazardousSubstanceService(),
-                internalServices.asfService(),
-                internalServices.asfSignerService(),
-                internalServices.asfWorkTypeService()
-        );
-
-        var unifiedFactory = initUnifiedFactory(internalServices, textPlaceholderService);
+        TextPlaceholderService textPlaceholderService = new TextPlaceholderService(internalServices);
+        UnifiedBlockFactory unifiedFactory = initUnifiedFactory(internalServices, textPlaceholderService);
 
         return new WordGenerationService(
                 PipelineConfiguration.createDocumentBuilder(),

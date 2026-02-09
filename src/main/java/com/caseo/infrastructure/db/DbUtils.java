@@ -31,18 +31,14 @@ public class DbUtils {
         List<T> list = new ArrayList<>();
 
         try (Connection conn = DatabaseService.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            for (int i = 0; i < params.length; i++) {
-                ps.setObject(i + 1, params[i]);
-            }
-
-            ResultSet rs = ps.executeQuery();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++)
+                preparedStatement.setObject(i + 1, params[i]);
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 list.add(mapper.map(rs));
             }
             return list;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

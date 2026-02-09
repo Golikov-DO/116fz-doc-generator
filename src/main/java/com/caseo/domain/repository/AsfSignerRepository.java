@@ -7,5 +7,6 @@ import java.sql.SQLException;
 public interface AsfSignerRepository {
 
     AsfSigner findByAsfId(int asfId) throws SQLException;
+
 }
 

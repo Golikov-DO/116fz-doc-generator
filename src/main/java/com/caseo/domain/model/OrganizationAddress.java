@@ -4,9 +4,9 @@ package com.caseo.domain.model;
  * Модель адреса объекта.
  * Поля соответствуют расширенной структуре БД для корректного формирования строки адреса.
  */
-public record ObjectAddress (
+public record OrganizationAddress(
         int id,
-        Long objectId,
+        Long organizationId,
         Integer index,
         String constituentEntity, // Субъект (край, область)
         String areaHierarchy,      // Муниципальное деление (округа, районы)
