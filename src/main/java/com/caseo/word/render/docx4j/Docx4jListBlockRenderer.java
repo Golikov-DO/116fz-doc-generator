@@ -71,6 +71,7 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
 
     private String buildListPrefix(String tag, int index) {
         if (tag.endsWith("LIST1")) return index + ".) ";
+        if (tag.endsWith("LIST")) return "";
         if (tag.contains("LIST№")) return "№ " + index + " ";
         return index + ". ";
     }
@@ -78,27 +79,33 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
     private P createNumberedParagraph(String prefix, String text, RPr runProperties) {
         ObjectFactory factory = Context.getWmlObjectFactory();
         P paragraph = factory.createP();
+        PPr pPr = paragraphFormatUtil.getOrCreatePPr(paragraph);
 
-        // Применяем стандартные интервалы (0 до, 0 после)
+        // 1. Устанавливаем выравнивание ВСЕГО параграфа по ширине
+        Jc jc = factory.createJc();
+        jc.setVal(JcEnumeration.BOTH); // Это растянет текст по краям
+        pPr.setJc(jc);
+
+        // 2. Применяем стандартные интервалы
         paragraphFormatUtil.applyStandardSpacing(paragraph);
 
-        // Настройка табуляции для отступа текста от номера
+        // 3. Настройка табуляции (оставляем ваш LEFT, это правильно для позиции текста)
         Tabs tabs = factory.createTabs();
         CTTabStop tabStop = factory.createCTTabStop();
         tabStop.setVal(STTabJc.LEFT);
-        tabStop.setPos(BigInteger.valueOf(500)); // позиция текста после номера
+        tabStop.setPos(BigInteger.valueOf(500));
         tabs.getTab().add(tabStop);
-        paragraphFormatUtil.getOrCreatePPr(paragraph).setTabs(tabs);
+        pPr.setTabs(tabs);
 
-        // Создаем Run для номера (1., 2. и т.д.)
+        // 4. Создаем Run для номера
         R numberRun = runFactoryUtil.createFormattedRun(runProperties);
         Text numberText = factory.createText();
         numberText.setValue(prefix);
         numberRun.getContent().add(numberText);
-        numberRun.getContent().add(factory.createRTab()); // прыжок к табуляции
+        numberRun.getContent().add(factory.createRTab());
         paragraph.getContent().add(numberRun);
 
-        // Создаем Run для основного текста
+        // 5. Создаем Run для основного текста
         R textRun = runFactoryUtil.createFormattedRun(runProperties);
         textInsertUtil.addTextWithBreaks(textRun, text, null);
         paragraph.getContent().add(textRun);

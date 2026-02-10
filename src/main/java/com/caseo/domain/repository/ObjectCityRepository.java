@@ -4,6 +4,6 @@ import com.caseo.domain.model.ObjectCity;
 
 public interface ObjectCityRepository {
 
-    ObjectCity findByObjectId(int id);
+    ObjectCity findById(int id);
 
 }

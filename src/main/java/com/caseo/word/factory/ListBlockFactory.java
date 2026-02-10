@@ -5,9 +5,8 @@ import com.caseo.domain.model.NumberedItem;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.ObjectStructure;
 import com.caseo.domain.model.TechnologicalBlock;
-import com.caseo.domain.service.ObjectService;
-import com.caseo.domain.service.ObjectStructureService;
-import com.caseo.domain.service.TechnologicalBlockService;
+import com.caseo.domain.service.*;
+import com.caseo.domain.util.TechnicalDescriptionFormatter;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -19,15 +18,21 @@ public class ListBlockFactory {
     private final ObjectService objectService;
     private final ObjectStructureService objectStructureService;
     private final TechnologicalBlockService technologicalBlockService;
+    private final ObjectAddressService objectAddressService;
+    private final ObjectCityService objectCityService;
 
     public ListBlockFactory(
             ObjectService objectService,
             ObjectStructureService objectStructureService,
-            TechnologicalBlockService technologicalBlockService
+            TechnologicalBlockService technologicalBlockService,
+            ObjectAddressService objectAddressService,
+            ObjectCityService objectCityService
     ) {
         this.objectService = objectService;
         this.objectStructureService = objectStructureService;
         this.technologicalBlockService = technologicalBlockService;
+        this.objectAddressService = objectAddressService;
+        this.objectCityService = objectCityService;
     }
 
     public Map<String,Object> build(DocumentSet documentSet) throws SQLException {
@@ -35,6 +40,18 @@ public class ListBlockFactory {
         Map<String,Object> data = new HashMap<>();
 
         ObjectModel objectModel = objectService.getByOrgId(documentSet.orgId());
+
+        // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
+        var objAddr = objectAddressService.getByObjectId(objectModel.id());
+        var city = objectCityService.getById(objAddr.id());
+        // Используем новый метод, возвращающий массив
+        String[] descriptionParagraphs = TechnicalDescriptionFormatter.formatAsParagraphs(city);
+
+        if (descriptionParagraphs.length > 0) {
+            // Новый тег заканчивается на LIST, как вы и предложили
+            data.put("OBJ_AREA_LOCATION_LIST", descriptionParagraphs);
+        }
+        // ============================================================
 
         // ===== OBJECT_STRUCTURE_LIST =====
         List<ObjectStructure> structureList = objectStructureService.getByObject(objectModel.id());

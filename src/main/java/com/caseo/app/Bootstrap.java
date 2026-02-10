@@ -101,7 +101,7 @@ public class Bootstrap {
                 new TableBlockFactory(s.organizationService(), s.objectService(), s.technologicalEquipmentService()),
                 new PlaceholderFillStrategy(textService),
                 new ImageBlockFactory(s.objectService()),
-                new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService()),
+                new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService(), s.objectAddressService(), s.objectCityService()),
                 s.hazardTableLayoutService()
         );
     }

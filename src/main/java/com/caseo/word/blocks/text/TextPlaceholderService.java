@@ -56,9 +56,9 @@ public class TextPlaceholderService {
         map.put("OBJ_NEAREST_FIRE_STATION", obj.nearestFireStation());
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.departmentGoChsCity());
         var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
-        var city = internalServices.objectCityService().getByObjectId(objAddr.id());
+        //var city = internalServices.objectCityService().getById(objAddr.id());
         map.put("OBJ_ADDRESS_FULL", AddressFormatter.format(objAddr));
-        map.put("OBJ_CITY_FULL", ObjectCityTextBuilder.buildFullDescription(city));
+        //map.put("OBJ_AREA_LOCATION", TechnicalDescriptionFormatter.format(city));
         var type = internalServices.objectTypeService().getObjectType(obj.id());
         map.put("OBJ_TYPE_DIFINITION", type.typeDefinition());
         var substance = internalServices.hazardousSubstanceService().getById(obj.id());

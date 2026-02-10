@@ -3,7 +3,7 @@ INSERT INTO "object_address" (
     "index",
     "constituent_entity",
     "area_hierarchy",
-    "city_name",      -- Исправлено с city на city_name
+    "city_name",
     "street",
     "house",
     "coordinates"
@@ -73,7 +73,6 @@ INSERT INTO "organization_address" (
          );
 
 INSERT INTO "object_city" (
-    "object_id",
     "geo_coords",
     "geo_relief",
     "geo_geology",

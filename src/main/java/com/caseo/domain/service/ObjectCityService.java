@@ -13,7 +13,7 @@ public class ObjectCityService {
         this.objectCityRepository = objectCityRepository;
     }
 
-    public ObjectCity getByObjectId(int id) {
-        return objectCityRepository.findByObjectId(id);
+    public ObjectCity getById(int id) {
+        return objectCityRepository.findById(id);
     }
 }
