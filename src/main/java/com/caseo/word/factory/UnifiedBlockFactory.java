@@ -51,36 +51,45 @@ public class UnifiedBlockFactory {
 
         // Картинки (byte[])
         creators.put(byte[].class, (key, val) ->
-                new ImageBlock(key, (byte[]) val, 500, 350, 0)
+                new ImageBlock(key, val,  0)
         );
     }
 
     public List<Block> buildBlocks(DocumentSet documentSet) throws SQLException {
-        // Собираем все "сырые" данные в одну карту
         Map<String, Object> allData = build(documentSet);
         List<Block> blocks = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : allData.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value == null) continue;
 
-            // 1. Пытаемся найти создателя по классу (String, String[], byte[])
+            if (value == null) {
+                if (key.contains("IMAGE")) {
+                    blocks.add(new ImageBlock(key, null, 0));
+                }
+                continue;
+            }
+
             BiFunction<String, Object, Block> creator = creators.get(value.getClass());
             if (creator != null) {
                 blocks.add(creator.apply(key, value));
                 continue;
             }
 
-            // 2. Обработка таблиц (так как List — это интерфейс, проверяем отдельно)
-            if (value instanceof List<?> list && !list.isEmpty() && list.getFirst() instanceof String[]) {
-                blocks.add(createTableBlock(key, (List<String[]>) list));
+            // 2. Обработка списков
+            if (value instanceof List<?> list && !list.isEmpty()) {
+                Object first = list.getFirst();
+
+                if (first instanceof String[]) {
+                    blocks.add(createTableBlock(key, (List<String[]>) list));
+                } else if (first instanceof byte[]) {
+                    blocks.add(new ImageBlock(key, value, 0));
+                }
             }
         }
         return blocks;
     }
 
-    // Выносим "мусорную" логику создания таблицы в отдельный приватный метод
     private TableBlock createTableBlock(String key, List<String[]> rows) {
         List<TableRow> tableRows = new ArrayList<>();
         int colCount = rows.getFirst().length;

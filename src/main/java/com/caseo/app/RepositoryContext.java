@@ -16,6 +16,7 @@ record RepositoryContext(
         ObjectCityRepository objectCityRepository,
         ObjectAddressRepository objectAddressRepository,
         ObjectTypeRepository objectTypeRepository,
+        ObjectImageRepository objectImageRepository,
         ObjectInsurancePolicyRepository objectInsurancePolicyRepository,
         ObjectOrderMinimumBalanceRepository objectOrderMinimumBalanceRepository,
         OrganizationAddressRepository organizationAddressRepository,

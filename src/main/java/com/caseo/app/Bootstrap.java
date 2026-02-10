@@ -45,6 +45,7 @@ public class Bootstrap {
                 new JdbcObjectCityRepository(),
                 new JdbcObjectAddressRepository(),
                 new JdbcObjectTypeRepository(),
+                new JdbcObjectImageRepository(),
                 new JdbcObjectInsurancePolicyRepository(),
                 new JdbcObjectOrderMinimumBalanceRepository(),
                 new JdbcOrganizationAddressRepository(),
@@ -71,6 +72,7 @@ public class Bootstrap {
                 new HazardousSubstanceService(repositoryContext.hazardousSubstanceRepository()),
                 new ObjectAddressService(repositoryContext.objectAddressRepository()),
                 new ObjectCityService(repositoryContext.objectCityRepository()),
+                new ObjectImageService(repositoryContext.objectImageRepository()),
                 new ObjectInsurancePolicyService(repositoryContext.objectInsurancePolicyRepository()),
                 new ObjectOrderMinimumBalanceService(repositoryContext.objectOrderMinimumBalanceRepository()),
                 objectService,
@@ -100,7 +102,7 @@ public class Bootstrap {
         return new UnifiedBlockFactory(
                 new TableBlockFactory(s.organizationService(), s.objectService(), s.technologicalEquipmentService()),
                 new PlaceholderFillStrategy(textService),
-                new ImageBlockFactory(s.objectService()),
+                new ImageBlockFactory(s.objectImageService(), s.objectService()),
                 new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService(), s.objectAddressService(), s.objectCityService()),
                 s.hazardTableLayoutService()
         );

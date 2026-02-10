@@ -14,6 +14,7 @@ public record InternalServices(
         HazardousSubstanceService hazardousSubstanceService,
         ObjectAddressService objectAddressService,
         ObjectCityService objectCityService,
+        ObjectImageService objectImageService,
         ObjectInsurancePolicyService objectInsurancePolicyService,
         ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService,
         ObjectService objectService,

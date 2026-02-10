@@ -5,6 +5,7 @@ import com.caseo.word.blocks.image.ImageBlock;
 import com.caseo.word.render.BlockRenderer;
 import com.caseo.word.render.RenderContext;
 import com.caseo.word.util.DocxTraversalUtil;
+import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.docx4j.TextUtils;
 import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.jaxb.Context;
@@ -27,50 +28,84 @@ public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void render(ImageBlock block, RenderContext context) {
         try {
             MainDocumentPart mdp = context.getDocument().getMainDocumentPart();
             List<Object> paragraphs = docxTraversalUtil.getAllElementFromObject(mdp, P.class);
+            ObjectFactory factory = Context.getWmlObjectFactory();
 
             for (Object paragraphObject : paragraphs) {
                 P paragraph = (P) paragraphObject;
-
-                // Поиск тега через toString() — самый надежный способ в docx4j
                 String text = TextUtils.getText(paragraph);
+
                 if (text != null && text.contains(block.key())) {
+                    Object rawData = block.data();
+                    List<byte[]> images;
 
-                    // Очищаем содержимое параграфа (удаляем текст тега)
-                    paragraph.getContent().clear();
+                    if (rawData instanceof List) {
+                        images = (List<byte[]>) rawData;
+                    } else if (rawData instanceof byte[]) {
+                        images = List.of((byte[]) rawData);
+                    } else {
+                        images = null;
+                    }
 
-                    // Создаем часть изображения в пакете
-                    BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(
-                            (WordprocessingMLPackage) mdp.getPackage(),
-                            block.data()
-                    );
+                    if (images == null || images.isEmpty()) {
+                        if (paragraph.getParent() instanceof ContentAccessor parent) {
+                            parent.getContent().remove(paragraph);
+                        }
+                        return;
+                    }
 
-                    // Генерируем уникальные ID для Word
-                    int id1 = idCounter.incrementAndGet();
-                    int id2 = idCounter.incrementAndGet();
+                    ContentAccessor parent = (ContentAccessor) paragraph.getParent();
+                    int index = parent.getContent().indexOf(paragraph);
 
-                    // Создаем Inline объект (картинка внутри строки)
-                    Inline inlineImage = imagePart.createImageInline(
-                            block.key(), block.key(), id1, id2, false);
+                    for (int i = 0; i < images.size(); i++) {
+                        byte[] imageData = images.get(i);
+                        if (imageData == null || imageData.length == 0) continue;
 
-                    ObjectFactory factory = Context.getWmlObjectFactory();
-                    Drawing drawing = factory.createDrawing();
-                    drawing.getAnchorOrInline().add(inlineImage);
+                        BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(
+                                (WordprocessingMLPackage) mdp.getPackage(), imageData);
 
-                    R imageRun = factory.createR();
-                    imageRun.getContent().add(drawing);
+                        // Получаем родной DPI картинки (обычно 72 или 96, если не задан)
+                        ImageSize size = imagePart.getImageInfo().getSize();
 
-                    // Вставляем картинку в параграф
-                    paragraph.getContent().add(imageRun);
+                        // Получаем DPI (обычно возвращает массив [x, y])
+                        double dpi = size.getDpiHorizontal();
+                        if (dpi <= 0) dpi = 96; // Страховка, если DPI не определен
 
+                        // Пересчитываем в EMU
+                        long cx = (long) (size.getWidthPx() * 914400L / dpi);
+                        long cy = (long) (size.getHeightPx() * 914400L / dpi);
+
+                        // Вставляем с явными размерами
+                        Inline inlineImage = imagePart.createImageInline(
+                                block.key(), block.key(),
+                                idCounter.incrementAndGet(),
+                                idCounter.incrementAndGet(),
+                                cx, cy, false);
+
+                        Drawing drawing = factory.createDrawing();
+                        drawing.getAnchorOrInline().add(inlineImage);
+
+                        R imageRun = factory.createR();
+                        imageRun.getContent().add(drawing);
+
+                        if (i == 0) {
+                            paragraph.getContent().clear();
+                            paragraph.getContent().add(imageRun);
+                        } else {
+                            P nextP = factory.createP();
+                            nextP.getContent().add(imageRun);
+                            parent.getContent().add(index + i, nextP);
+                        }
+                    }
                     return;
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка при вставке изображения: " + block.key(), e);
+            throw new RuntimeException("Ошибка при рендеринге картинок для ключа: " + block.key(), e);
         }
     }
 }

@@ -9,6 +9,8 @@ import com.caseo.word.render.RendererRegistry;
 import com.caseo.word.util.HeaderFooterUtil;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
+import java.util.List;
+
 public class DocumentBuilder {
 
     private final RendererRegistry rendererRegistry;
@@ -30,6 +32,15 @@ public class DocumentBuilder {
 
         if (!context.getTextReplacements().isEmpty()) {
             document.getMainDocumentPart().variableReplace(context.getTextReplacements());
+            List<Object> content = document.getMainDocumentPart().getContent();
+            content.removeIf(obj -> {
+                if (obj instanceof org.docx4j.wml.P p) {
+                    String text = org.docx4j.TextUtils.getText(p);
+                    // Если в абзаце остался мусор или наша метка — удаляем весь абзац
+                    return text != null && text.contains("DELETE_ME");
+                }
+                return false;
+            });
             new HeaderFooterUtil().processHeadersAndFooters(document, context.getTextReplacements());
         }
 

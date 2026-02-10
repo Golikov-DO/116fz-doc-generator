@@ -17,7 +17,6 @@ public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implem
                         rs.getInt("org_id"),
                         rs.getInt("hazardous_substance_id"),
                         rs.getInt("hazard_class"),
-                        rs.getBytes("plan_and_diagram_OPO"),
                         rs.getString("full_name"),
                         rs.getString("address"),
                         rs.getString("amount_of_hazardous_substance"),

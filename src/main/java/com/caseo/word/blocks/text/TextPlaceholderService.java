@@ -6,6 +6,7 @@ import com.caseo.domain.util.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TextPlaceholderService {
@@ -56,9 +57,7 @@ public class TextPlaceholderService {
         map.put("OBJ_NEAREST_FIRE_STATION", obj.nearestFireStation());
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.departmentGoChsCity());
         var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
-        //var city = internalServices.objectCityService().getById(objAddr.id());
         map.put("OBJ_ADDRESS_FULL", AddressFormatter.format(objAddr));
-        //map.put("OBJ_AREA_LOCATION", TechnicalDescriptionFormatter.format(city));
         var type = internalServices.objectTypeService().getObjectType(obj.id());
         map.put("OBJ_TYPE_DIFINITION", type.typeDefinition());
         var substance = internalServices.hazardousSubstanceService().getById(obj.id());
@@ -72,6 +71,34 @@ public class TextPlaceholderService {
         map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DateFormatter.russDate(balance.date()));
         int techBlocks = internalServices.technologicalBlockService().countByObjectId(obj.id());
         map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", RussianPlural.technologicalBlock(techBlocks));
+
+        // ---------- IMAGE & CAPTION TEXT BLOCK ----------
+        List<ObjectImage> allImagesFromDb = internalServices.objectImageService().getByObjectId(obj.id());
+
+        for (int i = 1; i <= 3; i++) {
+            String currentIdx = String.valueOf(i);
+            String linkTextKey = "OBJ_LINC_TEXT_" + i + "_IMAGE";
+            String linkNumKey = "OBJ_NUM_" + i + "_LINC_IMAGE";
+            String captureNumKey = "OBJ_NUM_" + i + "_CAPTURE_IMAGE";
+            String captureTextKey = "OBJ_TEXT_CAPTURE_" + i + "_IMAGE";
+
+            var firstInGroupOpt = allImagesFromDb.stream()
+                    .filter(img -> currentIdx.equals(img.groupKey()))
+                    .findFirst();
+
+            if (firstInGroupOpt.isPresent()) {
+                ObjectImage firstInGroup = firstInGroupOpt.get();
+                map.put(linkTextKey, firstInGroup.linkText());
+                map.put(linkNumKey, String.valueOf(i));
+                map.put(captureNumKey, String.valueOf(i));
+                map.put(captureTextKey, firstInGroup.caption());
+            } else {
+                map.put(linkTextKey, "DELETE_ME");
+                map.put(linkNumKey, "");
+                map.put(captureNumKey, "");
+                map.put(captureTextKey, "DELETE_ME");
+            }
+        }
 
         return map;
     }
