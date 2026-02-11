@@ -11,62 +11,42 @@ public class TechnicalDescriptionFormatter {
 
         List<String> paragraphs = new ArrayList<>();
 
-        // 1. Географический и геологический блок
-        StringBuilder geo = new StringBuilder();
-        if (isNotEmpty(city.cityName())) {
-            geo.append(city.cityName()).append(" расположен в географической зоне: ").append(city.adminStatus()).append(". ");
-        }
-        if (isNotEmpty(city.geoRelief())) {
-            geo.append("Рельеф местности: ").append(city.geoRelief()).append(". ");
-        }
-        if (isNotEmpty(city.geoGeology())) {
-            geo.append("Геологическое строение участка представлено: ").append(city.geoGeology()).append(".");
-        }
-        addParagraphIfNotEmpty(paragraphs, "Район расположения объекта характеризуется следующими параметрами:", geo);
-
-        // 2. Климат и Гидрология
-        StringBuilder climate = new StringBuilder();
-        if (isNotEmpty(city.climateDesc())) {
-            climate.append("Климат района ").append(city.climateDesc()).append(". ");
-        }
-        if (isNotEmpty(city.hydroDesc())) {
-            climate.append("Гидрографическая сеть представлена: ").append(city.hydroDesc()).append(".");
-        }
-        addParagraphIfNotEmpty(paragraphs, "Климатические и гидрологические условия:", climate);
-
-        // 3. Инфраструктура и организации
-        StringBuilder infra = new StringBuilder();
-        if (isNotEmpty(city.infraTransport())) {
-            infra.append("Транспортная доступность: ").append(city.infraTransport()).append(". ");
-        }
-        if (isNotEmpty(city.infraEngineering())) {
-            infra.append("Инженерные коммуникации района: ").append(city.infraEngineering()).append(". ");
-        }
-        if (isNotEmpty(city.infraOrganizations())) {
-            infra.append("Эксплуатирующие организации: ").append(city.infraOrganizations()).append(".");
-        }
-        addParagraphIfNotEmpty(paragraphs, "Транспортная и инженерная инфраструктура:", infra);
-
-        // 4. Окружение и безопасность
-        StringBuilder nearby = new StringBuilder();
-        if (isNotEmpty(city.nearbyTowns())) {
-            nearby.append("Ближайшие населенные пункты: ").append(city.nearbyTowns()).append(". ");
-        }
-        if (isNotEmpty(city.massPeoplePlaces())) {
-            nearby.append("Места массового пребывания людей: ").append(city.massPeoplePlaces()).append(".");
-        }
-        addParagraphIfNotEmpty(paragraphs, "Ближайшее окружение:", nearby);
+        // Если поле пустое, addParagraph не сработает, и в массив ничего не попадет
+        addParagraph(paragraphs, "Район расположения объекта", city.cityName(), city.adminStatus());
+        addParagraph(paragraphs, "Рельеф местности", city.geoRelief());
+        addParagraph(paragraphs, "Геологическое строение участка", city.geoGeology());
+        addParagraph(paragraphs, "Климатические условия", city.climateDesc());
+        addParagraph(paragraphs, "Гидрографическая сеть представлена", city.hydroDesc());
+        addParagraph(paragraphs, "Транспортная доступность", city.infraTransport());
+        addParagraph(paragraphs, "Инженерные коммуникации района", city.infraEngineering());
 
         return paragraphs.isEmpty()
                 ? new String[]{"Техническое описание временно недоступно."}
                 : paragraphs.toArray(new String[0]);
     }
 
-    private static void addParagraphIfNotEmpty(List<String> paragraphs, String title, StringBuilder content) {
-        String trimmedContent = content.toString().trim();
-        if (!trimmedContent.isEmpty()) {
-            paragraphs.add(title + " " + trimmedContent);
+    private static void addParagraph(List<String> list, String label, String value) {
+        if (isNotEmpty(value)) {
+            list.add(label + ": " + sanitize(value) + ".");
         }
+    }
+
+    // Перегрузка для первого пункта (город + статус)
+    private static void addParagraph(List<String> list, String label, String value, String status) {
+        if (isNotEmpty(value)) {
+            String fullStatus = isNotEmpty(status) ? " (" + status + ")" : "";
+            list.add(label + ": " + value + fullStatus + ".");
+        }
+    }
+
+    private static String sanitize(String str) {
+        if (str == null) return "";
+        str = str.trim();
+        // Убираем точку в конце, если она уже есть, чтобы не было двойных точек
+        if (str.endsWith(".")) {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
     }
 
     private static boolean isNotEmpty(String str) {

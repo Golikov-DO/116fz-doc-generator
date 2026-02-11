@@ -18,7 +18,7 @@ public class Main {
         ApplicationContext context = Bootstrap.init();
 
         // какой документ генерируем
-        int documentId = 1;
+        int documentId = 2;
 
         DocumentSet documentSet = context.documentSetService().getById(documentId);
         Organization org = context.organizationService().getById(documentSet.id());
