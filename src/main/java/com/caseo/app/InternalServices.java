@@ -5,6 +5,7 @@ import com.caseo.word.layout.HazardTableLayoutService;
 
 public record InternalServices(
         AsfCertificateService asfCertificateService,
+        AsfDocumentImageService asfDocumentImageService,
         AsfService asfService,
         AsfSignerService asfSignerService,
         AsfWorkTypeService asfWorkTypeService,

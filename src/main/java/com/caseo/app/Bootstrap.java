@@ -33,6 +33,7 @@ public class Bootstrap {
     private static RepositoryContext initRepositories() {
         return new RepositoryContext(
                 new JdbcAsfCertificateRepository(),
+                new JdbcAsfDocumentImageRepository(),
                 new JdbcAsfRepository(),
                 new JdbcAsfSignerRepository(),
                 new JdbcAsfWorkTypeRepository(),
@@ -63,6 +64,7 @@ public class Bootstrap {
         HazardTableLayoutService hazardTableLayoutService = new HazardTableLayoutService(objectService, hazardService);
         return new InternalServices(
                 new AsfCertificateService(repositoryContext.asfCertificateRepository()),
+                new AsfDocumentImageService(repositoryContext.asfDocumentImageRepository()),
                 new AsfService(repositoryContext.asfRepository()),
                 new AsfSignerService(repositoryContext.asfSignerRepository()),
                 new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
@@ -102,7 +104,7 @@ public class Bootstrap {
         return new UnifiedBlockFactory(
                 new TableBlockFactory(s.organizationService(), s.objectService(), s.technologicalEquipmentService()),
                 new PlaceholderFillStrategy(textService),
-                new ImageBlockFactory(s.objectImageService(), s.objectService()),
+                new ImageBlockFactory(s.objectImageService(), s.objectService(), s.asfDocumentImageService(), s.asfService()),
                 new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService(), s.objectAddressService(), s.objectCityService()),
                 s.hazardTableLayoutService()
         );

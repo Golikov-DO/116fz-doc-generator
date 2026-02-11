@@ -1,7 +1,7 @@
 package com.caseo.domain.model;
 
 /**
- * Модель изображения объекта.
+ * Модель изображений объекта.
  */
 public record ObjectImage(
         int id,

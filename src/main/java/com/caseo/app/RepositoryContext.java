@@ -4,6 +4,7 @@ import com.caseo.domain.repository.*;
 
 record RepositoryContext(
         AsfCertificateRepository asfCertificateRepository,
+        AsfDocumentImageRepository asfDocumentImageRepository,
         AsfRepository asfRepository,
         AsfSignerRepository asfSignerRepository,
         AsfWorkTypeRepository asfWorkTypeRepository,

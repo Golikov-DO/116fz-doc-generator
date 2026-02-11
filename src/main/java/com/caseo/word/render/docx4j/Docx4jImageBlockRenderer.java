@@ -76,8 +76,8 @@ public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
                         if (dpi <= 0) dpi = 96; // Страховка, если DPI не определен
 
                         // Пересчитываем в EMU
-                        long cx = (long) (size.getWidthPx() * 914400L / dpi);
-                        long cy = (long) (size.getHeightPx() * 914400L / dpi);
+                        long cx = (long) (size.getWidthPx() * 914400 / dpi);
+                        long cy = (long) (size.getHeightPx() * 914400 / dpi);
 
                         // Вставляем с явными размерами
                         Inline inlineImage = imagePart.createImageInline(
