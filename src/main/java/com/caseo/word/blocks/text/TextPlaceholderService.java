@@ -73,16 +73,15 @@ public class TextPlaceholderService {
         map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", RussianPlural.technologicalBlock(techBlocks));
 
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------
-        List<ObjectImage> allImagesFromDb = internalServices.objectImageService().getByObjectId(obj.id());
+        List<ObjectImage> objImages = internalServices.objectImageService().getByObjectId(obj.id());
 
         for (int i = 1; i <= 3; i++) {
             String currentIdx = String.valueOf(i);
             String linkTextKey = "OBJ_LINC_TEXT_" + i + "_IMAGE";
-            String linkNumKey = "OBJ_NUM_" + i + "_LINC_IMAGE";
-            String captureNumKey = "OBJ_NUM_" + i + "_CAPTURE_IMAGE";
+            String linkNumKey = "OBJ_NUM_" + i + "_IMAGE";
             String captureTextKey = "OBJ_TEXT_CAPTURE_" + i + "_IMAGE";
 
-            var firstInGroupOpt = allImagesFromDb.stream()
+            var firstInGroupOpt = objImages.stream()
                     .filter(img -> currentIdx.equals(img.groupKey()))
                     .findFirst();
 
@@ -90,13 +89,45 @@ public class TextPlaceholderService {
                 ObjectImage firstInGroup = firstInGroupOpt.get();
                 map.put(linkTextKey, firstInGroup.linkText());
                 map.put(linkNumKey, String.valueOf(i));
-                map.put(captureNumKey, String.valueOf(i));
                 map.put(captureTextKey, firstInGroup.caption());
             } else {
                 map.put(linkTextKey, "DELETE_ME");
                 map.put(linkNumKey, "");
-                map.put(captureNumKey, "");
                 map.put(captureTextKey, "DELETE_ME");
+            }
+        }
+
+        // ---------- TABLE & NAME LINC TEXT ----------
+        List<ObjectTableTitle> titles = internalServices.objectTableTitleService().getAll();
+
+        Map<Integer, Boolean> presenceMap = new HashMap<>();
+        presenceMap.put(1, !internalServices.technologicalEquipmentService().getByObject(obj.id()).isEmpty());
+        presenceMap.put(2, true);
+        // Добавить остальные вызовы как добавлю ещё таблиц )) по аналогии:
+        // presenceMap.put(3, !internalServices.someOtherService().getByObject(obj.id()).isEmpty());
+
+        int currentDisplayNum = 1;
+
+        for (int i = 1; i <= 9; i++) {
+            final int currentId = i;
+            String numKey = "OBJ_NUM_" + i + "_TABLE";
+            String linkKey = "OBJ_LINC_TEXT_" + i + "_TABLE";
+            String nameKey = "OBJ_TEXT_NAME_" + i + "_TABLE";
+
+            boolean hasData = presenceMap.getOrDefault(i, false);
+
+            if (hasData) {
+                var titleOpt = titles.stream().filter(t -> t.id() == currentId).findFirst();
+                if (titleOpt.isPresent()) {
+                    map.put(numKey, String.valueOf(currentDisplayNum));
+                    map.put(linkKey, titleOpt.get().tableTextLinc());
+                    map.put(nameKey, titleOpt.get().tableTextName());
+                    currentDisplayNum++;
+                }
+            } else {
+                map.put(numKey, "DELETE_ME");
+                map.put(linkKey, "DELETE_ME");
+                map.put(nameKey, "DELETE_ME");
             }
         }
 

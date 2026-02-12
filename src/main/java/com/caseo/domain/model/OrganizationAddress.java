@@ -2,7 +2,6 @@ package com.caseo.domain.model;
 
 /**
  * Модель адреса объекта.
- * Поля соответствуют расширенной структуре БД для корректного формирования строки адреса.
  */
 public record OrganizationAddress(
         int id,
@@ -15,5 +14,6 @@ public record OrganizationAddress(
         String house,              // Номер дома, строения или помещения
         String coordinates,        // Географические координаты
         String rawAddress          // Полный адрес строкой (для ручного ввода)
-) implements Addressable {}
+) implements Addressable {
+}
 

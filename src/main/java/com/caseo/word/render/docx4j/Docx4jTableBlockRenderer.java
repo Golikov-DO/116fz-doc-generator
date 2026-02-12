@@ -26,11 +26,23 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
 
     @Override
     public void render(TableBlock block, RenderContext context) {
+        MainDocumentPart mdp = context.getDocument().getMainDocumentPart();
 
         if (block.rows() == null || block.rows().isEmpty()) {
+            List<Object> paragraphs = docxTraversalUtil.getAllElementFromObject(mdp, P.class);
+            for (Object pObj : paragraphs) {
+                P p = (P) pObj;
+                if (org.docx4j.TextUtils.getText(p).contains(block.key())) {
+                    p.getContent().clear();
+                    Text deleteText = new Text();
+                    deleteText.setValue("DELETE_ME");
+                    R run = new R();
+                    run.getContent().add(deleteText);
+                    p.getContent().add(run);
+                }
+            }
             return;
         }
-        MainDocumentPart mdp = context.getDocument().getMainDocumentPart();
         renderTable(mdp, block);
     }
 
@@ -82,12 +94,12 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
         List<Object> all = mdp.getContent();
         for (int i = 0; i < all.size(); i++) {
             Object obj = XmlUtils.unwrap(all.get(i));
-            if (obj instanceof P p && p.toString().contains(tag)) {
-                // Удаляем заголовок
-                all.remove(i);
-                // Если следующим элементом идет таблица — удаляем и её
-                if (i < all.size() && XmlUtils.unwrap(all.get(i)) instanceof Tbl) {
-                    all.remove(i);
+            // Ищем таблицу, в которой "застрял" наш OBJ_TABLE_X_PLACEHOLDER
+            if (obj instanceof Tbl tbl && XmlUtils.marshaltoString(tbl).contains(tag)) {
+                all.remove(i); // Удаляем таблицу
+                // Удаляем заголовок (абзац ПЕРЕД таблицей), если он есть
+                if (i > 0 && XmlUtils.unwrap(all.get(i - 1)) instanceof P) {
+                    all.remove(i - 1);
                 }
                 break;
             }

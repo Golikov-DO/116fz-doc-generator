@@ -66,6 +66,8 @@ public class UnifiedBlockFactory {
             if (value == null) {
                 if (key.contains("IMAGE")) {
                     blocks.add(new ImageBlock(key, null, 0));
+                } else if (key.contains("TABLE")) {
+                    blocks.add(new TableBlock(key, null, null));
                 }
                 continue;
             }
@@ -118,9 +120,7 @@ public class UnifiedBlockFactory {
         putAllIfPresent(result, listBlockFactory.build(documentSet));
         putAllIfPresent(result, imageBlockFactory.build(documentSet));
         List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(documentSet);
-        if (!hazardData.isEmpty()) {
-            result.put("OBJ_HAZARD_TABLE", hazardData);
-        }
+        if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
 
         return result;
     }

@@ -24,6 +24,7 @@ public class Main {
         Organization org = context.organizationService().getById(documentSet.id());
 
         // ======================== TAG ============================
+        //Предпочтительный вариант очень гибкий и надёжный
         byte[] tagTemplateBytes =
                 Files.readAllBytes(Path.of(DocumentPathUtil.TAG_TEMPLATE_PATH));
 
@@ -37,7 +38,7 @@ public class Main {
         document.save(DocumentPathUtil.buildOutputFile(org));
 
         // ===================== PLACEHOLDER =======================
-
+//      Не очень решение, много работы с параграфами если длинный текст вставки
 //        byte[] placeholderTemplateBytes =
 //                Files.readAllBytes(Path.of(DocumentPathUtil.PLACEHOLDER_TEMPLATE_PATH));
 //

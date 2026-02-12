@@ -7,4 +7,5 @@ import java.sql.SQLException;
 public interface ObjectInsurancePolicyRepository {
 
     ObjectInsurancePolicy findByObjectId(int objectId) throws SQLException;
+
 }

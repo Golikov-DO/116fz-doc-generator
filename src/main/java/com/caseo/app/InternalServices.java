@@ -1,5 +1,6 @@
 package com.caseo.app;
 
+import com.caseo.domain.repository.ObjectTableTitleRepository;
 import com.caseo.domain.service.*;
 import com.caseo.word.layout.HazardTableLayoutService;
 
@@ -20,6 +21,7 @@ public record InternalServices(
         ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService,
         ObjectService objectService,
         ObjectStructureService objectStructureService,
+        ObjectTableTitleService objectTableTitleService,
         ObjectTypeService objectTypeService,
         OrganizationAddressService organizationAddressService,
         OrganizationService organizationService,

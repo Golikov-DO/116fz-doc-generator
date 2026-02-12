@@ -34,8 +34,10 @@
 
 ## Таблицы
 
-- `TECHNOLOGICAL_EQUIPMENT_TABLE` — Таблица 1 – Перечень основного технологического оборудования ОПО
-- `HAZARD_TABLE` - Таблица 2 – Характеристика опасного вещества
+- `${OBJ_LINC_TEXT_1_TABLE}` – Текстовая ссылка в документе на таблицу
+- `${OBJ_NUM_1_TABLE"}` – Номер таблиц в документе
+- `OBJ_TABLE_1_PLACEHOLDER` – Место заполнения таблиц
+- `${OBJ_TEXT_NAME_1_TABLE}` – Текстовая имя таблиц
 
 ## Нумерованные списки 
 
@@ -44,10 +46,9 @@
 
 ## Картинки
 
-- `${OBJ_LINC_TEXT_1_IMAGE}` –
-- `${OBJ_NUM_1_LINC_IMAGE"}` –
-- `OBJ_IMAGE_1_PLACEHOLDER` –
-- `OBJ_NUM_1_CAPTURE_IMAGE` –
-- `OBJ_TEXT_CAPTURE_1_IMAGE` –
+- `${OBJ_LINC_TEXT_1_IMAGE}` – Текстовая ссылка в документе на картинку
+- `${OBJ_NUM_1_IMAGE"}` – Номер картинки в документе
+- `OBJ_IMAGE_1_PLACEHOLDER` – Место картинки
+- `${OBJ_TEXT_CAPTURE_1_IMAGE}` – Текстовая подпись картинки
 - `OBJ_IMAGE_4_PLACEHOLDER` – Скан свидетельства может быть несколько картинок
-- - `OBJ_IMAGE_5_PLACEHOLDER` – Скан паспорта ПАСФ может быть несколько картинок
+- `OBJ_IMAGE_5_PLACEHOLDER` – Скан паспорта ПАСФ может быть несколько картинок

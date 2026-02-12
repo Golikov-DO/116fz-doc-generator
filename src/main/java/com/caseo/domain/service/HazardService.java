@@ -30,8 +30,6 @@ public class HazardService {
                 .stream()
                 .collect(Collectors.toMap(
                         HazardousParamValue::paramId,
-//                        v -> v,
-//                        (a, b) -> a
                         Function.identity()
                 ));
     }
