@@ -3,6 +3,8 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.AsfWorkType;
 import com.caseo.domain.repository.AsfWorkTypeRepository;
 
+import java.util.List;
+
 public class JdbcAsfWorkTypeRepository extends BaseJdbcRepository<AsfWorkType> implements AsfWorkTypeRepository {
 
     @Override
@@ -19,7 +21,8 @@ public class JdbcAsfWorkTypeRepository extends BaseJdbcRepository<AsfWorkType> i
     }
 
     @Override
-    public AsfWorkType findByAsfId(int asfId) {
-        return findOne("asf_id = ?", asfId).orElse(null);
+    public List<AsfWorkType> findByAsfId(int asfId) {
+        return findList("asf_id = ?", asfId);
     }
+
 }

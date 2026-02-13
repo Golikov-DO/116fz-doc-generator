@@ -15,11 +15,11 @@ public class JdbcTechnologicalEquipmentRepository extends BaseJdbcRepository<Tec
     @Override
     protected RowMapper<TechnologicalEquipment> mapper() {
         return rs -> new TechnologicalEquipment(
-                        rs.getInt("id"),
-                        rs.getInt("num"),
-                        rs.getString("equipment_name"),
-                        rs.getString("characteristics"),
-                        rs.getInt("object_id")
+                rs.getInt("id"),
+                rs.getInt("num"),
+                rs.getString("equipment_name"),
+                rs.getString("characteristics"),
+                rs.getInt("object_id")
         );
     }
 

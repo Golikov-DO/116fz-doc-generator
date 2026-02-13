@@ -36,7 +36,7 @@ public class ImageBlockFactory {
                         Collectors.mapping(ObjectImage::imageBlob, Collectors.toList())
                 ));
 
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 4; i++) {
             String imagePlaceholder = "OBJ_IMAGE_" + i + "_PLACEHOLDER";
 
             List<byte[]> blobs = imagesByGroup.get(String.valueOf(i));

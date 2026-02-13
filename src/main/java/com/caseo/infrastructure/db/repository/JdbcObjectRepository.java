@@ -13,15 +13,17 @@ public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implem
     @Override
     protected RowMapper<ObjectModel> mapper() {
         return rs -> new ObjectModel(
-                        rs.getInt("id"),
-                        rs.getInt("org_id"),
-                        rs.getInt("hazardous_substance_id"),
-                        rs.getInt("hazard_class"),
-                        rs.getString("full_name"),
-                        rs.getString("amount_of_hazardous_substance"),
-                        rs.getString("nearest_fire_station"),
-                        rs.getString("short_name"),
-                        rs.getString("department_gochs_city")
+                rs.getInt("id"),
+                rs.getInt("org_id"),
+                rs.getInt("hazardous_substance_id"),
+                rs.getInt("hazard_class"),
+                rs.getString("full_name"),
+                rs.getString("amount_of_hazardous_substance"),
+                rs.getString("nearest_fire_station"),
+                rs.getString("short_name"),
+                rs.getString("department_gochs_city"),
+                rs.getString("emergency_commission")
+
         );
     }
 

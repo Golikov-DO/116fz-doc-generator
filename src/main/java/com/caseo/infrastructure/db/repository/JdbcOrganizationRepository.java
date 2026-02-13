@@ -3,8 +3,6 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.repository.OrganizationRepository;
 
-import java.sql.SQLException;
-
 public class JdbcOrganizationRepository extends BaseJdbcRepository<Organization>
         implements OrganizationRepository {
 

@@ -13,11 +13,11 @@ public class JdbcHazardousParamValueRepository extends BaseJdbcRepository<Hazard
     }
 
     protected RowMapper<HazardousParamValue> mapper() {
-        return  rs -> new HazardousParamValue(
-        rs.getInt("id"),
-        rs.getInt("param_id"),
-        rs.getString("value_text"),
-        rs.getString("source_info")
+        return rs -> new HazardousParamValue(
+                rs.getInt("id"),
+                rs.getInt("param_id"),
+                rs.getString("value_text"),
+                rs.getString("source_info")
         );
     }
 

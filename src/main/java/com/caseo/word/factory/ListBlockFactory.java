@@ -44,11 +44,9 @@ public class ListBlockFactory {
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
         var objAddr = objectAddressService.getByObjectId(objectModel.id());
         var city = objectCityService.getById(objAddr.id());
-        // Используем новый метод, возвращающий массив
         String[] descriptionParagraphs = TechnicalDescriptionFormatter.formatAsParagraphs(city);
 
         if (descriptionParagraphs.length > 0) {
-            // Новый тег заканчивается на LIST, как вы и предложили
             data.put("OBJ_AREA_LOCATION_LIST", descriptionParagraphs);
         }
         // ============================================================

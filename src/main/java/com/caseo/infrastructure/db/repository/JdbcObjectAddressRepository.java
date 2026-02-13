@@ -27,7 +27,7 @@ public class JdbcObjectAddressRepository extends BaseJdbcRepository<ObjectAddres
     }
 
     @Override
-    public ObjectAddress findByObjectId(int objectId){
+    public ObjectAddress findByObjectId(int objectId) {
         return findOne("object_id = ?", objectId).orElse(null);
     }
 }

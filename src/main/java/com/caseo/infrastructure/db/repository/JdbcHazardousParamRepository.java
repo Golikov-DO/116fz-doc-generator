@@ -12,18 +12,18 @@ public class JdbcHazardousParamRepository extends BaseJdbcRepository<HazardousPa
         return "hazardous_param";
     }
 
-    protected RowMapper<HazardousParam> mapper () {
+    protected RowMapper<HazardousParam> mapper() {
         return rs -> new HazardousParam(
-        rs.getInt("id"),
-        rs.getInt("substance_id"),
-        rs.getString("section_no"),
-        rs.getString("title"),
-        rs.getString("subtitle")
+                rs.getInt("id"),
+                rs.getInt("substance_id"),
+                rs.getString("section_no"),
+                rs.getString("title"),
+                rs.getString("subtitle")
         );
     }
 
     @Override
     public List<HazardousParam> findParamBySubstanceId(int substanceId) {
-        return findList("substance_id = ?","ORDER BY id", substanceId);
+        return findList("substance_id = ?", "ORDER BY id", substanceId);
     }
 }

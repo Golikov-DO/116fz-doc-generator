@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TextPlaceholderService {
 
@@ -48,6 +49,10 @@ public class TextPlaceholderService {
         map.put("ASF_SIGNER_NAME", asfSigner.name());
         var cert = internalServices.asfCertificateService().getByAsfId(asf.id());
         map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
+        var types = internalServices.asfWorkTypeService().getByAsfId(asf.id());
+        map.put("ASF_WORK_TYPES", types.stream()
+                .map(AsfWorkType::name)
+                .collect(Collectors.joining(", ")));
 
         // ---------- OBJECT TEXT BLOCK ----------
         map.put("OBJ_NAME", obj.objectFullName());
@@ -56,6 +61,7 @@ public class TextPlaceholderService {
         map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", obj.amountOfHazardousSubstance());
         map.put("OBJ_NEAREST_FIRE_STATION", obj.nearestFireStation());
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.departmentGoChsCity());
+        map.put("OBJ_EMERGENCY_COMMISSION", obj.emergencyCommission());
         var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
         map.put("OBJ_ADDRESS_FULL", AddressFormatter.format(objAddr));
         var type = internalServices.objectTypeService().getObjectType(obj.id());
@@ -75,7 +81,7 @@ public class TextPlaceholderService {
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------
         List<ObjectImage> objImages = internalServices.objectImageService().getByObjectId(obj.id());
 
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 4; i++) {
             String currentIdx = String.valueOf(i);
             String linkTextKey = "OBJ_LINC_TEXT_" + i + "_IMAGE";
             String linkNumKey = "OBJ_NUM_" + i + "_IMAGE";
@@ -101,10 +107,14 @@ public class TextPlaceholderService {
         List<ObjectTableTitle> titles = internalServices.objectTableTitleService().getAll();
 
         Map<Integer, Boolean> presenceMap = new HashMap<>();
-        presenceMap.put(1, !internalServices.technologicalEquipmentService().getByObject(obj.id()).isEmpty());
+        presenceMap.put(1, !internalServices.technologicalEquipmentService().getByObjectId(obj.id()).isEmpty());
         presenceMap.put(2, true);
-        // Добавить остальные вызовы как добавлю ещё таблиц )) по аналогии:
-        // presenceMap.put(3, !internalServices.someOtherService().getByObject(obj.id()).isEmpty());
+        presenceMap.put(3, !internalServices.accidentScenariosService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(4, !internalServices.mainScenariosService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(5, !internalServices.fireEquipmentService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(6, true);
+        presenceMap.put(7, !internalServices.personsResponsibleService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(8, !internalServices.compositionKchsService().getByObjectId(obj.id()).isEmpty());
 
         int currentDisplayNum = 1;
 

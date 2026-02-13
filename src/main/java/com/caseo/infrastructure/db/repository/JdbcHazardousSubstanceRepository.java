@@ -12,17 +12,17 @@ public class JdbcHazardousSubstanceRepository extends BaseJdbcRepository<Hazardo
 
     protected RowMapper<HazardousSubstance> mapper() {
         return rs -> new HazardousSubstance(
-        rs.getInt("id"),
-        rs.getInt("object_id"),
-        rs.getString("name"),
-        rs.getString("name_gen")
+                rs.getInt("id"),
+                rs.getInt("object_id"),
+                rs.getString("name"),
+                rs.getString("name_gen")
         );
     }
 
     @Override
     public HazardousSubstance findById(int objectId) {
 
-        return  findOne("object_id = ?", objectId).orElse(null);
+        return findOne("object_id = ?", objectId).orElse(null);
 
     }
 }

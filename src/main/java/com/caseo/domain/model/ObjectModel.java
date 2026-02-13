@@ -9,6 +9,7 @@ public record ObjectModel(
         String amountOfHazardousSubstance,
         String nearestFireStation,
         String objectShortName,
-        String departmentGoChsCity
+        String departmentGoChsCity,
+        String emergencyCommission
 ) {
 }

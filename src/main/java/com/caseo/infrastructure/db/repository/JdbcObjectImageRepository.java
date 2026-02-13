@@ -2,6 +2,7 @@ package com.caseo.infrastructure.db.repository;
 
 import com.caseo.domain.model.ObjectImage;
 import com.caseo.domain.repository.ObjectImageRepository;
+
 import java.util.List;
 
 public class JdbcObjectImageRepository extends BaseJdbcRepository<ObjectImage> implements ObjectImageRepository {

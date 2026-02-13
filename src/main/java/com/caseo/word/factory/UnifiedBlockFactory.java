@@ -9,6 +9,7 @@ import com.caseo.word.blocks.table.TableRow;
 import com.caseo.word.blocks.table.TableSchema;
 import com.caseo.word.blocks.text.TextBlock;
 
+import com.caseo.word.layout.ContactTableLayoutService;
 import com.caseo.word.layout.HazardTableLayoutService;
 import com.caseo.word.strategy.PlaceholderFillStrategy;
 
@@ -23,6 +24,7 @@ public class UnifiedBlockFactory {
     private final PlaceholderFillStrategy placeholderFillStrategy;
     private final ImageBlockFactory imageBlockFactory;
     private final HazardTableLayoutService hazardTableLayoutService;
+    private final ContactTableLayoutService contactTableLayoutService;
 
     // Карта стратегий создания блоков
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
@@ -32,13 +34,15 @@ public class UnifiedBlockFactory {
             PlaceholderFillStrategy placeholderFillStrategy,
             ImageBlockFactory imageBlockFactory,
             ListBlockFactory listBlockFactory,
-            HazardTableLayoutService hazardTableLayoutService
+            HazardTableLayoutService hazardTableLayoutService,
+            ContactTableLayoutService contactTableLayoutService
     ) {
         this.tableBlockFactory = tableBlockFactory;
         this.listBlockFactory = listBlockFactory;
         this.placeholderFillStrategy = placeholderFillStrategy;
         this.imageBlockFactory = imageBlockFactory;
         this.hazardTableLayoutService = hazardTableLayoutService;
+        this.contactTableLayoutService = contactTableLayoutService;
         initCreators();
     }
 
@@ -121,6 +125,8 @@ public class UnifiedBlockFactory {
         putAllIfPresent(result, imageBlockFactory.build(documentSet));
         List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(documentSet);
         if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
+        List<String[]> contactData = contactTableLayoutService.getContactTableData(documentSet);
+        if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
 
         return result;
     }

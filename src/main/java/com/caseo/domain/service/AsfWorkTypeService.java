@@ -4,6 +4,7 @@ import com.caseo.domain.model.AsfWorkType;
 import com.caseo.domain.repository.AsfWorkTypeRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class AsfWorkTypeService {
 
@@ -13,7 +14,7 @@ public class AsfWorkTypeService {
 
     private final AsfWorkTypeRepository asfWorkTypeRepository;
 
-    public AsfWorkType getByAsfId(int asfId) throws SQLException {
+    public List<AsfWorkType> getByAsfId(int asfId) throws SQLException {
         return asfWorkTypeRepository.findByAsfId(asfId);
     }
 }

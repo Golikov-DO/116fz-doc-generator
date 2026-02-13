@@ -15,8 +15,8 @@ public class JdbcObjectStructureRepository extends BaseJdbcRepository<ObjectStru
     @Override
     protected RowMapper<ObjectStructure> mapper() {
         return rs -> new ObjectStructure(
-                    rs.getInt("num"),
-                    rs.getString("name")
+                rs.getInt("num"),
+                rs.getString("name")
         );
     }
 

@@ -6,12 +6,14 @@ import com.caseo.word.render.BlockRenderer;
 import com.caseo.word.render.RenderContext;
 import com.caseo.word.util.DocxTraversalUtil;
 import com.caseo.word.util.ParagraphFormatUtil;
+import com.caseo.word.util.TableMergeUtil;
 import com.caseo.word.util.TextInsertUtil;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
 import java.util.List;
+import java.util.Map;
 
 public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
 
@@ -47,7 +49,6 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
     }
 
     public void renderTable(MainDocumentPart mainDocumentPart, TableBlock block) {
-
         if (block.rows().isEmpty()) {
             removeTableAndHeader(mainDocumentPart, block.key());
             return;
@@ -59,34 +60,81 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
         for (Object tableObject : tables) {
             Tbl table = (Tbl) tableObject;
             Tr templateRow = null;
+
+            // 1. Ищем строку-шаблон
             for (Object rowObject : table.getContent()) {
                 if (XmlUtils.marshaltoString(rowObject).contains(tag)) {
                     templateRow = (Tr) XmlUtils.unwrap(rowObject);
                     break;
                 }
             }
+
             if (templateRow != null) {
-                int templateRowIndex = table.getContent().indexOf(templateRow);
+                // СОХРАНЯЕМ ЧИСТЫЙ КЛОН ДО МОДИФИКАЦИЙ
+                Tr cleanRowTemplate = XmlUtils.deepCopy(templateRow);
+                int insertIndex = table.getContent().indexOf(templateRow);
                 var schemaColumns = block.schema().columns();
+
                 for (var row : block.rows()) {
-                    Tr newRow = XmlUtils.deepCopy(templateRow);
+                    Map<String, Object> rowCells = row.cells();
+                    String firstColValue = String.valueOf(rowCells.getOrDefault("COL_0", ""));
+
+                    // Создаем новую строку из ЧИСТОГО шаблона
+                    Tr newRow = XmlUtils.deepCopy(cleanRowTemplate);
                     List<Object> cells = newRow.getContent();
-                    for (int cellIndex = 0; cellIndex < schemaColumns.size(); cellIndex++) {
-                        if (cellIndex < cells.size()) {
-                            Tc cell = (Tc) XmlUtils.unwrap(cells.get(cellIndex));
-                            String columnKey = schemaColumns.get(cellIndex).key();
-                            Object rawValue = row.get(columnKey);
-                            String value = rawValue != null ? rawValue.toString() : "";
-                            fillCellWithText(cell, tag, value);
+
+                    // --- ЛОГИКА H_MERGE (ОРГАНИЗАЦИЯ) ---
+                    if ("H_MERGE_FULL".equals(firstColValue)) {
+                        Tc firstCell = (Tc) XmlUtils.unwrap(cells.getFirst());
+                        TableMergeUtil.setGridSpan(firstCell, schemaColumns.size());
+
+                        // Удаляем лишние ячейки, чтобы Word 2016 не сошел с ума
+                        while (cells.size() > 1) { cells.remove(1); }
+
+                        String orgName = String.valueOf(rowCells.getOrDefault("COL_1", ""));
+                        replaceTextOrForce(firstCell, tag, orgName);
+                        TableMergeUtil.centerParagraph(firstCell, docxTraversalUtil);
+
+                        table.getContent().add(insertIndex++, newRow);
+                        continue;
+                    }
+
+                    // --- ЛОГИКА ОБЫЧНОЙ СТРОКИ И V_MERGE ---
+                    for (int i = 0; i < schemaColumns.size(); i++) {
+                        if (i < cells.size()) {
+                            Tc cell = (Tc) XmlUtils.unwrap(cells.get(i));
+                            String colKey = schemaColumns.get(i).key();
+                            Object rawValue = rowCells.get(colKey);
+                            String value = (rawValue != null) ? rawValue.toString() : "";
+
+                            if (i == 0) { // Колонка №
+                                if (value.startsWith("V_MERGE_START:")) {
+                                    TableMergeUtil.applyVMerge(cell, true);
+                                    value = value.substring(value.indexOf(":") + 1);
+                                } else if ("V_MERGE_CONT".equals(value)) {
+                                    TableMergeUtil.applyVMerge(cell, false);
+                                    value = ""; // В объединенной ячейке текст не нужен
+                                }
+                            }
+                            replaceTextOrForce(cell, tag, value);
                         }
                     }
-                    table.getContent().add(templateRowIndex + 1, newRow);
-                    templateRowIndex++;
+                    table.getContent().add(insertIndex++, newRow);
                 }
-
+                // Удаляем сам шаблон
                 table.getContent().remove(templateRow);
                 break;
             }
+        }
+    }
+
+    private void replaceTextOrForce(Tc cell, String tag, String value) {
+        String xml = XmlUtils.marshaltoString(cell);
+        if (xml.contains(tag)) {
+            fillCellWithText(cell, tag, value);
+        } else {
+            // Если тег потерялся при копировании, вставляем текст принудительно
+            TableMergeUtil.forceInsertText(cell, value, paragraphFormatUtil);
         }
     }
 

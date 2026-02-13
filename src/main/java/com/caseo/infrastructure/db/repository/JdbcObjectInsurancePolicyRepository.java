@@ -6,7 +6,10 @@ import com.caseo.domain.repository.ObjectInsurancePolicyRepository;
 public class JdbcObjectInsurancePolicyRepository extends BaseJdbcRepository<ObjectInsurancePolicy>
         implements ObjectInsurancePolicyRepository {
 
-    @Override protected String table() { return "object_insurance_policy"; }
+    @Override
+    protected String table() {
+        return "object_insurance_policy";
+    }
 
     @Override
     protected RowMapper<ObjectInsurancePolicy> mapper() {
@@ -20,6 +23,6 @@ public class JdbcObjectInsurancePolicyRepository extends BaseJdbcRepository<Obje
 
     @Override
     public ObjectInsurancePolicy findByObjectId(int objectId) {
-        return findOne("obj_id = ?",objectId).orElse(null);
+        return findOne("obj_id = ?", objectId).orElse(null);
     }
 }

@@ -14,7 +14,7 @@ public class TechnologicalEquipmentService {
         this.technologicalEquipmentRepository = technologicalEquipmentRepository;
     }
 
-    public List<TechnologicalEquipment> getByObject(int objectId) throws SQLException {
+    public List<TechnologicalEquipment> getByObjectId(int objectId) throws SQLException {
         return technologicalEquipmentRepository.findByObjectId(objectId);
     }
 }

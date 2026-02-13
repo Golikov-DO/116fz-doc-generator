@@ -3,9 +3,10 @@ package com.caseo.domain.repository;
 import com.caseo.domain.model.AsfWorkType;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface AsfWorkTypeRepository {
 
-    AsfWorkType findByAsfId(int asfId) throws SQLException;
+    List<AsfWorkType> findByAsfId(int asfId) throws SQLException;
 
 }

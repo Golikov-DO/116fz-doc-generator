@@ -1,18 +1,21 @@
 package com.caseo.infrastructure.db.repository;
 
 import com.caseo.infrastructure.db.DbUtils;
+
 import java.util.*;
 
 public abstract class BaseJdbcRepository<T> {
     protected abstract String table();
+
     protected abstract RowMapper<T> mapper();
+
     // Запрсопостроитель
     // Универсальный сборщик запросов (Мастер-метод)
     protected String buildSql(String select, String join, String where, String order, String limit) {
         StringBuilder sql = new StringBuilder(select != null ? select : "SELECT " + table() + ".*");
         sql.append(" FROM ").append(table());
 
-        if (join != null && !join.isEmpty())  sql.append(" ").append(join);
+        if (join != null && !join.isEmpty()) sql.append(" ").append(join);
         if (where != null && !where.isEmpty()) sql.append(" WHERE ").append(where);
         if (order != null && !order.isEmpty()) sql.append(" ").append(order);
         if (limit != null && !limit.isEmpty()) sql.append(" ").append(limit);

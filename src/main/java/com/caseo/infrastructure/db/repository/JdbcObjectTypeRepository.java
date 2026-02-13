@@ -13,9 +13,9 @@ public class JdbcObjectTypeRepository extends BaseJdbcRepository<ObjectType> imp
     @Override
     protected RowMapper<ObjectType> mapper() {
         return rs -> new ObjectType(
-                        rs.getInt("id"),
-                        rs.getInt("object_id"),
-                        rs.getString("object_type_definitions")
+                rs.getInt("id"),
+                rs.getInt("object_id"),
+                rs.getString("object_type_definitions")
         );
     }
 

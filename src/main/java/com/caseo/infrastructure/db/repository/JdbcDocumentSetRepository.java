@@ -13,13 +13,13 @@ public class JdbcDocumentSetRepository extends BaseJdbcRepository<DocumentSet> i
     @Override
     protected RowMapper<DocumentSet> mapper() {
         return rs -> new DocumentSet(
-        rs.getInt("id"),
-        rs.getInt("org_id")
+                rs.getInt("id"),
+                rs.getInt("org_id")
         );
     }
 
     @Override
-    public DocumentSet findById(int id){
+    public DocumentSet findById(int id) {
         return findOne("org_id = ?", id).orElse(null);
     }
 }

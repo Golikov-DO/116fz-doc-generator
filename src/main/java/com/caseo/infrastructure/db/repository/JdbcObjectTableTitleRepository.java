@@ -2,6 +2,7 @@ package com.caseo.infrastructure.db.repository;
 
 import com.caseo.domain.model.ObjectTableTitle;
 import com.caseo.domain.repository.ObjectTableTitleRepository;
+
 import java.util.List;
 
 public class JdbcObjectTableTitleRepository extends BaseJdbcRepository<ObjectTableTitle> implements ObjectTableTitleRepository {

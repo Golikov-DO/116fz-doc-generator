@@ -13,9 +13,9 @@ public class JdbcObjectOrderMinimumBalanceRepository extends BaseJdbcRepository<
     @Override
     protected RowMapper<ObjectOrderMinimumBalance> mapper() {
         return rs -> new ObjectOrderMinimumBalance(
-                        rs.getInt("number"),
-                        rs.getString("date")
-                );
+                rs.getInt("number"),
+                rs.getString("date")
+        );
     }
 
     @Override
