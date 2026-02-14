@@ -12,33 +12,33 @@ import java.util.stream.Collectors;
 
 public class TableBlockFactory {
 
-    private final AccidentScenariosService accidentScenariosService;
-    private final CompositionKchsService compositionKchsService;
-    private final FireEquipmentService fireEquipmentService;
-    private final MainScenariosService mainScenariosService;
+    private final ObjectAccidentScenariosService objectAccidentScenariosService;
+    private final ObjectCompositionKchsService objectCompositionKchsService;
+    private final ObjectFireEquipmentService objectFireEquipmentService;
+    private final ObjectMainScenariosService objectMainScenariosService;
     private final ObjectService objectService;
     private final OrganizationService organizationService;
-    private final PersonsResponsibleService personsResponsibleService;
-    private final TechnologicalEquipmentService technologicalEquipmentService;
+    private final ObjectPersonsResponsibleService objectPersonsResponsibleService;
+    private final ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService;
 
     public TableBlockFactory(
             OrganizationService organizationService,
             ObjectService objectService,
-            TechnologicalEquipmentService technologicalEquipmentService,
-            AccidentScenariosService accidentScenariosService,
-            MainScenariosService mainScenariosService,
-            FireEquipmentService fireEquipmentService,
-            PersonsResponsibleService personsResponsibleService,
-            CompositionKchsService compositionKchsService
+            ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService,
+            ObjectAccidentScenariosService objectAccidentScenariosService,
+            ObjectMainScenariosService objectMainScenariosService,
+            ObjectFireEquipmentService objectFireEquipmentService,
+            ObjectPersonsResponsibleService objectPersonsResponsibleService,
+            ObjectCompositionKchsService objectCompositionKchsService
     ) {
         this.organizationService = organizationService;
         this.objectService = objectService;
-        this.technologicalEquipmentService = technologicalEquipmentService;
-        this.accidentScenariosService = accidentScenariosService;
-        this.mainScenariosService = mainScenariosService;
-        this.fireEquipmentService = fireEquipmentService;
-        this.personsResponsibleService = personsResponsibleService;
-        this.compositionKchsService = compositionKchsService;
+        this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
+        this.objectAccidentScenariosService = objectAccidentScenariosService;
+        this.objectMainScenariosService = objectMainScenariosService;
+        this.objectFireEquipmentService = objectFireEquipmentService;
+        this.objectPersonsResponsibleService = objectPersonsResponsibleService;
+        this.objectCompositionKchsService = objectCompositionKchsService;
     }
 
     public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
@@ -54,17 +54,17 @@ public class TableBlockFactory {
 
             // Получаем данные для конкретного индекса.
             switch (i){
-                case 1 -> fillTable(data, placeholderKey, technologicalEquipmentService.getByObjectId(obj.id()),
+                case 1 -> fillTable(data, placeholderKey, objectTechnologicalEquipmentService.getByObjectId(obj.id()),
                         r -> new String[]{String.valueOf(r.num()), r.name(), r.characteristics()});
-                case 3 -> fillTable(data, placeholderKey, accidentScenariosService.getByObjectId(obj.id()),
+                case 3 -> fillTable(data, placeholderKey, objectAccidentScenariosService.getByObjectId(obj.id()),
                         r -> new String[]{r.scenarios(), r.scheme()});
-                case 4 -> fillTable(data, placeholderKey, mainScenariosService.getByObjectId(obj.id()),
+                case 4 -> fillTable(data, placeholderKey, objectMainScenariosService.getByObjectId(obj.id()),
                         r -> new String[]{r.equipmentName(), r.event(), r.scenariosList()});
-                case 5 -> fillTable(data, placeholderKey, fireEquipmentService.getByObjectId(obj.id()),
+                case 5 -> fillTable(data, placeholderKey, objectFireEquipmentService.getByObjectId(obj.id()),
                         r -> new String[]{String.valueOf(r.number()), r.productName(), r.quantity(), r.location()});
-                case 7 -> fillTable(data, placeholderKey, personsResponsibleService.getByObjectId(obj.id()),
+                case 7 -> fillTable(data, placeholderKey, objectPersonsResponsibleService.getByObjectId(obj.id()),
                         r -> new String[]{String.valueOf(r.number()), r.fullName(), r.position()});
-                case 8 -> fillTable(data, placeholderKey, compositionKchsService.getByObjectId(obj.id()),
+                case 8 -> fillTable(data, placeholderKey, objectCompositionKchsService.getByObjectId(obj.id()),
                         r -> new String[]{
                                 String.valueOf(r.number()),
                                 r.position(),

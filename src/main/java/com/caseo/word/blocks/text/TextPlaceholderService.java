@@ -6,7 +6,6 @@ import com.caseo.domain.util.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,59 +26,74 @@ public class TextPlaceholderService {
         Asf asf = internalServices.asfService().getOrganizationId(document.orgId());
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
+        var orgAddr = internalServices.organizationAddressService().getByOrganizationId(org.organizationId());
+        var orgSigner = internalServices.organizationSignerService().getByOrganizationId(org.organizationId());
+        map.put("ORG_ADDRESS_FULL", ObjectAddressFormatter.format(orgAddr));
         map.put("ORG_NAME", org.organizationName());
         map.put("ORG_SHORT_NAME", org.organizationShortName());
-        var orgAddr = internalServices.organizationAddressService().getByOrganizationId(org.organizationId());
-        map.put("ORG_ADDRESS_FULL", AddressFormatter.format(orgAddr));
-        map.put("ORG_TYPE_ACTIVITY", org.organizationTypeActivity());
-        var orgSigner = internalServices.organizationSignerService().getByOrganizationId(org.organizationId());
-        map.put("ORG_SIGNER_POSITION", orgSigner.position());
         map.put("ORG_SIGNER_NAME", orgSigner.name());
+        map.put("ORG_SIGNER_POSITION", orgSigner.position());
+        map.put("ORG_TYPE_ACTIVITY", org.organizationTypeActivity());
 
         // ---------- ASF TEXT BLOCK ----------
+        var asfSigner = internalServices.asfSignerService().getByAsfId(asf.id());
+        var cert = internalServices.asfCertificateService().getByAsfId(asf.id());
+        var funds = internalServices.asfCompositionDeploymentFundsService().getByAsfId(asf.id());
+        var personnel = internalServices.asfPersonnelService().getByAsfId(asf.id());
+        var specialists = internalServices.asfSpecialistsService().getByAsfId(asf.id());
+        var types = internalServices.asfWorkTypeService().getByAsfId(asf.id());
+
+        map.put("ASF_AREA_RESPONSIBILITY", funds.responsibilityArea());
+        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(asf.arrivalTime()));
+        map.put("ASF_AVAILABLE_SPECIALISTS", AsfSpecialistsTextBuilder.build(specialists));
+        map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
+        map.put("ASF_CERTIFIED_RESCUERS", AsfPersonnelTextBuilder.build(personnel));
+        map.put("ASF_CONTACT_NUMBER", funds.dutyOfficerTelephone());
+        map.put("ASF_DUTY_OFFICER_PHONE", funds.dutyOfficerTelephone());
+        map.put("ASF_E_MAIL", funds.eMail());
         map.put("ASF_FULL_NAME", asf.fullName());
         map.put("ASF_FULL_NAME_GEN", asf.fullNameGen());
+        map.put("ASF_NUMBER_BUILDINGS", funds.numberBuildings());
+        map.put("ASF_NUMBER_PERSONNEL_LIST", String.valueOf(personnel.staffByList()));
+        map.put("ASF_NUMBER_PERSONNEL_STAFF", String.valueOf(personnel.staffByStaffing()));
+        map.put("ASF_PLACE_LOCATION", funds.deploymentPlace());
+        map.put("ASF_RECEPTION_PHONE", funds.contactTelephone());
         map.put("ASF_SHORT_NAME", asf.shortName());
-        map.put("ASF_STATUS", asf.status());
-        map.put("ASF_STATUS_SHORT", asf.statusShort());
-        map.put("ASF_ARRIVAL_TIME", asf.arrivalTime());
-        map.put("ASF_CONTACT_NUMBER", asf.telethonNumber());
-        var asfSigner = internalServices.asfSignerService().getByAsfId(asf.id());
-        map.put("ASF_SIGNER_POSITION", asfSigner.position());
         map.put("ASF_SIGNER_NAME", asfSigner.name());
-        var cert = internalServices.asfCertificateService().getByAsfId(asf.id());
-        map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
-        var types = internalServices.asfWorkTypeService().getByAsfId(asf.id());
+        map.put("ASF_SIGNER_POSITION", asfSigner.position());
+        map.put("ASF_STATUS_SHORT", asf.statusShort());
+        map.put("ASF_TOTAL_BUILDING_AREA", funds.totalArea());
         map.put("ASF_WORK_TYPES", types.stream()
                 .map(AsfWorkType::name)
                 .collect(Collectors.joining(", ")));
 
         // ---------- OBJECT TEXT BLOCK ----------
-        map.put("OBJ_NAME", obj.objectFullName());
-        map.put("OBJ_SHORT_NAME", obj.objectShortName());
-        map.put("OBJ_HAZARD_CLASS", HazardUtils.toRoman(String.valueOf(obj.hazardClass())));
+        var balance = internalServices.objectOrderMinimumBalanceService().getByObjectId(obj.id());
+        var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
+        var policy = internalServices.objectInsurancePolicyService().getByObjectId(obj.id());
+        var substance = internalServices.objectHazardousSubstanceService().getById(obj.id());
+        var techBlocks = internalServices.objectTechnologicalBlockService().countByObjectId(obj.id());
+        var type = internalServices.objectTypeService().getObjectType(obj.id());
+
+        map.put("OBJ_ADDRESS_FULL", ObjectAddressFormatter.format(objAddr));
         map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", obj.amountOfHazardousSubstance());
-        map.put("OBJ_NEAREST_FIRE_STATION", obj.nearestFireStation());
+        map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", DocumentOutputFormatter.format(techBlocks + " технологический блок"));
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.departmentGoChsCity());
         map.put("OBJ_EMERGENCY_COMMISSION", obj.emergencyCommission());
-        var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
-        map.put("OBJ_ADDRESS_FULL", AddressFormatter.format(objAddr));
-        var type = internalServices.objectTypeService().getObjectType(obj.id());
-        map.put("OBJ_TYPE_DIFINITION", type.typeDefinition());
-        var substance = internalServices.hazardousSubstanceService().getById(obj.id());
         map.put("OBJ_HAZARDOUS_SUBSTANCE", substance.name());
         map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance.name_gen());
-        var policy = internalServices.objectInsurancePolicyService().getByObjectId(obj.id());
+        map.put("OBJ_HAZARD_CLASS", DocumentOutputFormatter.toRoman(String.valueOf(obj.hazardClass())));
+        map.put("OBJ_INSURANCE_POLICY_DATE", DocumentOutputFormatter.russDate(policy.validUntil()));
         map.put("OBJ_INSURANCE_POLICY_NUMBER", String.valueOf(policy.number()));
-        map.put("OBJ_INSURANCE_POLICY_DATE", DateFormatter.russDate(policy.validUntil()));
-        var balance = internalServices.objectOrderMinimumBalanceService().getByObjectId(obj.id());
+        map.put("OBJ_NAME", obj.objectFullName());
+        map.put("OBJ_NEAREST_FIRE_STATION", obj.nearestFireStation());
+        map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DocumentOutputFormatter.russDate(balance.date()));
         map.put("OBJ_ORDER_MINIMUM_BALANCE_NUMBER", String.valueOf(balance.number()));
-        map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DateFormatter.russDate(balance.date()));
-        int techBlocks = internalServices.technologicalBlockService().countByObjectId(obj.id());
-        map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", RussianPlural.technologicalBlock(techBlocks));
+        map.put("OBJ_SHORT_NAME", obj.objectShortName());
+        map.put("OBJ_TYPE_DIFINITION", type.typeDefinition());
 
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------
-        List<ObjectImage> objImages = internalServices.objectImageService().getByObjectId(obj.id());
+        var objImages = internalServices.objectImageService().getByObjectId(obj.id());
 
         for (int i = 1; i <= 4; i++) {
             String currentIdx = String.valueOf(i);
@@ -104,17 +118,18 @@ public class TextPlaceholderService {
         }
 
         // ---------- TABLE & NAME LINC TEXT ----------
-        List<ObjectTableTitle> titles = internalServices.objectTableTitleService().getAll();
+        var titles = internalServices.referenceTableTitleService().getAll();
 
         Map<Integer, Boolean> presenceMap = new HashMap<>();
-        presenceMap.put(1, !internalServices.technologicalEquipmentService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(1, !internalServices.objectTechnologicalEquipmentService().getByObjectId(obj.id()).isEmpty());
         presenceMap.put(2, true);
-        presenceMap.put(3, !internalServices.accidentScenariosService().getByObjectId(obj.id()).isEmpty());
-        presenceMap.put(4, !internalServices.mainScenariosService().getByObjectId(obj.id()).isEmpty());
-        presenceMap.put(5, !internalServices.fireEquipmentService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(3, !internalServices.objectAccidentScenariosService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(4, !internalServices.objectMainScenariosService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(5, !internalServices.objectFireEquipmentService().getByObjectId(obj.id()).isEmpty());
         presenceMap.put(6, true);
-        presenceMap.put(7, !internalServices.personsResponsibleService().getByObjectId(obj.id()).isEmpty());
-        presenceMap.put(8, !internalServices.compositionKchsService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(7, !internalServices.objectPersonsResponsibleService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(8, !internalServices.objectCompositionKchsService().getByObjectId(obj.id()).isEmpty());
+        presenceMap.put(9, true);
 
         int currentDisplayNum = 1;
 
@@ -140,7 +155,6 @@ public class TextPlaceholderService {
                 map.put(nameKey, "DELETE_ME");
             }
         }
-
         return map;
     }
 }

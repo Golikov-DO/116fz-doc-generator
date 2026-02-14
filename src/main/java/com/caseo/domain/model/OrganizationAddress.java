@@ -12,7 +12,6 @@ public record OrganizationAddress(
         String city,               // Населенный пункт (город, село)
         String street,             // Улица или описание местоположения
         String house,              // Номер дома, строения или помещения
-        String coordinates,        // Географические координаты
         String rawAddress          // Полный адрес строкой (для ручного ввода)
 ) implements Addressable {
 }

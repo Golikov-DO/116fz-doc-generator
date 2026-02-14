@@ -4,9 +4,9 @@ import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.NumberedItem;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.ObjectStructure;
-import com.caseo.domain.model.TechnologicalBlock;
+import com.caseo.domain.model.ObjectTechnologicalBlock;
 import com.caseo.domain.service.*;
-import com.caseo.domain.util.TechnicalDescriptionFormatter;
+import com.caseo.domain.util.ObjectTechnicalDescriptionFormatter;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -17,22 +17,22 @@ public class ListBlockFactory {
 
     private final ObjectService objectService;
     private final ObjectStructureService objectStructureService;
-    private final TechnologicalBlockService technologicalBlockService;
+    private final ObjectTechnologicalBlockService objectTechnologicalBlockService;
     private final ObjectAddressService objectAddressService;
-    private final ObjectCityService objectCityService;
+    private final ReferenceCityService referenceCityService;
 
     public ListBlockFactory(
             ObjectService objectService,
             ObjectStructureService objectStructureService,
-            TechnologicalBlockService technologicalBlockService,
+            ObjectTechnologicalBlockService objectTechnologicalBlockService,
             ObjectAddressService objectAddressService,
-            ObjectCityService objectCityService
+            ReferenceCityService referenceCityService
     ) {
         this.objectService = objectService;
         this.objectStructureService = objectStructureService;
-        this.technologicalBlockService = technologicalBlockService;
+        this.objectTechnologicalBlockService = objectTechnologicalBlockService;
         this.objectAddressService = objectAddressService;
-        this.objectCityService = objectCityService;
+        this.referenceCityService = referenceCityService;
     }
 
     public Map<String,Object> build(DocumentSet documentSet) throws SQLException {
@@ -43,8 +43,8 @@ public class ListBlockFactory {
 
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
         var objAddr = objectAddressService.getByObjectId(objectModel.id());
-        var city = objectCityService.getById(objAddr.id());
-        String[] descriptionParagraphs = TechnicalDescriptionFormatter.formatAsParagraphs(city);
+        var city = referenceCityService.getById(objAddr.id());
+        String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(city);
 
         if (descriptionParagraphs.length > 0) {
             data.put("OBJ_AREA_LOCATION_LIST", descriptionParagraphs);
@@ -59,7 +59,7 @@ public class ListBlockFactory {
         }
 
         // ===== TECHNO_BLOCK_LIST =====
-        List<TechnologicalBlock> technoList = technologicalBlockService.getByObject(objectModel.id());
+        List<ObjectTechnologicalBlock> technoList = objectTechnologicalBlockService.getByObject(objectModel.id());
         String[] technoItems = extractNames(technoList);
         if (technoItems.length > 0) {
             data.put("OBJ_TECHNO_BLOCK_LIST№", technoItems);

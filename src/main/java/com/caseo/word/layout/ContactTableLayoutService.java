@@ -9,14 +9,14 @@ import java.util.List;
 
 public class ContactTableLayoutService {
     private final ObjectService objectService;
-    private final EmergencyServicesService emergencyService;
-    private final RegionAuthoritiesService regionalService;
+    private final ReferenceEmergencyServicesService emergencyService;
+    private final ObjectRegionAuthoritiesService regionalService;
     private final OrganizationContactService organizationContactService;
     private final OrganizationService organizationService;
 
     public ContactTableLayoutService(ObjectService objectService,
-                                     EmergencyServicesService emergencyService,
-                                     RegionAuthoritiesService regionalService,
+                                     ReferenceEmergencyServicesService emergencyService,
+                                     ObjectRegionAuthoritiesService regionalService,
                                      OrganizationContactService organizationContactService,
                                      OrganizationService organizationService) {
         this.objectService = objectService;
@@ -32,13 +32,13 @@ public class ContactTableLayoutService {
         int counter = 1;
 
         // --- Секция 1: Emergency (1-5) ---
-        for (EmergencyServices es : emergencyService.getAll()) {
+        for (ReferenceEmergencyServices es : emergencyService.getAll()) {
             tableRows.add(new String[]{String.valueOf(counter++), es.serviceName(), es.positionContact(), es.phone(), es.address()});
         }
 
         // --- Секция 2: Regional (6-9) ---
-        List<RegionalAuthorities> regionalList = regionalService.getByObjectId(obj.id());
-        for (RegionalAuthorities regionalAuthorities : regionalList) {
+        List<ObjectRegionalAuthorities> regionalList = regionalService.getByObjectId(obj.id());
+        for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
             String numStr;
 
             // ВАЖНО: Условие по индексу в списке (0-3 для 6,7,8,9)
@@ -53,7 +53,7 @@ public class ContactTableLayoutService {
                 numStr = String.valueOf(counter++);
             }
 
-            tableRows.add(new String[]{numStr, regionalAuthorities.name(), regionalAuthorities.department(), regionalAuthorities.phone_number(), regionalAuthorities.address()});
+            tableRows.add(new String[]{numStr, objectRegionalAuthorities.name(), objectRegionalAuthorities.department(), objectRegionalAuthorities.phone_number(), objectRegionalAuthorities.address()});
         }
 
         // --- Секция 3: Разделитель (БЕЗ СЧЕТЧИКА) ---

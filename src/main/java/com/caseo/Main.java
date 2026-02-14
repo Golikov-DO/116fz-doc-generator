@@ -4,7 +4,7 @@ import com.caseo.app.ApplicationContext;
 import com.caseo.app.Bootstrap;
 import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.Organization;
-import com.caseo.domain.util.DocumentPathUtil;
+import com.caseo.domain.util.DocumentPathSet;
 import com.caseo.word.strategy.FillStrategy;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
@@ -18,7 +18,7 @@ public class Main {
         ApplicationContext context = Bootstrap.init();
 
         // какой документ генерируем
-        int documentId = 1;
+        int documentId = 2;
 
         DocumentSet documentSet = context.documentSetService().getById(documentId);
         Organization org = context.organizationService().getById(documentSet.id());
@@ -26,7 +26,7 @@ public class Main {
         // ======================== TAG ============================
         //Предпочтительный вариант очень гибкий и надёжный
         byte[] tagTemplateBytes =
-                Files.readAllBytes(Path.of(DocumentPathUtil.TAG_TEMPLATE_PATH));
+                Files.readAllBytes(Path.of(DocumentPathSet.TAG_TEMPLATE_PATH));
 
         WordprocessingMLPackage document =
         context.wordGenerationService().generate(
@@ -35,7 +35,7 @@ public class Main {
                 documentSet
         );
 
-        document.save(DocumentPathUtil.buildOutputFile(org));
+        document.save(DocumentPathSet.buildOutputFile(org));
 
         // ===================== PLACEHOLDER =======================
 //      Не очень решение, много работы с параграфами если длинный текст вставки

@@ -1,7 +1,7 @@
 package com.caseo.word.layout;
 
 import com.caseo.domain.model.*;
-import com.caseo.domain.service.HazardService;
+import com.caseo.domain.service.ObjectHazardService;
 import com.caseo.domain.service.ObjectService;
 
 import java.sql.SQLException;
@@ -13,24 +13,24 @@ import static com.caseo.word.util.LayoutUtil.rootSection;
 
 public class HazardTableLayoutService {
     private final ObjectService objectService;
-    private final HazardService hazardService;
+    private final ObjectHazardService objectHazardService;
     private static final int NAME_LIMIT  = 26;
     private static final int VALUE_LIMIT = 20;
     private static final int SECTION_LIMIT = 5;
 
-    public HazardTableLayoutService(ObjectService objectService, HazardService hazardService) {
+    public HazardTableLayoutService(ObjectService objectService, ObjectHazardService objectHazardService) {
         this.objectService = objectService;
-        this.hazardService = hazardService;
+        this.objectHazardService = objectHazardService;
     }
 
     public List<String[]> getHazardTableData(DocumentSet documentSet) throws SQLException {
         // 2. Сбор данных (переехало из HazardTableBlockFactory)
         ObjectModel obj = objectService.getByOrgId(documentSet.orgId());
-        List<HazardousParam> params = hazardService.getAllParamsOrdered(obj.hazardousSubstanceId());
+        List<ObjectHazardousParam> params = objectHazardService.getAllParamsOrdered(obj.hazardousSubstanceId());
 
-        Map<Integer, HazardousParamValue> values = new HashMap<>();
-        for (HazardousParam param : params) {
-            values.putAll(hazardService.getValuesByParam(param.id()));
+        Map<Integer, ObjectHazardousParamValue> values = new HashMap<>();
+        for (ObjectHazardousParam param : params) {
+            values.putAll(objectHazardService.getValuesByParam(param.id()));
         }
 
         // 3. Вызов твоей логики расчета (существующий метод)
@@ -38,9 +38,9 @@ public class HazardTableLayoutService {
         return buildVisualRowsAsArray(params, values);
     }
 
-    private List<String[]> buildVisualRowsAsArray(List<HazardousParam> params, Map<Integer, HazardousParamValue> values) {
+    private List<String[]> buildVisualRowsAsArray(List<ObjectHazardousParam> params, Map<Integer, ObjectHazardousParamValue> values) {
 
-        Map<Integer, List<HazardousParam>> grouped =
+        Map<Integer, List<ObjectHazardousParam>> grouped =
                 params.stream()
                         .collect(Collectors.groupingBy(
                                 p -> rootSection(p.sectionNo()),
@@ -50,29 +50,29 @@ public class HazardTableLayoutService {
 
         List<String[]> tableRows = new ArrayList<>();
 
-        for (List<HazardousParam> group : grouped.values()) {
+        for (List<ObjectHazardousParam> group : grouped.values()) {
 
             List<TableRowModel> rows = new ArrayList<>();
 
             // ---------- ШАГ 1 ----------
-            for (HazardousParam hazardousParam : group) {
+            for (ObjectHazardousParam objectHazardousParam : group) {
 
                 TableRowModel tableRow = new TableRowModel();
 
-                tableRow.isRoot = !hazardousParam.sectionNo().contains(".");
-                tableRow.section = hazardousParam.sectionNo();
-                tableRow.name = (hazardousParam.subtitle() != null)
-                        ? hazardousParam.subtitle()
-                        : hazardousParam.title() + ":";
+                tableRow.isRoot = !objectHazardousParam.sectionNo().contains(".");
+                tableRow.section = objectHazardousParam.sectionNo();
+                tableRow.name = (objectHazardousParam.subtitle() != null)
+                        ? objectHazardousParam.subtitle()
+                        : objectHazardousParam.title() + ":";
 
-                HazardousParamValue hazardousParamValue = values.get(hazardousParam.id());
+                ObjectHazardousParamValue objectHazardousParamValue = values.get(objectHazardousParam.id());
 
-                tableRow.value = (hazardousParamValue != null && hazardousParamValue.valueText() != null)
-                        ? hazardousParamValue.valueText()
+                tableRow.value = (objectHazardousParamValue != null && objectHazardousParamValue.valueText() != null)
+                        ? objectHazardousParamValue.valueText()
                         : "";
 
-                tableRow.source = (hazardousParamValue != null && hazardousParamValue.sourceInfo() != null)
-                        ? hazardousParamValue.sourceInfo()
+                tableRow.source = (objectHazardousParamValue != null && objectHazardousParamValue.sourceInfo() != null)
+                        ? objectHazardousParamValue.sourceInfo()
                         : "";
 
                 rows.add(tableRow);

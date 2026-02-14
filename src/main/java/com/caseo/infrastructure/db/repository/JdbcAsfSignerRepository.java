@@ -13,8 +13,6 @@ public class JdbcAsfSignerRepository extends BaseJdbcRepository<AsfSigner> imple
     @Override
     protected RowMapper<AsfSigner> mapper() {
         return rs -> new AsfSigner(
-                rs.getInt("id"),
-                rs.getInt("asf_id"),
                 rs.getString("signer_name"),
                 rs.getString("signer_position")
         );

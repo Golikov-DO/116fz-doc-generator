@@ -7,6 +7,5 @@ public interface Addressable {
     String city();
     String street();
     String house();
-    String coordinates();
     String rawAddress();
 }

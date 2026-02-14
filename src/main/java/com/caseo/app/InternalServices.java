@@ -1,42 +1,44 @@
 package com.caseo.app;
 
-import com.caseo.domain.repository.OrganizationContactRepository;
 import com.caseo.domain.service.*;
 import com.caseo.word.layout.ContactTableLayoutService;
 import com.caseo.word.layout.HazardTableLayoutService;
 
 public record InternalServices(
-        AccidentScenariosService accidentScenariosService,
+        ObjectAccidentScenariosService objectAccidentScenariosService,
         AsfCertificateService asfCertificateService,
+        AsfCompositionDeploymentFundsService asfCompositionDeploymentFundsService,
         AsfDocumentImageService asfDocumentImageService,
+        AsfPersonnelService asfPersonnelService,
         AsfService asfService,
         AsfSignerService asfSignerService,
+        AsfSpecialistsService asfSpecialistsService,
         AsfWorkTypeService asfWorkTypeService,
-        CompositionKchsService compositionKchsService,
+        ObjectCompositionKchsService objectCompositionKchsService,
         ContactTableLayoutService contactTableLayoutService,
         DocumentSetService documentSetService,
-        EmergencyServicesService emergencyServicesService,
-        FireEquipmentService fireEquipmentService,
-        HazardService hazardService,
+        ReferenceEmergencyServicesService referenceEmergencyServicesService,
+        ObjectFireEquipmentService objectFireEquipmentService,
+        ObjectHazardService objectHazardService,
         HazardTableLayoutService hazardTableLayoutService,
-        HazardousSubstanceService hazardousSubstanceService,
-        MainScenariosService mainScenariosService,
+        ObjectHazardousSubstanceService objectHazardousSubstanceService,
+        ObjectMainScenariosService objectMainScenariosService,
         ObjectAddressService objectAddressService,
-        ObjectCityService objectCityService,
+        ReferenceCityService referenceCityService,
         ObjectImageService objectImageService,
         ObjectInsurancePolicyService objectInsurancePolicyService,
         ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService,
         ObjectService objectService,
         ObjectStructureService objectStructureService,
-        ObjectTableTitleService objectTableTitleService,
+        ReferenceTableTitleService referenceTableTitleService,
         ObjectTypeService objectTypeService,
         OrganizationAddressService organizationAddressService,
         OrganizationContactService organizationContactService,
         OrganizationService organizationService,
         OrganizationSignerService organizationSignerService,
-        PersonsResponsibleService personsResponsibleService,
-        RegionAuthoritiesService regionAuthoritiesService,
-        TechnologicalBlockService technologicalBlockService,
-        TechnologicalEquipmentService technologicalEquipmentService
+        ObjectPersonsResponsibleService objectPersonsResponsibleService,
+        ObjectRegionAuthoritiesService objectRegionAuthoritiesService,
+        ObjectTechnologicalBlockService objectTechnologicalBlockService,
+        ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService
 ) {
 }

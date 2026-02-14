@@ -21,7 +21,6 @@ public class JdbcOrganizationAddressRepository extends BaseJdbcRepository<Organi
                 rs.getString("city_name"),
                 rs.getString("street"),
                 rs.getString("house"),
-                rs.getString("coordinates"),
                 rs.getString("raw_address")
         );
     }

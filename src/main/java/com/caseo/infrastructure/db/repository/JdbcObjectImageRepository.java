@@ -14,8 +14,6 @@ public class JdbcObjectImageRepository extends BaseJdbcRepository<ObjectImage> i
 
     protected RowMapper<ObjectImage> mapper() {
         return rs -> new ObjectImage(
-                rs.getInt("id"),
-                rs.getInt("object_id"),
                 rs.getString("group_key"),
                 rs.getBytes("image_blob"),
                 rs.getString("caption"),

@@ -14,8 +14,6 @@ public class JdbcAsfDocumentImageRepository extends BaseJdbcRepository<AsfDocume
 
     protected RowMapper<AsfDocumentImage> mapper() {
         return rs -> new AsfDocumentImage(
-                rs.getInt("id"),
-                rs.getInt("asf_id"),
                 rs.getString("group_key"),
                 rs.getBytes("image_blob"),
                 rs.getString("name_document")

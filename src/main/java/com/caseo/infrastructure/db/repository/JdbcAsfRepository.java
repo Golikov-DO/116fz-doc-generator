@@ -16,16 +16,9 @@ public class JdbcAsfRepository extends BaseJdbcRepository<Asf> implements AsfRep
                 rs.getString("full_name"),
                 rs.getString("full_name_gen"),
                 rs.getString("short_name"),
-                rs.getString("status"),
-                rs.getString("responsibility_zone"),
                 rs.getString("email"),
-                rs.getInt("buildings_count"),
-                rs.getString("notes"),
-                rs.getString("location_text"),
                 rs.getString("status_short"),
-                rs.getString("status_gen"),
-                rs.getString("arrival_time"),
-                rs.getString("telephone")
+                rs.getString("arrival_time")
         );
     }
 

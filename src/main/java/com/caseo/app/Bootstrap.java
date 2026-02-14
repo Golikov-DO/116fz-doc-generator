@@ -1,6 +1,5 @@
 package com.caseo.app;
 
-import com.caseo.domain.repository.*;
 import com.caseo.domain.service.*;
 import com.caseo.infrastructure.db.repository.*;
 import com.caseo.word.blocks.text.TextPlaceholderService;
@@ -33,25 +32,28 @@ public class Bootstrap {
 
     private static RepositoryContext initRepositories() {
         return new RepositoryContext(
-                new JdbcAccidentScenariosRepository(),
+                new JdbcObjectAccidentScenariosRepository(),
                 new JdbcAsfCertificateRepository(),
+                new JdbcAsfCompositionDeploymentFundsRepository(),
                 new JdbcAsfDocumentImageRepository(),
+                new JdbcAsfPersonnelRepository(),
                 new JdbcAsfRepository(),
                 new JdbcAsfSignerRepository(),
+                new JdbcAsfSpecialistsRepository(),
                 new JdbcAsfWorkTypeRepository(),
-                new JdbcCompositionKchsRepository(),
+                new JdbcObjectCompositionKchsRepository(),
                 new JdbcDocumentSetRepository(),
-                new JdbcEmergencyServicesRepository(),
-                new JdbcFireEquipmentRepository(),
-                new JdbcHazardousParamRepository(),
-                new JdbcHazardousParamValueRepository(),
-                new JdbcHazardousSubstanceRepository(),
-                new JdbcMainScenariosRepository(),
+                new JdbcReferenceEmergencyServicesRepository(),
+                new JdbcObjectFireEquipmentRepository(),
+                new JdbcObjectHazardousParamRepository(),
+                new JdbcObjectHazardousParamValueRepository(),
+                new JdbcObjectHazardousSubstanceRepository(),
+                new JdbcObjectMainScenariosRepository(),
                 new JdbcObjectRepository(),
                 new JdbcObjectStructureRepository(),
-                new JdbcObjectCityRepository(),
+                new JdbcReferenceCityRepository(),
                 new JdbcObjectAddressRepository(),
-                new JdbcObjectTableTitleRepository(),
+                new JdbcReferenceTableTitleRepository(),
                 new JdbcObjectTypeRepository(),
                 new JdbcObjectImageRepository(),
                 new JdbcObjectInsurancePolicyRepository(),
@@ -60,59 +62,70 @@ public class Bootstrap {
                 new JdbcOrganizationContactRepository(),
                 new JdbcOrganizationRepository(),
                 new JdbcOrganizationSignerRepository(),
-                new JdbcPersonsResponsibleRepository(),
-                new JdbcRegionAuthoritiesRepository(),
-                new JdbcTechnologicalEquipmentRepository(),
-                new JdbcTechnologicalBlockRepository()
+                new JdbcObjectPersonsResponsibleRepository(),
+                new JdbcObjectRegionAuthoritiesRepository(),
+                new JdbcObjectTechnologicalEquipmentRepository(),
+                new JdbcObjectTechnologicalBlockRepository()
         );
     }
 
     private static InternalServices initServices(RepositoryContext repositoryContext) {
 
-        EmergencyServicesService emergencyServicesService = new EmergencyServicesService(repositoryContext.emergencyServicesRepository());
-        HazardService hazardService = new HazardService(repositoryContext.hazardousParamRepository(), repositoryContext.hazardousParamValueRepository());
+        ReferenceEmergencyServicesService referenceEmergencyServicesService = new ReferenceEmergencyServicesService(repositoryContext.referenceEmergencyServicesRepository());
+        ObjectHazardService objectHazardService = new ObjectHazardService(repositoryContext.objectHazardousParamRepository(), repositoryContext.objectHazardousParamValueRepository());
         ObjectService objectService = new ObjectService(repositoryContext.objectRepository());
         OrganizationService organizationService = new OrganizationService(repositoryContext.organizationRepository());
         OrganizationContactService organizationContactService = new OrganizationContactService(repositoryContext.organizationContactRepository());
-        RegionAuthoritiesService regionAuthoritiesService = new RegionAuthoritiesService(repositoryContext.regionAuthoritiesRepository());
+        ObjectRegionAuthoritiesService objectRegionAuthoritiesService = new ObjectRegionAuthoritiesService(repositoryContext.objectRegionAuthoritiesRepository());
 
-        HazardTableLayoutService hazardTableLayoutService = new HazardTableLayoutService(objectService, hazardService);
+        HazardTableLayoutService hazardTableLayoutService = new HazardTableLayoutService(
+                objectService,
+                objectHazardService
+        );
         ContactTableLayoutService contactTableLayoutService = new ContactTableLayoutService(
-                objectService, emergencyServicesService, regionAuthoritiesService, organizationContactService, organizationService);
+                objectService,
+                referenceEmergencyServicesService,
+                objectRegionAuthoritiesService,
+                organizationContactService,
+                organizationService
+        );
 
         return new InternalServices(
-                new AccidentScenariosService(repositoryContext.accidentScenariosRepository()),
+                new ObjectAccidentScenariosService(repositoryContext.objectAccidentScenariosRepository()),
                 new AsfCertificateService(repositoryContext.asfCertificateRepository()),
+                new AsfCompositionDeploymentFundsService(repositoryContext.asfCompositionDeploymentFundsRepository()),
                 new AsfDocumentImageService(repositoryContext.asfDocumentImageRepository()),
+                new AsfPersonnelService(repositoryContext.asfPersonnelRepository()),
                 new AsfService(repositoryContext.asfRepository()),
                 new AsfSignerService(repositoryContext.asfSignerRepository()),
+                new AsfSpecialistsService(repositoryContext.asfSpecialistsRepository()),
                 new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
-                new CompositionKchsService(repositoryContext.compositionKchsRepository()),
+                new ObjectCompositionKchsService(repositoryContext.objectCompositionKchsRepository()),
                 contactTableLayoutService,
                 new DocumentSetService(repositoryContext.documentSetRepository()),
-                emergencyServicesService,
-                new FireEquipmentService(repositoryContext.fireEquipmentRepository()),
-                hazardService,
+                referenceEmergencyServicesService,
+                new ObjectFireEquipmentService(repositoryContext.objectFireEquipmentRepository()),
+                objectHazardService,
                 hazardTableLayoutService,
-                new HazardousSubstanceService(repositoryContext.hazardousSubstanceRepository()),
-                new MainScenariosService(repositoryContext.mainScenariosRepository()),
+                new ObjectHazardousSubstanceService(repositoryContext.objectHazardousSubstanceRepository()),
+                new ObjectMainScenariosService(repositoryContext.objectMainScenariosRepository()),
                 new ObjectAddressService(repositoryContext.objectAddressRepository()),
-                new ObjectCityService(repositoryContext.objectCityRepository()),
+                new ReferenceCityService(repositoryContext.referenceCityRepository()),
                 new ObjectImageService(repositoryContext.objectImageRepository()),
                 new ObjectInsurancePolicyService(repositoryContext.objectInsurancePolicyRepository()),
                 new ObjectOrderMinimumBalanceService(repositoryContext.objectOrderMinimumBalanceRepository()),
                 objectService,
                 new ObjectStructureService(repositoryContext.objectStructureRepository()),
-                new ObjectTableTitleService(repositoryContext.objectTableTitleRepository()),
+                new ReferenceTableTitleService(repositoryContext.referenceTableTitleRepository()),
                 new ObjectTypeService(repositoryContext.objectTypeRepository()),
                 new OrganizationAddressService(repositoryContext.organizationAddressRepository()),
                 organizationContactService,
                 organizationService,
                 new OrganizationSignerService(repositoryContext.organizationSignerRepository()),
-                new PersonsResponsibleService(repositoryContext.personsResponsibleRepository()),
-                regionAuthoritiesService,
-                new TechnologicalBlockService(repositoryContext.technologicalBlockRepository()),
-                new TechnologicalEquipmentService(repositoryContext.technologicalEquipmentRepository())
+                new ObjectPersonsResponsibleService(repositoryContext.objectPersonsResponsibleRepository()),
+                objectRegionAuthoritiesService,
+                new ObjectTechnologicalBlockService(repositoryContext.objectTechnologicalBlockRepository()),
+                new ObjectTechnologicalEquipmentService(repositoryContext.objectTechnologicalEquipmentRepository())
 
         );
     }
@@ -128,23 +141,34 @@ public class Bootstrap {
         );
     }
 
-    private static UnifiedBlockFactory initUnifiedFactory(InternalServices s, TextPlaceholderService textService) {
+    private static UnifiedBlockFactory initUnifiedFactory(InternalServices internalServices, TextPlaceholderService textService) {
         return new UnifiedBlockFactory(
                 new TableBlockFactory(
-                        s.organizationService(),
-                        s.objectService(),
-                        s.technologicalEquipmentService(),
-                        s.accidentScenariosService(),
-                        s.mainScenariosService(),
-                        s.fireEquipmentService(),
-                        s.personsResponsibleService(),
-                        s.compositionKchsService()
+                        internalServices.organizationService(),
+                        internalServices.objectService(),
+                        internalServices.objectTechnologicalEquipmentService(),
+                        internalServices.objectAccidentScenariosService(),
+                        internalServices.objectMainScenariosService(),
+                        internalServices.objectFireEquipmentService(),
+                        internalServices.objectPersonsResponsibleService(),
+                        internalServices.objectCompositionKchsService()
                 ),
                 new PlaceholderFillStrategy(textService),
-                new ImageBlockFactory(s.objectImageService(), s.objectService(), s.asfDocumentImageService(), s.asfService()),
-                new ListBlockFactory(s.objectService(), s.objectStructureService(), s.technologicalBlockService(), s.objectAddressService(), s.objectCityService()),
-                s.hazardTableLayoutService(),
-                s.contactTableLayoutService()
+                new ImageBlockFactory(
+                        internalServices.objectImageService(),
+                        internalServices.objectService(),
+                        internalServices.asfDocumentImageService(),
+                        internalServices.asfService()
+                ),
+                new ListBlockFactory(
+                        internalServices.objectService(),
+                        internalServices.objectStructureService(),
+                        internalServices.objectTechnologicalBlockService(),
+                        internalServices.objectAddressService(),
+                        internalServices.referenceCityService()
+                ),
+                internalServices.hazardTableLayoutService(),
+                internalServices.contactTableLayoutService()
         );
     }
 }

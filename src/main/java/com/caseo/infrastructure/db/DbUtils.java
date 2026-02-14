@@ -9,7 +9,7 @@ import java.util.List;
 public class DbUtils {
 
     public static <T> T queryOne(String sql, RowMapper<T> mapper, Object... params) {
-        try (Connection conn = DatabaseService.getConnection();
+        try (Connection conn = DatabaseSetService.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             for (int i = 0; i < params.length; i++) {
@@ -30,7 +30,7 @@ public class DbUtils {
     public static <T> List<T> queryMany(String sql, RowMapper<T> mapper, Object... params) {
         List<T> list = new ArrayList<>();
 
-        try (Connection conn = DatabaseService.getConnection();
+        try (Connection conn = DatabaseSetService.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++)
                 preparedStatement.setObject(i + 1, params[i]);

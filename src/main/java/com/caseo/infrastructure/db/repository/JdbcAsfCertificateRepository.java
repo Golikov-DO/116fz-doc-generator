@@ -13,7 +13,6 @@ public class JdbcAsfCertificateRepository extends BaseJdbcRepository<AsfCertific
     @Override
     protected RowMapper<AsfCertificate> mapper() {
         return rs -> new AsfCertificate(
-                rs.getInt("asf_id"),
                 rs.getString("cert_number"),
                 rs.getString("cert_series"),
                 rs.getString("issued_by"),
