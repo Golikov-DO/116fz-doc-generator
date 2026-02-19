@@ -22,7 +22,8 @@ public class TextPlaceholderService {
 
         // Базовые объекты для получения ID и общих данных
         Organization org = internalServices.organizationService().getById(document.orgId());
-        ObjectModel obj = internalServices.objectService().getByOrgId(org.organizationId());
+        //ObjectModel obj = internalServices.objectService().getByOrgId(org.organizationId());
+        ObjectModel obj = internalServices.objectService().getById(document.objectId());
         Asf asf = internalServices.asfService().getOrganizationId(document.orgId());
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
@@ -95,6 +96,8 @@ public class TextPlaceholderService {
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------
         var objImages = internalServices.objectImageService().getByObjectId(obj.id());
 
+        int currentImageDisplayNum = 1;
+
         for (int i = 1; i <= 4; i++) {
             String currentIdx = String.valueOf(i);
             String linkTextKey = "OBJ_LINC_TEXT_" + i + "_IMAGE";
@@ -108,8 +111,9 @@ public class TextPlaceholderService {
             if (firstInGroupOpt.isPresent()) {
                 ObjectImage firstInGroup = firstInGroupOpt.get();
                 map.put(linkTextKey, firstInGroup.linkText());
-                map.put(linkNumKey, String.valueOf(i));
+                map.put(linkNumKey, String.valueOf(currentImageDisplayNum));
                 map.put(captureTextKey, firstInGroup.caption());
+                currentImageDisplayNum++;
             } else {
                 map.put(linkTextKey, "DELETE_ME");
                 map.put(linkNumKey, "");

@@ -3,6 +3,7 @@ package com.caseo;
 import com.caseo.app.ApplicationContext;
 import com.caseo.app.Bootstrap;
 import com.caseo.domain.model.DocumentSet;
+import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.util.DocumentPathSet;
 import com.caseo.word.strategy.FillStrategy;
@@ -18,25 +19,33 @@ public class Main {
         ApplicationContext context = Bootstrap.init();
 
         // какой документ генерируем
-        int documentId = 2;
+        int documentId = 3;
 
         DocumentSet documentSet = context.documentSetService().getById(documentId);
-        Organization org = context.organizationService().getById(documentSet.id());
+        Organization org = context.organizationService().getById(documentSet.orgId());
+
+        var objects = context.objectService().getAllByOrgId(org.organizationId());
 
         // ======================== TAG ============================
         //Предпочтительный вариант очень гибкий и надёжный
-        byte[] tagTemplateBytes =
+        byte[] template =
                 Files.readAllBytes(Path.of(DocumentPathSet.TAG_TEMPLATE_PATH));
 
-        WordprocessingMLPackage document =
-        context.wordGenerationService().generate(
-                FillStrategy.TAG,
-                tagTemplateBytes,
-                documentSet
-        );
+        for (ObjectModel object : objects) {
 
-        document.save(DocumentPathSet.buildOutputFile(org));
+            DocumentSet perObject =
+                    new DocumentSet(documentSet.id(), documentSet.orgId(), object.id());
 
+            WordprocessingMLPackage document =
+                    context.wordGenerationService().generate(
+                            FillStrategy.TAG,
+                            template,
+                            perObject
+                    );
+
+            Path output = DocumentPathSet.buildOutputFile(org, object);
+            document.save(output.toFile());
+        }
         // ===================== PLACEHOLDER =======================
 //      Не очень решение, много работы с параграфами если длинный текст вставки
 //        byte[] placeholderTemplateBytes =

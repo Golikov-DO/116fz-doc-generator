@@ -26,7 +26,8 @@ public class Bootstrap {
                 repos.asfSignerRepository(),
                 wordService,
                 services.documentSetService(),
-                services.organizationService()
+                services.organizationService(),
+                services.objectService()
         );
     }
 

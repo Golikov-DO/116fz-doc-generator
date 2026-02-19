@@ -7,6 +7,7 @@ public record ApplicationContext(
         AsfSignerRepository asfSignerRepository,
         WordGenerationService wordGenerationService,
         DocumentSetService documentSetService,
-        OrganizationService organizationService
+        OrganizationService organizationService,
+        ObjectService objectService
 ) {
 }
