@@ -3,6 +3,8 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.repository.ObjectRepository;
 
+import java.util.List;
+
 public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implements ObjectRepository {
 
     @Override
@@ -29,5 +31,15 @@ public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implem
     @Override
     public ObjectModel findByOrgId(int orgId) {
         return findOne("org_id = ?", orgId).orElse(null);
+    }
+
+    @Override
+    public ObjectModel findById(int id) {
+        return findOne("id = ?", id).orElse(null);
+    }
+
+    @Override
+    public List<ObjectModel> findAllByOrgId(int orgId) {
+        return findList("org_id = ?", orgId);
     }
 }

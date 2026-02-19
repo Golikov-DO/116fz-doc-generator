@@ -27,8 +27,8 @@ public class ImageBlockFactory {
         Map<String, Object> data = new HashMap<>();
         Asf asf = asfService.getOrganizationId(documentSet.orgId());
         List<AsfDocumentImage> asfImage = asfDocumentImageService.getByAsfId(asf.id());
-        ObjectModel obj = objectService.getByOrgId(documentSet.orgId());
-        List<ObjectImage> objectImages = objectImageService.getByObjectId(obj.id());
+        List<ObjectImage> objectImages =
+                objectImageService.getByObjectId(documentSet.objectId());
 
         Map<String, List<byte[]>> imagesByGroup = objectImages.stream()
                 .collect(Collectors.groupingBy(
