@@ -89,6 +89,16 @@ public class DocumentOutputFormatter {
                     "технологических блоков");
         }
 
+        // 3. ЛОГИКА ДЛЯ ПЛАНОВ
+        if (lookup.contains("план")) {
+            return pluralize(count, "план", "плана", "планов");
+        }
+
+        // 4. ДОБАВЛЯЕМ ОБЪЕКТЫ
+        if (lookup.contains("объект")) {
+            return pluralize(count, "объекта", "объектов", "объектов");
+        }
+
         return input;
     }
 

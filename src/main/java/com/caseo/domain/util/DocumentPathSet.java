@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class DocumentPathSet {
 
     // ===== OUTPUT =====
-    private static final String OUTPUT_DIR = "result";
+    private static final String OUTPUT_DIR = System.getProperty("user.home") + "/documents";
 
     // ===== TEMPLATES =====
     public static final String PLACEHOLDER_TEMPLATE_PATH = "template/template.docx";

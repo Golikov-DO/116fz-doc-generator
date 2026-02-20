@@ -14,7 +14,7 @@ public class ObjectStructureService {
         this.objectStructureRepository = objectStructureRepository;
     }
 
-    public List<ObjectStructure> getByObject(int objectId) throws SQLException {
+    public List<ObjectStructure> getByObjectId(int objectId) throws SQLException {
         return objectStructureRepository.findByObjectId(objectId);
     }
 }

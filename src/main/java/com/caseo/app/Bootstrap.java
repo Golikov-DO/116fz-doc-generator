@@ -27,7 +27,8 @@ public class Bootstrap {
                 wordService,
                 services.documentSetService(),
                 services.organizationService(),
-                services.objectService()
+                services.objectService(),
+                services
         );
     }
 

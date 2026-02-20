@@ -3,6 +3,8 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.repository.DocumentSetRepository;
 
+import java.util.List;
+
 public class JdbcDocumentSetRepository extends BaseJdbcRepository<DocumentSet> implements DocumentSetRepository {
 
     @Override
@@ -22,5 +24,10 @@ public class JdbcDocumentSetRepository extends BaseJdbcRepository<DocumentSet> i
     @Override
     public DocumentSet findById(int id) {
         return findOne("id = ?", id).orElse(null);
+    }
+
+    @Override
+    public List<DocumentSet> findAll() {
+        return findList(null);
     }
 }

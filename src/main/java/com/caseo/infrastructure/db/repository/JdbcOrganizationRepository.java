@@ -3,6 +3,8 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.repository.OrganizationRepository;
 
+import java.util.List;
+
 public class JdbcOrganizationRepository extends BaseJdbcRepository<Organization>
         implements OrganizationRepository {
 
@@ -25,5 +27,10 @@ public class JdbcOrganizationRepository extends BaseJdbcRepository<Organization>
     @Override
     public Organization findById(int id) {
         return findOne("id = ?", id).orElse(null);
+    }
+
+    @Override
+    public List<Organization> findAll() {
+        return findList(null);
     }
 }

@@ -8,6 +8,7 @@ public record ApplicationContext(
         WordGenerationService wordGenerationService,
         DocumentSetService documentSetService,
         OrganizationService organizationService,
-        ObjectService objectService
+        ObjectService objectService,
+        InternalServices internalServices
 ) {
 }

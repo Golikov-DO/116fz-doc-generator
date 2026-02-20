@@ -5,6 +5,7 @@ import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.repository.DocumentSetRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class DocumentSetService {
 
@@ -20,5 +21,9 @@ public class DocumentSetService {
             throw new IllegalArgumentException("DocumentSet not found: " + documentSetId);
         }
         return doc;
+    }
+
+    public List<DocumentSet> getAll() throws SQLException {
+        return documentSetRepository.findAll();
     }
 }

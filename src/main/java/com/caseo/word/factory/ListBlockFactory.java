@@ -52,7 +52,7 @@ public class ListBlockFactory {
         // ============================================================
 
         // ===== OBJECT_STRUCTURE_LIST =====
-        List<ObjectStructure> structureList = objectStructureService.getByObject(objectModel.id());
+        List<ObjectStructure> structureList = objectStructureService.getByObjectId(objectModel.id());
         String[] structureItems = extractNames(structureList);
         if (structureItems.length > 0) {
             data.put("OBJ_STRUCTURE_LIST1", structureItems);
