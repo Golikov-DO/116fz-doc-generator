@@ -1,4 +1,4 @@
-/* Основные стили */
+/* webapp/css/portal.css */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -13,7 +13,6 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Шапка */
 .header {
     padding: 10px 20px;
     border-bottom: 2px solid #4CAF50;
@@ -25,7 +24,6 @@ body {
     color: #333;
 }
 
-/* Статусная строка */
 .status-bar {
     padding: 8px 20px;
     background-color: #fff3cd;
@@ -41,7 +39,6 @@ body {
     margin-right: 10px;
 }
 
-/* Вкладки */
 .tabs {
     display: flex;
     border-bottom: 1px solid #ddd;
@@ -66,15 +63,49 @@ body {
     border-bottom-color: #4CAF50;
 }
 
-/* Контент вкладок */
-.tab-content {
-    padding: 20px;
-}
 .tab-pane {
     display: none;
+    padding: 20px;
 }
 .tab-pane.active {
     display: block;
+}
+
+.form-footer {
+    margin: 30px 20px 40px 20px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    width: 200px;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.btn-primary:hover {
+    background-color: #45a049;
+}
+
+.delete-row {
+    color: #f44336;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+}
+
+.disabled-tab {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Секции */
@@ -171,11 +202,8 @@ textarea {
     font-size: 12px;
     border-radius: 3px;
 }
-.delete-row {
-    color: #f44336;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
+.add-row:hover {
+    background-color: #e8f5e9;
 }
 
 /* Раскрывающиеся блоки */
@@ -201,18 +229,7 @@ textarea {
     display: block;
 }
 
-/* Кнопки */
-.btn-primary {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 13px;
-    margin: 20px;
-    width: calc(100% - 40px);
-}
-.btn-primary:hover {
-    background-color: #45a049;
+/* Контент вкладок */
+.tab-content {
+    padding: 20px;
 }

@@ -19,7 +19,7 @@ public class Main {
         ApplicationContext context = Bootstrap.init();
 
         // какой документ генерируем
-        int documentId = 3;
+        int documentId = 2;
 
         DocumentSet documentSet = context.documentSetService().getById(documentId);
         Organization org = context.organizationService().getById(documentSet.orgId());
@@ -29,7 +29,6 @@ public class Main {
         // ======================== TAG ============================
         //Предпочтительный вариант очень гибкий и надёжный
         byte[] template = Files.readAllBytes(Path.of(DocumentPathSet.TAG_TEMPLATE_PATH));
-        System.out.println("MAIN template size = " + template.length);
         for (ObjectModel object : objects) {
 
             DocumentSet perObject =

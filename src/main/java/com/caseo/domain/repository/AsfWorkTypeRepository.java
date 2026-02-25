@@ -9,4 +9,7 @@ public interface AsfWorkTypeRepository {
 
     List<AsfWorkType> findByAsfId(int asfId) throws SQLException;
 
+    void save(AsfWorkType asfWorkType, int asfId) throws SQLException;
+
+    void deleteByAsfId(int asfId) throws SQLException;
 }

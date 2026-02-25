@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class AsfCertificateService {
 
-    AsfCertificateRepository asfCertificateRepository;
+    private final AsfCertificateRepository asfCertificateRepository;
 
     public AsfCertificateService(AsfCertificateRepository asfCertificateRepository) {
         this.asfCertificateRepository = asfCertificateRepository;
@@ -17,4 +17,11 @@ public class AsfCertificateService {
         return asfCertificateRepository.findByAsfId(asfId);
     }
 
+    public void save(AsfCertificate certificate, int asfId) throws SQLException {
+        asfCertificateRepository.save(certificate, asfId);
+    }
+
+    public void deleteByAsfId(int asfId) throws SQLException{
+        asfCertificateRepository.deleteByAsfId(asfId);
+    }
 }

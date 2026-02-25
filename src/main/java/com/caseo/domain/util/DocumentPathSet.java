@@ -14,7 +14,7 @@ public class DocumentPathSet {
 
     // ===== TEMPLATES =====
     public static final String PLACEHOLDER_TEMPLATE_PATH = "template/template.docx";
-    public static final String TAG_TEMPLATE_PATH = "template/tagtemplate.docx";
+    public static final String TAG_TEMPLATE_PATH = "src/main/webapp/WEB-INF/template/tagtemplate.docx";
 
     // ===== OUTPUT FILE =====
     public static Path buildOutputFile(Organization org, ObjectModel object) throws IOException {

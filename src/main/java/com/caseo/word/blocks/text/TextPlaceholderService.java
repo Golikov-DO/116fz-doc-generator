@@ -24,7 +24,7 @@ public class TextPlaceholderService {
         Organization org = internalServices.organizationService().getById(document.orgId());
         //ObjectModel obj = internalServices.objectService().getByOrgId(org.organizationId());
         ObjectModel obj = internalServices.objectService().getById(document.objectId());
-        Asf asf = internalServices.asfService().getOrganizationId(document.orgId());
+        Asf asf = internalServices.asfService().getObjectId(document.orgId());
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
         var orgAddr = internalServices.organizationAddressService().getByOrganizationId(org.organizationId());

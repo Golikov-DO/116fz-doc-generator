@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DocumentSetService {
 
-    private DocumentSetRepository documentSetRepository;
+    private final DocumentSetRepository documentSetRepository;
 
     public DocumentSetService(DocumentSetRepository documentSetRepository) {
         this.documentSetRepository = documentSetRepository;

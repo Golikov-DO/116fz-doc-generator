@@ -16,6 +16,9 @@ public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implem
     protected RowMapper<ObjectModel> mapper() {
         return rs -> new ObjectModel(
                 rs.getInt("id"),
+                rs.getInt("asf_id"),
+                rs.getInt("asf_signer_id"),
+                rs.getInt("object_city_id"),
                 rs.getInt("hazardous_substance_id"),
                 rs.getInt("hazard_class"),
                 rs.getString("full_name"),
@@ -24,7 +27,6 @@ public class JdbcObjectRepository extends BaseJdbcRepository<ObjectModel> implem
                 rs.getString("short_name"),
                 rs.getString("department_gochs_city"),
                 rs.getString("emergency_commission")
-
         );
     }
 

@@ -3,6 +3,9 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.AsfPersonnel;
 import com.caseo.domain.repository.AsfPersonnelRepository;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class JdbcAsfPersonnelRepository extends BaseJdbcRepository<AsfPersonnel> implements AsfPersonnelRepository {
 
     @Override
@@ -27,5 +30,26 @@ public class JdbcAsfPersonnelRepository extends BaseJdbcRepository<AsfPersonnel>
     @Override
     public AsfPersonnel findByAsfId(int asfId) {
         return findOne("asf_id = ?", asfId).orElse(null);
+    }
+
+    @Override
+    public void save(AsfPersonnel asfPersonnel, int asfId) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("asf_id", asfId);
+        data.put("staff_by_staffing", asfPersonnel.staffByStaffing());
+        data.put("staff_by_list", asfPersonnel.staffByList());
+        data.put("certified_total", asfPersonnel.certifiedTotal());
+        data.put("qualified_total", asfPersonnel.qualifiedTotal());
+        data.put("third_class", asfPersonnel.thirdClass());
+        data.put("second_class", asfPersonnel.secondClass());
+        data.put("first_class", asfPersonnel.firstClass());
+        data.put("international_class", asfPersonnel.internationalClass());
+
+        insert(data);
+    }
+
+    @Override
+    public void deleteByAsfId(int asfId) {
+        delete("asf_id = ?", asfId);
     }
 }

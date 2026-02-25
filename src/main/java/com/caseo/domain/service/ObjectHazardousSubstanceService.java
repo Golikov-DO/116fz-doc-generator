@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class ObjectHazardousSubstanceService {
 
-    private ObjectHazardousSubstanceRepository objectHazardousSubstanceRepository;
+    private final ObjectHazardousSubstanceRepository objectHazardousSubstanceRepository;
 
     public ObjectHazardousSubstanceService(ObjectHazardousSubstanceRepository objectHazardousSubstanceRepository) {
         this.objectHazardousSubstanceRepository = objectHazardousSubstanceRepository;

@@ -6,6 +6,7 @@ import com.caseo.domain.repository.ObjectInsurancePolicyRepository;
 import java.sql.SQLException;
 
 public class ObjectInsurancePolicyService {
+
     private final ObjectInsurancePolicyRepository objectInsurancePolicyRepository;
 
     public ObjectInsurancePolicyService(ObjectInsurancePolicyRepository objectInsurancePolicyRepository) {

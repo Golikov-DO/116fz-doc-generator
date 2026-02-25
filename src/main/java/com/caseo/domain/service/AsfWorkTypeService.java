@@ -8,13 +8,21 @@ import java.util.List;
 
 public class AsfWorkTypeService {
 
+    private final AsfWorkTypeRepository asfWorkTypeRepository;
+
     public AsfWorkTypeService(AsfWorkTypeRepository asfWorkTypeRepository) {
         this.asfWorkTypeRepository = asfWorkTypeRepository;
     }
 
-    private final AsfWorkTypeRepository asfWorkTypeRepository;
-
     public List<AsfWorkType> getByAsfId(int asfId) throws SQLException {
         return asfWorkTypeRepository.findByAsfId(asfId);
+    }
+
+    public void save(AsfWorkType asfWorkType, int asfId) throws SQLException{
+        asfWorkTypeRepository.save(asfWorkType, asfId);
+    }
+
+    public void deleteByAsfId(int asfId) throws SQLException{
+        asfWorkTypeRepository.deleteByAsfId(asfId);
     }
 }

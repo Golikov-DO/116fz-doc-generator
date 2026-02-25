@@ -4,6 +4,7 @@ import com.caseo.domain.model.ObjectType;
 import com.caseo.domain.repository.ObjectTypeRepository;
 
 public class ObjectTypeService {
+
     private final ObjectTypeRepository objectTypeRepository;
 
     public ObjectTypeService(ObjectTypeRepository objectTypeRepository) {

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/com/caseo/infrastructure/db/repository/JdbcAsfSignerRepository.java" value="8a357925-0761-4e6c-9b3d-6b1788d38231" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/exempleFill.sql" value="defe7e93-15fb-45ba-8c0a-3da0844200e2" />
-  </component>
-</project>

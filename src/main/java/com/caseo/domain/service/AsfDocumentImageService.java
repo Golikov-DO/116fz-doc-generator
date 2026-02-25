@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AsfDocumentImageService {
 
-    private AsfDocumentImageRepository asfDocumentImageRepository;
+    private final AsfDocumentImageRepository asfDocumentImageRepository;
 
     public AsfDocumentImageService(AsfDocumentImageRepository asfDocumentImageRepository) {
         this.asfDocumentImageRepository = asfDocumentImageRepository;
@@ -16,5 +16,13 @@ public class AsfDocumentImageService {
 
     public List<AsfDocumentImage> getByAsfId(int asfId) throws SQLException {
         return asfDocumentImageRepository.findByAsfId(asfId);
+    }
+
+    public void save(AsfDocumentImage image, int asfId) throws SQLException{
+        asfDocumentImageRepository.save(image, asfId);
+    }
+
+    public void deleteByAsfId(int asfId) throws SQLException{
+        asfDocumentImageRepository.deleteByAsfId(asfId);
     }
 }

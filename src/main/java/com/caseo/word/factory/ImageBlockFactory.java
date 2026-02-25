@@ -25,7 +25,7 @@ public class ImageBlockFactory {
 
     public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
         Map<String, Object> data = new HashMap<>();
-        Asf asf = asfService.getOrganizationId(documentSet.orgId());
+        Asf asf = asfService.getObjectId(documentSet.orgId());
         List<AsfDocumentImage> asfImage = asfDocumentImageService.getByAsfId(asf.id());
         List<ObjectImage> objectImages =
                 objectImageService.getByObjectId(documentSet.objectId());

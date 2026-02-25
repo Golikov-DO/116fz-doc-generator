@@ -8,5 +8,8 @@ public interface AsfCompositionDeploymentFundsRepository {
 
     AsfCompositionDeploymentFunds findByAsfId(int asfId) throws SQLException;
 
+    void save(AsfCompositionDeploymentFunds asfCompositionDeploymentFunds, int asfId) throws SQLException;
+
+    void deleteByAsfId(int asfId) throws SQLException;
 }
 
