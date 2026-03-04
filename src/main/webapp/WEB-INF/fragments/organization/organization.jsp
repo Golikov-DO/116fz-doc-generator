@@ -74,7 +74,7 @@
             <div class="organization-form-field">
                 <label>
                     <input type="text" name="signer_position"
-                           value="<%= hasData ? signer.position() : "" %>" <%= disabled %>>
+                           value="<%= hasData && signer.position() != null ? signer.position() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -82,7 +82,7 @@
             <div class="organization-form-label">ФИО:</div>
             <div class="organization-form-field">
                 <label>
-                    <input type="text" name="signer_name" value="<%= hasData ? signer.name() : "" %>" <%= disabled %>>
+                    <input type="text" name="signer_name" value="<%= hasData && signer.name() != null ? signer.name() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -99,32 +99,33 @@
             <div>
                 <label style="font-size: 11px;">Индекс</label>
                 <label>
-                    <input type="text" name="org_index" value="<%= hasData ? addr.index() : "" %>" <%= disabled %>>
+                    <input type="text" name="org_index" value="<%= hasData && addr.index() != null ? addr.index() : "" %>"
+                    <%= disabled %>>
                 </label>
             </div>
             <div>
                 <label style="font-size: 11px;">Субъект РФ</label>
                 <label>
                     <input type="text" name="org_constituent_entity"
-                           value="<%= hasData ? addr.constituentEntity() : "" %>" <%= disabled %>>
+                           value="<%= hasData && addr.constituentEntity() != null ? addr.constituentEntity() : "" %>" <%= disabled %>>
                 </label>
             </div>
             <div>
                 <label style="font-size: 11px;">Город</label>
                 <label>
-                    <input type="text" name="org_city" value="<%= hasData ? addr.city() : "" %>" <%= disabled %>>
+                    <input type="text" name="org_city" value="<%= hasData && addr.city() != null ? addr.city() : "" %>" <%= disabled %>>
                 </label>
             </div>
             <div>
                 <label style="font-size: 11px;">Улица</label>
                 <label>
-                    <input type="text" name="org_street" value="<%= hasData ? addr.street() : "" %>" <%= disabled %>>
+                    <input type="text" name="org_street" value="<%= hasData && addr.street() != null ? addr.street() : "" %>" <%= disabled %>>
                 </label>
             </div>
             <div>
                 <label style="font-size: 11px;">Дом</label>
                 <label>
-                    <input type="text" name="org_house" value="<%= hasData ? addr.house() : "" %>" <%= disabled %>>
+                    <input type="text" name="org_house" value="<%= hasData && addr.house() != null ? addr.house() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>

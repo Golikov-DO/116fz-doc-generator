@@ -9,4 +9,7 @@ public interface ObjectRegionAuthoritiesRepository {
 
     List<ObjectRegionalAuthorities> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectRegionalAuthorities objectRegionalAuthorities, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

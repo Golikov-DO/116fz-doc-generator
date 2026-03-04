@@ -80,11 +80,11 @@ function getObjectTemplate(number) {
                 <td><input type="text" name="nearest_fire_station[]" style="width: 100%;"></td>
                 <td><input type="text" name="department_gochs[]" style="width: 100%;"></td>
                 <td>
-                    <select name="emergency_commission[]">
-                        <option value=""></option>
-                        <option value="создана">Создана</option>
-                        <option value="не создана">Не создана</option>
-                    </select>
+                <select name="emergency_commission[]" onchange="toggleKchsVisibility(this, ${number})">
+                    <option value=""></option>
+                    <option value="true">Создана</option>
+                    <option value="false">Не создана</option>
+                </select>
                 </td>
             </tr>
         </table>
@@ -264,14 +264,24 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
         });
 }
 
-function openAsfModal(asfId, objectIndex) {
+function openAsfModal(asfId, objectItem, addSignerMode = false) {
+    console.log('openAsfModal called with asfId:', asfId);
+
     const modal = document.getElementById('asfModal');
     const content = document.getElementById('asfModalContent');
+    const title = document.getElementById('asfModalTitle');
 
-    // Сохраняем индекс объекта для обновления после сохранения
-    modal.setAttribute('data-object-index', objectIndex);
+    // Сохраняем ссылку на объект для обратного вызова
+    modal.setAttribute('data-object-item', objectItem ? objectItem.id || '' : '');
+    modal.setAttribute('data-add-signer-mode', addSignerMode);
 
-    // Загружаем форму АСФ
+    // Меняем заголовок в зависимости от режима
+    if (addSignerMode) {
+        title.textContent = 'Добавление подписанта';
+    } else {
+        title.textContent = asfId ? 'Редактирование АСФ' : 'Добавление АСФ';
+    }
+
     const url = asfId ? 'asf?mode=edit&asfId=' + asfId : 'asf?mode=create';
 
     fetch(url, {
@@ -280,6 +290,19 @@ function openAsfModal(asfId, objectIndex) {
         .then(response => response.text())
         .then(html => {
             content.innerHTML = html;
+
+            // Если это режим добавления подписанта, скрываем ненужные блоки
+            if (addSignerMode) {
+                // Скрываем все блоки кроме подписантов
+                const blocks = content.querySelectorAll('.asf-collapse-block');
+                blocks.forEach(block => {
+                    const header = block.querySelector('.asf-collapse-header span');
+                    if (header && !header.textContent.includes('Подписанты')) {
+                        block.style.display = 'none';
+                    }
+                });
+            }
+
             modal.style.display = 'block';
         });
 }
@@ -288,10 +311,55 @@ function closeAsfModal() {
     document.getElementById('asfModal').style.display = 'none';
 }
 
-// Инициализация для объектов
+// Сохранение АСФ из модального окна
+function saveAsfModal() {
+    const modal = document.getElementById('asfModal');
+    const modalContent = document.getElementById('asfModalContent');
+    const form = modalContent.querySelector('#asfForm');
+    const objectItemId = modal.getAttribute('data-object-item');
+    const addSignerMode = modal.getAttribute('data-add-signer-mode') === 'true';
+
+    if (!form) {
+        alert('Форма не найдена');
+        return;
+    }
+
+    // Создаём FormData из формы
+    const formData = new FormData(form);
+
+    // Добавляем mode
+    const mode = form.querySelector('input[name="mode"]').value;
+    formData.append('mode', mode);
+
+    // Отправляем на savePortal
+    fetch('savePortal', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.text())
+        .then(() => {
+            closeAsfModal();
+
+            // Получаем ID сохранённого АСФ из ответа
+            // Временно используем заглушку - после сохранения нужно получить ID
+            // Пока просто перезагрузим страницу
+            alert('АСФ успешно сохранён');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка: ' + error);
+        });
+}
+
 // Вспомогательные функции
 function getObjectElements(element) {
-    const objectItem = element.closest('.object-item');
+    let objectItem;
+    if (element instanceof HTMLElement) {
+        objectItem = element.closest('.object-item');
+    } else {
+        objectItem = element;
+    }
     return {
         objectItem,
         signerSelect: objectItem.querySelector('.signer-select'),
@@ -312,6 +380,25 @@ function resetSignerSelect(signerSelect) {
     signerSelect.disabled = true;
 }
 
+// Переключение видимости блока КЧС в зависимости от выбора
+function toggleKchsVisibility(select, objectIndex) {
+
+    const objectItem = select.closest('.object-item');
+    // Ищем блок КЧС по ID
+    const kchsBlock = document.getElementById('kchs-block-' + objectIndex);
+
+    if (!kchsBlock) {
+        return;
+    }
+
+    // Если выбрана пустая опция или "Не создана" - скрываем
+    if (select.value === '' || select.value === 'false') {
+        kchsBlock.style.display = 'none';
+    } else if (select.value === 'true') {
+        kchsBlock.style.display = 'block';
+    }
+}
+
 // Инициализация
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.asf-select').forEach(select => {
@@ -320,6 +407,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const elements = getObjectElements(select);
         loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
+    });
+
+    document.querySelectorAll('select[name="emergency_commission[]"]').forEach((select, index) => {
+        // Добавляем обработчик изменения
+        select.addEventListener('change', function() {
+            toggleKchsVisibility(this, index);
+        });
+
+        // Устанавливаем начальное состояние
+        toggleKchsVisibility(select, index);
     });
 });
 
@@ -336,7 +433,8 @@ document.addEventListener('change', function(e) {
         }
 
         if (asfId === 'new_asf') {
-            handleNewAsf();
+            // Открываем модальное окно для создания нового АСФ
+            openAsfModal(null, elements.objectItem);
             return;
         }
 
@@ -346,6 +444,13 @@ document.addEventListener('change', function(e) {
     // Обработка выбора подписанта
     if (e.target?.classList.contains('signer-select') && e.target.value === 'add_new_signer') {
         const elements = getObjectElements(e.target);
-        handleNewAsf(elements.asfSelect.value);
+        // Открываем модальное окно для создания нового подписанта
+        // Но сначала нужно получить выбранное АСФ
+        const asfSelect = elements.asfSelect;
+        if (asfSelect && asfSelect.value && asfSelect.value !== 'new_asf') {
+            openAsfModal(asfSelect.value, elements.objectItem, true); // true = добавляем подписанта
+        } else {
+            alert('Сначала выберите АСФ');
+        }
     }
 });

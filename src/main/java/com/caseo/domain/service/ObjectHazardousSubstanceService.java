@@ -4,6 +4,7 @@ import com.caseo.domain.model.ObjectHazardousSubstance;
 import com.caseo.domain.repository.ObjectHazardousSubstanceRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class ObjectHazardousSubstanceService {
 
@@ -15,5 +16,17 @@ public class ObjectHazardousSubstanceService {
 
     public ObjectHazardousSubstance getById(int id) throws SQLException {
         return objectHazardousSubstanceRepository.findById(id);
+    }
+
+    public void save(ObjectHazardousSubstance objectHazardousSubstance, int objectId) throws SQLException{
+        objectHazardousSubstanceRepository.save(objectHazardousSubstance, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectHazardousSubstanceRepository.deleteByObjectId(objectId);
+    }
+
+    public List<ObjectHazardousSubstance> getAll() throws SQLException {
+        return objectHazardousSubstanceRepository.findAll();
     }
 }

@@ -16,4 +16,12 @@ public class ObjectAddressService {
     public ObjectAddress getByObjectId(int objectId) throws SQLException {
         return objectAddressRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectAddress objectAddress, int objectId) throws SQLException{
+        objectAddressRepository.save(objectAddress, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectAddressRepository.deleteByObjectId(objectId);
+    }
 }

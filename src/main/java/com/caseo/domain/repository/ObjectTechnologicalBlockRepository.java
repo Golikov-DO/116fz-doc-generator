@@ -1,6 +1,5 @@
 package com.caseo.domain.repository;
 
-
 import com.caseo.domain.model.ObjectTechnologicalBlock;
 
 import java.sql.SQLException;
@@ -12,4 +11,7 @@ public interface ObjectTechnologicalBlockRepository {
 
     int countByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectTechnologicalBlock objectTechnologicalBlock, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

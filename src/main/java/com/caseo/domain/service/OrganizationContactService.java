@@ -14,8 +14,16 @@ public class OrganizationContactService {
         this.organizationContactRepository = organizationContactRepository;
     }
 
-    public List<OrganizationContact> getByOrganizationId(int organizationID) throws SQLException {
-        return organizationContactRepository.findByOrganizationId(organizationID);
+    public List<OrganizationContact> getByOrganizationId(int orgId) throws SQLException {
+        return organizationContactRepository.findByOrganizationId(orgId);
+    }
+
+    public void save(OrganizationContact organizationContact, int orgId) throws SQLException{
+        organizationContactRepository.save(organizationContact, orgId);
+    }
+
+    public void deleteByOrganizationId(int orgId) throws SQLException {
+        organizationContactRepository.deleteByOrganizationId(orgId);
     }
 }
 

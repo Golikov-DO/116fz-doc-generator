@@ -1,7 +1,7 @@
 package com.caseo.domain.model;
 
 public record AsfWorkType(
-        int id,
+        int asfId,
         String name
 ) {
 }

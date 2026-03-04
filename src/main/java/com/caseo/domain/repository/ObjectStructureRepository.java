@@ -9,4 +9,7 @@ public interface ObjectStructureRepository {
 
     List<ObjectStructure> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectStructure objectStructure, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

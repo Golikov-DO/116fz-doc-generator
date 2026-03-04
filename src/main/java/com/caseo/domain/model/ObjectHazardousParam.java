@@ -1,7 +1,7 @@
 package com.caseo.domain.model;
 
 public record ObjectHazardousParam(
-        Integer id,
+        int id,
         int substanceId,
         String sectionNo,
         String title,

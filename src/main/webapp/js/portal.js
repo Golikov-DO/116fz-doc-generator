@@ -1,4 +1,3 @@
-// webapp/js/portal.js
 
 // Переключение вкладок
 function showTab(tabName) {

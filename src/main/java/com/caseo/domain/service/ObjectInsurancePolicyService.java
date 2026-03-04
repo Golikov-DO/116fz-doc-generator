@@ -16,4 +16,12 @@ public class ObjectInsurancePolicyService {
     public ObjectInsurancePolicy getByObjectId(int id) throws SQLException {
         return objectInsurancePolicyRepository.findByObjectId(id);
     }
+
+    public void save(ObjectInsurancePolicy objectInsurancePolicy, int objectId) throws SQLException{
+        objectInsurancePolicyRepository.save(objectInsurancePolicy, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectInsurancePolicyRepository.deleteByObjectId(objectId);
+    }
 }

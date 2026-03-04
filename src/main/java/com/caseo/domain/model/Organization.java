@@ -4,6 +4,7 @@ public record Organization(
         int organizationId,
         String organizationName,
         String organizationShortName,
-        String organizationTypeActivity
+        String organizationTypeActivity,
+        boolean oneTerritory
 ) {
 }

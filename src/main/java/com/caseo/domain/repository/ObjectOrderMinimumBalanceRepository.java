@@ -8,4 +8,7 @@ public interface ObjectOrderMinimumBalanceRepository {
 
     ObjectOrderMinimumBalance findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectOrderMinimumBalance objectOrderMinimumBalance, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

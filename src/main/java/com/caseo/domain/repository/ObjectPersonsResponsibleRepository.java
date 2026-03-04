@@ -9,4 +9,7 @@ public interface ObjectPersonsResponsibleRepository {
 
     List<ObjectPersonsResponsible> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectPersonsResponsible objectPersonsResponsible, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

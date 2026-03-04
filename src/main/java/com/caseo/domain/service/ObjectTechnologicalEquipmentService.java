@@ -17,5 +17,13 @@ public class ObjectTechnologicalEquipmentService {
     public List<ObjectTechnologicalEquipment> getByObjectId(int objectId) throws SQLException {
         return objectTechnologicalEquipmentRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectTechnologicalEquipment objectTechnologicalEquipment, int objectId) throws SQLException{
+        objectTechnologicalEquipmentRepository.save(objectTechnologicalEquipment, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectTechnologicalEquipmentRepository.deleteByObjectId(objectId);
+    }
 }
 

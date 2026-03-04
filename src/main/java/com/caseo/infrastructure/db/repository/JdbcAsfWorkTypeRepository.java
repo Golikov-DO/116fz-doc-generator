@@ -18,7 +18,7 @@ public class JdbcAsfWorkTypeRepository extends BaseJdbcRepository<AsfWorkType> i
     @Override
     protected RowMapper<AsfWorkType> mapper() {
         return rs -> new AsfWorkType(
-                rs.getInt("id"),
+                rs.getInt("asf_id"),
                 rs.getString("name")
         );
     }

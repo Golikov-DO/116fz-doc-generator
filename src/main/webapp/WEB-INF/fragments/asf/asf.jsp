@@ -37,7 +37,7 @@
             <div class="asf-form-label">Краткое наименование *:</div>
             <div class="asf-form-field">
                 <label>
-                    <input type="text" name="short_name" value="<%= hasData ? asf.shortName() : "" %>" <%= disabled %> required>
+                    <input type="text" name="short_name" value="<%= hasData ? asf.shortName() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -45,7 +45,7 @@
             <div class="asf-form-label">Полное наименование *:</div>
             <div class="asf-form-field">
                 <label>
-                    <textarea name="full_name" rows="2" <%= disabled %> required><%= hasData ? asf.fullName() : "" %></textarea>
+                    <textarea name="full_name" rows="2" <%= disabled %>><%= hasData ? asf.fullName() : "" %></textarea>
                 </label>
             </div>
         </div>

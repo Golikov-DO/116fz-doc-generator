@@ -37,7 +37,7 @@
         <span>Режим <%= "view".equals(mode) ? "просмотра" : "редактирования" %></span>
     </div>
 
-    <form action="saveOrganization" method="post" id="organizationForm">
+    <form action="<%= orgId == null || orgId.isEmpty() ? "createOrganization" : "updateOrganization" %>" method="post" id="organizationForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
 

@@ -3,6 +3,7 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.ObjectImage;
 import com.caseo.domain.repository.ObjectImageRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class JdbcObjectImageRepository extends BaseJdbcRepository<ObjectImage> implements ObjectImageRepository {
@@ -24,6 +25,16 @@ public class JdbcObjectImageRepository extends BaseJdbcRepository<ObjectImage> i
     @Override
     public List<ObjectImage> findByObjectId(int objectId) {
         // Сортируем сначала по группе, потом по порядку внутри группы
-        return findList("object_id = ?", "ORDER BY group_key, id", objectId);
+        return findList("object_id = ?", "ORDER BY group_key, asfId", objectId);
+    }
+
+    @Override
+    public void save(ObjectImage objectImage, int objectId) throws SQLException {
+
+    }
+
+    @Override
+    public void deleteByObjectId(int objectId) throws SQLException {
+        delete("object_id = ?", objectId);
     }
 }

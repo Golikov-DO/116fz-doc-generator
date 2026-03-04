@@ -16,4 +16,12 @@ public class ObjectOrderMinimumBalanceService {
     public ObjectOrderMinimumBalance getByObjectId(int id) throws SQLException {
         return objectOrderMinimumBalanceRepository.findByObjectId (id);
     }
+
+    public void save(ObjectOrderMinimumBalance objectOrderMinimumBalance, int objectId) throws SQLException{
+        objectOrderMinimumBalanceRepository.save(objectOrderMinimumBalance, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectOrderMinimumBalanceRepository.deleteByObjectId(objectId);
+    }
 }

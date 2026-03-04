@@ -17,5 +17,13 @@ public class ObjectMainScenariosService {
     public List<ObjectMainScenarios> getByObjectId(int objectId) throws SQLException {
         return objectMainScenariosRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectMainScenarios objectMainScenarios, int objectId) throws SQLException{
+        objectMainScenariosRepository.save(objectMainScenarios, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectMainScenariosRepository.deleteByObjectId(objectId);
+    }
 }
 

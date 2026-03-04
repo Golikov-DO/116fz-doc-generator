@@ -25,7 +25,7 @@ public class JdbcAsfDocumentImageRepository extends BaseJdbcRepository<AsfDocume
     @Override
     public List<AsfDocumentImage> findByAsfId(int asfId) {
         // Сортируем сначала по группе, потом по порядку внутри группы
-        return findList("asf_id = ?", "ORDER BY group_key, id", asfId);
+        return findList("asf_id = ?", "ORDER BY group_key, asf_id", asfId);
     }
 
     @Override

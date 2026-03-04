@@ -17,5 +17,13 @@ public class ObjectFireEquipmentService {
     public List<ObjectFireEquipment> getByObjectId(int objectId) throws SQLException {
         return objectFireEquipmentRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectFireEquipment objectFireEquipment, int objectId) throws SQLException{
+        objectFireEquipmentRepository.save(objectFireEquipment, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectFireEquipmentRepository.deleteByObjectId(objectId);
+    }
 }
 

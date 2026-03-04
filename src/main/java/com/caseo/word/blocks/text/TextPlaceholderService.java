@@ -80,7 +80,7 @@ public class TextPlaceholderService {
         map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", obj.amountOfHazardousSubstance());
         map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", DocumentOutputFormatter.format(techBlocks + " технологический блок"));
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.departmentGoChsCity());
-        map.put("OBJ_EMERGENCY_COMMISSION", obj.emergencyCommission());
+        map.put("OBJ_EMERGENCY_COMMISSION", obj.emergencyCommission() == true ? "создана" : "не создана");
         map.put("OBJ_HAZARDOUS_SUBSTANCE", substance.name());
         map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance.name_gen());
         map.put("OBJ_HAZARD_CLASS", DocumentOutputFormatter.toRoman(String.valueOf(obj.hazardClass())));

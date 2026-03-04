@@ -9,4 +9,7 @@ public interface ObjectCompositionKchsRepository {
 
     List<ObjectCompositionKchs> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectCompositionKchs objectCompositionKchs, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

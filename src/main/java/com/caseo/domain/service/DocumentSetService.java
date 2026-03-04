@@ -1,6 +1,5 @@
 package com.caseo.domain.service;
 
-
 import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.repository.DocumentSetRepository;
 
@@ -25,5 +24,9 @@ public class DocumentSetService {
 
     public List<DocumentSet> getAll() throws SQLException {
         return documentSetRepository.findAll();
+    }
+
+    public DocumentSet save(DocumentSet documentSet) throws SQLException {
+        return documentSetRepository.save(documentSet);
     }
 }

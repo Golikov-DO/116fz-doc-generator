@@ -18,5 +18,13 @@ public class ObjectPersonsResponsibleService {
     public List<ObjectPersonsResponsible> getByObjectId(int objectId) throws SQLException {
         return objectPersonsResponsibleRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectPersonsResponsible objectPersonsResponsible, int objectId) throws SQLException{
+        objectPersonsResponsibleRepository.save(objectPersonsResponsible, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectPersonsResponsibleRepository.deleteByObjectId(objectId);
+    }
 }
 

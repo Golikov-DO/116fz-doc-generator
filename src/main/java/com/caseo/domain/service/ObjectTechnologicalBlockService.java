@@ -21,4 +21,12 @@ public class ObjectTechnologicalBlockService {
     public int countByObjectId(int objectId) throws SQLException {
         return objectTechnologicalBlockRepository.countByObjectId(objectId);
     }
+
+    public void save(ObjectTechnologicalBlock objectTechnologicalBlock, int objectId) throws SQLException{
+        objectTechnologicalBlockRepository.save(objectTechnologicalBlock, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectTechnologicalBlockRepository.deleteByObjectId(objectId);
+    }
 }

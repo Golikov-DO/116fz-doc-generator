@@ -38,12 +38,19 @@ public class JdbcAsfSignerRepository extends BaseJdbcRepository<AsfSigner> imple
     @Override
     public void save(AsfSigner asfSigner, int asfId) throws SQLException {
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("id", asfId);
         data.put("asf_id", asfId);
         data.put("signer_name", asfSigner.name());
         data.put("signer_position", asfSigner.position());
 
-        insert(data);
+        if (asfSigner.id() == 0) {
+            // Новый подписант - INSERT
+            insert(data);
+        } else {
+            // Существующий подписант - UPDATE
+            String[] fields = data.keySet().toArray(new String[0]);
+            Object[] values = data.values().toArray();
+            update(fields, values, "id = ?", asfSigner.id());
+        }
     }
 
     @Override

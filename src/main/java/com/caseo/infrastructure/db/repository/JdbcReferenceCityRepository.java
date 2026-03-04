@@ -37,4 +37,9 @@ public class JdbcReferenceCityRepository extends BaseJdbcRepository<ReferenceCit
         List<ReferenceCity> list = findList("id = ?", id);
         return list.isEmpty() ? null : list.getFirst();
     }
+
+    @Override
+    public List<ReferenceCity> findAll() {
+        return findList(null);
+    }
 }

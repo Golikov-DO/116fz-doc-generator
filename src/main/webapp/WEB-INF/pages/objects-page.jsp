@@ -20,6 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
+    <title>1</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/objects.css">
 </head>

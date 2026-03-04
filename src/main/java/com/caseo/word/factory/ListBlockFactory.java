@@ -43,7 +43,7 @@ public class ListBlockFactory {
 
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
         var objAddr = objectAddressService.getByObjectId(objectModel.id());
-        var city = referenceCityService.getById(objAddr.id());
+        var city = referenceCityService.getById(objAddr.objectId());
         String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(city);
 
         if (descriptionParagraphs.length > 0) {

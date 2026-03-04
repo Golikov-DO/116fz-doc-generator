@@ -1,8 +1,7 @@
 package com.caseo.domain.model;
 
 public record ObjectInsurancePolicy(
-        int id,
-        int obj_id,
+        int objectId,
         String number,
         String validUntil
 ) {

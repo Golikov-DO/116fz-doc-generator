@@ -1,6 +1,11 @@
+<%@ page import="com.caseo.domain.model.Asf" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
     String mode = (String) request.getAttribute("mode");
+    String docId = (String) request.getAttribute("docId");
+    String orgId = (String) request.getAttribute("orgId");
+    String asfId = (String) request.getAttribute("asfId");
 
     String pageTitle, badgeText;
 
@@ -19,6 +24,20 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
+    <script>
+        window.asfOptionsList = [
+            <%
+            List<Asf> asfList = (List<Asf>) request.getAttribute("asfList");
+            if (asfList != null) {
+                for (Asf asf : asfList) {
+            %>
+            { id: <%= asf.id() %>, name: "<%= asf.shortName() %>" },
+            <%
+                }
+            }
+            %>
+        ];
+    </script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/organization.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/objects.css">
@@ -36,34 +55,54 @@
     </div>
 
     <div class="tabs">
-        <button class="tab active" onclick="showTab('organization')">Организация</button>
+        <button class="tab <%= "create".equals(mode) ? "active" : "" %>"
+                onclick="showTab('organization')"
+                <%= "create".equals(mode) ? "disabled style='opacity:0.5; cursor:not-allowed;'" : "" %>>
+            Организация
+        </button>
+
+        <% if (!"create".equals(mode)) { %>
         <button class="tab" onclick="showTab('objects')">Объекты</button>
+        <% } %>
     </div>
 
-    <form action="<%= "create".equals(mode) ? "savePortal" : "updatePortal" %>" method="post" id="portalForm">
-        <input type="hidden" name="mode" value="<%= mode %>">
-        <input type="hidden" name="docId" value="<%= request.getAttribute("docId") != null ? request.getAttribute("docId") : "" %>">
-        <input type="hidden" name="orgId" value="<%= request.getAttribute("orgId") != null ? request.getAttribute("orgId") : "" %>">
-        <input type="hidden" name="asfId" value="<%= request.getAttribute("asfId") != null ? request.getAttribute("asfId") : "" %>">
+    <!-- Вкладка Организация -->
+    <div id="organization" class="tab-pane active">
+        <form action="<%= orgId == null || orgId.isEmpty() ? "createOrganization" : "updateOrganization" %>"
+              method="post" id="organizationForm">
+            <input type="hidden" name="mode" value="<%= mode %>">
+            <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
 
-        <div id="organization" class="tab-pane active">
             <jsp:include page="/WEB-INF/fragments/organization/organization.jsp" />
-        </div>
 
-        <div id="objects" class="tab-pane">
+            <% if (!"view".equals(mode)) { %>
+            <div class="form-footer">
+                <button type="submit" class="btn-primary">Сохранить организацию</button>
+            </div>
+            <% } %>
+        </form>
+    </div>
+
+    <% if (!"create".equals(mode)) { %>
+    <!-- Вкладка Объекты -->
+    <div id="objects" class="tab-pane">
+        <form action="<%= docId == null || docId.isEmpty() ? "createObjects" : "updateObjects" %>"
+              method="post" id="objectsForm">
+            <input type="hidden" name="mode" value="<%= mode %>">
+            <input type="hidden" name="docId" value="<%= docId != null ? docId : "" %>">
+            <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
+
             <jsp:include page="/WEB-INF/fragments/objects/objects.jsp" />
-        </div>
 
-        <div id="asf" class="tab-pane">
-            <jsp:include page="/WEB-INF/fragments/asf/asf.jsp" />
-        </div>
+            <% if (!"view".equals(mode)) { %>
+            <div class="form-footer">
+                <button type="submit" class="btn-primary">Сохранить объекты</button>
+            </div>
+            <% } %>
+        </form>
+    </div>
+    <% } %>
 
-        <% if (!"view".equals(mode)) { %>
-        <div class="form-footer">
-            <button type="submit" class="btn-primary">Сохранить</button>
-        </div>
-        <% } %>
-    </form>
 </div>
 
 <script src="${pageContext.request.contextPath}/js/portal.js"></script>

@@ -3,7 +3,9 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.repository.DocumentSetRepository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JdbcDocumentSetRepository extends BaseJdbcRepository<DocumentSet> implements DocumentSetRepository {
 
@@ -29,5 +31,16 @@ public class JdbcDocumentSetRepository extends BaseJdbcRepository<DocumentSet> i
     @Override
     public List<DocumentSet> findAll() {
         return findList(null);
+    }
+
+    @Override
+    public DocumentSet save(DocumentSet documentSet) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("org_id", documentSet.orgId());
+        data.put("object_id", documentSet.objectId());
+
+        int newId = insert(data);
+
+        return new DocumentSet(newId, documentSet.orgId(), documentSet.objectId());
     }
 }

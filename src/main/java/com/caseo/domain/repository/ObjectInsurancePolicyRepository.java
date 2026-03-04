@@ -8,4 +8,7 @@ public interface ObjectInsurancePolicyRepository {
 
     ObjectInsurancePolicy findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectInsurancePolicy objectInsurancePolicy, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

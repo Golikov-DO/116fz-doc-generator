@@ -45,7 +45,17 @@ public class JdbcAsfPersonnelRepository extends BaseJdbcRepository<AsfPersonnel>
         data.put("first_class", asfPersonnel.firstClass());
         data.put("international_class", asfPersonnel.internationalClass());
 
-        insert(data);
+        AsfPersonnel existing = findByAsfId(asfId);
+
+        if (existing == null) {
+            // Нет записи - INSERT
+            insert(data);
+        } else {
+            // Есть запись - UPDATE
+            String[] fields = data.keySet().toArray(new String[0]);
+            Object[] values = data.values().toArray();
+            update(fields, values, "asf_id = ?", asfId);
+        }
     }
 
     @Override

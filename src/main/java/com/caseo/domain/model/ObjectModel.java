@@ -2,6 +2,7 @@ package com.caseo.domain.model;
 
 public record ObjectModel(
         int id,
+        int orgId,
         int asfId,
         int asf_signer_id,
         int object_city_id,
@@ -12,6 +13,6 @@ public record ObjectModel(
         String nearestFireStation,
         String objectShortName,
         String departmentGoChsCity,
-        String emergencyCommission
+        boolean emergencyCommission
 ) {
 }

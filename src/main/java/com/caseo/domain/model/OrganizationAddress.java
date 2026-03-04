@@ -4,8 +4,7 @@ package com.caseo.domain.model;
  * Модель адреса объекта.
  */
 public record OrganizationAddress(
-        int id,
-        Long organizationId,
+        int organizationId,
         Integer index,
         String constituentEntity, // Субъект (край, область)
         String areaHierarchy,      // Муниципальное деление (округа, районы)

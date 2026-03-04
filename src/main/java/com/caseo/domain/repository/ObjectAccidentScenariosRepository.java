@@ -9,4 +9,7 @@ public interface ObjectAccidentScenariosRepository {
 
     List<ObjectAccidentScenarios> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectAccidentScenarios objectAccidentScenarios, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

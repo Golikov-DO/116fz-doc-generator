@@ -9,4 +9,7 @@ public interface ObjectTechnologicalEquipmentRepository {
 
     List<ObjectTechnologicalEquipment> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectTechnologicalEquipment objectTechnologicalEquipment, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

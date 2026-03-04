@@ -25,4 +25,12 @@ public class ObjectService {
     public List<ObjectModel> getAllByOrgId(int orgId) throws SQLException {
         return objectRepository.findAllByOrgId(orgId);
     }
+
+    public ObjectModel save(ObjectModel object) throws SQLException {
+        return objectRepository.save(object);
+    }
+
+    public void deleteById (int id) throws SQLException{
+        objectRepository.deleteById(id);
+    }
 }

@@ -16,4 +16,12 @@ public class OrganizationAddressService {
     public OrganizationAddress getByOrganizationId(int organizationID) throws SQLException {
         return organizationAddressRepository.findByOrganizationId(organizationID);
     }
+
+    public void save(OrganizationAddress organizationAddress, int orgId) throws SQLException{
+        organizationAddressRepository.save(organizationAddress, orgId);
+    }
+
+    public void deleteByOrganizationId(int orgId) throws SQLException {
+        organizationAddressRepository.deleteByOrganizationId(orgId);
+    }
 }

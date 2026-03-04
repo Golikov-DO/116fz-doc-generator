@@ -17,5 +17,13 @@ public class ObjectStructureService {
     public List<ObjectStructure> getByObjectId(int objectId) throws SQLException {
         return objectStructureRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectStructure objectStructure, int objectId) throws SQLException{
+        objectStructureRepository.save(objectStructure, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectStructureRepository.deleteByObjectId(objectId);
+    }
 }
 

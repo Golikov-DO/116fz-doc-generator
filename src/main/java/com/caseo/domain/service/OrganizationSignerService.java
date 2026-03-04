@@ -16,4 +16,12 @@ public class OrganizationSignerService {
     public OrganizationSigner getByOrganizationId(int orgId) throws SQLException {
         return organizationSignerRepository.findByOrganizationId(orgId);
     }
+
+    public void save(OrganizationSigner organizationSigner, int orgId) throws SQLException{
+        organizationSignerRepository.save(organizationSigner, orgId);
+    }
+
+    public void deleteByOrganizationId(int orgId) throws SQLException {
+        organizationSignerRepository.deleteByOrganizationId(orgId);
+    }
 }

@@ -38,6 +38,14 @@ public class PortalServlet extends HttpServlet {
             // Загружаем список АСФ для всех режимов
             List<Asf> asfList = services.asfService().getAll();
             req.setAttribute("asfList", asfList);
+
+            // Загружаем справочник городов
+            List<ReferenceCity> cities = services.referenceCityService().getAll();
+            req.setAttribute("cities", cities);
+
+            // Загружаем справочник опасных веществ
+            List<ObjectHazardousSubstance> substances = services.objectHazardousSubstanceService().getAll();
+            req.setAttribute("substances", substances);
             
             // Загружаем данные организации
             if (orgId != null && !orgId.isEmpty()) {
@@ -108,7 +116,11 @@ public class PortalServlet extends HttpServlet {
 
             for (ObjectModel object : objects) {
                 objectAddresses.add(services.objectAddressService().getByObjectId(object.id()));
-                kchsLists.add(services.objectCompositionKchsService().getByObjectId(object.id()));
+                if (object.emergencyCommission()) {
+                    kchsLists.add(services.objectCompositionKchsService().getByObjectId(object.id()));
+                } else {
+                    kchsLists.add(new ArrayList<>());
+                }
                 equipmentLists.add(services.objectTechnologicalEquipmentService().getByObjectId(object.id()));
                 structureLists.add(services.objectStructureService().getByObjectId(object.id()));
                 fireLists.add(services.objectFireEquipmentService().getByObjectId(object.id()));

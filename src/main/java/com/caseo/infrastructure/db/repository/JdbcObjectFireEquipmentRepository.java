@@ -3,6 +3,7 @@ package com.caseo.infrastructure.db.repository;
 import com.caseo.domain.model.ObjectFireEquipment;
 import com.caseo.domain.repository.ObjectFireEquipmentRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class JdbcObjectFireEquipmentRepository extends BaseJdbcRepository<ObjectFireEquipment> implements ObjectFireEquipmentRepository {
@@ -26,5 +27,15 @@ public class JdbcObjectFireEquipmentRepository extends BaseJdbcRepository<Object
     @Override
     public List<ObjectFireEquipment> findByObjectId(int objectId) {
         return findList("object_id = ?", objectId);
+    }
+
+    @Override
+    public void save(ObjectFireEquipment objectFireEquipment, int objectId) throws SQLException {
+
+    }
+
+    @Override
+    public void deleteByObjectId(int objectId) throws SQLException {
+        delete("object_id = ?", objectId);
     }
 }

@@ -1,5 +1,6 @@
 package com.caseo.domain.service;
 
+import com.caseo.domain.model.ObjectAddress;
 import com.caseo.domain.model.ObjectCompositionKchs;
 import com.caseo.domain.repository.ObjectCompositionKchsRepository;
 
@@ -16,6 +17,14 @@ public class ObjectCompositionKchsService {
 
     public List<ObjectCompositionKchs> getByObjectId(int objectId) throws SQLException {
         return objectCompositionKchsRepository.findByObjectId(objectId);
+    }
+
+    public void save(ObjectCompositionKchs objectCompositionKchs, int objectId) throws SQLException{
+        objectCompositionKchsRepository.save(objectCompositionKchs, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectCompositionKchsRepository.deleteByObjectId(objectId);
     }
 }
 

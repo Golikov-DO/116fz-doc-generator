@@ -21,4 +21,10 @@ public class OrganizationService {
     public List<Organization> getAll() throws SQLException {
         return organizationRepository.findAll();
     }
+
+    public Organization save(Organization organization) throws SQLException {
+        return organizationRepository.save(organization);
+    }
+
+
 }

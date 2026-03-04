@@ -9,4 +9,7 @@ public interface ObjectMainScenariosRepository {
 
     List<ObjectMainScenarios> findByObjectId(int objectId) throws SQLException;
 
+    void save(ObjectMainScenarios objectMainScenarios, int objectId) throws SQLException;
+
+    void deleteByObjectId(int objectId) throws SQLException;
 }

@@ -11,4 +11,6 @@ public interface OrganizationRepository {
 
     List<Organization> findAll() throws SQLException;
 
+    Organization save(Organization organization) throws SQLException;
+
 }

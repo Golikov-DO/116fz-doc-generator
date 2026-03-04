@@ -17,5 +17,13 @@ public class ObjectRegionAuthoritiesService {
     public List<ObjectRegionalAuthorities> getByObjectId(int objectId) throws SQLException {
         return objectRegionAuthoritiesRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectRegionalAuthorities objectRegionalAuthorities, int objectId) throws SQLException{
+        objectRegionAuthoritiesRepository.save(objectRegionalAuthorities, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectRegionAuthoritiesRepository.deleteByObjectId(objectId);
+    }
 }
 

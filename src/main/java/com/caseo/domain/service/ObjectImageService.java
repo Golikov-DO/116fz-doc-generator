@@ -16,4 +16,12 @@ public class ObjectImageService {
     public List<ObjectImage> getByObjectId(int objectId) throws SQLException {
         return objectImageRepository.findByObjectId(objectId);
     }
+
+    public void save(ObjectImage objectImage, int objectId) throws SQLException{
+        objectImageRepository.save(objectImage, objectId);
+    }
+
+    public void deleteByObjectId (int objectId) throws SQLException{
+        objectImageRepository.deleteByObjectId(objectId);
+    }
 }
