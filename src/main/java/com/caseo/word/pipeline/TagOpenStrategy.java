@@ -1,6 +1,5 @@
 package com.caseo.word.pipeline;
 
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.word.blocks.Block;
 import com.caseo.word.factory.UnifiedBlockFactory;
 import org.docx4j.model.datastorage.migration.VariablePrepare;
@@ -17,13 +16,12 @@ public class TagOpenStrategy implements OpenStrategy {
     }
 
     @Override
-    public OpenResult open(byte[] templateBytes, DocumentSet documentSet) {
+    public OpenResult open(byte[] templateBytes, int objectId) {
         try {
             WordprocessingMLPackage pkg = WordprocessingMLPackage.load(new ByteArrayInputStream(templateBytes));
-
             VariablePrepare.prepare(pkg);
-
-            List<Block> blocks = blockFactory.buildBlocks(documentSet);
+            // Передаем orgId и objectId в фабрику
+            List<Block> blocks = blockFactory.buildBlocks(objectId);
             return new OpenResult(pkg, blocks);
         } catch (Exception e) {
             throw new RuntimeException("TAG Strategy failed", e);

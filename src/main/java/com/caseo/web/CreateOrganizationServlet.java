@@ -17,7 +17,6 @@ public class CreateOrganizationServlet extends HttpServlet {
 
     private OrganizationService organizationService;
     private OrganizationSaveHelper saveHelper;
-    private DocumentSetService documentSetService;
     private ObjectService objectService;
 
 
@@ -28,7 +27,6 @@ public class CreateOrganizationServlet extends HttpServlet {
         InternalServices services = context.internalServices();
 
         organizationService = services.organizationService();
-        documentSetService = services.documentSetService();
         objectService = services.objectService();
         OrganizationAddressService organizationAddressService = services.organizationAddressService();
         OrganizationSignerService organizationSignerService = services.organizationSignerService();
@@ -67,13 +65,7 @@ public class CreateOrganizationServlet extends HttpServlet {
 
             ObjectModel savedObject = objectService.save(emptyObject);
 
-            // Создаём запись в document_set
-            DocumentSet document = new DocumentSet(0, savedOrgId, savedObject.id());
-            DocumentSet savedDoc = documentSetService.save(document);
-
-            documentSetService.save(document);
-
-            resp.sendRedirect("portal?mode=edit&orgId=" + savedOrgId + "&docId=" + savedDoc.id() + "&tab=objects");
+            resp.sendRedirect("portal?mode=edit&orgId=" + savedOrgId + "&tab=objects");
 
         } catch (Exception e) {
             e.printStackTrace();

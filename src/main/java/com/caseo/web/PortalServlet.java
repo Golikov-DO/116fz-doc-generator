@@ -21,12 +21,10 @@ public class PortalServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String mode = req.getParameter("mode");
-        String docId = req.getParameter("docId");
         String orgId = req.getParameter("orgId");
         String asfId = req.getParameter("asfId");
         
         req.setAttribute("mode", mode);
-        req.setAttribute("docId", docId);
         req.setAttribute("orgId", orgId);
         req.setAttribute("asfId", asfId);
         
@@ -50,11 +48,6 @@ public class PortalServlet extends HttpServlet {
             // Загружаем данные организации
             if (orgId != null && !orgId.isEmpty()) {
                 loadOrganizationData(req, Integer.parseInt(orgId), services);
-            }
-            
-            // Загружаем данные объектов
-            if (docId != null && !docId.isEmpty()) {
-                loadObjectsData(req, Integer.parseInt(docId), services);
             }
             
             // Загружаем данные АСФ
@@ -89,20 +82,19 @@ public class PortalServlet extends HttpServlet {
         }
     }
     
-    private void loadObjectsData(HttpServletRequest req, int docId, InternalServices services) {
+    private void loadObjectsData(HttpServletRequest req, int orgId, InternalServices services) {
         try {
-            DocumentSet document = services.documentSetService().getById(docId);
-            if (document == null) return;
+            Organization org = services.organizationService().getById(orgId);
+            if (org == null) return;
 
-            Organization org = services.organizationService().getById(document.orgId());
             OrganizationAddress orgAddr = services.organizationAddressService()
-                    .getByOrganizationId(document.orgId());
+                    .getByOrganizationId(org.organizationId());
             OrganizationSigner orgSigner = services.organizationSignerService()
-                    .getByOrganizationId(document.orgId());
+                    .getByOrganizationId(org.organizationId());
             List<OrganizationContact> contacts = services.organizationContactService()
-                    .getByOrganizationId(document.orgId());
+                    .getByOrganizationId(org.organizationId());
             List<ObjectModel> objects = services.objectService()
-                    .getAllByOrgId(document.orgId());
+                    .getAllByOrgId(org.organizationId());
 
             List<ObjectAddress> objectAddresses = new ArrayList<>();
             List<List<ObjectCompositionKchs>> kchsLists = new ArrayList<>();

@@ -23,12 +23,11 @@ public class ImageBlockFactory {
         this.asfService = asfService;
     }
 
-    public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
+    public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
-        Asf asf = asfService.getObjectId(documentSet.orgId());
+        Asf asf = asfService.getById(objectId);
         List<AsfDocumentImage> asfImage = asfDocumentImageService.getByAsfId(asf.id());
-        List<ObjectImage> objectImages =
-                objectImageService.getByObjectId(documentSet.objectId());
+        List<ObjectImage> objectImages = objectImageService.getByObjectId(objectId);
 
         Map<String, List<byte[]>> imagesByGroup = objectImages.stream()
                 .collect(Collectors.groupingBy(

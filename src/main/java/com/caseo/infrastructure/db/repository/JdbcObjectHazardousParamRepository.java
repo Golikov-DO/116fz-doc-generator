@@ -24,6 +24,6 @@ public class JdbcObjectHazardousParamRepository extends BaseJdbcRepository<Objec
 
     @Override
     public List<ObjectHazardousParam> findParamBySubstanceId(int substanceId) {
-        return findList("substance_id = ?", "ORDER BY asfId", substanceId);
+        return findList("substance_id = ?", "ORDER BY id", substanceId);
     }
 }

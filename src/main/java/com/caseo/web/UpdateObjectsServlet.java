@@ -24,7 +24,6 @@ public class UpdateObjectsServlet extends HttpServlet {
     private ObjectTypeService objectTypeService;
     private ObjectInsurancePolicyService objectInsurancePolicyService;
     private ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService;
-    private DocumentSetService documentSetService;
     private ObjectSaveHelper objectSaveHelper;
 
     @Override
@@ -40,7 +39,6 @@ public class UpdateObjectsServlet extends HttpServlet {
         objectTypeService = services.objectTypeService();
         objectInsurancePolicyService = services.objectInsurancePolicyService();
         objectOrderMinimumBalanceService = services.objectOrderMinimumBalanceService();
-        documentSetService = services.documentSetService();
 
         objectSaveHelper = new ObjectSaveHelper(
                 objectAddressService,
@@ -62,7 +60,7 @@ public class UpdateObjectsServlet extends HttpServlet {
 
         try {
             int savedDocId = updateDocument(req, Integer.parseInt(orgId), Integer.parseInt(docId));
-            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId + "&docId=" + savedDocId);
+            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId);
 
         } catch (Exception e) {
             getServletContext().log("Ошибка при обновлении объектов", e);
@@ -84,11 +82,6 @@ public class UpdateObjectsServlet extends HttpServlet {
             objectOrderMinimumBalanceService.deleteByObjectId(oldObject.id());
             objectService.deleteById(oldObject.id());
         }
-
-        // Обновляем документ
-        DocumentSet document = new DocumentSet(docId, orgId, oldObjectId);
-        DocumentSet savedDoc = documentSetService.save(document);
-        int savedDocId = savedDoc.id();
 
         // Сохраняем новые объекты
         String[] objectFullNames = req.getParameterValues("object_full_name[]");
@@ -131,7 +124,7 @@ public class UpdateObjectsServlet extends HttpServlet {
                 objectSaveHelper.saveObjectDetails(req, i, savedObject.id());
             }
         }
-        return savedDocId;
+        return orgId;
     }
 
     private int parseIntOrDefault(String value, int defaultValue) {

@@ -1,30 +1,35 @@
-// webapp/js/index.js
 
 function openDocument(mode) {
-    const select = document.querySelector('select[name="documentId"]');
-    const selected = select.options[select.selectedIndex];
-
-    const docId = select.value;
-    const orgId = selected.getAttribute('data-org-id');
-
-    if (!docId) {
-        alert('Пожалуйста, выберите документ');
+    const select = document.querySelector('select[name="orgId"]');  // ИЗМЕНЕНО: name="orgId"
+    if (!select || select.selectedIndex < 0) {
+        alert('Пожалуйста, выберите организацию');
         return;
     }
 
-    window.location.href = 'portal?mode=' + mode +
-        '&docId=' + (docId || '') +
-        '&orgId=' + (orgId || '');
+    const selected = select.options[select.selectedIndex];
+    const orgId = select.value;  // ИЗМЕНЕНО: теперь orgId в value
+    const objId = selected.getAttribute('data-obj-id');  // для возможного использования
+
+    if (!orgId) {
+        alert('Пожалуйста, выберите организацию');
+        return;
+    }
+
+    // ИЗМЕНЕНО: убрали docId, оставили только orgId
+    window.location.href = 'portal?mode=' + mode + '&orgId=' + orgId;
 }
 
 function developPlan() {
-    const select = document.querySelector('select[name="documentId"]');
-    const selected = select.options[select.selectedIndex];
+    const select = document.querySelector('select[name="orgId"]');  // ИЗМЕНЕНО: name="orgId"
+    if (!select || select.selectedIndex < 0) {
+        alert('Пожалуйста, выберите организацию');
+        return;
+    }
 
-    const docId = select.value;
+    const orgId = select.value;  // ИЗМЕНЕНО: берем orgId
 
-    if (!docId) {
-        alert('Пожалуйста, выберите документ');
+    if (!orgId) {
+        alert('Пожалуйста, выберите организацию');
         return;
     }
 
@@ -33,32 +38,31 @@ function developPlan() {
     btn.textContent = '⏳ Разработка...';
     btn.disabled = true;
 
+    // ИЗМЕНЕНО: передаем orgId вместо documentId
     fetch('generatePlan', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'documentId=' + docId
+        body: 'orgId=' + orgId  // ИЗМЕНЕНО: documentId → orgId
     })
         .then(response => {
             if (response.ok) {
-                alert('✅ План успешно разработан!');
-                location.reload();
-            } else {
-                alert('❌ Ошибка при разработке плана');
-                btn.textContent = originalText;
-                btn.disabled = false;
+                return response.text();
             }
+            throw new Error('Ошибка сервера');
+        })
+        .then(data => {
+            alert('✅ ' + data);
+            location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('❌ Ошибка при разработке плана');
+            alert('Ошибка при разработке плана');
             btn.textContent = originalText;
             btn.disabled = false;
         });
 }
-
-// Добавьте эту функцию в конец файла js/index.js
 
 function copyToClipboard(text) {
     // Создаем временный элемент

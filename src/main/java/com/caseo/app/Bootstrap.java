@@ -25,7 +25,6 @@ public class Bootstrap {
         return new ApplicationContext(
                 repos.asfSignerRepository(),
                 wordService,
-                services.documentSetService(),
                 services.organizationService(),
                 services.objectService(),
                 services
@@ -44,7 +43,6 @@ public class Bootstrap {
                 new JdbcAsfSpecialistsRepository(),
                 new JdbcAsfWorkTypeRepository(),
                 new JdbcObjectCompositionKchsRepository(),
-                new JdbcDocumentSetRepository(),
                 new JdbcReferenceEmergencyServicesRepository(),
                 new JdbcObjectFireEquipmentRepository(),
                 new JdbcObjectHazardousParamRepository(),
@@ -104,7 +102,6 @@ public class Bootstrap {
                 new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
                 new ObjectCompositionKchsService(repositoryContext.objectCompositionKchsRepository()),
                 contactTableLayoutService,
-                new DocumentSetService(repositoryContext.documentSetRepository()),
                 referenceEmergencyServicesService,
                 new ObjectFireEquipmentService(repositoryContext.objectFireEquipmentRepository()),
                 objectHazardService,
@@ -146,7 +143,6 @@ public class Bootstrap {
     private static UnifiedBlockFactory initUnifiedFactory(InternalServices internalServices, TextPlaceholderService textService) {
         return new UnifiedBlockFactory(
                 new TableBlockFactory(
-                        internalServices.organizationService(),
                         internalServices.objectService(),
                         internalServices.objectTechnologicalEquipmentService(),
                         internalServices.objectAccidentScenariosService(),
@@ -170,7 +166,8 @@ public class Bootstrap {
                         internalServices.referenceCityService()
                 ),
                 internalServices.hazardTableLayoutService(),
-                internalServices.contactTableLayoutService()
+                internalServices.contactTableLayoutService(),
+                internalServices.objectService()
         );
     }
 }

@@ -35,8 +35,8 @@ public class JdbcAsfRepository extends BaseJdbcRepository<Asf> implements AsfRep
     @Override
     public Asf findByObjectId(int objectId) {
         return findOne(
-                "JOIN object ON object.asf_id = asf.asfId",
-                "object.asfId = ?",
+                "JOIN object ON object.asf_id = asf.id",
+                "object.asf_id = ?",
                 objectId
         ).orElse(null);
     }

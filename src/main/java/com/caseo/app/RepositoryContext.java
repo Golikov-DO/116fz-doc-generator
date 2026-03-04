@@ -13,7 +13,6 @@ record RepositoryContext(
         AsfSpecialistsRepository asfSpecialistsRepository,
         AsfWorkTypeRepository asfWorkTypeRepository,
         ObjectCompositionKchsRepository objectCompositionKchsRepository,
-        DocumentSetRepository documentSetRepository,
         ReferenceEmergencyServicesRepository referenceEmergencyServicesRepository,
         ObjectFireEquipmentRepository objectFireEquipmentRepository,
         ObjectHazardousParamRepository objectHazardousParamRepository,

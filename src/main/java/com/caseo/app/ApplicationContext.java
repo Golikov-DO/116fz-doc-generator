@@ -6,7 +6,6 @@ import com.caseo.domain.service.*;
 public record ApplicationContext(
         AsfSignerRepository asfSignerRepository,
         WordGenerationService wordGenerationService,
-        DocumentSetService documentSetService,
         OrganizationService organizationService,
         ObjectService objectService,
         InternalServices internalServices

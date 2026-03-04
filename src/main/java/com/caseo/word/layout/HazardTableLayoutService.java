@@ -23,9 +23,9 @@ public class HazardTableLayoutService {
         this.objectHazardService = objectHazardService;
     }
 
-    public List<String[]> getHazardTableData(DocumentSet documentSet) throws SQLException {
+    public List<String[]> getHazardTableData(int objectId) throws SQLException  {
         // 2. Сбор данных (переехало из HazardTableBlockFactory)
-        ObjectModel obj = objectService.getByOrgId(documentSet.orgId());
+        ObjectModel obj = objectService.getById(objectId);
         List<ObjectHazardousParam> params = objectHazardService.getAllParamsOrdered(obj.hazardousSubstanceId());
 
         Map<Integer, ObjectHazardousParamValue> values = new HashMap<>();

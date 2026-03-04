@@ -1,14 +1,14 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.caseo.domain.model.Organization" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="com.caseo.domain.model.DocumentSet" %>
+<%@ page import="com.caseo.domain.model.ObjectModel" %>
 
 <html>
 <head>
     <meta charset="UTF-8">
     <title>CASEO - Личный кабинет</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/index.css">
 </head>
 <body>
 
@@ -19,21 +19,21 @@
             <h2>Панель управления</h2>
 
             <label>Выберите организацию:</label>
-            <select name="documentId">
+            <label for="orgSelect"></label>
+            <select name="orgId" id="orgSelect">
                 <option value="" disabled selected>— Выберите организацию —</option>
                 <%
-                    Map<Organization, List<DocumentSet>> grouped =
-                            (Map<Organization, List<DocumentSet>>) request.getAttribute("groupedDocuments");
+                    @SuppressWarnings("unchecked")
+                    Map<Organization, List<ObjectModel>> grouped = (Map<Organization, List<ObjectModel>>) request.getAttribute("groupedDocuments");
                     if (grouped != null) {
-                        for (Map.Entry<Organization, List<DocumentSet>> entry : grouped.entrySet()) {
+                        for (Map.Entry<Organization, List<ObjectModel>> entry : grouped.entrySet()) {
                             Organization org = entry.getKey();
-                            List<DocumentSet> docs = entry.getValue();
-                            if (!docs.isEmpty()) {
-                                DocumentSet firstDoc = docs.get(0);
+                            List<ObjectModel> objects = entry.getValue();
+                            if (objects != null && !objects.isEmpty()) {
+                                ObjectModel firstObject = objects.getFirst();
                 %>
-                <option value="<%= firstDoc.id() %>"
-                        data-org-id="<%= firstDoc.orgId() %>"
-                        data-obj-id="<%= firstDoc.objectId() %>">
+                <option value="<%= org.organizationId() %>"
+                        data-obj-id="<%= firstObject.id() %>">
                     <%= org.organizationShortName() %>
                 </option>
                 <%
@@ -69,8 +69,8 @@
     <div class="box right-box">
         <h2>📁 Разработанные планы</h2>
         <%
-            Map<String, List<String>> existing =
-                    (Map<String, List<String>>) request.getAttribute("existingFiles");
+            @SuppressWarnings("unchecked")
+            Map<String, List<String>> existing = (Map<String, List<String>>) request.getAttribute("existingFiles");
 
             String documentsPath = System.getProperty("user.home") + "/documents/";
 
@@ -104,6 +104,6 @@
     </div>
 </div>
 
-<script src="js/index.js"></script>
+<script src="${pageContext.request.contextPath}/js/index.js"></script>
 </body>
 </html>

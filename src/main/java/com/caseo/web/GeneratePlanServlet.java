@@ -1,7 +1,6 @@
 package com.caseo.web;
 
 import com.caseo.app.ApplicationContext;
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.util.DocumentPathSet;
@@ -41,41 +40,34 @@ public class GeneratePlanServlet extends HttpServlet {
             System.setProperty("java.io.tmpdir", tomcatTemp);
             System.setProperty("docx4j.tmpdir", tomcatTemp);
             System.setProperty("org.docx4j.tmpdir", tomcatTemp);
-
-            System.out.println(">>> TMPDIR set to: " + tomcatTemp);
         }
 
         resp.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = resp.getWriter();
 
         try {
-            String documentIdParam = req.getParameter("documentId");
+            String orgIdParam = req.getParameter("orgId");
 
-            if (documentIdParam == null || documentIdParam.isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Document ID is required");
+            if (orgIdParam == null || orgIdParam.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Organization ID is required");
                 return;
             }
 
-            int documentId = Integer.parseInt(documentIdParam);
+            int orgId = Integer.parseInt(orgIdParam);
 
             ApplicationContext context = (ApplicationContext) getServletContext()
                     .getAttribute("appContext");
 
-            DocumentSet documentSet = context.documentSetService().getById(documentId);
-
-            if (documentSet == null) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Document not found");
-                return;
-            }
-
-            Organization org = context.organizationService().getById(documentSet.orgId());
+            // Загружаем организацию
+            Organization org = context.organizationService().getById(orgId);
 
             if (org == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Organization not found");
                 return;
             }
 
-            List<ObjectModel> objects = context.objectService().getAllByOrgId(org.organizationId());
+            // Загружаем объекты организации
+            List<ObjectModel> objects = context.objectService().getAllByOrgId(orgId);
 
             if (objects == null || objects.isEmpty()) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No objects found for this organization");
@@ -83,7 +75,6 @@ public class GeneratePlanServlet extends HttpServlet {
             }
 
             String templatePath = getServletContext().getRealPath("/WEB-INF/template/tagtemplate.docx");
-            System.out.println("Template path: " + templatePath);
 
             if (templatePath == null) {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template file not found");
@@ -95,16 +86,10 @@ public class GeneratePlanServlet extends HttpServlet {
             int generatedCount = 0;
             for (ObjectModel object : objects) {
 
-                DocumentSet perObjectDoc = new DocumentSet(
-                        documentSet.id(),
-                        documentSet.orgId(),
-                        object.id()
-                );
-
                 WordprocessingMLPackage document = context.wordGenerationService().generate(
                         FillStrategy.TAG,
                         template,
-                        perObjectDoc
+                        object.id()  // только objectId!
                 );
 
                 Path outputPath = DocumentPathSet.buildOutputFile(org, object);
@@ -113,10 +98,11 @@ public class GeneratePlanServlet extends HttpServlet {
             }
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            out.println("✅ План успешно разработан. Сгенерировано файлов: " + generatedCount);
+            out.println("План успешно разработан. Сгенерировано файлов: " + generatedCount);
 
         } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid document ID format");
+            // ИСПРАВЛЕНО: текст ошибки соответствует параметру
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid organization ID format");
         } catch (Exception e) {
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

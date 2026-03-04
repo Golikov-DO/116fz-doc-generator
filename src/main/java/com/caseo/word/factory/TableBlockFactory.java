@@ -17,12 +17,10 @@ public class TableBlockFactory {
     private final ObjectFireEquipmentService objectFireEquipmentService;
     private final ObjectMainScenariosService objectMainScenariosService;
     private final ObjectService objectService;
-    private final OrganizationService organizationService;
     private final ObjectPersonsResponsibleService objectPersonsResponsibleService;
     private final ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService;
 
     public TableBlockFactory(
-            OrganizationService organizationService,
             ObjectService objectService,
             ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService,
             ObjectAccidentScenariosService objectAccidentScenariosService,
@@ -31,7 +29,6 @@ public class TableBlockFactory {
             ObjectPersonsResponsibleService objectPersonsResponsibleService,
             ObjectCompositionKchsService objectCompositionKchsService
     ) {
-        this.organizationService = organizationService;
         this.objectService = objectService;
         this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
         this.objectAccidentScenariosService = objectAccidentScenariosService;
@@ -41,11 +38,10 @@ public class TableBlockFactory {
         this.objectCompositionKchsService = objectCompositionKchsService;
     }
 
-    public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
+    public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
 
-        Organization org = organizationService.getById(documentSet.orgId());
-        ObjectModel obj = objectService.getByOrgId(org.organizationId());
+        ObjectModel obj = objectService.getById(objectId);
 
         for (int i = 1; i <= 9; i++) {
             if (i == 2 || i == 6) continue;

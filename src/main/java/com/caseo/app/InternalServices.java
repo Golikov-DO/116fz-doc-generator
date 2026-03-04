@@ -16,7 +16,6 @@ public record InternalServices(
         AsfWorkTypeService asfWorkTypeService,
         ObjectCompositionKchsService objectCompositionKchsService,
         ContactTableLayoutService contactTableLayoutService,
-        DocumentSetService documentSetService,
         ReferenceEmergencyServicesService referenceEmergencyServicesService,
         ObjectFireEquipmentService objectFireEquipmentService,
         ObjectHazardService objectHazardService,

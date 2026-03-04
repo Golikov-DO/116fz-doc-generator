@@ -1,6 +1,5 @@
 package com.caseo.word.strategy;
 
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.word.blocks.text.TextPlaceholderService;
 
 import java.sql.SQLException;
@@ -14,8 +13,8 @@ public class PlaceholderFillStrategy {
     public PlaceholderFillStrategy(TextPlaceholderService textPlaceholderService) {
         this.textPlaceholderService = textPlaceholderService;
     }
-    public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
-        return new HashMap<>(textPlaceholderService.build(documentSet));
+    public Map<String, Object> build(int orgId, int objectId) throws SQLException {
+        return new HashMap<>(textPlaceholderService.build(orgId, objectId));
     }
 }
 

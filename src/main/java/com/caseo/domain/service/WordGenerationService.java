@@ -1,6 +1,5 @@
 package com.caseo.domain.service;
 
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.word.document.DocumentBuilder;
 import com.caseo.word.pipeline.OpenResult;
 import com.caseo.word.pipeline.OpenStrategy;
@@ -23,10 +22,9 @@ public class WordGenerationService {
         this.placeholderOpenStrategy = placeholderOpenStrategy;
     }
 
-    public WordprocessingMLPackage generate(FillStrategy strategy, byte[] templateBytes, DocumentSet documentSet) throws Exception {
-
+    public WordprocessingMLPackage generate(FillStrategy strategy, byte[] templateBytes, int objectId) throws Exception {
         OpenStrategy openStrategy = resolve(strategy);
-        OpenResult openResult = openStrategy.open(templateBytes, documentSet);
+        OpenResult openResult = openStrategy.open(templateBytes, objectId);
         return documentBuilder.build(openResult);
     }
 

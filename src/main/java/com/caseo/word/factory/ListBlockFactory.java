@@ -1,6 +1,5 @@
 package com.caseo.word.factory;
 
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.NumberedItem;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.ObjectStructure;
@@ -35,11 +34,11 @@ public class ListBlockFactory {
         this.referenceCityService = referenceCityService;
     }
 
-    public Map<String,Object> build(DocumentSet documentSet) throws SQLException {
+    public Map<String,Object> build(int objectId) throws SQLException {
 
         Map<String,Object> data = new HashMap<>();
 
-        ObjectModel objectModel = objectService.getByOrgId(documentSet.orgId());
+        ObjectModel objectModel = objectService.getById(objectId);
 
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
         var objAddr = objectAddressService.getByObjectId(objectModel.id());

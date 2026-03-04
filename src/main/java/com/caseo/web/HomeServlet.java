@@ -1,7 +1,7 @@
 package com.caseo.web;
 
 import com.caseo.app.ApplicationContext;
-import com.caseo.domain.model.DocumentSet;
+import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +21,6 @@ public class HomeServlet extends HttpServlet {
         try {
             ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("appContext");
 
-            var docs = context.documentSetService().getAll();
             var organizations = context.organizationService().getAll();
 
             var orgMap = new java.util.HashMap<Integer, Organization>();
@@ -29,12 +28,12 @@ public class HomeServlet extends HttpServlet {
                 orgMap.put(org.organizationId(), org);
             }
 
-            var grouped = new LinkedHashMap<Organization, List<DocumentSet>>();
+            var grouped = new LinkedHashMap<Organization, List<ObjectModel>>();
 
-            for (var doc : docs) {
-                Organization org = orgMap.get(doc.orgId());
-                if (org != null) {
-                    grouped.computeIfAbsent(org, k -> new ArrayList<>()).add(doc);
+            for (var org : organizations) {
+                List<ObjectModel> objects = context.objectService().getAllByOrgId(org.organizationId());
+                if (objects != null && !objects.isEmpty()) {
+                    grouped.put(org, objects);
                 }
             }
 

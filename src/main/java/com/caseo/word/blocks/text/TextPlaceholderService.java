@@ -17,14 +17,13 @@ public class TextPlaceholderService {
         this.internalServices = internalServices;
     }
 
-    public Map<String, String> build(DocumentSet document) throws SQLException {
+    public Map<String, String> build(int orgId, int objectId) throws SQLException  {
         Map<String, String> map = new HashMap<>();
 
         // Базовые объекты для получения ID и общих данных
-        Organization org = internalServices.organizationService().getById(document.orgId());
-        //ObjectModel obj = internalServices.objectService().getByOrgId(org.organizationId());
-        ObjectModel obj = internalServices.objectService().getById(document.objectId());
-        Asf asf = internalServices.asfService().getObjectId(document.orgId());
+        Organization org = internalServices.organizationService().getById(orgId);
+        ObjectModel obj = internalServices.objectService().getById(objectId);
+        Asf asf = internalServices.asfService().getById(obj.asfId());
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
         var orgAddr = internalServices.organizationAddressService().getByOrganizationId(org.organizationId());
@@ -72,7 +71,7 @@ public class TextPlaceholderService {
         var balance = internalServices.objectOrderMinimumBalanceService().getByObjectId(obj.id());
         var objAddr = internalServices.objectAddressService().getByObjectId(obj.id());
         var policy = internalServices.objectInsurancePolicyService().getByObjectId(obj.id());
-        var substance = internalServices.objectHazardousSubstanceService().getById(obj.id());
+        var substance = internalServices.objectHazardousSubstanceService().getById(obj.hazardousSubstanceId());
         var techBlocks = internalServices.objectTechnologicalBlockService().countByObjectId(obj.id());
         var type = internalServices.objectTypeService().getObjectType(obj.id());
 

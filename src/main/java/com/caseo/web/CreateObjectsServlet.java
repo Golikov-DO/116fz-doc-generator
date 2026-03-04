@@ -22,7 +22,6 @@ public class CreateObjectsServlet extends HttpServlet {
     private ObjectTypeService objectTypeService;
     private ObjectInsurancePolicyService objectInsurancePolicyService;
     private ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService;
-    private DocumentSetService documentSetService;
     private ObjectSaveHelper objectSaveHelper;
 
     @Override
@@ -38,7 +37,6 @@ public class CreateObjectsServlet extends HttpServlet {
         objectTypeService = services.objectTypeService();
         objectInsurancePolicyService = services.objectInsurancePolicyService();
         objectOrderMinimumBalanceService = services.objectOrderMinimumBalanceService();
-        documentSetService = services.documentSetService();
 
         objectSaveHelper = new ObjectSaveHelper(
                 objectAddressService,
@@ -59,7 +57,7 @@ public class CreateObjectsServlet extends HttpServlet {
 
         try {
             int savedDocId = saveDocument(req, Integer.parseInt(orgId));
-            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId + "&docId=" + savedDocId);
+            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId);
 
         } catch (Exception e) {
             getServletContext().log("Ошибка при создании объектов", e);
@@ -69,10 +67,6 @@ public class CreateObjectsServlet extends HttpServlet {
     }
 
     private int saveDocument(HttpServletRequest req, int orgId) throws Exception {
-        DocumentSet document = new DocumentSet(0, 0, orgId);
-        DocumentSet savedDoc = documentSetService.save(document);
-        int savedDocId = savedDoc.id();
-
         String[] objectFullNames = req.getParameterValues("object_full_name[]");
         String[] objectShortNames = req.getParameterValues("object_short_name[]");
         String[] objectCityIds = req.getParameterValues("object_city_id[]");
@@ -109,7 +103,7 @@ public class CreateObjectsServlet extends HttpServlet {
                 objectSaveHelper.saveObjectDetails(req, i, savedObject.id());
             }
         }
-        return savedDocId;
+        return orgId;
     }
 
     private int parseIntOrDefault(String value, int defaultValue) {

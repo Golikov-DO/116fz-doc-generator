@@ -25,7 +25,7 @@ public class JdbcObjectImageRepository extends BaseJdbcRepository<ObjectImage> i
     @Override
     public List<ObjectImage> findByObjectId(int objectId) {
         // Сортируем сначала по группе, потом по порядку внутри группы
-        return findList("object_id = ?", "ORDER BY group_key, asfId", objectId);
+        return findList("object_id = ?", "ORDER BY group_key, id", objectId);
     }
 
     @Override

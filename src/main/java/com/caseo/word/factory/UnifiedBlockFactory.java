@@ -1,5 +1,6 @@
 package com.caseo.word.factory;
-import com.caseo.domain.model.DocumentSet;
+import com.caseo.domain.model.ObjectModel;
+import com.caseo.domain.service.ObjectService;
 import com.caseo.word.blocks.Block;
 import com.caseo.word.blocks.image.ImageBlock;
 import com.caseo.word.blocks.list.ListBlock;
@@ -25,6 +26,7 @@ public class UnifiedBlockFactory {
     private final ImageBlockFactory imageBlockFactory;
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
+    private final ObjectService objectService;
 
     // Карта стратегий создания блоков
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
@@ -35,7 +37,8 @@ public class UnifiedBlockFactory {
             ImageBlockFactory imageBlockFactory,
             ListBlockFactory listBlockFactory,
             HazardTableLayoutService hazardTableLayoutService,
-            ContactTableLayoutService contactTableLayoutService
+            ContactTableLayoutService contactTableLayoutService,
+            ObjectService objectService
     ) {
         this.tableBlockFactory = tableBlockFactory;
         this.listBlockFactory = listBlockFactory;
@@ -43,6 +46,7 @@ public class UnifiedBlockFactory {
         this.imageBlockFactory = imageBlockFactory;
         this.hazardTableLayoutService = hazardTableLayoutService;
         this.contactTableLayoutService = contactTableLayoutService;
+        this.objectService = objectService;
         initCreators();
     }
 
@@ -59,8 +63,8 @@ public class UnifiedBlockFactory {
         );
     }
 
-    public List<Block> buildBlocks(DocumentSet documentSet) throws SQLException {
-        Map<String, Object> allData = build(documentSet);
+    public List<Block> buildBlocks(int objectId) throws SQLException {
+        Map<String, Object> allData = build(objectId);
         List<Block> blocks = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : allData.entrySet()) {
@@ -116,16 +120,22 @@ public class UnifiedBlockFactory {
         return new TableBlock(key, new TableSchema(columns), tableRows);
     }
 
-    public Map<String, Object> build(DocumentSet documentSet) throws SQLException {
+    public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> result = new LinkedHashMap<>();
 
-        putAllIfPresent(result, placeholderFillStrategy.build(documentSet));
-        putAllIfPresent(result, tableBlockFactory.build(documentSet));
-        putAllIfPresent(result, listBlockFactory.build(documentSet));
-        putAllIfPresent(result, imageBlockFactory.build(documentSet));
-        List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(documentSet);
+        ObjectModel obj = objectService.getById(objectId);
+        if (obj == null) {
+            return result;
+        }
+        int orgId = obj.orgId();
+
+        putAllIfPresent(result, placeholderFillStrategy.build(orgId, objectId));
+        putAllIfPresent(result, tableBlockFactory.build(objectId));
+        putAllIfPresent(result, listBlockFactory.build(objectId));
+        putAllIfPresent(result, imageBlockFactory.build(objectId));
+        List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(objectId);
         if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
-        List<String[]> contactData = contactTableLayoutService.getContactTableData(documentSet);
+        List<String[]> contactData = contactTableLayoutService.getContactTableData(orgId, objectId);
         if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
 
         return result;

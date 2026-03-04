@@ -21,7 +21,7 @@ public class ObjectsServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String mode = req.getParameter("mode");
-        String docId = req.getParameter("docId");
+        String orgId = req.getParameter("orgId");
 
         req.setAttribute("mode", mode);
 
@@ -34,9 +34,9 @@ public class ObjectsServlet extends HttpServlet {
             List<Asf> asfList = services.asfService().getAll();
             req.setAttribute("asfList", asfList);
 
-            // Для view и edit загружаем данные документа
-            if (("view".equals(mode) || "edit".equals(mode)) && docId != null && !docId.isEmpty()) {
-                loadDocumentData(req, Integer.parseInt(docId), services);
+// Для view и edit загружаем данные организации и её объектов
+            if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
+                loadOrganizationData(req, Integer.parseInt(orgId), services);
             }
 
         } catch (Exception e) {
@@ -54,21 +54,25 @@ public class ObjectsServlet extends HttpServlet {
         }
     }
 
-    private void loadDocumentData(HttpServletRequest req, int docId, InternalServices services) {
+    private void loadOrganizationData(HttpServletRequest req, int orgId, InternalServices services) {
         try {
-            DocumentSet document = services.documentSetService().getById(docId);
-            if (document == null) return;
+            // Загружаем организацию напрямую по orgId
+            Organization org = services.organizationService().getById(orgId);
+            if (org == null) return;
 
-            Organization org = services.organizationService().getById(document.orgId());
+            // Загружаем все данные организации
             OrganizationAddress orgAddr = services.organizationAddressService()
-                    .getByOrganizationId(document.orgId());
+                    .getByOrganizationId(orgId);
             OrganizationSigner orgSigner = services.organizationSignerService()
-                    .getByOrganizationId(document.orgId());
+                    .getByOrganizationId(orgId);
             List<OrganizationContact> contacts = services.organizationContactService()
-                    .getByOrganizationId(document.orgId());
-            List<ObjectModel> objects = services.objectService()
-                    .getAllByOrgId(document.orgId());
+                    .getByOrganizationId(orgId);
 
+            // Загружаем все объекты этой организации
+            List<ObjectModel> objects = services.objectService()
+                    .getAllByOrgId(orgId);
+
+            // Собираем данные для каждого объекта
             List<ObjectAddress> objectAddresses = new ArrayList<>();
             List<List<ObjectCompositionKchs>> kchsLists = new ArrayList<>();
             List<List<ObjectTechnologicalEquipment>> equipmentLists = new ArrayList<>();
@@ -92,6 +96,7 @@ public class ObjectsServlet extends HttpServlet {
                 objectTypes.add(services.objectTypeService().getObjectType(object.id()));
             }
 
+            // Создаем агрегированный документ с теми же данными
             AggregatedDocument aggregated = new AggregatedDocument(
                     org, orgAddr, orgSigner, objectTypes, contacts,
                     objects, objectAddresses, kchsLists, equipmentLists,

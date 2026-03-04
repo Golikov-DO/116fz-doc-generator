@@ -2,7 +2,6 @@ package com.caseo;
 
 import com.caseo.app.ApplicationContext;
 import com.caseo.app.Bootstrap;
-import com.caseo.domain.model.DocumentSet;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
 import com.caseo.domain.util.DocumentPathSet;
@@ -18,27 +17,25 @@ public class Main {
 
         ApplicationContext context = Bootstrap.init();
 
-        // какой документ генерируем
-        int documentId = 2;
+        // ID организации (раньше был documentId)
+        int orgId = 2;
 
-        DocumentSet documentSet = context.documentSetService().getById(documentId);
-        Organization org = context.organizationService().getById(documentSet.orgId());
+        Organization org = context.organizationService().getById(orgId);
+        if (org == null) {
+            System.out.println("Организация не найдена");
+            return;
+        }
 
-        var objects = context.objectService().getAllByOrgId(org.organizationId());
+        var objects = context.objectService().getAllByOrgId(orgId);
 
         // ======================== TAG ============================
-        //Предпочтительный вариант очень гибкий и надёжный
         byte[] template = Files.readAllBytes(Path.of(DocumentPathSet.TAG_TEMPLATE_PATH));
         for (ObjectModel object : objects) {
-
-            DocumentSet perObject =
-                    new DocumentSet(documentSet.id(), documentSet.orgId(), object.id());
-
             WordprocessingMLPackage document =
                     context.wordGenerationService().generate(
                             FillStrategy.TAG,
                             template,
-                            perObject
+                            object.id()
                     );
 
             Path output = DocumentPathSet.buildOutputFile(org, object);

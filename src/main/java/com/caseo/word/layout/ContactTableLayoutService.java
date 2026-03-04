@@ -26,8 +26,8 @@ public class ContactTableLayoutService {
         this.organizationService = organizationService;
     }
 
-    public List<String[]> getContactTableData(DocumentSet documentSet) throws SQLException {
-        ObjectModel obj = objectService.getByOrgId(documentSet.orgId());
+    public List<String[]> getContactTableData(int orgId, int objectId) throws SQLException {
+        ObjectModel obj = objectService.getById(objectId);
         List<String[]> tableRows = new ArrayList<>();
         int counter = 1;
 
@@ -57,11 +57,11 @@ public class ContactTableLayoutService {
         }
 
         // --- Секция 3: Разделитель (БЕЗ СЧЕТЧИКА) ---
-        var org = organizationService.getById(documentSet.orgId());
+        var org = organizationService.getById(orgId);
         tableRows.add(new String[]{"H_MERGE_FULL", org.organizationShortName(), "", "", ""});
 
         // --- Секция 4: Organization Contact (Начнется с 9) ---
-        for (OrganizationContact oc : organizationContactService.getByOrganizationId(documentSet.orgId())) {
+        for (OrganizationContact oc : organizationContactService.getByOrganizationId(orgId)) {
             tableRows.add(new String[]{String.valueOf(counter++), oc.fullName(), oc.position(), oc.phones(), oc.address()});
         }
 
