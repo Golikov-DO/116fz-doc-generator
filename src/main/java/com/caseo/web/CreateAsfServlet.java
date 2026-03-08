@@ -20,41 +20,30 @@ import java.io.IOException;
 )
 public class CreateAsfServlet extends HttpServlet {
 
-    private AsfService asfService;
-    private AsfSaveHelper asfSaveHelper;
+    private ParentService<Asf> asfService;
+    private AsfSaveHelper asfSaveHelper;  // helper
 
     @Override
     public void init() {
         ApplicationContext context = (ApplicationContext) getServletContext()
                 .getAttribute("appContext");
         InternalServices services = context.internalServices();
-
-        asfService = services.asfService();
-
-        asfSaveHelper = new AsfSaveHelper(
-                services.asfCertificateService(),
-                services.asfCompositionDeploymentFundsService(),
-                services.asfPersonnelService(),
-                services.asfSpecialistsService(),
-                services.asfSignerService(),
-                services.asfWorkTypeService(),
-                services.asfDocumentImageService()
-        );
+        asfService = services.getParentService(Asf.class);
+        asfSaveHelper = new AsfSaveHelper();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String mode = req.getParameter("mode");
         String returnMode = req.getParameter("returnMode");
-        String returnDocId = req.getParameter("returnDocId");
+        String returnOrgId = req.getParameter("returnOrgId");
 
         try {
             int savedAsfId = saveAsf(req);
 
-            if (returnMode != null && returnDocId != null) {
-                resp.sendRedirect("portal?mode=" + returnMode + "&docId=" + returnDocId + "&asfId=" + savedAsfId);
+            if (returnMode != null && returnOrgId != null) {
+                resp.sendRedirect("portal?mode=" + returnMode + "&orgId=" + returnOrgId + "&asfId=" + savedAsfId);
             } else {
                 resp.sendRedirect("asf?mode=edit&asfId=" + savedAsfId);
             }
@@ -66,31 +55,22 @@ public class CreateAsfServlet extends HttpServlet {
         }
     }
 
-    private int saveAsf(HttpServletRequest req) throws Exception {
-        String hours = req.getParameter("arrival_hours");
-        String minutes = req.getParameter("arrival_minutes");
-        String arrivalTime = null;
-        if (hours != null && !hours.isEmpty() && minutes != null && !minutes.isEmpty()) {
-            arrivalTime = String.format("%s:%s:00", hours, minutes);
-        } else if (hours != null && !hours.isEmpty()) {
-            arrivalTime = String.format("%s:00:00", hours);
-        }
+    private int saveAsf(HttpServletRequest req) {
+        // 1. Создаем ASF через helper
+        Asf asf = asfSaveHelper.createAsf(req);
 
-        Asf asf = new Asf(
-                0,
-                req.getParameter("full_name"),
-                req.getParameter("full_name_gen"),
-                req.getParameter("short_name"),
-                req.getParameter("email"),
-                req.getParameter("status_short"),
-                arrivalTime
-        );
+        // 2. Добавляем все связанные сущности через helper
+        asfSaveHelper.addCertificate(req, asf);
+        asfSaveHelper.addPersonnel(req, asf);
+        asfSaveHelper.addSpecialists(req, asf);
+        asfSaveHelper.addDeployment(req, asf);
+        asfSaveHelper.addSigners(req, asf);
+        asfSaveHelper.addWorkTypes(req, asf);
+        asfSaveHelper.addImages(req, asf);
 
-        Asf savedAsf = asfService.save(asf);
-        int savedAsfId = savedAsf.id();
+        // 3. ОДИН save!
+        asfService.save(asf);
 
-        asfSaveHelper.saveRelatedEntities(req, savedAsfId);
-
-        return savedAsfId;
+        return asf.getId();
     }
 }

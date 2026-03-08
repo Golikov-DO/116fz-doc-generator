@@ -1,12 +1,79 @@
 package com.caseo.domain.model;
 
-public record Asf(
-        int id,
-        String fullName,
-        String fullNameGen,
-        String shortName,
-        String email,
-        String statusShort,
-        String arrivalTime
-) {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "asf")
+public class Asf {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String fullName;
+    private String fullNameGen;
+    private String shortName;
+    private String email;
+    private String statusShort;
+    @Column(columnDefinition = "time")
+    private String arrivalTime;
+
+    public Asf() {}
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getFullNameGen() {
+        return fullNameGen;
+    }
+
+    public void setFullNameGen(String fullNameGen) {
+        this.fullNameGen = fullNameGen;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getStatusShort() {
+        return statusShort;
+    }
+
+    public void setStatusShort(String statusShort) {
+        this.statusShort = statusShort;
+    }
+
+    @Column(columnDefinition = "time")
+    public String getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(String arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
 }

@@ -28,7 +28,8 @@
             <div class="organization-form-field">
                 <label>
                     <textarea name="organization_full_name"
-                              rows="2" <%= disabled %>><%= hasData ? org.organizationName() : "" %></textarea>
+                              rows="2"
+                            <%= disabled %>><%= hasData ? org.getOrganizationName() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -37,7 +38,7 @@
             <div class="organization-form-field">
                 <label>
                     <input type="text" name="organization_short_name"
-                           value="<%= hasData ? org.organizationShortName() : "" %>" <%= disabled %>>
+                           value="<%= hasData ? org.getOrganizationShortName() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -46,7 +47,7 @@
             <div class="organization-form-field">
                 <label>
                     <textarea name="organization_type_activity"
-                              rows="2" <%= disabled %>><%= hasData ? org.organizationTypeActivity() : "" %></textarea>
+                              rows="2" <%= disabled %>><%= hasData ? org.getOrganizationTypeActivity() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -55,7 +56,7 @@
             <div class="organization-form-field">
                 <label class="checkbox-label">
                     <input type="checkbox" name="opo_single_territory"
-                           value="1" <%= hasData ? "checked" : "" %> <%= disabled %>>
+                           value="1" <%= hasData && org.isOneTerritory() ? "checked" : "" %> <%= disabled %>>
                     Да
                 </label>
             </div>
@@ -74,7 +75,7 @@
             <div class="organization-form-field">
                 <label>
                     <input type="text" name="signer_position"
-                           value="<%= hasData && signer.position() != null ? signer.position() : "" %>" <%= disabled %>>
+                           value="<%= hasData && signer.getPosition() != null ? signer.getPosition() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -82,7 +83,7 @@
             <div class="organization-form-label">ФИО:</div>
             <div class="organization-form-field">
                 <label>
-                    <input type="text" name="signer_name" value="<%= hasData && signer.name() != null ? signer.name() : "" %>" <%= disabled %>>
+                    <input type="text" name="signer_name" value="<%= hasData && signer.getName() != null ? signer.getName() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -99,7 +100,7 @@
             <div>
                 <label style="font-size: 11px;">Индекс</label>
                 <label>
-                    <input type="text" name="org_index" value="<%= hasData && addr.index() != null ? addr.index() : "" %>"
+                    <input type="text" name="org_index" value="<%= hasData && addr.addressIndex() != null ? addr.addressIndex() : "" %>"
                     <%= disabled %>>
                 </label>
             </div>
@@ -160,27 +161,27 @@
                 <td>
                     <label>
                         <input type="text" name="org_contact_name[]"
-                               value="<%= contact != null && contact.fullName() != null ? contact.fullName() : "" %>"
+                               value="<%= contact != null && contact.getFullName() != null ? contact.getFullName() : "" %>"
                                style="width:100%;" <%= disabled %>>
                     </label>
                 </td>
                 <td>
                     <label>
                         <input type="text" name="org_contact_position[]"
-                               value="<%= contact != null && contact.position() != null ? contact.position() : ""%>"
+                               value="<%= contact != null && contact.getPosition() != null ? contact.getPosition() : ""%>"
                                style="width:100%;" <%= disabled %>>
                     </label>
                 </td>
                 <td>
                     <label>
                         <input type="text" name="org_contact_phone[]"
-                               value="<%= contact != null && contact.phones() != null ? contact.phones() : "" %>"
+                               value="<%= contact != null && contact.getPhones() != null ? contact.getPhones() : "" %>"
                                style="width:100%;" <%= disabled %>>
                     </label>
                 </td>
                 <td><label>
                     <input type="text" name="org_contact_address[]"
-                           value="<%= contact != null && contact.address() != null ? contact.address() : "" %>"
+                           value="<%= contact != null && contact.getAddress() != null ? contact.getAddress() : "" %>"
                            style="width:100%;" <%= disabled %>>
                 </label>
                 </td>

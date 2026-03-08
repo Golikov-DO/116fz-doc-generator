@@ -8,12 +8,12 @@ public class AsfCertificateTextBuilder {
 
         if (cert == null) return "";
 
-        return "серия № " + cert.certSeries() +
-                ", рег. номер " + cert.certNumber() +
-                " от " + DocumentOutputFormatter.dotDate(cert.issueDate()) +
+        return "серия № " + cert.getCertSeries() +
+                ", рег. номер " + cert.getCertNumber() +
+                " от " + DocumentOutputFormatter.dotDate(cert.getIssueDate()) +
                 " г., выданное на основании протокола заседания " +
-                cert.issuedBy() + " " + cert.issueBasis() +
-                ", сроком действия до " + DocumentOutputFormatter.russDate(cert.validUntil()) +
+                cert.getIssuedBy() + " " + cert.getIssueBasis() +
+                ", сроком действия до " + DocumentOutputFormatter.russDate(cert.getValidUntil()) +
                 "г";
     }
 }

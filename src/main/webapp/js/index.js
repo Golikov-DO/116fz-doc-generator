@@ -1,32 +1,31 @@
 
 function openDocument(mode) {
-    const select = document.querySelector('select[name="orgId"]');  // ИЗМЕНЕНО: name="orgId"
+    const select = document.querySelector('select[name="orgId"]');
     if (!select || select.selectedIndex < 0) {
         alert('Пожалуйста, выберите организацию');
         return;
     }
 
     const selected = select.options[select.selectedIndex];
-    const orgId = select.value;  // ИЗМЕНЕНО: теперь orgId в value
-    const objId = selected.getAttribute('data-obj-id');  // для возможного использования
+    const orgId = select.value;
+    const objId = selected.getAttribute('data-obj-id');
 
     if (!orgId) {
         alert('Пожалуйста, выберите организацию');
         return;
     }
 
-    // ИЗМЕНЕНО: убрали docId, оставили только orgId
     window.location.href = 'portal?mode=' + mode + '&orgId=' + orgId;
 }
 
 function developPlan() {
-    const select = document.querySelector('select[name="orgId"]');  // ИЗМЕНЕНО: name="orgId"
+    const select = document.querySelector('select[name="orgId"]');
     if (!select || select.selectedIndex < 0) {
         alert('Пожалуйста, выберите организацию');
         return;
     }
 
-    const orgId = select.value;  // ИЗМЕНЕНО: берем orgId
+    const orgId = select.value;
 
     if (!orgId) {
         alert('Пожалуйста, выберите организацию');

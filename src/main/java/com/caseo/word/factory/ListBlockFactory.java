@@ -1,9 +1,6 @@
 package com.caseo.word.factory;
 
-import com.caseo.domain.model.NumberedItem;
-import com.caseo.domain.model.ObjectModel;
-import com.caseo.domain.model.ObjectStructure;
-import com.caseo.domain.model.ObjectTechnologicalBlock;
+import com.caseo.domain.model.*;
 import com.caseo.domain.service.*;
 import com.caseo.domain.util.ObjectTechnicalDescriptionFormatter;
 
@@ -14,18 +11,18 @@ import java.util.Map;
 
 public class ListBlockFactory {
 
-    private final ObjectService objectService;
-    private final ObjectStructureService objectStructureService;
-    private final ObjectTechnologicalBlockService objectTechnologicalBlockService;
-    private final ObjectAddressService objectAddressService;
-    private final ReferenceCityService referenceCityService;
+    private final ChildService<ObjectModel> objectService;
+    private final ChildService<ObjectStructure> objectStructureService;
+    private final ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService;
+    private final ChildService<ObjectAddress> objectAddressService;
+    private final ParentService<ReferenceCity> referenceCityService;
 
     public ListBlockFactory(
-            ObjectService objectService,
-            ObjectStructureService objectStructureService,
-            ObjectTechnologicalBlockService objectTechnologicalBlockService,
-            ObjectAddressService objectAddressService,
-            ReferenceCityService referenceCityService
+            ChildService<ObjectModel> objectService,
+            ChildService<ObjectStructure> objectStructureService,
+            ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService,
+            ChildService<ObjectAddress> objectAddressService,
+            ParentService<ReferenceCity> referenceCityService
     ) {
         this.objectService = objectService;
         this.objectStructureService = objectStructureService;
@@ -38,11 +35,11 @@ public class ListBlockFactory {
 
         Map<String,Object> data = new HashMap<>();
 
-        ObjectModel objectModel = objectService.getById(objectId);
+        ObjectModel object = objectService.getOneByParentId(objectId);
 
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
-        var objAddr = objectAddressService.getByObjectId(objectModel.id());
-        var city = referenceCityService.getById(objAddr.objectId());
+        var objAddr = objectAddressService.getOneByParentId(object.getId());
+        var city = referenceCityService.getOneById(objAddr.getObject().getId());
         String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(city);
 
         if (descriptionParagraphs.length > 0) {
@@ -51,14 +48,14 @@ public class ListBlockFactory {
         // ============================================================
 
         // ===== OBJECT_STRUCTURE_LIST =====
-        List<ObjectStructure> structureList = objectStructureService.getByObjectId(objectModel.id());
+        List<ObjectStructure> structureList = objectStructureService.getManyByParentId(object.getId());
         String[] structureItems = extractNames(structureList);
         if (structureItems.length > 0) {
             data.put("OBJ_STRUCTURE_LIST1", structureItems);
         }
 
         // ===== TECHNO_BLOCK_LIST =====
-        List<ObjectTechnologicalBlock> technoList = objectTechnologicalBlockService.getByObject(objectModel.id());
+        List<ObjectTechnologicalBlock> technoList = objectTechnologicalBlockService.getManyByParentId(object.getId());
         String[] technoItems = extractNames(technoList);
         if (technoItems.length > 0) {
             data.put("OBJ_TECHNO_BLOCK_LIST№", technoItems);

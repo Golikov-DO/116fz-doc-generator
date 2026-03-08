@@ -10,110 +10,193 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.caseo.web.util.RequestUtils.*;
 
 @WebServlet("/createObjects")
 public class CreateObjectsServlet extends HttpServlet {
 
-    private ObjectService objectService;
-    private ObjectAddressService objectAddressService;
-    private ObjectCompositionKchsService objectCompositionKchsService;
-    private ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService;
-    private ObjectTypeService objectTypeService;
-    private ObjectInsurancePolicyService objectInsurancePolicyService;
-    private ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService;
-    private ObjectSaveHelper objectSaveHelper;
+    private ObjectSaveHelper saveHelper;
+
+    // Сервисы для объектов
+    private ChildService<ObjectModel> objectService;
+
+    // Родители
+    private ParentService<Organization> orgService;
+    private ParentService<ReferenceCity> cityService;
+    private ParentService<Asf> asfService;
+    private ParentService<ObjectHazardousSubstance> substanceService;
+
+    // Дети
+    private ChildService<ObjectAddress> addressService;
+    private ChildService<ObjectType> typeService;
+    private ChildService<ObjectInsurancePolicy> policyService;
+    private ChildService<ObjectOrderMinimumBalance> balanceService;
+    private ChildService<ObjectCompositionKchs> kchsService;
+    private ChildService<ObjectTechnologicalEquipment> equipmentService;
 
     @Override
     public void init() {
         ApplicationContext context = (ApplicationContext) getServletContext()
                 .getAttribute("appContext");
         InternalServices services = context.internalServices();
+        saveHelper = new ObjectSaveHelper();
 
-        objectService = services.objectService();
-        objectAddressService = services.objectAddressService();
-        objectCompositionKchsService = services.objectCompositionKchsService();
-        objectTechnologicalEquipmentService = services.objectTechnologicalEquipmentService();
-        objectTypeService = services.objectTypeService();
-        objectInsurancePolicyService = services.objectInsurancePolicyService();
-        objectOrderMinimumBalanceService = services.objectOrderMinimumBalanceService();
+        // Инициализируем все сервисы
+        orgService = services.getParentService(Organization.class);
+        cityService = services.getParentService(ReferenceCity.class);
+        asfService = services.getParentService(Asf.class);
+        substanceService = services.getParentService(ObjectHazardousSubstance.class);
 
-        objectSaveHelper = new ObjectSaveHelper(
-                objectAddressService,
-                objectCompositionKchsService,
-                objectTechnologicalEquipmentService,
-                objectTypeService,
-                objectInsurancePolicyService,
-                objectOrderMinimumBalanceService
-        );
+        objectService = services.getChildService(ObjectModel.class);
+
+        addressService = services.getChildService(ObjectAddress.class);
+        typeService = services.getChildService(ObjectType.class);
+        policyService = services.getChildService(ObjectInsurancePolicy.class);
+        balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
+        kchsService = services.getChildService(ObjectCompositionKchs.class);
+        equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        String mode = req.getParameter("mode");
-        String orgId = req.getParameter("orgId");
+            throws ServletException {
 
         try {
-            int savedDocId = saveDocument(req, Integer.parseInt(orgId));
-            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId);
+            req.getParameterMap().forEach((k,v) ->
+                    System.out.println(k + " = " + java.util.Arrays.toString(v))
+            );
+            String orgIdParam = req.getParameter("orgId");
+            String mode = req.getParameter("mode");
 
-        } catch (Exception e) {
-            getServletContext().log("Ошибка при создании объектов", e);
-            req.setAttribute("error", "Ошибка: " + e.getMessage());
-            req.getRequestDispatcher("/WEB-INF/pages/portal.jsp").forward(req, resp);
-        }
-    }
+            Integer orgId = orgIdParam != null && !orgIdParam.isEmpty() ? Integer.parseInt(orgIdParam) : null;
 
-    private int saveDocument(HttpServletRequest req, int orgId) throws Exception {
-        String[] objectFullNames = req.getParameterValues("object_full_name[]");
-        String[] objectShortNames = req.getParameterValues("object_short_name[]");
-        String[] objectCityIds = req.getParameterValues("object_city_id[]");
-        String[] hazardClasses = req.getParameterValues("hazard_class[]");
-        String[] objectAsfIds = req.getParameterValues("object_asf_id[]");
-        String[] objectSignerIds = req.getParameterValues("object_signer_id[]");
-        String[] nearestFireStations = req.getParameterValues("nearest_fire_station[]");
-        String[] departmentGochs = req.getParameterValues("department_gochs[]");
-        String[] emergencyCommissions = req.getParameterValues("emergency_commission[]");
-        String[] hazardousSubstanceIds = req.getParameterValues("hazardous_substance_id[]");
-        String[] amountOfHazardousSubstances = req.getParameterValues("amount_of_hazardous_substance[]");
+            if (orgId == null) throw new ServletException("orgId is required");
 
-        if (objectFullNames != null) {
+            Organization organization = orgService.getOneById(orgId);
+            List<ObjectModel> objects;
+            List<ObjectModel> existingObjects = objectService.getManyByParentId(orgId);
+
+            objects = existingObjects != null
+                    ? new ArrayList<>(existingObjects)
+                    : new ArrayList<>();
+
+            // Получаем данные из формы
+            String[] objectFullNames = req.getParameterValues("object_full_name[]");
+            if (objectFullNames == null) return;
+
+            // Обрабатываем каждый объект из формы
             for (int i = 0; i < objectFullNames.length; i++) {
                 if (objectFullNames[i] == null || objectFullNames[i].trim().isEmpty()) continue;
 
-                ObjectModel object = new ObjectModel(
-                        0,                    // id
-                        orgId,                // orgId
-                        parseIntOrDefault(objectAsfIds[i], 0),           // asfId
-                        parseIntOrDefault(objectSignerIds[i], 0),        // asf_signer_id
-                        parseIntOrDefault(objectCityIds[i], 0),          // object_city_id
-                        parseIntOrDefault(hazardousSubstanceIds[i], 0),
-                        parseIntOrDefault(hazardClasses[i], 0),          // hazardClass
-                        objectFullNames[i],                               // full_name
-                        amountOfHazardousSubstances[i],                   // amount_of_hazardous_substance
-                        nearestFireStations[i],                           // nearest_fire_station
-                        objectShortNames[i],                              // short_name
-                        departmentGochs[i],                               // department_gochs_city
-                        Boolean.parseBoolean(emergencyCommissions[i])
-                );
+                ObjectModel object;
 
-                ObjectModel savedObject = objectService.save(object);
-                objectSaveHelper.saveObjectDetails(req, i, savedObject.id());
+                // Если объект уже существует - используем его
+                if (i < objects.size()) object = objects.get(i);
+                else object = new ObjectModel();
+
+                // Заполняем основную информацию
+                object.setOrganization(organization);
+                saveHelper.mapObject(req, i, object);
+
+                // Справочники
+                Integer cityId = paramInt(req, "presence_area_id[]", i);
+                if (cityId != null) object.setCity(cityService.getOneById(cityId));
+
+                Integer asfId = paramInt(req,"object_asf_id[]", i);
+                if (asfId != null) object.setAsf(asfService.getOneById(asfId));
+
+                Integer substanceId = paramInt(req,"hazardous_substance_id[]", i);
+                if (substanceId != null) object.setHazardousSubstance(substanceService.getOneById(substanceId));
+
+                // Сохраняем объект (получает ID)
+                objectService.save(object);
+
+                // Адрес
+                ObjectAddress address = addressService.getOneByParentId(object.getId());
+                if (address == null) {
+                    address = new ObjectAddress();
+                }
+                saveHelper.mapAddress(req, i, address);
+                address.setObject(object);
+                addressService.save(address);
+
+                // КЧС
+                List<ObjectCompositionKchs> kchsList = saveHelper.mapKchsList(req, i);
+
+                if (object.getId() != null) {
+                    List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(object.getId());
+                    for (ObjectCompositionKchs oldItem : oldDbList) {
+                        boolean stillExists = kchsList.stream()
+                                .anyMatch(n -> n.getId() != null && n.getId().equals(oldItem.getId()));
+
+                        if (!stillExists) {
+                            kchsService.deleteById(oldItem.getId());
+                        }
+                    }
+                }
+
+                for (ObjectCompositionKchs kchs : kchsList) {
+                    kchs.setObject(object);
+                    kchsService.save(kchs);
+                }
+
+                // Оборудование
+                List<ObjectTechnologicalEquipment> equipmentList = saveHelper.mapEquipmentList(req, i);
+
+                if (object.getId() != null) {
+                    List<ObjectTechnologicalEquipment> oldDbList = equipmentService.getManyByParentId(object.getId());
+                    for (ObjectTechnologicalEquipment oldItem : oldDbList) {
+                        boolean stillExists = equipmentList.stream()
+                                .anyMatch(n -> n.getId() != null && n.getId().equals(oldItem.getId()));
+
+                        if (!stillExists) {
+                            equipmentService.deleteById(oldItem.getId());
+                        }
+                    }
+                }
+
+                for (ObjectTechnologicalEquipment equipment : equipmentList) {
+                    equipment.setObject(object);
+                    equipmentService.save(equipment);
+                }
+
+                // Тип объекта
+                ObjectType objectType = typeService.getOneByParentId(object.getId());
+                if (objectType == null) {
+                    objectType = new ObjectType();
+                }
+                saveHelper.mapObjectType(req, i, objectType);
+                objectType.setObject(object);
+                typeService.save(objectType);
+
+                // Страховка
+                ObjectInsurancePolicy policy = policyService.getOneByParentId(object.getId());
+                if (policy == null) {
+                    policy = new ObjectInsurancePolicy();
+                }
+                saveHelper.mapInsurancePolicy(req, i, policy);
+                policy.setObject(object);
+                policyService.save(policy);
+
+                // Приказ
+                ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(object.getId());
+                if (balance == null) {
+                    balance = new ObjectOrderMinimumBalance();
+                }
+                saveHelper.mapOrderMinimumBalance(req, i, balance);
+                balance.setObject(object);
+                balanceService.save(balance);
+
             }
-        }
-        return orgId;
-    }
 
-    private int parseIntOrDefault(String value, int defaultValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            return defaultValue;
+            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId + "&tab=objects");
+
+        } catch (Exception e) {
+            getServletContext().log("Ошибка при сохранении объектов", e);
+            throw new ServletException("Ошибка при сохранении объектов", e);
         }
     }
 }

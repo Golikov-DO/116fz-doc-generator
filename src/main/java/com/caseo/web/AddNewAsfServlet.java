@@ -34,8 +34,8 @@ public class AddNewAsfServlet extends HttpServlet {
             if (asfIdParam != null && !asfIdParam.isEmpty()) {
                 int asfId = Integer.parseInt(asfIdParam);
 
-                Asf asf = services.asfService().getById(asfId);
-                List<AsfSigner> signers = services.asfSignerService().getAllByAsfId(asfId);
+                Asf asf = services.getParentService(Asf.class).getOneById(asfId);
+                List<AsfSigner> signers = services.getChildService(AsfSigner.class).getManyByParentId(asfId);
 
                 req.setAttribute("editAsf", asf);
                 req.setAttribute("asfSigners", signers);

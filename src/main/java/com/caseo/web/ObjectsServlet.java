@@ -3,18 +3,29 @@ package com.caseo.web;
 import com.caseo.app.ApplicationContext;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.*;
-import com.caseo.web.model.AggregatedDocument;
+import com.caseo.domain.service.*;
+import com.caseo.web.helper.DataLoader;
+import com.caseo.web.helper.DataLoader.ObjectsData;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet("/objects")
 public class ObjectsServlet extends HttpServlet {
+
+    private InternalServices services;
+    private DataLoader dataLoader;
+
+    @Override
+    public void init() {
+        ApplicationContext context = (ApplicationContext) getServletContext()
+                .getAttribute("appContext");
+        services = context.internalServices();
+        dataLoader = new DataLoader(services);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -26,21 +37,37 @@ public class ObjectsServlet extends HttpServlet {
         req.setAttribute("mode", mode);
 
         try {
-            ApplicationContext context = (ApplicationContext) getServletContext()
-                    .getAttribute("appContext");
-            InternalServices services = context.internalServices();
+            // Справочники для селектов
+            ParentService<Asf> asfService = services.getParentService(Asf.class);
+            req.setAttribute("asfList", asfService.getMany());
 
-            // Всегда загружаем список АСФ для селектов
-            List<Asf> asfList = services.asfService().getAll();
-            req.setAttribute("asfList", asfList);
+            ParentService<ReferenceCity> cityService = services.getParentService(ReferenceCity.class);
+            req.setAttribute("cities", cityService.getMany());
 
-// Для view и edit загружаем данные организации и её объектов
+            ParentService<ObjectHazardousSubstance> substanceService = services.getParentService(ObjectHazardousSubstance.class);
+            req.setAttribute("substances", substanceService.getMany());
+
+            // Загружаем объекты
             if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
-                loadOrganizationData(req, Integer.parseInt(orgId), services);
+                int id = Integer.parseInt(orgId);
+
+                // Одна строка вместо 40!
+                ObjectsData data = dataLoader.loadObjects(id);
+
+                req.setAttribute("objects", data.objects());
+                req.setAttribute("objectAddresses", data.addresses());
+                req.setAttribute("kchsLists", data.kchsLists());
+                req.setAttribute("equipmentLists", data.equipmentLists());
+                req.setAttribute("structureLists", data.structureLists());
+                req.setAttribute("fireLists", data.fireLists());
+                req.setAttribute("authoritiesLists", data.authoritiesLists());
+                req.setAttribute("policyList", data.policies());
+                req.setAttribute("balanceList", data.balances());
+                req.setAttribute("objectTypes", data.types());
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            getServletContext().log("Ошибка в ObjectsServlet", e);
         }
 
         String requestedWith = req.getHeader("X-Requested-With");
@@ -51,63 +78,6 @@ public class ObjectsServlet extends HttpServlet {
         } else {
             req.getRequestDispatcher("/WEB-INF/pages/objects-page.jsp")
                     .forward(req, resp);
-        }
-    }
-
-    private void loadOrganizationData(HttpServletRequest req, int orgId, InternalServices services) {
-        try {
-            // Загружаем организацию напрямую по orgId
-            Organization org = services.organizationService().getById(orgId);
-            if (org == null) return;
-
-            // Загружаем все данные организации
-            OrganizationAddress orgAddr = services.organizationAddressService()
-                    .getByOrganizationId(orgId);
-            OrganizationSigner orgSigner = services.organizationSignerService()
-                    .getByOrganizationId(orgId);
-            List<OrganizationContact> contacts = services.organizationContactService()
-                    .getByOrganizationId(orgId);
-
-            // Загружаем все объекты этой организации
-            List<ObjectModel> objects = services.objectService()
-                    .getAllByOrgId(orgId);
-
-            // Собираем данные для каждого объекта
-            List<ObjectAddress> objectAddresses = new ArrayList<>();
-            List<List<ObjectCompositionKchs>> kchsLists = new ArrayList<>();
-            List<List<ObjectTechnologicalEquipment>> equipmentLists = new ArrayList<>();
-            List<List<ObjectStructure>> structureLists = new ArrayList<>();
-            List<List<ObjectFireEquipment>> fireLists = new ArrayList<>();
-            List<List<ObjectRegionalAuthorities>> authoritiesLists = new ArrayList<>();
-            List<ObjectInsurancePolicy> policyList = new ArrayList<>();
-            List<ObjectOrderMinimumBalance> balanceList = new ArrayList<>();
-            List<ObjectType> objectTypes = new ArrayList<>();
-
-            for (ObjectModel object : objects) {
-                objectAddresses.add(services.objectAddressService().getByObjectId(object.id()));
-                kchsLists.add(services.objectCompositionKchsService().getByObjectId(object.id()));
-                equipmentLists.add(services.objectTechnologicalEquipmentService().getByObjectId(object.id()));
-                structureLists.add(services.objectStructureService().getByObjectId(object.id()));
-                fireLists.add(services.objectFireEquipmentService().getByObjectId(object.id()));
-                authoritiesLists.add(services.objectRegionAuthoritiesService().getByObjectId(object.id()));
-
-                policyList.add(services.objectInsurancePolicyService().getByObjectId(object.id()));
-                balanceList.add(services.objectOrderMinimumBalanceService().getByObjectId(object.id()));
-                objectTypes.add(services.objectTypeService().getObjectType(object.id()));
-            }
-
-            // Создаем агрегированный документ с теми же данными
-            AggregatedDocument aggregated = new AggregatedDocument(
-                    org, orgAddr, orgSigner, objectTypes, contacts,
-                    objects, objectAddresses, kchsLists, equipmentLists,
-                    structureLists, fireLists, authoritiesLists,
-                    policyList, balanceList
-            );
-
-            req.setAttribute("data", aggregated);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

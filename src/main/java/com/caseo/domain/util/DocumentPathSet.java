@@ -18,10 +18,10 @@ public class DocumentPathSet {
 
     // ===== OUTPUT FILE =====
     public static Path buildOutputFile(Organization org, ObjectModel object) throws IOException {
-        Path dirPath = Path.of(OUTPUT_DIR, org.organizationShortName());
+        Path dirPath = Path.of(OUTPUT_DIR, org.getOrganizationShortName());
         Files.createDirectories(dirPath);
 
-        String name = object.objectShortName();
+        String name = object.getObjectShortName();
         Path filePath = dirPath.resolve(name + " ПМЛЛПА.docx");
 
         int count = 2;

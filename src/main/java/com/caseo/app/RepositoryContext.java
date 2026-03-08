@@ -2,39 +2,19 @@ package com.caseo.app;
 
 import com.caseo.domain.repository.*;
 
-record RepositoryContext(
-        ObjectAccidentScenariosRepository objectAccidentScenariosRepository,
-        AsfCertificateRepository asfCertificateRepository,
-        AsfCompositionDeploymentFundsRepository asfCompositionDeploymentFundsRepository,
-        AsfDocumentImageRepository asfDocumentImageRepository,
-        AsfPersonnelRepository asfPersonnelRepository,
-        AsfRepository asfRepository,
-        AsfSignerRepository asfSignerRepository,
-        AsfSpecialistsRepository asfSpecialistsRepository,
-        AsfWorkTypeRepository asfWorkTypeRepository,
-        ObjectCompositionKchsRepository objectCompositionKchsRepository,
-        ReferenceEmergencyServicesRepository referenceEmergencyServicesRepository,
-        ObjectFireEquipmentRepository objectFireEquipmentRepository,
-        ObjectHazardousParamRepository objectHazardousParamRepository,
-        ObjectHazardousParamValueRepository objectHazardousParamValueRepository,
-        ObjectHazardousSubstanceRepository objectHazardousSubstanceRepository,
-        ObjectMainScenariosRepository objectMainScenariosRepository,
-        ObjectRepository objectRepository,
-        ObjectStructureRepository objectStructureRepository,
-        ReferenceCityRepository referenceCityRepository,
-        ObjectAddressRepository objectAddressRepository,
-        ReferenceTableTitleRepository referenceTableTitleRepository,
-        ObjectTypeRepository objectTypeRepository,
-        ObjectImageRepository objectImageRepository,
-        ObjectInsurancePolicyRepository objectInsurancePolicyRepository,
-        ObjectOrderMinimumBalanceRepository objectOrderMinimumBalanceRepository,
-        OrganizationAddressRepository organizationAddressRepository,
-        OrganizationContactRepository organizationContactRepository,
-        OrganizationRepository organizationRepository,
-        OrganizationSignerRepository organizationSignerRepository,
-        ObjectPersonsResponsibleRepository objectPersonsResponsibleRepository,
-        ObjectRegionAuthoritiesRepository objectRegionAuthoritiesRepository,
-        ObjectTechnologicalEquipmentRepository objectTechnologicalEquipmentRepository,
-        ObjectTechnologicalBlockRepository objectTechnologicalBlockRepository
+import java.util.Map;
+
+public record RepositoryContext(
+        Map<Class<?>, ParentRepository<?>> parentRepos,
+        Map<Class<?>, ChildRepository<?>> childRepos
 ) {
+    @SuppressWarnings("unchecked")
+    public <T> ParentRepository<T> getParent(Class<T> entityClass) {
+        return (ParentRepository<T>) parentRepos.get(entityClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ChildRepository<T> getChild(Class<T> entityClass) {
+        return (ChildRepository<T>) childRepos.get(entityClass);
+    }
 }

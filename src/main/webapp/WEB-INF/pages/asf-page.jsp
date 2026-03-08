@@ -40,7 +40,6 @@
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="asfId" value="<%= asfId != null ? asfId : "" %>">
         <input type="hidden" name="returnMode" value="<%= mode %>">
-        <input type="hidden" name="returnDocId" value="">
 
         <jsp:include page="/WEB-INF/fragments/asf/asf.jsp" />
     </form>

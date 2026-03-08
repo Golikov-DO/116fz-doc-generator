@@ -8,13 +8,13 @@ public class AsfSpecialistsTextBuilder {
 
         if (specialists == null) return "данных по специалистам нет";
 
-        return "всего " + specialists.totalCount() +
-                "; из них: " + specialists.asrTp() +
-                " для АСР ТП; " + specialists.asrLrnTer() +
-                " для АСР ЛРН(тер.); " + specialists.gzsr() +
-                " для ГзСР; " + specialists.psr() +
-                " для ПСР; " + DocumentOutputFormatter.format(specialists.driver() +  " Водитель") +
-                "; " + specialists.asrLrnSea() +
+        return "всего " + specialists.getTotalCount() +
+                "; из них: " + specialists.getAsrTp() +
+                " для АСР ТП; " + specialists.getAsrLrnTer() +
+                " для АСР ЛРН(тер.); " + specialists.getGzsr() +
+                " для ГзСР; " + specialists.getPsr() +
+                " для ПСР; " + DocumentOutputFormatter.format(specialists.getDriver() +  " Водитель") +
+                "; " + specialists.getAsrLrnSea() +
                 " для АСР ЛРН(море).";
     }
 }

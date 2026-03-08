@@ -1,13 +1,8 @@
 package com.caseo.app;
 
-import com.caseo.domain.repository.*;
-import com.caseo.domain.service.*;
+import com.caseo.domain.service.WordGenerationService;
 
 public record ApplicationContext(
-        AsfSignerRepository asfSignerRepository,
         WordGenerationService wordGenerationService,
-        OrganizationService organizationService,
-        ObjectService objectService,
         InternalServices internalServices
-) {
-}
+) {}

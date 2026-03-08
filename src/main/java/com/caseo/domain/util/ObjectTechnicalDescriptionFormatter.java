@@ -12,13 +12,13 @@ public class ObjectTechnicalDescriptionFormatter {
         List<String> paragraphs = new ArrayList<>();
 
         // Если поле пустое, addParagraph не сработает, и в массив ничего не попадет
-        addParagraph(paragraphs, "Район расположения объекта", city.cityName(), city.adminStatus());
-        addParagraph(paragraphs, "Рельеф местности", city.geoRelief());
-        addParagraph(paragraphs, "Геологическое строение участка", city.geoGeology());
-        addParagraph(paragraphs, "Климатические условия", city.climateDesc());
-        addParagraph(paragraphs, "Гидрографическая сеть представлена", city.hydroDesc());
-        addParagraph(paragraphs, "Транспортная доступность", city.infraTransport());
-        addParagraph(paragraphs, "Инженерные коммуникации района", city.infraEngineering());
+        addParagraph(paragraphs, "Район расположения объекта", city.getCityName(), city.getAdminStatus());
+        addParagraph(paragraphs, "Рельеф местности", city.getGeoRelief());
+        addParagraph(paragraphs, "Геологическое строение участка", city.getGeoGeology());
+        addParagraph(paragraphs, "Климатические условия", city.getClimateDesc());
+        addParagraph(paragraphs, "Гидрографическая сеть представлена", city.getHydroDesc());
+        addParagraph(paragraphs, "Транспортная доступность", city.getInfraTransport());
+        addParagraph(paragraphs, "Инженерные коммуникации района", city.getInfraEngineering());
 
         return paragraphs.isEmpty()
                 ? new String[]{"Техническое описание временно недоступно."}

@@ -1,6 +1,6 @@
 package com.caseo.word.factory;
 import com.caseo.domain.model.ObjectModel;
-import com.caseo.domain.service.ObjectService;
+import com.caseo.domain.service.ChildService;
 import com.caseo.word.blocks.Block;
 import com.caseo.word.blocks.image.ImageBlock;
 import com.caseo.word.blocks.list.ListBlock;
@@ -26,7 +26,7 @@ public class UnifiedBlockFactory {
     private final ImageBlockFactory imageBlockFactory;
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
-    private final ObjectService objectService;
+    private final ChildService<ObjectModel> objectService;  // вместо ObjectService
 
     // Карта стратегий создания блоков
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
@@ -38,7 +38,7 @@ public class UnifiedBlockFactory {
             ListBlockFactory listBlockFactory,
             HazardTableLayoutService hazardTableLayoutService,
             ContactTableLayoutService contactTableLayoutService,
-            ObjectService objectService
+            ChildService<ObjectModel> objectService  // вот здесь!
     ) {
         this.tableBlockFactory = tableBlockFactory;
         this.listBlockFactory = listBlockFactory;
@@ -87,6 +87,7 @@ public class UnifiedBlockFactory {
             }
 
             // 2. Обработка списков
+
             if (value instanceof List<?> list && !list.isEmpty()) {
                 Object first = list.getFirst();
 
@@ -123,11 +124,11 @@ public class UnifiedBlockFactory {
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> result = new LinkedHashMap<>();
 
-        ObjectModel obj = objectService.getById(objectId);
+        ObjectModel obj = objectService.getOneByParentId(objectId);
         if (obj == null) {
             return result;
         }
-        int orgId = obj.orgId();
+        int orgId = obj.getOrganization().getId();
 
         putAllIfPresent(result, placeholderFillStrategy.build(orgId, objectId));
         putAllIfPresent(result, tableBlockFactory.build(objectId));

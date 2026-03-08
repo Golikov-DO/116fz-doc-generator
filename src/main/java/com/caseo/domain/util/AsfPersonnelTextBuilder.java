@@ -8,12 +8,12 @@ public class AsfPersonnelTextBuilder {
 
         if (personnel == null) return "данных по личному составу нет";
 
-        return "Аттестованных спасателей – всего " + personnel.certifiedTotal() +
-                ", из них имеют классную квалификацию: спасатель – " + personnel.qualifiedTotal() +
-                " чел.; 3 класс – " + personnel.thirdClass() +
-                " чел.; 2 класс – " + personnel.secondClass() +
-                " чел.; 1 класс – " + personnel.firstClass() +
-                " чел.; международный класс – " + personnel.internationalClass() +
+        return "Аттестованных спасателей – всего " + personnel.getCertifiedTotal() +
+                ", из них имеют классную квалификацию: спасатель – " + personnel.getQualifiedTotal() +
+                " чел.; 3 класс – " + personnel.getThirdClass() +
+                " чел.; 2 класс – " + personnel.getSecondClass() +
+                " чел.; 1 класс – " + personnel.getFirstClass() +
+                " чел.; международный класс – " + personnel.getInternationalClass() +
                 " чел.";
     }
 }

@@ -3,22 +3,22 @@ package com.caseo.word.layout;
 import com.caseo.domain.model.*;
 import com.caseo.domain.service.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactTableLayoutService {
-    private final ObjectService objectService;
-    private final ReferenceEmergencyServicesService emergencyService;
-    private final ObjectRegionAuthoritiesService regionalService;
-    private final OrganizationContactService organizationContactService;
-    private final OrganizationService organizationService;
+    private final ChildService<ObjectModel> objectService;
+    private final ParentService<ReferenceEmergencyServices> emergencyService;
+    private final ChildService<ObjectRegionalAuthorities> regionalService;
+    private final ChildService<OrganizationContact> organizationContactService;  // ИЗМЕНЕНО!
+    private final ParentService<Organization> organizationService;
 
-    public ContactTableLayoutService(ObjectService objectService,
-                                     ReferenceEmergencyServicesService emergencyService,
-                                     ObjectRegionAuthoritiesService regionalService,
-                                     OrganizationContactService organizationContactService,
-                                     OrganizationService organizationService) {
+    public ContactTableLayoutService(
+            ChildService<ObjectModel> objectService,
+            ParentService<ReferenceEmergencyServices> emergencyService,
+            ChildService<ObjectRegionalAuthorities> regionalService,
+            ChildService<OrganizationContact> organizationContactService,  // ИЗМЕНЕНО!
+            ParentService<Organization> organizationService) {
         this.objectService = objectService;
         this.emergencyService = emergencyService;
         this.regionalService = regionalService;
@@ -26,18 +26,18 @@ public class ContactTableLayoutService {
         this.organizationService = organizationService;
     }
 
-    public List<String[]> getContactTableData(int orgId, int objectId) throws SQLException {
-        ObjectModel obj = objectService.getById(objectId);
+    public List<String[]> getContactTableData(int orgId, int objectId) {
+        ObjectModel obj = objectService.getOneByParentId(objectId);
         List<String[]> tableRows = new ArrayList<>();
         int counter = 1;
 
         // --- Секция 1: Emergency (1-5) ---
-        for (ReferenceEmergencyServices es : emergencyService.getAll()) {
-            tableRows.add(new String[]{String.valueOf(counter++), es.serviceName(), es.positionContact(), es.phone(), es.address()});
+        for (ReferenceEmergencyServices es : emergencyService.getMany()) {
+            tableRows.add(new String[]{String.valueOf(counter++), es.getServiceName(), es.getPositionContact(), es.getPhone(), es.getAddress()});
         }
 
         // --- Секция 2: Regional (6-9) ---
-        List<ObjectRegionalAuthorities> regionalList = regionalService.getByObjectId(obj.id());
+        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(obj.getId());
         for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
             String numStr;
 
@@ -53,16 +53,16 @@ public class ContactTableLayoutService {
                 numStr = String.valueOf(counter++);
             }
 
-            tableRows.add(new String[]{numStr, objectRegionalAuthorities.name(), objectRegionalAuthorities.department(), objectRegionalAuthorities.phone_number(), objectRegionalAuthorities.address()});
+            tableRows.add(new String[]{numStr, objectRegionalAuthorities.getName(), objectRegionalAuthorities.getDepartment(), objectRegionalAuthorities.getPhoneNumber(), objectRegionalAuthorities.getAddress()});
         }
 
         // --- Секция 3: Разделитель (БЕЗ СЧЕТЧИКА) ---
-        var org = organizationService.getById(orgId);
-        tableRows.add(new String[]{"H_MERGE_FULL", org.organizationShortName(), "", "", ""});
+        var org = organizationService.getOneById(orgId);
+        tableRows.add(new String[]{"H_MERGE_FULL", org.getOrganizationShortName(), "", "", ""});
 
         // --- Секция 4: Organization Contact (Начнется с 9) ---
-        for (OrganizationContact oc : organizationContactService.getByOrganizationId(orgId)) {
-            tableRows.add(new String[]{String.valueOf(counter++), oc.fullName(), oc.position(), oc.phones(), oc.address()});
+        for (OrganizationContact organizationContact : organizationContactService.getManyByParentId(orgId)) {
+            tableRows.add(new String[]{String.valueOf(counter++), organizationContact.getFullName(), organizationContact.getPosition(), organizationContact.getPhones(), organizationContact.getAddress()});
         }
 
         return tableRows;

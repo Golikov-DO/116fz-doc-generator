@@ -17,8 +17,8 @@ public class ObjectAddressFormatter {
         StringJoiner addressLine = new StringJoiner(", ");
 
         // 2. Индекс
-        if (addr.index() != null && addr.index() > 0) {
-            addressLine.add(String.valueOf(addr.index()));
+        if (addr.addressIndex() != null && addr.addressIndex() > 0) {
+            addressLine.add(String.valueOf(addr.addressIndex()));
         }
 
         // 3. Субъект (Край/Область)

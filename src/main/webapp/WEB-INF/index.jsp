@@ -32,9 +32,9 @@
                             if (objects != null && !objects.isEmpty()) {
                                 ObjectModel firstObject = objects.getFirst();
                 %>
-                <option value="<%= org.organizationId() %>"
-                        data-obj-id="<%= firstObject.id() %>">
-                    <%= org.organizationShortName() %>
+                <option value="<%= org.getId() %>"
+                        data-obj-id="<%= firstObject.getId() %>">
+                    <%= org.getOrganizationShortName() %>
                 </option>
                 <%
                             }

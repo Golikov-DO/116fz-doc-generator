@@ -1,15 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
     String mode = (String) request.getAttribute("mode");
-    String docId = request.getParameter("docId");
+    String orgId = request.getParameter("orgId");
 
     String pageTitle, badgeText;
 
     if ("view".equals(mode)) {
-        pageTitle = "👁Просмотр объектов";
+        pageTitle = "Просмотр объектов";
         badgeText = "Просмотр";
     } else if ("edit".equals(mode)) {
-        pageTitle = "✏Редактирование объектов";
+        pageTitle = "Редактирование объектов";
         badgeText = "Редактирование";
     } else {
         pageTitle = "Добавление объектов";
@@ -20,7 +20,6 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
-    <title>1</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/objects.css">
 </head>
@@ -35,9 +34,9 @@
         <span>Режим <%= "view".equals(mode) ? "просмотра" : "редактирования" %></span>
     </div>
 
-    <form action="saveObjects" method="post" id="objectsForm">
+    <form action="createObjects" method="post" id="objectsForm">
         <input type="hidden" name="mode" value="<%= mode %>">
-        <input type="hidden" name="docId" value="<%= docId != null ? docId : "" %>">
+        <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
 
         <jsp:include page="/WEB-INF/fragments/objects/objects.jsp" />
 
@@ -45,9 +44,9 @@
             <% if (!"view".equals(mode)) { %>
             <button type="submit" class="btn-primary">Сохранить</button>
             <% } else { %>
-            <a href="?mode=edit&docId=<%= docId %>" class="btn-primary">✏️ Редактировать</a>
+            <a href="?mode=edit&orgId=<%= orgId %>" class="btn-primary">Редактировать</a>
             <% } %>
-            <a href="main" class="btn-primary">↩Вернуться</a>
+            <a href="main" class="btn-primary">↩ Вернуться</a>
         </div>
     </form>
 </div>

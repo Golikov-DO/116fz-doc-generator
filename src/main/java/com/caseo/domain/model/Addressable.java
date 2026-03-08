@@ -1,7 +1,7 @@
 package com.caseo.domain.model;
 
 public interface Addressable {
-    Integer index();
+    Integer addressIndex();
     String constituentEntity();
     String areaHierarchy();
     String city();

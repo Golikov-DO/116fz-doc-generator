@@ -26,6 +26,20 @@ function getObjectTemplate(number) {
         ).join('');
     }
 
+    let substanceOptions = '';
+    if (window.substanceOptionsList) {
+        substanceOptions = window.substanceOptionsList.map(sub =>
+            `<option value="${sub.id}">${sub.name}</option>`
+        ).join('');
+    }
+
+    let presenceOptions = '';
+    if (window.presenceAreaList) {
+        presenceOptions = window.presenceAreaList.map(area =>
+            `<option value="${area.id}">${area.name}</option>`
+        ).join('');
+    }
+
     return `
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span style="font-weight: bold;">Объект #${number}</span>
@@ -35,41 +49,67 @@ function getObjectTemplate(number) {
             <tr>
                 <th>Полное наименование</th>
                 <th>Краткое наименование</th>
-                <th>ID города</th>
-                <th>Класс опасности</th>
             </tr>
             <tr>
                 <td><input type="text" name="object_full_name[]" style="width: 100%;"></td>
                 <td><input type="text" name="object_short_name[]" style="width: 100%;"></td>
-                <td><input type="number" name="object_city_id[]" style="width: 80px;"></td>
-                <td><input type="number" name="hazard_class[]" style="width: 70px;"></td>
             </tr>
         </table>
         
-        <table class="objects-data-table" style="margin-bottom: 10px; width: 100%; table-layout: fixed;">
+        <!-- Класс опасности, опасное вещество, количество -->
+        <table class="objects-data-table" style="margin-bottom: 10px;">
             <tr>
-                <th>АСФ:</th>
-                <th>Подписант:</th>
+                <th style="width:15%;">Класс опасности</th>
+                <th style="width:50%;">Опасное вещество</th>
+                <th style="width:35%;">Количество опасного вещества</th>
             </tr>
             <tr>
                 <td>
-                    <select name="object_asf_id[]" class="asf-select" style="width: 100%;">
-                        <option value="">Выберите АСФ</option>
-                        ${asfOptions}
-                        <option value="new_asf">➕ Добавить новое АСФ</option>
+                    <select name="hazard_class[]" style="width:100%;">
+                        <option value="1">I класс</option>
+                        <option value="2">II класс</option>
+                        <option value="3">III класс</option>
+                        <option value="4">IV класс</option>
                     </select>
                 </td>
                 <td>
-                    <select name="object_signer_id[]" class="signer-select" style="width: 100%;" disabled>
+                    <select name="hazardous_substance_id[]" style="width:100%;">
+                        <option value="">— выберите вещество —</option>
+                        ${substanceOptions}
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="amount_of_hazardous_substance[]" style="width:100%;">
+                </td>
+            </tr>
+        </table>
+        
+        <!-- АСФ и подписант -->
+        <table class="objects-data-table" style="margin-bottom: 10px;">
+            <tr>
+                <th style="width:50%;">Аварийно-спасательное формирование</th>
+                <th style="width:50%;">Подписант от АСФ</th>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <select name="object_asf_id[]" class="asf-select" style="width:100%;">
+                            <option value="">Выберите АСФ</option>
+                            ${asfOptions}
+                            <option value="new_asf">Добавить новое АСФ</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <select name="object_signer_id[]" class="signer-select" style="width:100%;" disabled>
                         <option value="">Сначала выберите АСФ</option>
                     </select>
+                    <input type="hidden" class="signer-id-hidden" name="object_signer_id_hidden[]" value="">
                 </td>
             </tr>
         </table>
         
-        <input type="hidden" class="signer-id-hidden" name="object_signer_id_hidden[]" value="">
-        
-        <!-- Детали объекта -->
+        <!-- Ближайшая ПСЧ, Департамент ГОЧС, Наличие КЧС -->
         <table class="objects-data-table" style="margin-bottom: 10px;">
             <tr>
                 <th>Ближайшая ПСЧ</th>
@@ -77,53 +117,71 @@ function getObjectTemplate(number) {
                 <th>Наличие КЧС</th>
             </tr>
             <tr>
-                <td><input type="text" name="nearest_fire_station[]" style="width: 100%;"></td>
-                <td><input type="text" name="department_gochs[]" style="width: 100%;"></td>
+                <td><input type="text" name="nearest_fire_station[]" style="width:100%;"></td>
+                <td><input type="text" name="department_gochs[]" style="width:100%;"></td>
                 <td>
-                <select name="emergency_commission[]" onchange="toggleKchsVisibility(this, ${number})">
-                    <option value=""></option>
-                    <option value="true">Создана</option>
-                    <option value="false">Не создана</option>
-                </select>
+                    <select name="emergency_commission[]" onchange="toggleKchsVisibility(this, ${number})">
+                        <option value="true">Создана</option>
+                        <option value="false">Не создана</option>
+                    </select>
                 </td>
             </tr>
         </table>
         
-        <!-- Адрес объекта -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-bottom: 10px;">
-            <div>
-                <label style="font-size: 11px;">Субъект РФ</label>
-                <input type="text" name="object_constituent_entity[]" style="width: 100%;">
-            </div>
-            <div>
-                <label style="font-size: 11px;">Район</label>
-                <input type="text" name="object_area[]" style="width: 100%;">
-            </div>
-            <div>
-                <label style="font-size: 11px;">Координаты</label>
-                <input type="text" name="object_coordinates[]" style="width: 100%;">
-            </div>
-        </div>
+        <!-- Адрес: индекс, субъект, район, город -->
+        <table class="objects-data-table" style="margin-bottom: 10px;">
+            <tr>
+                <th style="width:10%;">Индекс</th>
+                <th style="width:30%;">Субъект РФ</th>
+                <th style="width:25%;">Район</th>
+                <th style="width:35%;">Город</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="object_index[]" style="width:100%;" placeholder="356000"></td>
+                <td><input type="text" name="object_constituent_entity[]" style="width:100%;"></td>
+                <td><input type="text" name="object_area[]" style="width:100%;"></td>
+                <td>
+                    <input type="text" name="object_city[]" style="width:100%;" placeholder="г. Ставрополь">
+                </td>
+            </tr>
+        </table>
         
-        <!-- Страховка и Приказ -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-            <div>
-                <label style="font-size: 11px;">Номер полиса</label>
-                <input type="text" name="insurance_number[]" style="width: 100%;">
-            </div>
-            <div>
-                <label style="font-size: 11px;">Действителен до</label>
-                <input type="date" name="insurance_valid_until[]" style="width: 100%;">
-            </div>
-            <div>
-                <label style="font-size: 11px;">Номер приказа</label>
-                <input type="number" name="balance_number[]" style="width: 100%;">
-            </div>
-            <div>
-                <label style="font-size: 11px;">Дата приказа</label>
-                <input type="date" name="balance_date[]" style="width: 100%;">
-            </div>
-        </div>
+        <!-- Улица, дом, координаты, район ОПО -->
+        <table class="objects-data-table" style="margin-bottom: 10px;">
+            <tr>
+                <th style="width:25%;">Улица</th>
+                <th style="width:15%;">Дом</th>
+                <th style="width:30%;">Координаты</th>
+                <th style="width:30%;">Район расположения ОПО</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="object_street[]" style="width:100%;"></td>
+                <td><input type="text" name="object_house[]" style="width:100%;"></td>
+                <td><input type="text" name="object_coordinates[]" style="width:100%;"></td>
+                <td>
+                    <select name="presence_area_id[]" style="width:100%;">
+                        <option value="">— выберите район присутствия —</option>
+                        ${presenceOptions}
+                    </select>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Страховка и приказ -->
+        <table class="objects-data-table" style="margin-bottom: 10px;">
+            <tr>
+                <th>Номер полиса</th>
+                <th>Действителен до</th>
+                <th>Номер приказа</th>
+                <th>Дата приказа</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="insurance_number[]" style="width:100%;"></td>
+                <td><input type="date" name="insurance_valid_until[]" style="width:100%;"></td>
+                <td><input type="number" name="balance_number[]" style="width:100%;"></td>
+                <td><input type="date" name="balance_date[]" style="width:100%;"></td>
+            </tr>
+        </table>
         
         <!-- Тип объекта -->
         <div style="margin-bottom: 10px;">
@@ -138,7 +196,6 @@ function getObjectTemplate(number) {
                 <span>▼</span>
             </div>
             <div class="object-collapse-content">
-                <button type="button" class="add-row" onclick="addKchs(this)">Добавить члена КЧС</button>
                 <table class="objects-data-table" style="margin-top: 10px;">
                     <thead>
                         <tr>
@@ -149,9 +206,12 @@ function getObjectTemplate(number) {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody class="kchs-body">
+                    <tbody class="kchs-body" data-object-index="${number}">
                         <tr>
-                            <td><input type="text" name="kchs_position[]" style="width: 100%;"></td>
+                            <td>
+                                <input type="hidden" name="kchs_object_index[]" value="${number}">
+                                <input type="text" name="kchs_position[]" style="width: 100%;">
+                            </td>
                             <td><input type="text" name="kchs_name[]" style="width: 100%;"></td>
                             <td><input type="text" name="kchs_phone[]" style="width: 100%;"></td>
                             <td><input type="text" name="kchs_address[]" style="width: 100%;"></td>
@@ -159,6 +219,7 @@ function getObjectTemplate(number) {
                         </tr>
                     </tbody>
                 </table>
+                <button type="button" class="add-row" onclick="addKchs(this)">Добавить члена КЧС</button>
             </div>
         </div>
         
@@ -169,23 +230,30 @@ function getObjectTemplate(number) {
                 <span>▼</span>
             </div>
             <div class="object-collapse-content">
-                <button type="button" class="add-row" onclick="addEquipment(this)">Добавить оборудование</button>
                 <table class="objects-data-table" style="margin-top: 10px;">
                     <thead>
                         <tr>
+                            <th>№</th>
                             <th>Наименование</th>
                             <th>Характеристики</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody class="equipment-body">
+                    <tbody class="equipment-body" data-object-index="${number}">
                         <tr>
-                            <td><input type="text" name="techno_name[]" style="width: 100%;"></td>
+                            <td>
+                                <input type="number" name="techno_number[]" style="width:60px;">
+                            </td>
+                            <td>
+                                <input type="hidden" name="techno_object_index[]" value="${number}">
+                                <input type="text" name="techno_name[]" style="width: 100%;">
+                            </td>
                             <td><textarea name="techno_characteristics[]" rows="2" style="width: 100%;"></textarea></td>
                             <td class="delete-row" onclick="deleteRow(this)">✖</td>
                         </tr>
                     </tbody>
                 </table>
+                <button type="button" class="add-row" onclick="addEquipment(this)">Добавить оборудование</button>
             </div>
         </div>
     `;
@@ -194,9 +262,13 @@ function getObjectTemplate(number) {
 // Добавление члена КЧС
 function addKchs(button) {
     const tbody = button.closest('.object-collapse-content').querySelector('.kchs-body');
+    const number = tbody.dataset.objectIndex;
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
-        <td><input type="text" name="kchs_position[]" placeholder="Должность в КЧС" style="width: 100%;"></td>
+        <td>
+            <input type="hidden" name="kchs_object_index[]" value="${number}">
+            <input type="hidden" name="kchs_id[]" value="">
+            <input type="text" name="kchs_position[]" placeholder="Должность в КЧС" style="width: 100%;"></td>
         <td><input type="text" name="kchs_name[]" placeholder="ФИО с должностью" style="width: 100%;"></td>
         <td><input type="text" name="kchs_phone[]" placeholder="Телефон" style="width: 100%;"></td>
         <td><input type="text" name="kchs_address[]" placeholder="Домашний адрес" style="width: 100%;"></td>
@@ -208,9 +280,13 @@ function addKchs(button) {
 // Добавление оборудования
 function addEquipment(button) {
     const tbody = button.closest('.object-collapse-content').querySelector('.equipment-body');
+    const number = tbody.dataset.objectIndex;
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
-        <td><input type="text" name="techno_name[]" placeholder="Наименование" style="width: 100%;"></td>
+        <td>
+            <input type="hidden" name="techno_object_index[]" value="${number}">
+            <input type="hidden" name="techno_id[]" value="">
+            <input type="text" name="techno_name[]" placeholder="Наименование" style="width: 100%;"></td>
         <td><textarea name="techno_characteristics[]" rows="2" placeholder="Характеристики" style="width: 100%;"></textarea></td>
         <td class="delete-row" onclick="deleteRow(this)">✖</td>
     `;
@@ -249,7 +325,6 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
 
             signerSelect.innerHTML = options;
 
-            // !!! ИЗМЕНЕНИЕ ЗДЕСЬ !!!
             // Разблокируем только если НЕ режим просмотра
             signerSelect.disabled = (window.currentMode === 'view');
 
@@ -264,6 +339,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
         });
 }
 
+// objects.js - обновите существующую функцию openAsfModal
 function openAsfModal(asfId, objectItem, addSignerMode = false) {
     console.log('openAsfModal called with asfId:', asfId);
 
@@ -273,7 +349,8 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
 
     // Сохраняем ссылку на объект для обратного вызова
     modal.setAttribute('data-object-item', objectItem ? objectItem.id || '' : '');
-    modal.setAttribute('data-add-signer-mode', addSignerMode);
+    modal.setAttribute('data-add-signer-mode', addSignerMode ? 'true' : 'false');
+    modal.setAttribute('data-view-mode', 'false'); // Это режим редактирования
 
     // Меняем заголовок в зависимости от режима
     if (addSignerMode) {
@@ -304,6 +381,44 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
             }
 
             modal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки АСФ:', error);
+            alert('Ошибка при загрузке данных АСФ');
+        });
+}
+
+// objects.js - добавьте эту функцию
+function viewAsf(asfId, objectItem) {
+    console.log('viewAsf called with asfId:', asfId);
+
+    const modal = document.getElementById('asfModal');
+    const content = document.getElementById('asfModalContent');
+    const title = document.getElementById('asfModalTitle');
+
+    // Сохраняем ссылку на объект для обратного вызова
+    modal.setAttribute('data-object-item', objectItem ? objectItem.id || '' : '');
+    modal.setAttribute('data-view-mode', 'true'); // Отмечаем, что это режим просмотра
+
+    title.textContent = 'Просмотр АСФ';
+
+    const url = 'asf?mode=view&asfId=' + asfId;
+
+    fetch(url, {
+        headers: {'X-Requested-With': 'XMLHttpRequest'}
+    })
+        .then(response => response.text())
+        .then(html => {
+            content.innerHTML = html;
+
+            // В режиме просмотра все поля должны быть disabled
+            // asf.jsp уже обрабатывает это через параметр mode=view
+
+            modal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки АСФ:', error);
+            alert('Ошибка при загрузке данных АСФ');
         });
 }
 
@@ -315,6 +430,14 @@ function closeAsfModal() {
 function saveAsfModal() {
     const modal = document.getElementById('asfModal');
     const modalContent = document.getElementById('asfModalContent');
+    const isViewMode = modal.getAttribute('data-view-mode') === 'true';
+
+    // Если это режим просмотра - просто закрываем модальное окно
+    if (isViewMode) {
+        closeAsfModal();
+        return;
+    }
+
     const form = modalContent.querySelector('#asfForm');
     const objectItemId = modal.getAttribute('data-object-item');
     const addSignerMode = modal.getAttribute('data-add-signer-mode') === 'true';
@@ -366,13 +489,6 @@ function getObjectElements(element) {
         hiddenField: objectItem.querySelector('.signer-id-hidden'),
         asfSelect: objectItem.querySelector('.asf-select')
     };
-}
-
-function handleNewAsf() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') || 'create';
-    const docId = urlParams.get('docId') || '';
-    window.location.href = "addNewAsf?mode=" + mode + "&docId=" + docId;
 }
 
 function resetSignerSelect(signerSelect) {
@@ -454,3 +570,8 @@ document.addEventListener('change', function(e) {
         }
     }
 });
+
+function autoResize(el) {
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+}

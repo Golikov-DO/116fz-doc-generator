@@ -1,5 +1,8 @@
 package com.caseo.app;
 
+import com.caseo.domain.model.*;
+import com.caseo.domain.repository.ChildRepository;
+import com.caseo.domain.repository.ParentRepository;
 import com.caseo.domain.service.*;
 import com.caseo.infrastructure.db.repository.*;
 import com.caseo.word.blocks.text.TextPlaceholderService;
@@ -7,167 +10,128 @@ import com.caseo.word.factory.*;
 import com.caseo.word.layout.ContactTableLayoutService;
 import com.caseo.word.layout.HazardTableLayoutService;
 import com.caseo.word.pipeline.PipelineConfiguration;
-
 import com.caseo.word.strategy.PlaceholderFillStrategy;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Bootstrap {
 
     public static ApplicationContext init() {
         // 1. Инфраструктура (Репозитории)
-        var repos = initRepositories();
+        RepositoryContext repoContext = initRepositories();
 
         // 2. Бизнес-логика (Сервисы)
-        var services = initServices(repos);
+        InternalServices services = initServices(repoContext);
 
         // 3. Генератор документов
         var wordService = initWordService(services);
 
-        return new ApplicationContext(
-                repos.asfSignerRepository(),
-                wordService,
-                services.organizationService(),
-                services.objectService(),
-                services
-        );
+        return new ApplicationContext(wordService, services);
     }
 
     private static RepositoryContext initRepositories() {
-        return new RepositoryContext(
-                new JdbcObjectAccidentScenariosRepository(),
-                new JdbcAsfCertificateRepository(),
-                new JdbcAsfCompositionDeploymentFundsRepository(),
-                new JdbcAsfDocumentImageRepository(),
-                new JdbcAsfPersonnelRepository(),
-                new JdbcAsfRepository(),
-                new JdbcAsfSignerRepository(),
-                new JdbcAsfSpecialistsRepository(),
-                new JdbcAsfWorkTypeRepository(),
-                new JdbcObjectCompositionKchsRepository(),
-                new JdbcReferenceEmergencyServicesRepository(),
-                new JdbcObjectFireEquipmentRepository(),
-                new JdbcObjectHazardousParamRepository(),
-                new JdbcObjectHazardousParamValueRepository(),
-                new JdbcObjectHazardousSubstanceRepository(),
-                new JdbcObjectMainScenariosRepository(),
-                new JdbcObjectRepository(),
-                new JdbcObjectStructureRepository(),
-                new JdbcReferenceCityRepository(),
-                new JdbcObjectAddressRepository(),
-                new JdbcReferenceTableTitleRepository(),
-                new JdbcObjectTypeRepository(),
-                new JdbcObjectImageRepository(),
-                new JdbcObjectInsurancePolicyRepository(),
-                new JdbcObjectOrderMinimumBalanceRepository(),
-                new JdbcOrganizationAddressRepository(),
-                new JdbcOrganizationContactRepository(),
-                new JdbcOrganizationRepository(),
-                new JdbcOrganizationSignerRepository(),
-                new JdbcObjectPersonsResponsibleRepository(),
-                new JdbcObjectRegionAuthoritiesRepository(),
-                new JdbcObjectTechnologicalEquipmentRepository(),
-                new JdbcObjectTechnologicalBlockRepository()
-        );
+        Map<Class<?>, ParentRepository<?>> parentRepos = new HashMap<>();
+        Map<Class<?>, ChildRepository<?>> childRepos = new HashMap<>();
+
+        // Родители
+        parentRepos.put(Asf.class, new HibernateAsfRepository());
+        parentRepos.put(ObjectHazardousSubstance.class, new HibernateObjectHazardousSubstanceRepository());
+        parentRepos.put(Organization.class, new HibernateOrganizationRepository());
+        parentRepos.put(ReferenceCity.class, new HibernateReferenceCityRepository());
+        parentRepos.put(ReferenceEmergencyServices.class, new HibernateReferenceEmergencyServicesRepository());
+        parentRepos.put(ReferenceTableTitle.class, new HibernateReferenceTableTitleRepository());
+
+        // Дети (и те, кто и родитель и ребенок)
+        childRepos.put(AsfCertificate.class, new HibernateAsfCertificateRepository());
+        childRepos.put(AsfCompositionDeploymentFunds.class, new HibernateAsfCompositionDeploymentFundsRepository());
+        childRepos.put(AsfDocumentImage.class, new HibernateAsfDocumentImageRepository());
+        childRepos.put(AsfPersonnel.class, new HibernateAsfPersonnelRepository());
+        childRepos.put(AsfSigner.class, new HibernateAsfSignerRepository());
+        childRepos.put(AsfSpecialists.class, new HibernateAsfSpecialistRepository());
+        childRepos.put(AsfWorkType.class, new HibernateAsfWorkTypeRepository());
+        childRepos.put(ObjectAccidentScenarios.class, new HibernateObjectAccidentScenariosRepository());
+        childRepos.put(ObjectAddress.class, new HibernateObjectAddressRepository());
+        childRepos.put(ObjectCompositionKchs.class, new HibernateObjectCompositionKchsRepository());
+        childRepos.put(ObjectFireEquipment.class, new HibernateObjectFireEquipmentRepository());
+        childRepos.put(ObjectHazardousParam.class, new HibernateObjectHazardousParamRepository());
+        childRepos.put(ObjectHazardousParamValue.class, new HibernateObjectHazardousParamValueRepository());
+        childRepos.put(ObjectImage.class, new HibernateObjectImageRepository());
+        childRepos.put(ObjectInsurancePolicy.class, new HibernateObjectInsurancePolicyRepository());
+        childRepos.put(ObjectMainScenarios.class, new HibernateObjectMainScenariosRepository());
+        childRepos.put(ObjectModel.class, new HibernateObjectRepository());
+        childRepos.put(ObjectOrderMinimumBalance.class, new HibernateObjectOrderMinimumBalanceRepository());
+        childRepos.put(ObjectPersonsResponsible.class, new HibernateObjectPersonsResponsibleRepository());
+        childRepos.put(ObjectRegionalAuthorities.class, new HibernateObjectRegionAuthoritiesRepository());
+        childRepos.put(ObjectStructure.class, new HibernateObjectStructureRepository());
+        childRepos.put(ObjectTechnologicalBlock.class, new HibernateObjectTechnologicalBlockRepository());
+        childRepos.put(ObjectTechnologicalEquipment.class, new HibernateObjectTechnologicalEquipmentRepository());
+        childRepos.put(ObjectType.class, new HibernateObjectTypeRepository());
+        childRepos.put(OrganizationAddress.class, new HibernateOrganizationAddressRepository());
+        childRepos.put(OrganizationContact.class, new HibernateOrganizationContactRepository());
+        childRepos.put(OrganizationSigner.class, new HibernateOrganizationSignerRepository());
+
+        return new RepositoryContext(parentRepos, childRepos);
     }
 
-    private static InternalServices initServices(RepositoryContext repositoryContext) {
+    private static InternalServices initServices(RepositoryContext repoContext) {
+        return new InternalServices(repoContext);
+    }
 
-        ReferenceEmergencyServicesService referenceEmergencyServicesService = new ReferenceEmergencyServicesService(repositoryContext.referenceEmergencyServicesRepository());
-        ObjectHazardService objectHazardService = new ObjectHazardService(repositoryContext.objectHazardousParamRepository(), repositoryContext.objectHazardousParamValueRepository());
-        ObjectService objectService = new ObjectService(repositoryContext.objectRepository());
-        OrganizationService organizationService = new OrganizationService(repositoryContext.organizationRepository());
-        OrganizationContactService organizationContactService = new OrganizationContactService(repositoryContext.organizationContactRepository());
-        ObjectRegionAuthoritiesService objectRegionAuthoritiesService = new ObjectRegionAuthoritiesService(repositoryContext.objectRegionAuthoritiesRepository());
+    private static WordGenerationService initWordService(InternalServices services) {
+        // Специфические сервисы для Word
+        ObjectHazardService objectHazardService = new ObjectHazardService(
+                services.getChildService(ObjectHazardousParam.class),
+                services.getChildService(ObjectHazardousParamValue.class)
+        );
 
         HazardTableLayoutService hazardTableLayoutService = new HazardTableLayoutService(
-                objectService,
+                services.getChildService(ObjectModel.class),
                 objectHazardService
         );
+
         ContactTableLayoutService contactTableLayoutService = new ContactTableLayoutService(
-                objectService,
-                referenceEmergencyServicesService,
-                objectRegionAuthoritiesService,
-                organizationContactService,
-                organizationService
+                services.getChildService(ObjectModel.class),
+                services.getParentService(ReferenceEmergencyServices.class),
+                services.getChildService(ObjectRegionalAuthorities.class),
+                services.getChildService(OrganizationContact.class),
+                services.getParentService(Organization.class)
         );
 
-        return new InternalServices(
-                new ObjectAccidentScenariosService(repositoryContext.objectAccidentScenariosRepository()),
-                new AsfCertificateService(repositoryContext.asfCertificateRepository()),
-                new AsfCompositionDeploymentFundsService(repositoryContext.asfCompositionDeploymentFundsRepository()),
-                new AsfDocumentImageService(repositoryContext.asfDocumentImageRepository()),
-                new AsfPersonnelService(repositoryContext.asfPersonnelRepository()),
-                new AsfService(repositoryContext.asfRepository()),
-                new AsfSignerService(repositoryContext.asfSignerRepository()),
-                new AsfSpecialistsService(repositoryContext.asfSpecialistsRepository()),
-                new AsfWorkTypeService(repositoryContext.asfWorkTypeRepository()),
-                new ObjectCompositionKchsService(repositoryContext.objectCompositionKchsRepository()),
-                contactTableLayoutService,
-                referenceEmergencyServicesService,
-                new ObjectFireEquipmentService(repositoryContext.objectFireEquipmentRepository()),
-                objectHazardService,
+        TextPlaceholderService textPlaceholderService = new TextPlaceholderService(services);
+
+        UnifiedBlockFactory unifiedFactory = new UnifiedBlockFactory(
+                new TableBlockFactory(
+                        services.getChildService(ObjectCompositionKchs.class),
+                        services.getChildService(ObjectModel.class),
+                        services.getChildService(ObjectTechnologicalEquipment.class),
+                        services.getChildService(ObjectAccidentScenarios.class),
+                        services.getChildService(ObjectMainScenarios.class),
+                        services.getChildService(ObjectFireEquipment.class),
+                        services.getChildService(ObjectPersonsResponsible.class)
+                ),
+                new PlaceholderFillStrategy(textPlaceholderService),
+                new ImageBlockFactory(
+                        services.getChildService(ObjectImage.class),
+                        services.getChildService(AsfDocumentImage.class),
+                        services.getChildService(ObjectModel.class)
+                ),
+                new ListBlockFactory(
+                        services.getChildService(ObjectModel.class),
+                        services.getChildService(ObjectStructure.class),
+                        services.getChildService(ObjectTechnologicalBlock.class),
+                        services.getChildService(ObjectAddress.class),
+                        services.getParentService(ReferenceCity.class)
+                ),
                 hazardTableLayoutService,
-                new ObjectHazardousSubstanceService(repositoryContext.objectHazardousSubstanceRepository()),
-                new ObjectMainScenariosService(repositoryContext.objectMainScenariosRepository()),
-                new ObjectAddressService(repositoryContext.objectAddressRepository()),
-                new ReferenceCityService(repositoryContext.referenceCityRepository()),
-                new ObjectImageService(repositoryContext.objectImageRepository()),
-                new ObjectInsurancePolicyService(repositoryContext.objectInsurancePolicyRepository()),
-                new ObjectOrderMinimumBalanceService(repositoryContext.objectOrderMinimumBalanceRepository()),
-                objectService,
-                new ObjectStructureService(repositoryContext.objectStructureRepository()),
-                new ReferenceTableTitleService(repositoryContext.referenceTableTitleRepository()),
-                new ObjectTypeService(repositoryContext.objectTypeRepository()),
-                new OrganizationAddressService(repositoryContext.organizationAddressRepository()),
-                organizationContactService,
-                organizationService,
-                new OrganizationSignerService(repositoryContext.organizationSignerRepository()),
-                new ObjectPersonsResponsibleService(repositoryContext.objectPersonsResponsibleRepository()),
-                objectRegionAuthoritiesService,
-                new ObjectTechnologicalBlockService(repositoryContext.objectTechnologicalBlockRepository()),
-                new ObjectTechnologicalEquipmentService(repositoryContext.objectTechnologicalEquipmentRepository())
-
+                contactTableLayoutService,
+                services.getChildService(ObjectModel.class)
         );
-    }
-
-    private static WordGenerationService initWordService(InternalServices internalServices) {
-        TextPlaceholderService textPlaceholderService = new TextPlaceholderService(internalServices);
-        UnifiedBlockFactory unifiedFactory = initUnifiedFactory(internalServices, textPlaceholderService);
 
         return new WordGenerationService(
                 PipelineConfiguration.createDocumentBuilder(),
                 PipelineConfiguration.createTagStrategy(unifiedFactory),
                 PipelineConfiguration.createPlaceholderStrategy(unifiedFactory)
-        );
-    }
-
-    private static UnifiedBlockFactory initUnifiedFactory(InternalServices internalServices, TextPlaceholderService textService) {
-        return new UnifiedBlockFactory(
-                new TableBlockFactory(
-                        internalServices.objectService(),
-                        internalServices.objectTechnologicalEquipmentService(),
-                        internalServices.objectAccidentScenariosService(),
-                        internalServices.objectMainScenariosService(),
-                        internalServices.objectFireEquipmentService(),
-                        internalServices.objectPersonsResponsibleService(),
-                        internalServices.objectCompositionKchsService()
-                ),
-                new PlaceholderFillStrategy(textService),
-                new ImageBlockFactory(
-                        internalServices.objectImageService(),
-                        internalServices.objectService(),
-                        internalServices.asfDocumentImageService(),
-                        internalServices.asfService()
-                ),
-                new ListBlockFactory(
-                        internalServices.objectService(),
-                        internalServices.objectStructureService(),
-                        internalServices.objectTechnologicalBlockService(),
-                        internalServices.objectAddressService(),
-                        internalServices.referenceCityService()
-                ),
-                internalServices.hazardTableLayoutService(),
-                internalServices.contactTableLayoutService(),
-                internalServices.objectService()
         );
     }
 }

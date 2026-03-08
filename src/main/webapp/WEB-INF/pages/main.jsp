@@ -55,7 +55,6 @@
 
     <form action="<%= "create".equals(mode) ? "saveAll" : "updateAll" %>" method="post" id="mainForm">
         <input type="hidden" name="mode" value="<%= mode %>">
-        <input type="hidden" name="docId" value="<%= request.getAttribute("docId") %>">
         <input type="hidden" name="orgId" value="<%= request.getAttribute("orgId") %>">
         <input type="hidden" name="asfId" value="<%= request.getAttribute("asfId") %>">
 

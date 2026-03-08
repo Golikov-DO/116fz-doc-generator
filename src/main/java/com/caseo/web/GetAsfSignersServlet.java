@@ -3,9 +3,8 @@ package com.caseo.web;
 import com.caseo.app.ApplicationContext;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.AsfSigner;
-import com.caseo.domain.service.AsfSignerService;
+import com.caseo.domain.service.ChildService;
 import com.google.gson.Gson;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,20 +17,20 @@ import java.util.List;
 @WebServlet("/getAsfSigners")
 public class GetAsfSignersServlet extends HttpServlet {
 
-    private AsfSignerService asfSignerService;
-    private Gson gson = new Gson();
+    private ChildService<AsfSigner> signerService;
+    private final Gson gson = new Gson();
 
     @Override
     public void init() {
         ApplicationContext context = (ApplicationContext) getServletContext()
                 .getAttribute("appContext");
         InternalServices services = context.internalServices();
-        asfSignerService = services.asfSignerService();
+        signerService = services.getChildService(AsfSigner.class);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws IOException {
 
         String asfIdParam = req.getParameter("asfId");
         if (asfIdParam == null || asfIdParam.isEmpty()) {
@@ -42,15 +41,16 @@ public class GetAsfSignersServlet extends HttpServlet {
         try {
             int asfId = Integer.parseInt(asfIdParam);
             // Получаем ОДНОГО подписанта для этого АСФ
-            List<AsfSigner> signers = asfSignerService.getAllByAsfId(asfId);
+            List<AsfSigner> signers = signerService.getManyByParentId(asfId);
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(gson.toJson(signers));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log("Ошибка при получении подписантов ASF", e);
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
         }
     }
 }

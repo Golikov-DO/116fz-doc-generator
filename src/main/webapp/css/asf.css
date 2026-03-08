@@ -170,3 +170,18 @@
     border: 1px solid #eee;
     border-radius: 4px;
 }
+
+.view-asf-btn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.view-asf-btn:hover {
+    background-color: #45a049;
+}

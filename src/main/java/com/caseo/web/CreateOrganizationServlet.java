@@ -10,15 +10,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/createOrganization")
 public class CreateOrganizationServlet extends HttpServlet {
 
-    private OrganizationService organizationService;
+    private ParentService<Organization> organizationService;
+    private ChildService<ObjectModel> objectService;
     private OrganizationSaveHelper saveHelper;
-    private ObjectService objectService;
-
+    private ChildService<OrganizationAddress> addressService;
+    private ChildService<OrganizationSigner> signerService;
+    private ChildService<OrganizationContact> contactService;
 
     @Override
     public void init() {
@@ -26,68 +30,82 @@ public class CreateOrganizationServlet extends HttpServlet {
                 .getAttribute("appContext");
         InternalServices services = context.internalServices();
 
-        organizationService = services.organizationService();
-        objectService = services.objectService();
-        OrganizationAddressService organizationAddressService = services.organizationAddressService();
-        OrganizationSignerService organizationSignerService = services.organizationSignerService();
-        OrganizationContactService organizationContactService = services.organizationContactService();
-        saveHelper = new OrganizationSaveHelper(
-                organizationAddressService,
-                organizationSignerService,
-                organizationContactService
-        );
+        organizationService = services.getParentService(Organization.class);
+        objectService = services.getChildService(ObjectModel.class);
+        saveHelper = new OrganizationSaveHelper();
+        addressService = services.getChildService(OrganizationAddress.class);
+        signerService = services.getChildService(OrganizationSigner.class);
+        contactService = services.getChildService(OrganizationContact.class);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws ServletException {
 
         try {
-            // Сохраняем организацию
-            int savedOrgId = saveOrganization(req);
+            String orgIdParam = req.getParameter("orgId");
+            Integer orgId = orgIdParam != null && !orgIdParam.isEmpty() ? Integer.parseInt(orgIdParam) : null;
 
-            // Создаём пустой объект для этой организации
-            ObjectModel emptyObject = new ObjectModel(
-                    0,                    // id
-                    savedOrgId,
-                    0,                    // asfId
-                    0,                    // asf_signer_id
-                    0,                    // object_city_id
-                    0,                    // hazardousSubstanceId
-                    0,                    // hazardClass
-                    "Новый объект",       // objectFullName
-                    "",                   // amountOfHazardousSubstance
-                    "",                   // nearestFireStation
-                    "Новый объект",       // objectShortName
-                    "",                   // departmentGoChsCity
-                    false                 // emergencyCommission
-            );
+            Organization org;
+            OrganizationAddress address;
+            OrganizationSigner signer;
+            List<OrganizationContact> contacts = new ArrayList<>();
+            ObjectAddress emptyAddress = null;
 
-            ObjectModel savedObject = objectService.save(emptyObject);
+            if (orgId != null) {
+                org = organizationService.getOneById(orgId);
+                address = addressService.getOneByParentId(orgId);
+                signer = signerService.getOneByParentId(orgId);
+                List<OrganizationContact> existingContacts = contactService.getManyByParentId(orgId);
+                if (existingContacts != null) {
+                    contacts.addAll(existingContacts);
+                }
+            } else {
+                org = new Organization();
+                address = new OrganizationAddress();
+                signer = new OrganizationSigner();
+                emptyAddress = new ObjectAddress();
+            }
 
-            resp.sendRedirect("portal?mode=edit&orgId=" + savedOrgId + "&tab=objects");
+            saveHelper.mapOrganization(req, org);
+            saveHelper.mapAddress(req, address);
+            saveHelper.mapSigner(req, signer);
+            saveHelper.mapContacts(req, contacts);
+
+            // Сохраняем организацию и сразу получаем её ID
+            organizationService.save(org);
+
+            // Теперь, когда у организации есть ID, устанавливаем связи
+            if (address != null) {
+                address.setOrganization(org);
+                addressService.save(address);
+            }
+
+            if (    signer != null) {
+                signer.setOrganization(org);
+                signerService.save(signer);
+            }
+
+            // Сохраняем контакты
+            for (OrganizationContact contact : contacts) {
+                contact.setOrganization(org);
+                contactService.save(contact);
+            }
+
+            // Создаем пустой объект для новой организации
+//            if (orgId == null) {
+//                ObjectModel emptyObject = new ObjectModel();
+//                emptyObject.setObjectFullName("Новый объект");
+//                emptyObject.setObjectShortName("Новый объект");
+//                emptyObject.setOrganization(org);
+//                objectService.save(emptyObject);
+//            }
+
+            resp.sendRedirect("portal?mode=edit&orgId=" + org.getId() + "&tab=objects");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServletException("Ошибка при создании организации", e);
+            getServletContext().log("Ошибка при сохранении организации", e);
+            throw new ServletException("Ошибка при сохранении организации", e);
         }
-    }
-
-    private int saveOrganization(HttpServletRequest req) throws Exception {
-        // orgId всегда 0 при создании
-        Organization org = new Organization(
-                0,
-                req.getParameter("organization_full_name"),
-                req.getParameter("organization_short_name"),
-                req.getParameter("organization_type_activity"),
-                Boolean.parseBoolean(req.getParameter("opo_single_territory"))
-        );
-
-        Organization savedOrg = organizationService.save(org);
-        int savedOrgId = savedOrg.organizationId();
-
-        saveHelper.saveRelatedEntities(req, savedOrgId);
-
-        return savedOrgId;
     }
 }

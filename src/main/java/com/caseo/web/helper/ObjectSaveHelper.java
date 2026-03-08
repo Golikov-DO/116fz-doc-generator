@@ -1,139 +1,108 @@
 package com.caseo.web.helper;
 
 import com.caseo.domain.model.*;
-import com.caseo.domain.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.caseo.web.util.RequestUtils.*;
+
 public class ObjectSaveHelper {
-
-    private final ObjectAddressService objectAddressService;
-    private final ObjectCompositionKchsService objectCompositionKchsService;
-    private final ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService;
-    private final ObjectTypeService objectTypeService;
-    private final ObjectInsurancePolicyService objectInsurancePolicyService;
-    private final ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService;
-
-    public ObjectSaveHelper(
-            ObjectAddressService objectAddressService,
-            ObjectCompositionKchsService objectCompositionKchsService,
-            ObjectTechnologicalEquipmentService objectTechnologicalEquipmentService,
-            ObjectTypeService objectTypeService,
-            ObjectInsurancePolicyService objectInsurancePolicyService,
-            ObjectOrderMinimumBalanceService objectOrderMinimumBalanceService) {
-        this.objectAddressService = objectAddressService;
-        this.objectCompositionKchsService = objectCompositionKchsService;
-        this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
-        this.objectTypeService = objectTypeService;
-        this.objectInsurancePolicyService = objectInsurancePolicyService;
-        this.objectOrderMinimumBalanceService = objectOrderMinimumBalanceService;
+    public void mapObject(HttpServletRequest req, int index, ObjectModel object) {
+        object.setObjectFullName(param(req, "object_full_name[]", index));
+        object.setObjectShortName(param(req, "object_short_name[]", index));
+        object.setHazardClass(paramInt(req, "hazard_class[]", index));
+        object.setAmountOfHazardousSubstance(param(req, "amount_of_hazardous_substance[]", index));
+        object.setNearestFireStation(param(req, "nearest_fire_station[]", index));
+        object.setDepartmentGoChsCity(param(req, "department_gochs[]", index));
+        object.setEmergencyCommission(paramBool(req, "emergency_commission[]", index));
+        object.setAsfSignerId(paramInt(req,"object_signer_id[]", index));
     }
 
-    public void saveObjectDetails(HttpServletRequest req, int index, int objectId) throws Exception {
-        // КЧС
-        String[] kchsPositions = req.getParameterValues("kchs_position[]");
-        String[] kchsNames = req.getParameterValues("kchs_name[]");
-        String[] kchsPhones = req.getParameterValues("kchs_phone[]");
-        String[] kchsAddresses = req.getParameterValues("kchs_address[]");
+    public void mapAddress(HttpServletRequest req, int index, ObjectAddress address) {
+        address.setAddressIndex(paramInt(req, "object_index[]", index));
+        address.setConstituentEntity(param(req, "object_constituent_entity[]", index));
+        address.setAreaHierarchy(param(req, "object_area[]", index));
+        address.setCity(param(req, "object_city[]", index));
+        address.setStreet(param(req, "object_street[]", index));
+        address.setHouse(param(req, "object_house[]", index));
+        address.setCoordinates(param(req, "object_coordinates[]", index));
+    }
 
-        if (kchsPositions != null) {
-            for (int i = 0; i < kchsPositions.length; i++) {
-                if (kchsPositions[i] != null && !kchsPositions[i].trim().isEmpty()) {
-                    ObjectCompositionKchs kchs = new ObjectCompositionKchs(
-                            objectId,
-                            0,
-                            kchsPositions[i],
-                            kchsNames != null && kchsNames.length > i ? kchsNames[i] : null,
-                            kchsPhones != null && kchsPhones.length > i ? kchsPhones[i] : null,
-                            null,
-                            kchsAddresses != null && kchsAddresses.length > i ? kchsAddresses[i] : null
-                    );
-                    objectCompositionKchsService.save(kchs, objectId);
+    public void mapKchs(HttpServletRequest req, int index, ObjectCompositionKchs kchs) {
+        kchs.setPosition(param(req, "kchs_position[]", index));
+        kchs.setFullName(param(req, "kchs_name[]", index));
+        kchs.setCellPhone(param(req, "kchs_phone[]", index));
+        kchs.setHomeAddress(param(req, "kchs_address[]", index));
+    }
+
+    public void mapEquipment(HttpServletRequest req, int index, ObjectTechnologicalEquipment equipment) {
+        equipment.setNum(paramInt(req, "techno_number[]", index));
+        equipment.setName(param(req, "techno_name[]", index));
+        equipment.setCharacteristics(param(req, "techno_characteristics[]", index));
+    }
+
+    public void mapObjectType(HttpServletRequest req, int index, ObjectType type) {
+        type.setTypeDefinition(param(req, "object_type_definition[]", index));
+    }
+
+    public void mapInsurancePolicy(HttpServletRequest req, int index, ObjectInsurancePolicy policy) {
+        policy.setNumber(param(req, "insurance_number[]", index));
+        policy.setValidUntil(paramDate(req, "insurance_valid_until[]", index));
+    }
+
+    public void mapOrderMinimumBalance(HttpServletRequest req, int index, ObjectOrderMinimumBalance balance) {
+        balance.setNumber(param(req, "balance_number[]", index));
+        balance.setDate(paramDate(req, "balance_date[]", index));
+    }
+
+    public List<ObjectCompositionKchs> mapKchsList(HttpServletRequest req, int currentObjectIndex) {
+
+        List<ObjectCompositionKchs> list = new ArrayList<>();
+
+        String[] index = req.getParameterValues("kchs_object_index[]");
+        String[] ids = req.getParameterValues("kchs_id[]");
+        if (index == null) return list;
+
+        for (int i = 0; i < index.length; i++) {
+            if (index[i] != null && Integer.parseInt(index[i]) == currentObjectIndex) {
+                ObjectCompositionKchs kchs = new ObjectCompositionKchs();
+
+                // Если ID есть, сетим его (Hibernate поймет, что это UPDATE)
+                if (ids != null && i < ids.length && ids[i] != null && !ids[i].isEmpty()) {
+                    kchs.setId(Integer.parseInt(ids[i]));
                 }
+
+                mapKchs(req, i, kchs);
+                list.add(kchs);
             }
         }
+        System.out.println("KCHS COUNT = " + list.size());
+        return list;
+    }
 
-        // Оборудование
-        String[] technoNames = req.getParameterValues("techno_name[]");
-        String[] technoCharacteristics = req.getParameterValues("techno_characteristics[]");
+    public List<ObjectTechnologicalEquipment> mapEquipmentList(HttpServletRequest req, int currentObjectIndex) {
+        List<ObjectTechnologicalEquipment> list = new ArrayList<>();
 
-        if (technoNames != null) {
-            for (int i = 0; i < technoNames.length; i++) {
-                if (technoNames[i] != null && !technoNames[i].trim().isEmpty()) {
-                    ObjectTechnologicalEquipment eq = new ObjectTechnologicalEquipment(
-                            0,
-                            objectId,
-                            0,
-                            technoNames[i],
-                            technoCharacteristics != null && technoCharacteristics.length > i ? technoCharacteristics[i] : null
-                    );
-                    objectTechnologicalEquipmentService.save(eq, objectId);
+        String[] index = req.getParameterValues("techno_object_index[]");
+        String[] ids = req.getParameterValues("techno_id[]");
+        if (index == null) return list;
+
+        for (int i = 0; i < index.length; i++) {
+            if (index[i] != null && Integer.parseInt(index[i]) == currentObjectIndex) {
+                ObjectTechnologicalEquipment equipment = new ObjectTechnologicalEquipment();
+
+                // Если ID есть, сетим его (Hibernate поймет, что это UPDATE)
+                if (ids != null && i < ids.length && ids[i] != null && !ids[i].isEmpty()) {
+                    equipment.setId(Integer.parseInt(ids[i]));
                 }
+
+                mapEquipment(req, i, equipment);
+                list.add(equipment);
             }
         }
-
-        // Тип объекта
-        String[] typeDefinitions = req.getParameterValues("object_type_definition[]");
-        if (typeDefinitions != null && typeDefinitions.length > index) {
-            ObjectType type = new ObjectType(0, objectId, typeDefinitions[index]);
-            objectTypeService.save(type, objectId);
-        }
-
-        // Страховка
-        String[] insuranceNumbers = req.getParameterValues("insurance_number[]");
-        String[] insuranceValidUntil = req.getParameterValues("insurance_valid_until[]");
-        if (insuranceNumbers != null && insuranceNumbers.length > index) {
-            ObjectInsurancePolicy policy = new ObjectInsurancePolicy(
-                    objectId,
-                    insuranceNumbers[index],
-                    insuranceValidUntil != null && insuranceValidUntil.length > index ? insuranceValidUntil[index] : null
-            );
-            objectInsurancePolicyService.save(policy, objectId);
-        }
-
-        // Приказ
-        String[] balanceNumbers = req.getParameterValues("balance_number[]");
-        String[] balanceDates = req.getParameterValues("balance_date[]");
-        if (balanceNumbers != null && balanceNumbers.length > index) {
-            ObjectOrderMinimumBalance balance = new ObjectOrderMinimumBalance(
-                    objectId,
-                    Integer.parseInt(balanceNumbers[index]),
-                    balanceDates != null && balanceDates.length > index ? balanceDates[index] : "1970-01-01"
-            );
-            objectOrderMinimumBalanceService.save(balance, objectId);
-        }
-
-        // Адрес объекта
-        String[] indices = req.getParameterValues("object_index[]");
-        String[] constituentEntities = req.getParameterValues("object_constituent_entity[]");
-        String[] areas = req.getParameterValues("object_area[]");
-        String[] cities = req.getParameterValues("object_city[]");
-        String[] streets = req.getParameterValues("object_street[]");
-        String[] houses = req.getParameterValues("object_house[]");
-        String[] coordinates = req.getParameterValues("object_coordinates[]");
-
-        if (indices != null && indices.length > index) {
-            int indexValue = 0;
-            if (indices[index] != null && !indices[index].isEmpty()) {
-                try {
-                    indexValue = Integer.parseInt(indices[index]);
-                } catch (NumberFormatException e) {
-                    indexValue = 0;
-                }
-            }
-
-            ObjectAddress addr = new ObjectAddress(
-                    objectId,
-                    indexValue,
-                    constituentEntities != null && constituentEntities.length > index ? constituentEntities[index] : null,
-                    areas != null && areas.length > index ? areas[index] : null,
-                    cities != null && cities.length > index ? cities[index] : null,
-                    streets != null && streets.length > index ? streets[index] : null,
-                    houses != null && houses.length > index ? houses[index] : null,
-                    coordinates != null && coordinates.length > index ? coordinates[index] : null,
-                    null // raw_address пока не используем
-            );
-            objectAddressService.save(addr, objectId);
-
-        }
+        System.out.println("KCHS COUNT = " + list.size());
+        return list;
     }
 }

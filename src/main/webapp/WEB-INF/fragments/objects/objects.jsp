@@ -2,6 +2,7 @@
 <%@ page import="com.caseo.web.model.AggregatedDocument" %>
 <%@ page import="com.caseo.domain.model.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Objects" %>
 
 <%
     AggregatedDocument data = (AggregatedDocument) request.getAttribute("data");
@@ -17,6 +18,28 @@
 %>
 <script>
     window.currentMode = '<%= mode %>';
+
+    // Передаем списки для выпадающих списков в JavaScript
+    window.presenceAreaList = [
+        <% if (cities != null) {
+            for (ReferenceCity city : cities) { %>
+        {id: <%= city.getId() %>, name: "<%= city.getCityName() %>"},
+        <% }} %>
+    ];
+
+    window.substanceOptionsList = [
+        <% if (substances != null) {
+            for (ObjectHazardousSubstance sub : substances) { %>
+        {id: <%= sub.getId() %>, name: "<%= sub.getName() %>"},
+        <% }} %>
+    ];
+
+    window.asfOptionsList = [
+        <% if (asfList != null) {
+            for (Asf asf : asfList) { %>
+        {id: <%= asf.getId() %>, name: "<%= asf.getShortName() %>"},
+        <% }} %>
+    ];
 </script>
 
 <div class="objects-section">
@@ -43,12 +66,16 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="object_full_name[]" value="<%= object.objectFullName() %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_full_name[]" value="<%= object.getObjectFullName() %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_short_name[]" value="<%= object.objectShortName() %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_short_name[]" value="<%= object.getObjectShortName() %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -62,28 +89,38 @@
                     </tr>
                     <tr>
                         <td>
-                            <select name="hazard_class[]" style="width:100%;" <%= disabled %>>
-                                <option value="1" <%= object.hazardClass() == 1 ? "selected" : "" %>>I класс</option>
-                                <option value="2" <%= object.hazardClass() == 2 ? "selected" : "" %>>II класс</option>
-                                <option value="3" <%= object.hazardClass() == 3 ? "selected" : "" %>>III класс</option>
-                                <option value="4" <%= object.hazardClass() == 4 ? "selected" : "" %>>IV класс</option>
-                            </select>
+                            <label>
+                                <select name="hazard_class[]" style="width:100%;" <%= disabled %>>
+                                    <option value="1" <%= object.getHazardClass() == 1 ? "selected" : "3" %>>I класс</option>
+                                    <option value="2" <%= object.getHazardClass() == 2 ? "selected" : "3" %>>II класс</option>
+                                    <option value="3" <%= object.getHazardClass() == 3 ? "selected" : "3" %>>III класс</option>
+                                    <option value="4" <%= object.getHazardClass() == 4 ? "selected" : "3" %>>IV класс</option>
+                                </select>
+                            </label>
                         </td>
                         <td>
-                            <select name="hazardous_substance_id[]" style="width:100%;" <%= disabled %>>
-                                <option value="">— выберите вещество —</option>
-                                <% if (substances != null) {
-                                    for (ObjectHazardousSubstance s : substances) { %>
-                                <option value="<%= s.id() %>" <%= object.hazardousSubstanceId() == s.id() ? "selected" : "" %>>
-                                    <%= s.name() %>
-                                </option>
-                                <% }} %>
-                            </select>
+                            <label>
+                                <select name="hazardous_substance_id[]" style="width:100%;" <%= disabled %>>
+                                    <option value="">— выберите вещество —</option>
+                                    <% if (substances != null) {
+                                        ObjectHazardousSubstance selectedSubstance = object.getHazardousSubstance(); // Получаем выбранное вещество
+                                        Integer selectedId = selectedSubstance != null ? selectedSubstance.getId() : null; // Берем ID или null
+                                        for (ObjectHazardousSubstance hazardousSubstance : substances) {
+                                            boolean isSelected = selectedId != null && Objects.equals(selectedId, hazardousSubstance.getId());
+                                    %>
+                                    <option value="<%= hazardousSubstance.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                        <%= hazardousSubstance.getName() %>
+                                    </option>
+                                    <% }} %>
+                                </select>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="amount_of_hazardous_substance[]"
-                                   value="<%= object.amountOfHazardousSubstance() %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="amount_of_hazardous_substance[]"
+                                       value="<%= object != null && object.getAmountOfHazardousSubstance() != null ? object.getAmountOfHazardousSubstance() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -96,36 +133,47 @@
                     </tr>
                     <tr>
                         <td>
-                            <select name="object_asf_id[]" class="asf-select" style="width:100%;" <%= disabled %>>
-                                <option value="">Выберите АСФ</option>
-                                <% if (asfList != null) {
-                                    for (Asf asf : asfList) { %>
-                                <option value="<%= asf.id() %>" <%= object.asfId() == asf.id() ? "selected" : "" %>>
-                                    <%= asf.shortName() %>
-                                </option>
-                                <% }} %>
-                                <option value="new_asf">Добавить новое АСФ</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="object_signer_id[]" class="signer-select"
-                                    style="width:100%;" <%= disabled %>>
-                                <option value="">Сначала выберите АСФ</option>
-                            </select>
-                            <input type="hidden" class="signer-id-hidden" value="<%= object.asf_signer_id() %>">
-                        </td>
-                        <td>
                             <div style="display: flex; gap: 5px; align-items: center;">
-                                <% if (!isView && object.asfId() > 0) { %>
+                                <label style="flex:1;">
+                                    <select name="object_asf_id[]" class="asf-select" style="width:100%;" <%= disabled %>>
+                                        <option value="">Выберите АСФ</option>
+                                        <% if (asfList != null) {
+                                            Asf selectedAsf = object.getAsf();
+                                            Integer selectedAsfId = selectedAsf != null ? selectedAsf.getId() : null;
+                                            for (Asf asf : asfList) {
+                                                boolean isSelected = selectedAsfId != null && Objects.equals(selectedAsfId, asf.getId());
+                                        %>
+                                        <option value="<%= asf.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                            <%= asf.getShortName() %>
+                                        </option>
+                                        <% }} %>
+                                        <option value="new_asf">Добавить новое АСФ</option>
+                                    </select>
+                                </label>
+                                <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
                                 <button type="button" class="edit-asf-btn"
-                                        onclick="openAsfModal(<%= object.asfId() %>, <%= i %>)"
-                                        style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                                        onclick="openAsfModal(<%= object.getAsf().getId() %>, this.closest('.object-item'))"
+                                        style="padding: 5px 10px; background-color: #e0e0e0; color: black; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap;">
                                     Редактировать
+                                </button>
+                                <% } else if (isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
+                                <button type="button" class="view-asf-btn"
+                                        onclick="viewAsf(<%= object.getAsf().getId() %>, this.closest('.object-item'))"
+                                        style="padding: 5px 10px; background-color: #e0e0e0; color: black; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap;">
+                                    Просмотр АСФ
                                 </button>
                                 <% } %>
                             </div>
                         </td>
-                    </tr>
+                        <td>
+                            <label>
+                                <select name="object_signer_id[]" class="signer-select"
+                                        style="width:100%;" <%= disabled %>>
+                                    <option value="">Сначала выберите АСФ</option>
+                                </select>
+                            </label>
+                            <input type="hidden" class="signer-id-hidden" value="<%= object != null && object.getAsfSignerId() != 0 ? object.getAsfSignerId() : 0 %>">
+                        </td>
                     </tr>
                 </table>
 
@@ -138,18 +186,24 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="nearest_fire_station[]" value="<%= object.nearestFireStation() %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="nearest_fire_station[]" value="<%= object != null && object.getNearestFireStation() != null ? object.getNearestFireStation() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="department_gochs[]" value="<%= object.departmentGoChsCity() %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="department_gochs[]" value="<%= object != null && object.getDepartmentGoChsCity() != null ? object.getDepartmentGoChsCity() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <select name="emergency_commission[]" <%= disabled %>>
-                                <option value="true" <%= object.emergencyCommission() ? "selected" : "" %>>Создана</option>
-                                <option value="false" <%= !object.emergencyCommission() ? "selected" : "" %>>Не создана</option>
-                            </select>
+                            <label>
+                                <select name="emergency_commission[]" <%= disabled %>>
+                                    <option value="true" <%= object.isEmergencyCommission() ? "selected" : "" %>>Создана</option>
+                                    <option value="false" <%= !object.isEmergencyCommission() ? "selected" : "" %>>Не создана</option>
+                                </select>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -164,24 +218,32 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="object_index[]"
-                                   value="<%= addr != null && addr.index() != null ? addr.index() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_index[]"
+                                       value="<%= addr != null && addr.addressIndex() != null ? addr.addressIndex() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_constituent_entity[]"
-                                   value="<%= addr != null ? addr.constituentEntity() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_constituent_entity[]"
+                                       value="<%= addr != null && addr.constituentEntity() != null ? addr.constituentEntity() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_area[]"
-                                   value="<%= addr != null ? addr.areaHierarchy() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_area[]"
+                                       value="<%= addr != null && addr.areaHierarchy() != null ? addr.areaHierarchy() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_city[]"
-                                   value="<%= addr != null ? addr.city() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_city[]"
+                                       value="<%= addr != null && addr.city() != null ? addr.city() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -190,35 +252,49 @@
                 <table class="objects-data-table" style="margin-bottom: 10px;">
                     <tr>
                         <th style="width:25%;">Улица</th>
-                        <th style="width:15%;">Дом</th>
-                        <th style="width:30%;">Координаты</th>
+                        <th style="width:25%;">Дом</th>
+                        <th style="width:25%;">Координаты</th>
                         <th style="width:30%;">Район расположения ОПО</th>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="object_street[]"
-                                   value="<%= addr != null ? addr.street() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_street[]"
+                                       value="<%= addr != null && addr.street() != null ? addr.street() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_house[]"
-                                   value="<%= addr != null ? addr.house() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <textarea name="object_house[]"
+                                    rows="1"
+                                    oninput="autoResize(this)"
+                                    style="width:100%; resize:none; overflow:hidden;"
+                                    <%= disabled %>><%= addr != null && addr.house() != null ? addr.house() : "" %></textarea>
+                            </label>
                         </td>
                         <td>
-                            <input type="text" name="object_coordinates[]"
-                                   value="<%= addr != null && addr.coordinates() != null ? addr.coordinates().replace("\"", "&quot;") : "" %>"                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="object_coordinates[]"
+                                       value="<%= addr != null && addr.getCoordinates() != null ? addr.getCoordinates().replace("\"", "&quot;") : "" %>"                                   style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <select name="object_city_id[]" style="width:100%;" <%= disabled %>>
-                                <option value="">— выберите —</option>
-                                <% if (cities != null) {
-                                    for (ReferenceCity city : cities) { %>
-                                <option value="<%= city.id() %>" <%= object.object_city_id() == city.id() ? "selected" : "" %>>
-                                    <%= city.cityName() %>
-                                </option>
-                                <% }} %>
-                            </select>
+                            <label>
+                                <select name="object_city_id[]" style="width:100%;" <%= disabled %>>
+                                    <option value="">— выберите —</option>
+                                    <% if (cities != null) {
+                                        ReferenceCity selectedCity = object.getCity();
+                                        Integer selectedCityId = selectedCity != null ? selectedCity.getId() : null;
+                                        for (ReferenceCity city : cities) {
+                                            boolean isSelected = selectedCityId != null && Objects.equals(selectedCityId, city.getId());
+                                    %>
+                                    <option value="<%= city.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                        <%= city.getCityName() %>
+                                    </option>
+                                    <% }} %>
+                                </select>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -233,24 +309,32 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="insurance_number[]"
-                                   value="<%= data.policyList().get(i) != null ? data.policyList().get(i).number() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="text" name="insurance_number[]"
+                                       value="<%= data.policyList().get(i) != null ? data.policyList().get(i).getNumber() : "" %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="date" name="insurance_valid_until[]"
-                                   value="<%= data.policyList().get(i) != null ? data.policyList().get(i).validUntil() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="date" name="insurance_valid_until[]"
+                                       value="<%= data.policyList().get(i) != null ? data.policyList().get(i).getValidUntil() : null %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="number" name="balance_number[]"
-                                   value="<%= data.balanceList().get(i) != null ? data.balanceList().get(i).number() : 0 %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="number" name="balance_number[]"
+                                       value="<%= data.balanceList().get(i) != null ? data.balanceList().get(i).getNumber() : 0 %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                         <td>
-                            <input type="date" name="balance_date[]"
-                                   value="<%= data.balanceList().get(i) != null ? data.balanceList().get(i).date() : "" %>"
-                                   style="width:100%;" <%= disabled %>>
+                            <label>
+                                <input type="date" name="balance_date[]"
+                                       value="<%= data.balanceList().get(i) != null ? data.balanceList().get(i).getDate() : null %>"
+                                       style="width:100%;" <%= disabled %>>
+                            </label>
                         </td>
                     </tr>
                 </table>
@@ -274,17 +358,35 @@
                                 <% } %>
                             </tr>
                             </thead>
-                            <tbody class="kchs-body">
+                            <tbody class="kchs-body" data-object-index="<%= i %>">
                             <%
                                 List<ObjectCompositionKchs> kchsList = data.kchsLists().get(i);
                                 if (kchsList != null && !kchsList.isEmpty()) {
                                     for (ObjectCompositionKchs kchs : kchsList) {
                             %>
                             <tr>
-                                <td><input type="text" name="kchs_position[]" value="<%= kchs.position() %>" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_name[]" value="<%= kchs.fullName() %>" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_phone[]" value="<%= kchs.cellPhone() %>" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_address[]" value="<%= kchs.homeAddress() %>" style="width:100%;" <%= disabled %>></td>
+                                <td>
+                                    <input type="hidden" name="kchs_id[]" value="<%= kchs.getId() %>">
+                                    <input type="hidden" name="kchs_object_index[]" value="<%= i %>">
+                                    <label>
+                                        <input type="text" name="kchs_position[]" value="<%= kchs.getPosition() %>" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_name[]" value="<%= kchs.getFullName() %>" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_phone[]" value="<%= kchs.getCellPhone() %>" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_address[]" value="<%= kchs.getHomeAddress() %>" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
                                 <% if (!isView) { %>
                                 <td class="delete-row" onclick="deleteRow(this)">✖</td>
                                 <% } %>
@@ -294,10 +396,27 @@
                             } else {
                             %>
                             <tr>
-                                <td><input type="text" name="kchs_position[]" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_name[]" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_phone[]" style="width:100%;" <%= disabled %>></td>
-                                <td><input type="text" name="kchs_address[]" style="width:100%;" <%= disabled %>></td>
+                                <td>
+                                    <input type="hidden" name="kchs_object_index[]" value="<%= i %>">
+                                    <label>
+                                        <input type="text" name="kchs_position[]" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_name[]" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_phone[]" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input type="text" name="kchs_address[]" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
                                 <% if (!isView) { %>
                                 <td class="delete-row" onclick="deleteRow(this)">✖</td>
                                 <% } %>
@@ -307,6 +426,11 @@
                             %>
                             </tbody>
                         </table>
+                        <% if (!isView) { %>
+                        <button type="button" class="add-row" onclick="addKchs(this)">
+                            Добавить члена КЧС
+                        </button>
+                        <% } %>
                     </div>
                 </div>
 
@@ -320,6 +444,7 @@
                         <table class="objects-data-table" style="margin-top: 10px;">
                             <thead>
                             <tr>
+                                <th style="width:60px;">№ п/п</th>
                                 <th>Наименование</th>
                                 <th>Характеристики</th>
                                 <% if (!isView) { %>
@@ -327,15 +452,30 @@
                                 <% } %>
                             </tr>
                             </thead>
-                            <tbody class="equipment-body">
+                            <tbody class="equipment-body" data-object-index="<%= i %>">
                             <%
                                 List<ObjectTechnologicalEquipment> equipmentList = data.equipmentLists().get(i);
                                 if (equipmentList != null && !equipmentList.isEmpty()) {
-                                    for (ObjectTechnologicalEquipment eq : equipmentList) {
+                                    for (ObjectTechnologicalEquipment equipment : equipmentList) {
                             %>
                             <tr>
-                                <td><input type="text" name="techno_name[]" value="<%= eq.name() %>" style="width:100%;" <%= disabled %>></td>
-                                <td><textarea name="techno_characteristics[]" rows="2" style="width:100%;" <%= disabled %>><%= eq.characteristics() %></textarea></td>
+                                <td>
+                                    <input type="number" name="techno_number[]" value="<%= equipment.getNum() %>" style="width:60px;" <%= disabled %>>
+                                </td>
+                                <td>
+                                    <input type="hidden" name="techno_id[]" value="<%= equipment.getId() %>">
+                                    <input type="hidden" name="techno_object_index[]" value="<%= i %>">
+                                    <label>
+                                        <input type="text" name="techno_name[]" value="<%= equipment.getName() %>" style="width:100%;" <%= disabled %>>
+                                    </label>
+                                </td>
+                                <td>
+                                        <textarea name="techno_characteristics[]"
+                                                  rows="2"
+                                                  oninput="autoResize(this)"
+                                                  style="width:100%; resize:none; overflow:hidden;"
+                                                <%= disabled %>><%= equipment.getCharacteristics() %></textarea>
+                                </td>
                                 <% if (!isView) { %>
                                 <td class="delete-row" onclick="deleteRow(this)">✖</td>
                                 <% } %>
@@ -345,7 +485,7 @@
                             } else {
                             %>
                             <tr>
-                                <td colspan="2" style="text-align:center; color:#888;">Нет данных по оборудованию</td>
+                                <td colspan="3" style="text-align:center; color:#888;">Нет данных по оборудованию</td>
                             </tr>
                             <%
                                 }
@@ -391,8 +531,32 @@
         </div>
         <div class="modal-body" id="asfModalContent" style="padding: 20px;"></div>
         <div class="modal-footer" style="padding: 15px 20px; border-top: 1px solid #ddd; text-align: right;">
-            <button type="button" onclick="saveAsfModal()" class="btn-primary" style="padding: 8px 20px;">Сохранить</button>
-            <button type="button" onclick="closeAsfModal()" class="btn-secondary" style="padding: 8px 20px; margin-left: 10px;">Отмена</button>
+            <button type="button" id="saveAsfButton" onclick="saveAsfModal()" class="btn-primary" style="padding: 8px 20px;">Сохранить</button>
+            <button type="button" onclick="closeAsfModal()" class="btn-secondary" style="padding: 8px 20px; margin-left: 10px;">Закрыть</button>
         </div>
     </div>
 </div>
+
+<script>
+    // Добавим обработчик для скрытия кнопки сохранения в режиме просмотра
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('asfModal');
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'style' && modal.style.display === 'block') {
+                    const isViewMode = modal.getAttribute('data-view-mode') === 'true';
+                    const saveButton = document.getElementById('saveAsfButton');
+                    if (saveButton) {
+                        if (isViewMode) {
+                            saveButton.style.display = 'none';
+                        } else {
+                            saveButton.style.display = 'inline-block';
+                        }
+                    }
+                }
+            });
+        });
+
+        observer.observe(modal, { attributes: true });
+    });
+</script>

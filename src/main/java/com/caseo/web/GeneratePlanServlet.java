@@ -1,11 +1,13 @@
 package com.caseo.web;
 
 import com.caseo.app.ApplicationContext;
+import com.caseo.app.InternalServices;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
+import com.caseo.domain.service.ChildService;
+import com.caseo.domain.service.ParentService;
 import com.caseo.domain.util.DocumentPathSet;
 import com.caseo.word.strategy.FillStrategy;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +27,7 @@ public class GeneratePlanServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws IOException {
 
         // 1. Устанавливаем временную папку СРАЗУ в начале
         String catalinaBase = System.getProperty("catalina.base");
@@ -58,8 +60,11 @@ public class GeneratePlanServlet extends HttpServlet {
             ApplicationContext context = (ApplicationContext) getServletContext()
                     .getAttribute("appContext");
 
+            InternalServices services = context.internalServices();
+
             // Загружаем организацию
-            Organization org = context.organizationService().getById(orgId);
+            ParentService<Organization> organizationService = services.getParentService(Organization.class);
+            Organization org = organizationService.getOneById(orgId);
 
             if (org == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Organization not found");
@@ -67,7 +72,8 @@ public class GeneratePlanServlet extends HttpServlet {
             }
 
             // Загружаем объекты организации
-            List<ObjectModel> objects = context.objectService().getAllByOrgId(orgId);
+            ChildService<ObjectModel> objectService = services.getChildService(ObjectModel.class);
+            List<ObjectModel> objects = objectService.getManyByParentId(orgId);
 
             if (objects == null || objects.isEmpty()) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No objects found for this organization");
@@ -89,7 +95,7 @@ public class GeneratePlanServlet extends HttpServlet {
                 WordprocessingMLPackage document = context.wordGenerationService().generate(
                         FillStrategy.TAG,
                         template,
-                        object.id()  // только objectId!
+                        object.getId()  // только objectId!
                 );
 
                 Path outputPath = DocumentPathSet.buildOutputFile(org, object);

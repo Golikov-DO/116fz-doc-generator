@@ -1,72 +1,49 @@
 package com.caseo.web.helper;
 
 import com.caseo.domain.model.*;
-import com.caseo.domain.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
+import static com.caseo.web.util.RequestUtils.*;
+
 public class OrganizationSaveHelper {
-
-    private final OrganizationAddressService organizationAddressService;
-    private final OrganizationSignerService organizationSignerService;
-    private final OrganizationContactService organizationContactService;
-
-    public OrganizationSaveHelper(
-            OrganizationAddressService organizationAddressService,
-            OrganizationSignerService organizationSignerService,
-            OrganizationContactService organizationContactService) {
-        this.organizationAddressService = organizationAddressService;
-        this.organizationSignerService = organizationSignerService;
-        this.organizationContactService = organizationContactService;
+    public void mapOrganization(HttpServletRequest req, Organization org) {
+        org.setOrganizationName(param(req, "organization_full_name"));
+        org.setOrganizationShortName(param(req, "organization_short_name"));
+        org.setOrganizationTypeActivity(param(req,"organization_type_activity"));
+        org.setOneTerritory(paramBool(req, "opo_single_territory"));
     }
 
-    public void saveRelatedEntities(HttpServletRequest req, int orgId) throws Exception {
-        // Сохраняем адрес
-        String index = req.getParameter("org_index");
-        String constituentEntity = req.getParameter("org_constituent_entity");
-        String city = req.getParameter("org_city");
-        String street = req.getParameter("org_street");
-        String house = req.getParameter("org_house");
+    public void mapAddress(HttpServletRequest req, OrganizationAddress address) {
+        address.setAddressIndex(paramInt(req, "org_index"));
+        address.setConstituentEntity(param(req, "org_constituent_entity"));
+        address.setCity(param(req, "org_city"));
+        address.setStreet(param(req, "org_street"));
+        address.setHouse(param(req, "org_house"));
+    }
 
-        OrganizationAddress addr = new OrganizationAddress(
-                orgId,
-                index != null && !index.isEmpty() ? Integer.parseInt(index) : 0,
-                constituentEntity,
-                null,
-                city,
-                street,
-                house,
-                null
-        );
-        organizationAddressService.save(addr, orgId);
+    public void mapSigner(HttpServletRequest req, OrganizationSigner signer) {
+        signer.setName(param(req, "signer_name"));
+        signer.setPosition(param(req, "signer_position"));
+    }
 
-        // Сохраняем подписанта
-        OrganizationSigner signer = new OrganizationSigner(
-                0,
-                orgId,
-                req.getParameter("signer_name"),
-                req.getParameter("signer_position")
-        );
-        organizationSignerService.save(signer, orgId);
+    public void mapContacts(HttpServletRequest req, List<OrganizationContact> contacts) {
+        String[] names = req.getParameterValues("org_contact_name[]");
+        if (names == null) return;
 
-        // Сохраняем контакты
-        String[] contactNames = req.getParameterValues("org_contact_name[]");
-        String[] contactPositions = req.getParameterValues("org_contact_position[]");
-        String[] contactPhones = req.getParameterValues("org_contact_phone[]");
-        String[] contactAddresses = req.getParameterValues("org_contact_address[]");
+        for (int i = 0; i < names.length; i++) {
 
-        if (contactNames != null) {
-            for (int i = 0; i < contactNames.length; i++) {
-                if (contactNames[i] != null && !contactNames[i].trim().isEmpty()) {
-                    OrganizationContact contact = new OrganizationContact(
-                            orgId,
-                            contactNames[i],
-                            contactPositions != null && contactPositions.length > i ? contactPositions[i] : null,
-                            contactPhones != null && contactPhones.length > i ? contactPhones[i] : null,
-                            contactAddresses != null && contactAddresses.length > i ? contactAddresses[i] : null
-                    );
-                    organizationContactService.save(contact, orgId);
-                }
-            }
+            String name = param(req, "org_contact_name[]", i);
+            if (name == null || name.isBlank()) continue;
+
+            OrganizationContact contact = new OrganizationContact();
+            contact.setFullName(name);
+            contact.setPosition(param(req, "org_contact_position[]", i));
+            contact.setPhones(param(req, "org_contact_phone[]", i));
+            contact.setAddress(param(req, "org_contact_address[]", i));
+
+            contacts.add(contact);
         }
     }
 }
