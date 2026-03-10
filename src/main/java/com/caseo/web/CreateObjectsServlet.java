@@ -5,6 +5,7 @@ import com.caseo.app.InternalServices;
 import com.caseo.domain.model.*;
 import com.caseo.domain.service.*;
 import com.caseo.web.helper.ObjectSaveHelper;
+import com.caseo.web.util.SyncListUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -65,11 +66,7 @@ public class CreateObjectsServlet extends HttpServlet {
             throws ServletException {
 
         try {
-            req.getParameterMap().forEach((k,v) ->
-                    System.out.println(k + " = " + java.util.Arrays.toString(v))
-            );
             String orgIdParam = req.getParameter("orgId");
-            String mode = req.getParameter("mode");
 
             Integer orgId = orgIdParam != null && !orgIdParam.isEmpty() ? Integer.parseInt(orgIdParam) : null;
 
@@ -116,26 +113,19 @@ public class CreateObjectsServlet extends HttpServlet {
 
                 // Адрес
                 ObjectAddress address = addressService.getOneByParentId(object.getId());
-                if (address == null) {
-                    address = new ObjectAddress();
-                }
+                if (address == null) address = new ObjectAddress();
                 saveHelper.mapAddress(req, i, address);
                 address.setObject(object);
                 addressService.save(address);
 
                 // КЧС
                 List<ObjectCompositionKchs> kchsList = saveHelper.mapKchsList(req, i);
-
                 if (object.getId() != null) {
                     List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(object.getId());
-                    for (ObjectCompositionKchs oldItem : oldDbList) {
-                        boolean stillExists = kchsList.stream()
-                                .anyMatch(n -> n.getId() != null && n.getId().equals(oldItem.getId()));
-
-                        if (!stillExists) {
-                            kchsService.deleteById(oldItem.getId());
-                        }
-                    }
+                    SyncListUtils.syncList( kchsList, oldDbList,
+                            ObjectCompositionKchs::getId,
+                            kchsService::deleteById
+                    );
                 }
 
                 for (ObjectCompositionKchs kchs : kchsList) {
@@ -145,17 +135,12 @@ public class CreateObjectsServlet extends HttpServlet {
 
                 // Оборудование
                 List<ObjectTechnologicalEquipment> equipmentList = saveHelper.mapEquipmentList(req, i);
-
                 if (object.getId() != null) {
                     List<ObjectTechnologicalEquipment> oldDbList = equipmentService.getManyByParentId(object.getId());
-                    for (ObjectTechnologicalEquipment oldItem : oldDbList) {
-                        boolean stillExists = equipmentList.stream()
-                                .anyMatch(n -> n.getId() != null && n.getId().equals(oldItem.getId()));
-
-                        if (!stillExists) {
-                            equipmentService.deleteById(oldItem.getId());
-                        }
-                    }
+                    SyncListUtils.syncList(equipmentList, oldDbList,
+                            ObjectTechnologicalEquipment::getId,
+                            equipmentService::deleteById
+                    );
                 }
 
                 for (ObjectTechnologicalEquipment equipment : equipmentList) {
@@ -165,35 +150,26 @@ public class CreateObjectsServlet extends HttpServlet {
 
                 // Тип объекта
                 ObjectType objectType = typeService.getOneByParentId(object.getId());
-                if (objectType == null) {
-                    objectType = new ObjectType();
-                }
+                if (objectType == null) objectType = new ObjectType();
                 saveHelper.mapObjectType(req, i, objectType);
                 objectType.setObject(object);
                 typeService.save(objectType);
 
                 // Страховка
                 ObjectInsurancePolicy policy = policyService.getOneByParentId(object.getId());
-                if (policy == null) {
-                    policy = new ObjectInsurancePolicy();
-                }
+                if (policy == null) policy = new ObjectInsurancePolicy();
                 saveHelper.mapInsurancePolicy(req, i, policy);
                 policy.setObject(object);
                 policyService.save(policy);
 
                 // Приказ
                 ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(object.getId());
-                if (balance == null) {
-                    balance = new ObjectOrderMinimumBalance();
-                }
+                if (balance == null) balance = new ObjectOrderMinimumBalance();
                 saveHelper.mapOrderMinimumBalance(req, i, balance);
                 balance.setObject(object);
                 balanceService.save(balance);
-
             }
-
-            resp.sendRedirect("portal?mode=" + mode + "&orgId=" + orgId + "&tab=objects");
-
+            resp.sendRedirect("objects?mode=view&orgId=" + orgId);
         } catch (Exception e) {
             getServletContext().log("Ошибка при сохранении объектов", e);
             throw new ServletException("Ошибка при сохранении объектов", e);

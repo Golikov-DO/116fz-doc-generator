@@ -3,6 +3,7 @@ function addOrgContact(button) {
   const tbody = button.closest('.collapse-content').querySelector('.org-contacts-body');
   const newRow = document.createElement('tr');
   newRow.innerHTML = `
+        <input type="hidden" name="contact_id[]" value="">
         <td><input type="text" name="org_contact_name[]" placeholder="ФИО" style="width: 100%;"></td>
         <td><input type="text" name="org_contact_position[]" placeholder="Должность" style="width: 100%;"></td>
         <td><input type="text" name="org_contact_phone[]" placeholder="Телефон" style="width: 100%;"></td>

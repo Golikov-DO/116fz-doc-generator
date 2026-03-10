@@ -73,7 +73,7 @@ public class TextPlaceholderService {
         var types = asfWorkTypeService.getManyByParentId(asf.getId());
 
         map.put("ASF_AREA_RESPONSIBILITY", funds.getResponsibilityArea());
-        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(asf.getArrivalTime()));
+        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(String.valueOf(asf.getArrivalTime())));
         map.put("ASF_AVAILABLE_SPECIALISTS", AsfSpecialistsTextBuilder.build(specialists));
         map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
         map.put("ASF_CERTIFIED_RESCUERS", AsfPersonnelTextBuilder.build(personnel));

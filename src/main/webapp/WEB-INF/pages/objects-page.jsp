@@ -16,12 +16,15 @@
         badgeText = "Новая запись";
     }
 %>
+
+
 <html>
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/objects.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asf.css">
 </head>
 <body>
 <div class="container">
@@ -46,7 +49,9 @@
             <% } else { %>
             <a href="?mode=edit&orgId=<%= orgId %>" class="btn-primary">Редактировать</a>
             <% } %>
-            <a href="main" class="btn-primary">↩ Вернуться</a>
+            <button type="button" onclick="goBack()" class="btn-secondary">
+                Отменить
+            </button>
         </div>
     </form>
 </div>

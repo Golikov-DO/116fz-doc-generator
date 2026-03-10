@@ -1,9 +1,9 @@
 package com.caseo.web.helper;
 
 import com.caseo.domain.model.*;
+import com.caseo.web.util.MapListUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.caseo.web.util.RequestUtils.*;
@@ -31,9 +31,11 @@ public class ObjectSaveHelper {
     }
 
     public void mapKchs(HttpServletRequest req, int index, ObjectCompositionKchs kchs) {
+        kchs.setNumber(paramInt(req, "kchs_number[]", index));
         kchs.setPosition(param(req, "kchs_position[]", index));
         kchs.setFullName(param(req, "kchs_name[]", index));
         kchs.setCellPhone(param(req, "kchs_phone[]", index));
+        kchs.setWorkPhone(param(req, "kchs_work_phone[]", index));
         kchs.setHomeAddress(param(req, "kchs_address[]", index));
     }
 
@@ -57,52 +59,25 @@ public class ObjectSaveHelper {
         balance.setDate(paramDate(req, "balance_date[]", index));
     }
 
-    public List<ObjectCompositionKchs> mapKchsList(HttpServletRequest req, int currentObjectIndex) {
-
-        List<ObjectCompositionKchs> list = new ArrayList<>();
-
-        String[] index = req.getParameterValues("kchs_object_index[]");
-        String[] ids = req.getParameterValues("kchs_id[]");
-        if (index == null) return list;
-
-        for (int i = 0; i < index.length; i++) {
-            if (index[i] != null && Integer.parseInt(index[i]) == currentObjectIndex) {
-                ObjectCompositionKchs kchs = new ObjectCompositionKchs();
-
-                // Если ID есть, сетим его (Hibernate поймет, что это UPDATE)
-                if (ids != null && i < ids.length && ids[i] != null && !ids[i].isEmpty()) {
-                    kchs.setId(Integer.parseInt(ids[i]));
-                }
-
-                mapKchs(req, i, kchs);
-                list.add(kchs);
-            }
-        }
-        System.out.println("KCHS COUNT = " + list.size());
-        return list;
+    public List<ObjectCompositionKchs> mapKchsList(HttpServletRequest req, int objectIndex) {
+        return MapListUtils.mapList(
+                req,
+                objectIndex,
+                "kchs_object_index[]",
+                "kchs_id[]",
+                ObjectCompositionKchs::new,
+                (ctx, kchs) -> mapKchs(ctx.req, ctx.index, kchs)
+        );
     }
 
-    public List<ObjectTechnologicalEquipment> mapEquipmentList(HttpServletRequest req, int currentObjectIndex) {
-        List<ObjectTechnologicalEquipment> list = new ArrayList<>();
-
-        String[] index = req.getParameterValues("techno_object_index[]");
-        String[] ids = req.getParameterValues("techno_id[]");
-        if (index == null) return list;
-
-        for (int i = 0; i < index.length; i++) {
-            if (index[i] != null && Integer.parseInt(index[i]) == currentObjectIndex) {
-                ObjectTechnologicalEquipment equipment = new ObjectTechnologicalEquipment();
-
-                // Если ID есть, сетим его (Hibernate поймет, что это UPDATE)
-                if (ids != null && i < ids.length && ids[i] != null && !ids[i].isEmpty()) {
-                    equipment.setId(Integer.parseInt(ids[i]));
-                }
-
-                mapEquipment(req, i, equipment);
-                list.add(equipment);
-            }
-        }
-        System.out.println("KCHS COUNT = " + list.size());
-        return list;
+    public List<ObjectTechnologicalEquipment> mapEquipmentList(HttpServletRequest req, int objectIndex) {
+        return MapListUtils.mapList(
+                req,
+                objectIndex,
+                "techno_object_index[]",
+                "techno_id[]",
+                ObjectTechnologicalEquipment::new,
+                (ctx, eq) -> mapEquipment(ctx.req, ctx.index, eq)
+        );
     }
 }

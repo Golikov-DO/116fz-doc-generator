@@ -83,7 +83,7 @@
                             <option value="">Час</option>
                             <% for (int h = 0; h <= 24; h++) {
                                 String hour = String.format("%02d", h);
-                                String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().startsWith(hour) ? "selected" : "";
+                                String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().getHour() == h ? "selected" : "";
                             %>
                             <option value="<%= hour %>" <%= selected %>><%= h %></option>
                             <% } %>
@@ -95,7 +95,7 @@
                             <option value="">Мин</option>
                             <% for (int m = 0; m < 60; m += 5) {
                                 String minute = String.format("%02d", m);
-                                String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().contains(":" + minute) ? "selected" : "";
+                                String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().getMinute() == m ? "selected" : "";
                             %>
                             <option value="<%= minute %>" <%= selected %>><%= minute %></option>
                             <% } %>
@@ -356,16 +356,17 @@
                     for (AsfSigner signer : signersList) {
                 %>
                 <div class="asf-signer-item">
+                    <input type="hidden" name="signer_id[]" value="<%= signer.getId() %>">
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">ФИО подписанта</div>
                         <label>
-                            <input type="text" name="signer_name[]" value="<%= signer != null ? signer.getName() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="signer_name[]" value="<%= signer.getName() != null ? signer.getName() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Должность</div>
                         <label>
-                            <input type="text" name="signer_position[]" value="<%= signer != null ? signer.getPosition() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="signer_position[]" value="<%= signer.getPosition() != null ? signer.getPosition() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <% if (!isView) { %>
@@ -405,10 +406,11 @@
                     for (AsfWorkType workType : workTypesList) {
                 %>
                 <div class="asf-work-type-item">
+                    <input type="hidden" name="work_type_id[]" value="<%= workType != null ? workType.getId() : "" %>">
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Наименование типа работ</div>
                         <label>
-                            <input type="text" name="work_type_name[]" value="<%= workType != null ? workType.getName() : "" %>" style="width: 100%; padding: 5px;" placeholder="Например: Газоспасательные работы" <%= disabled %>>
+                            <input type="text" name="work_type_name[]" value="<%= workType != null && workType.getName() != null ? workType.getName() : "" %>" style="width: 100%; padding: 5px;" placeholder="Например: Газоспасательные работы" <%= disabled %>>
                         </label>
                     </div>
                     <% if (!isView) { %>
@@ -506,6 +508,8 @@
                                         int pos = i + 1;
                                 %>
                                 <div class="asf-image-item" style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
+                                    <input type="hidden" name="image_id[]" value="<%= img.getId() %>">
+                                    <input type="hidden" name="image_group[]" value="1">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                         <span style="font-size: 11px; color: #666;">Изображение <%= pos %></span>
                                         <% if (!isView) { %>
@@ -608,6 +612,8 @@
                                         int pos = i + 1;
                                 %>
                                 <div class="asf-image-item" style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
+                                    <input type="hidden" name="image_id[]" value="<%= img.getId() %>">
+                                    <input type="hidden" name="image_group[]" value="2">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                         <span style="font-size: 11px; color: #666;">Изображение <%= pos %></span>
                                         <% if (!isView) { %>

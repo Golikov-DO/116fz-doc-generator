@@ -30,6 +30,12 @@ public class OrganizationServlet extends HttpServlet {
 
         String mode = req.getParameter("mode");
         String orgId = req.getParameter("orgId");
+        if (orgId != null && !orgId.isEmpty()) {
+            req.getSession().setAttribute("orgId", orgId);
+        }
+        if ((orgId == null || orgId.isEmpty()) && req.getSession().getAttribute("orgId") != null) {
+            orgId = req.getSession().getAttribute("orgId").toString();
+        }
 
         req.setAttribute("mode", mode);
 
@@ -55,8 +61,8 @@ public class OrganizationServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/fragments/organization/organization.jsp")
                     .forward(req, resp);
         } else {
-            req.getRequestDispatcher("/WEB-INF/pages/organization-page.jsp")
-                    .forward(req, resp);
+            req.setAttribute("contentPage", "/WEB-INF/pages/organization-page.jsp");
+            req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
         }
     }
 }

@@ -36,7 +36,7 @@
         <span>Режим <%= "view".equals(mode) ? "просмотра" : "редактирования" %></span>
     </div>
 
-    <form action="saveNewAsf" method="post" enctype="multipart/form-data" id="asfForm">
+    <form action="createAsf" method="post" enctype="multipart/form-data" id="asfForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="asfId" value="<%= asfId != null ? asfId : "" %>">
         <input type="hidden" name="returnMode" value="<%= mode %>">

@@ -79,12 +79,14 @@
     justify-content: space-between;
 }
 
-.object-collapse-content {
+.object-collapse-content,
+.asf-collapse-content {
     padding: 10px;
     display: none;
 }
 
-.object-collapse-content.expanded {
+.object-collapse-content.expanded,
+.asf-collapse-content.expanded {
     display: block;
 }
 

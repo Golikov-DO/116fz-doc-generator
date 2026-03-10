@@ -49,7 +49,9 @@
             <% } else { %>
             <a href="?mode=edit&orgId=<%= orgId %>" class="btn-primary"><%= buttonText %></a>
             <% } %>
-            <a href="main" class="btn-primary">↩Вернуться</a>
+            <button type="button" onclick="goBack()" class="btn-secondary">
+                Отменить
+            </button>
         </div>
     </form>
 </div>

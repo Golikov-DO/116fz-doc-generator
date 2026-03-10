@@ -12,6 +12,7 @@ function addSigner() {
     const newItem = document.createElement('div');
     newItem.className = 'asf-signer-item';
     newItem.innerHTML = `
+    <input type="hidden" name="signer_id[]" value="">
         <div>
             <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">ФИО подписанта</div>
             <input type="text" name="signer_name[]" style="width: 100%; padding: 5px;">
@@ -49,6 +50,8 @@ function addWorkType() {
     const newItem = document.createElement('div');
     newItem.className = 'asf-work-type-item';
     newItem.innerHTML = `
+    <input type="hidden" name="work_type_index[]" value="0">
+    <input type="hidden" name="work_type_id[]" value="">
         <div>
             <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Наименование типа работ</div>
             <input type="text" name="work_type_name[]" style="width: 100%; padding: 5px;" placeholder="Например: Газоспасательные работы">
@@ -205,6 +208,9 @@ function addImageField(group) {
     const div = document.createElement('div');
     div.className = 'asf-image-item';
     div.innerHTML = `
+    <input type="hidden" name="image_index[]" value="0">
+    <input type="hidden" name="image_id[]" value="">
+    <input type="hidden" name="image_group[]" value="${group}">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11px; color: #666;">Изображение ${counter} (1047x1480px)</span>
             <span class="delete-row" onclick="removeImageField(this, '${group}', ${position})" style="color: #f44336; cursor: pointer;">✖</span>
@@ -242,7 +248,7 @@ function removeImageDiv(element) {
 }
 
 // Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
+function initAsfForm()  {
     // Валидация формы
     const form = document.getElementById('asfForm');
     if (form) {
@@ -256,4 +262,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
+}

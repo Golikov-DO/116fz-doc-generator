@@ -2,6 +2,8 @@ package com.caseo.domain.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "asf_certificate")
 public class AsfCertificate {
@@ -18,10 +20,8 @@ public class AsfCertificate {
     private String certSeries;
     private String issuedBy;
     private String issueBasis;
-    @Column(columnDefinition = "date")
-    private String issueDate;
-    @Column(columnDefinition = "date")
-    private String validUntil;
+    private LocalDate issueDate;
+    private LocalDate validUntil;
 
     public AsfCertificate() {
     }
@@ -74,19 +74,19 @@ public class AsfCertificate {
         this.issueBasis = issueBasis;
     }
 
-    public String getIssueDate() {
+    public LocalDate getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(String issueDate) {
+    public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
     }
 
-    public String getValidUntil() {
+    public LocalDate getValidUntil() {
         return validUntil;
     }
 
-    public void setValidUntil(String validUntil) {
+    public void setValidUntil(LocalDate validUntil) {
         this.validUntil = validUntil;
     }
 }

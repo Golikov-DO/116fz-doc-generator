@@ -2,6 +2,8 @@ package com.caseo.domain.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "asf")
 public class Asf {
@@ -15,8 +17,7 @@ public class Asf {
     private String shortName;
     private String email;
     private String statusShort;
-    @Column(columnDefinition = "time")
-    private String arrivalTime;
+    private LocalTime arrivalTime;
 
     public Asf() {}
 
@@ -69,11 +70,11 @@ public class Asf {
     }
 
     @Column(columnDefinition = "time")
-    public String getArrivalTime() {
+    public LocalTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 }

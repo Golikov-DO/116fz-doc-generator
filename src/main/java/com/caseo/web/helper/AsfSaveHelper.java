@@ -1,158 +1,135 @@
 package com.caseo.web.helper;
 
 import com.caseo.domain.model.*;
-import com.caseo.domain.service.*;
+import com.caseo.web.util.MapListUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
+import java.util.List;
+
+import static com.caseo.web.util.RequestUtils.*;
+
 public class AsfSaveHelper {
 
-    public Asf createAsf(HttpServletRequest req) {
-        Asf asf = new Asf();
-        asf.setFullName(req.getParameter("full_name"));
-        asf.setFullNameGen(req.getParameter("full_name_gen"));
-        asf.setShortName(req.getParameter("short_name"));
-        asf.setEmail(req.getParameter("email"));
-        asf.setStatusShort(req.getParameter("status_short"));
+    // ---------------- ASF ----------------
+    public void mapAsf(HttpServletRequest req, Asf asf) {
 
-        // Обработка времени прибытия
-        String hours = req.getParameter("arrival_hours");
-        String minutes = req.getParameter("arrival_minutes");
+        asf.setFullName(param(req, "full_name"));
+        asf.setFullNameGen(param(req, "full_name_gen"));
+        asf.setShortName(param(req, "short_name"));
+        asf.setEmail(param(req, "email"));
+        asf.setStatusShort(param(req, "status_short"));
+
+        String hours = param(req, "arrival_hours");
+        String minutes = param(req, "arrival_minutes");
         if (hours != null && !hours.isEmpty()) {
-            String arrivalTime = minutes != null && !minutes.isEmpty()
-                    ? String.format("%s:%s:00", hours, minutes)
-                    : String.format("%s:00:00", hours);
-            asf.setArrivalTime(arrivalTime);
-        }
-        return asf;
-    }
 
-    public void addCertificate(HttpServletRequest req, Asf asf) {
-        String certNumber = req.getParameter("cert_number");
-        if (certNumber != null && !certNumber.isEmpty()) {
-            AsfCertificate cert = new AsfCertificate();
-            cert.setCertNumber(certNumber);
-            cert.setCertSeries(req.getParameter("cert_series"));
-            cert.setIssuedBy(req.getParameter("issued_by"));
-            cert.setIssueBasis(req.getParameter("issue_basis"));
-            cert.setIssueDate(req.getParameter("issue_date"));
-            cert.setValidUntil(req.getParameter("valid_until"));
-            cert.setAsf(asf);
+            int h = Integer.parseInt(hours);
+            int m = (minutes != null && !minutes.isEmpty()) ? Integer.parseInt(minutes) : 0;
+
+            asf.setArrivalTime(java.time.LocalTime.of(h, m));
         }
     }
 
-    public void addPersonnel(HttpServletRequest req, Asf asf) {
-        String staffByStaffing = req.getParameter("staff_by_staffing");
-        if (staffByStaffing != null && !staffByStaffing.isEmpty()) {
-            AsfPersonnel personnel = new AsfPersonnel();
-            personnel.setStaffByStaffing(Integer.parseInt(staffByStaffing));
-            personnel.setStaffByList(Integer.parseInt(req.getParameter("staff_by_list")));
-            personnel.setCertifiedTotal(Integer.parseInt(req.getParameter("certified_total")));
-            personnel.setQualifiedTotal(Integer.parseInt(req.getParameter("qualified_total")));
-            personnel.setThirdClass(Integer.parseInt(req.getParameter("third_class")));
-            personnel.setSecondClass(Integer.parseInt(req.getParameter("second_class")));
-            personnel.setFirstClass(Integer.parseInt(req.getParameter("first_class")));
-            personnel.setInternationalClass(Integer.parseInt(req.getParameter("international_class")));
-            personnel.setAsf(asf);
-        }
+    // ---------------- CERTIFICATE ----------------
+    public void mapCertificate(HttpServletRequest req, AsfCertificate cert) {
+        cert.setCertNumber(param(req, "cert_number"));
+        cert.setCertSeries(param(req, "cert_series"));
+        cert.setIssuedBy(param(req, "issued_by"));
+        cert.setIssueBasis(param(req, "issue_basis"));
+        cert.setIssueDate(paramDate(req, "issue_date"));
+        cert.setValidUntil(paramDate(req, "valid_until"));
     }
 
-    public void addSpecialists(HttpServletRequest req, Asf asf) {
-        String totalCount = req.getParameter("specialists_total");
-        if (totalCount != null && !totalCount.isEmpty()) {
-            AsfSpecialists specialists = new AsfSpecialists();
-            specialists.setTotalCount(Integer.parseInt(totalCount));
-            specialists.setAsrTp(Integer.parseInt(req.getParameter("asr_tp")));
-            specialists.setAsrLrnTer(Integer.parseInt(req.getParameter("asr_lrn_ter")));
-            specialists.setGzsr(Integer.parseInt(req.getParameter("gzsr")));
-            specialists.setPsr(Integer.parseInt(req.getParameter("psr")));
-            specialists.setDriver(Integer.parseInt(req.getParameter("driver")));
-            specialists.setAsrLrnSea(Integer.parseInt(req.getParameter("asr_lrn_sea")));
-            specialists.setAsf(asf);
-        }
+    // ---------------- PERSONNEL ----------------
+    public void mapPersonnel(HttpServletRequest req, AsfPersonnel personnel) {
+        personnel.setStaffByStaffing(paramInt(req, "staff_by_staffing"));
+        personnel.setStaffByList(paramInt(req, "staff_by_list"));
+        personnel.setCertifiedTotal(paramInt(req, "certified_total"));
+        personnel.setQualifiedTotal(paramInt(req, "qualified_total"));
+        personnel.setThirdClass(paramInt(req, "third_class"));
+        personnel.setSecondClass(paramInt(req, "second_class"));
+        personnel.setFirstClass(paramInt(req, "first_class"));
+        personnel.setInternationalClass(paramInt(req, "international_class"));
     }
 
-    public void addDeployment(HttpServletRequest req, Asf asf) {
-        String responsibilityArea = req.getParameter("responsibility_area[]");
-        if (responsibilityArea != null && !responsibilityArea.isEmpty()) {
-            AsfCompositionDeploymentFunds deployment = new AsfCompositionDeploymentFunds();
-            deployment.setResponsibilityArea(responsibilityArea);
-            deployment.setDeploymentPlace(req.getParameter("deployment_place[]"));
-            deployment.setDutyOfficerTelephone(req.getParameter("duty_officer_phone[]"));
-            deployment.setContactTelephone(req.getParameter("contact_phone[]"));
-            deployment.setEMail(req.getParameter("deployment_email[]"));
-            deployment.setNumberBuildings(req.getParameter("number_buildings[]"));
-            deployment.setTotalArea(req.getParameter("total_area[]"));
-            deployment.setAsf(asf);
-        }
+    // ---------------- SPECIALISTS ----------------
+    public void mapSpecialists(HttpServletRequest req, AsfSpecialists specialists) {
+        specialists.setTotalCount(paramInt(req, "specialists_total"));
+        specialists.setAsrTp(paramInt(req, "asr_tp"));
+        specialists.setAsrLrnTer(paramInt(req, "asr_lrn_ter"));
+        specialists.setGzsr(paramInt(req, "gzsr"));
+        specialists.setPsr(paramInt(req, "psr"));
+        specialists.setDriver(paramInt(req, "driver"));
+        specialists.setAsrLrnSea(paramInt(req, "asr_lrn_sea"));
     }
 
-    public void addSigners(HttpServletRequest req, Asf asf) {
-        String[] signerNames = req.getParameterValues("signer_name[]");
-        String[] signerPositions = req.getParameterValues("signer_position[]");
+    // ---------------- DEPLOYMENT ----------------
+    public void mapDeployment(HttpServletRequest req, AsfCompositionDeploymentFunds deployment) {
+        deployment.setResponsibilityArea(param(req, "responsibility_area"));
+        deployment.setDeploymentPlace(param(req, "deployment_place"));
+        deployment.setDutyOfficerTelephone(param(req, "duty_officer_phone"));
+        deployment.setContactTelephone(param(req, "contact_phone"));
+        deployment.setEMail(param(req, "deployment_email"));
+        deployment.setNumberBuildings(param(req, "number_buildings"));
+        deployment.setTotalArea(param(req, "total_area"));
+    }
 
-        if (signerNames != null) {
-            for (int i = 0; i < signerNames.length; i++) {
-                if (signerNames[i] != null && !signerNames[i].trim().isEmpty()) {
-                    AsfSigner signer = new AsfSigner();
-                    signer.setName(signerNames[i]);
-                    signer.setPosition(signerPositions != null && i < signerPositions.length ? signerPositions[i] : null);
-                    signer.setAsf(asf);
-                }
+    // ---------------- SIGNER ----------------
+    public void mapSigner(HttpServletRequest req, int index, AsfSigner signer) {
+        signer.setName(param(req, "signer_name[]", index));
+        signer.setPosition(param(req, "signer_position[]", index));
+    }
+
+    public List<AsfSigner> mapSigners(HttpServletRequest req) {
+        return MapListUtils.mapList(
+                req,
+                "signer_id[]",
+                AsfSigner::new,
+                (ctx, signer) -> mapSigner(ctx.req, ctx.index, signer)
+        );
+    }
+
+    // ---------------- WORK TYPES ----------------
+    public void mapWorkType(HttpServletRequest req, int index, AsfWorkType workType) {
+        workType.setName(param(req, "work_type_name[]", index));
+    }
+
+    public List<AsfWorkType> mapWorkTypes(HttpServletRequest req) {
+        return MapListUtils.mapList(
+                req,
+                "work_type_id[]",
+                AsfWorkType::new,
+                (ctx, type) -> mapWorkType(ctx.req, ctx.index, type)
+        );
+    }
+
+    // ---------------- IMAGES ----------------
+
+    public void mapImage(HttpServletRequest req, int index, AsfDocumentImage image) {
+
+        String group = param(req, "image_group[]", index);
+        image.setGroupKey(group);
+
+        if ("1".equals(group)) image.setNameDocument("Свидетельство");
+        else if ("2".equals(group)) image.setNameDocument("Паспорт");
+        try {
+            Part filePart = req.getPart("image_file_" + group + "_" + index);
+
+            if (filePart != null && filePart.getSize() > 0) {
+                image.setImageBlob(filePart.getInputStream().readAllBytes());
             }
-        }
+
+        } catch (Exception ignored) {}
     }
 
-    public void addWorkTypes(HttpServletRequest req, Asf asf) {
-        String[] workTypeNames = req.getParameterValues("work_type_name[]");
-        if (workTypeNames != null) {
-            for (String workTypeName : workTypeNames) {
-                if (workTypeName != null && !workTypeName.trim().isEmpty()) {
-                    AsfWorkType workType = new AsfWorkType();
-                    workType.setName(workTypeName.trim());
-                    workType.setAsf(asf);
-                }
-            }
-        }
-    }
+    public List<AsfDocumentImage> mapImages(HttpServletRequest req) {
 
-    public void addImages(HttpServletRequest req, Asf asf) {
-        // Приложение 1
-        String[] imageNames1 = req.getParameterValues("image_name_1[]");
-        if (imageNames1 != null) {
-            for (int i = 0; i < imageNames1.length; i++) {
-                try {
-                    Part filePart = req.getPart("image_file_1_" + i);
-                    if (filePart != null && filePart.getSize() > 0) {
-                        AsfDocumentImage image = new AsfDocumentImage();
-                        image.setGroupKey("1");
-                        image.setNameDocument(imageNames1[i]);
-                        image.setImageBlob(filePart.getInputStream().readAllBytes());
-                        image.setAsf(asf);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace(); // логируй нормально
-                }
-            }
-        }
-
-        // Приложение 2
-        String[] imageNames2 = req.getParameterValues("image_name_2[]");
-        if (imageNames2 != null) {
-            for (int i = 0; i < imageNames2.length; i++) {
-                try {
-                    Part filePart = req.getPart("image_file_2_" + i);
-                    if (filePart != null && filePart.getSize() > 0) {
-                        AsfDocumentImage image = new AsfDocumentImage();
-                        image.setGroupKey("2");
-                        image.setNameDocument(imageNames2[i]);
-                        image.setImageBlob(filePart.getInputStream().readAllBytes());
-                        image.setAsf(asf);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace(); // логируй нормально
-                }
-            }
-        }
+        return MapListUtils.mapList(
+                req,
+                "image_id[]",
+                AsfDocumentImage::new,
+                (ctx, img) -> mapImage(ctx.req, ctx.index, img)
+        );
     }
 }

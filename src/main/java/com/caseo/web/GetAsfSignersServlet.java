@@ -5,12 +5,16 @@ import com.caseo.app.InternalServices;
 import com.caseo.domain.model.AsfSigner;
 import com.caseo.domain.service.ChildService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -18,7 +22,11 @@ import java.util.List;
 public class GetAsfSignersServlet extends HttpServlet {
 
     private ChildService<AsfSigner> signerService;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(java.time.LocalTime.class,
+                    (JsonSerializer<LocalTime>) (src, typeOfSrc, context) ->
+                            new JsonPrimitive(src.toString()))
+            .create();
 
     @Override
     public void init() {

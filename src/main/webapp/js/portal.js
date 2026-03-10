@@ -28,7 +28,12 @@ function deleteRow(element) {
 // Раскрытие/сворачивание блоков
 function toggleCollapse(header) {
     const content = header.nextElementSibling;
+    if (!content) return;
     const arrow = header.querySelector('span:last-child');
     content.classList.toggle('expanded');
     arrow.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+}
+
+function goBack() {
+    window.history.back();
 }

@@ -10,10 +10,10 @@ public class AsfCertificateTextBuilder {
 
         return "серия № " + cert.getCertSeries() +
                 ", рег. номер " + cert.getCertNumber() +
-                " от " + DocumentOutputFormatter.dotDate(cert.getIssueDate()) +
+                " от " + DocumentOutputFormatter.dotDate(String.valueOf(cert.getIssueDate())) +
                 " г., выданное на основании протокола заседания " +
                 cert.getIssuedBy() + " " + cert.getIssueBasis() +
-                ", сроком действия до " + DocumentOutputFormatter.russDate(cert.getValidUntil()) +
+                ", сроком действия до " + DocumentOutputFormatter.russDate(String.valueOf(cert.getValidUntil())) +
                 "г";
     }
 }

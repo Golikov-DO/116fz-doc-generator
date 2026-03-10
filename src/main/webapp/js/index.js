@@ -15,7 +15,7 @@ function openDocument(mode) {
         return;
     }
 
-    window.location.href = 'portal?mode=' + mode + '&orgId=' + orgId;
+    window.location.href = 'organization?mode=' + mode + '&orgId=' + orgId;
 }
 
 function developPlan() {

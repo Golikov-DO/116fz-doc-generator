@@ -76,8 +76,8 @@ public class ObjectsServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/fragments/objects/objects.jsp")
                     .forward(req, resp);
         } else {
-            req.getRequestDispatcher("/WEB-INF/pages/objects-page.jsp")
-                    .forward(req, resp);
+            req.setAttribute("contentPage", "/WEB-INF/pages/objects-page.jsp");
+            req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
         }
     }
 }

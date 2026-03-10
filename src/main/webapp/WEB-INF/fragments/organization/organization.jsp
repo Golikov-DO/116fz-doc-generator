@@ -29,7 +29,7 @@
                 <label>
                     <textarea name="organization_full_name"
                               rows="2"
-                            <%= disabled %>><%= hasData ? org.getOrganizationName() : "" %></textarea>
+                            <%= disabled %>><%= hasData && org.getOrganizationName() != null ? org.getOrganizationName() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -38,7 +38,7 @@
             <div class="organization-form-field">
                 <label>
                     <input type="text" name="organization_short_name"
-                           value="<%= hasData ? org.getOrganizationShortName() : "" %>" <%= disabled %>>
+                           value="<%= hasData && org.getOrganizationShortName() != null ? org.getOrganizationShortName() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -47,7 +47,7 @@
             <div class="organization-form-field">
                 <label>
                     <textarea name="organization_type_activity"
-                              rows="2" <%= disabled %>><%= hasData ? org.getOrganizationTypeActivity() : "" %></textarea>
+                              rows="2" <%= disabled %>><%= hasData && org.getOrganizationTypeActivity() != null ? org.getOrganizationTypeActivity() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -160,6 +160,7 @@
             <tr>
                 <td>
                     <label>
+                        <input type="hidden" name="contact_id[]" value="<%= contact.getId() %>">
                         <input type="text" name="org_contact_name[]"
                                value="<%= contact != null && contact.getFullName() != null ? contact.getFullName() : "" %>"
                                style="width:100%;" <%= disabled %>>

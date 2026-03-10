@@ -1,6 +1,7 @@
 package com.caseo.web.helper;
 
 import com.caseo.domain.model.*;
+import com.caseo.web.util.MapListUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -28,22 +29,19 @@ public class OrganizationSaveHelper {
         signer.setPosition(param(req, "signer_position"));
     }
 
-    public void mapContacts(HttpServletRequest req, List<OrganizationContact> contacts) {
-        String[] names = req.getParameterValues("org_contact_name[]");
-        if (names == null) return;
+    public void mapContact(HttpServletRequest req,OrganizationContact contact) {
+        contact.setFullName(param(req, "org_contact_name[]"));
+        contact.setPosition(param(req, "org_contact_position[]"));
+        contact.setPhones(param(req, "org_contact_phone[]"));
+        contact.setAddress(param(req, "org_contact_address[]"));
+    }
 
-        for (int i = 0; i < names.length; i++) {
-
-            String name = param(req, "org_contact_name[]", i);
-            if (name == null || name.isBlank()) continue;
-
-            OrganizationContact contact = new OrganizationContact();
-            contact.setFullName(name);
-            contact.setPosition(param(req, "org_contact_position[]", i));
-            contact.setPhones(param(req, "org_contact_phone[]", i));
-            contact.setAddress(param(req, "org_contact_address[]", i));
-
-            contacts.add(contact);
-        }
+    public List<OrganizationContact> mapContacts(HttpServletRequest req) {
+        return MapListUtils.mapList(
+                req,
+                "contact_id[]",
+                OrganizationContact::new,
+                (ctx, contact) -> mapContact(ctx.req,  contact)
+        );
     }
 }
