@@ -170,13 +170,13 @@
                     <div style="flex: 1;">
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Зона ответственности</div>
                         <label>
-                            <input type="text" name="responsibility_area[]" value="<%= deployment != null ? deployment.getResponsibilityArea() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="responsibility_area" value="<%= deployment != null && deployment.getResponsibilityArea() != null ? deployment.getResponsibilityArea() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div style="flex: 1;">
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Место размещения</div>
                         <label>
-                            <input type="text" name="deployment_place[]" value="<%= deployment != null ? deployment.getDeploymentPlace() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="deployment_place" value="<%= deployment != null && deployment.getDeploymentPlace() != null ? deployment.getDeploymentPlace() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                 </div>
@@ -185,25 +185,25 @@
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Телефон дежурного</div>
                         <label>
-                            <input type="text" name="duty_officer_phone[]" value="<%= deployment != null ? deployment.getDutyOfficerTelephone() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="duty_officer_phone" value="<%= deployment != null && deployment.getDutyOfficerTelephone() != null ? deployment.getDutyOfficerTelephone() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Контактный телефон</div>
                         <label>
-                            <input type="text" name="contact_phone[]" value="<%= deployment != null ? deployment.getContactTelephone() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="contact_phone" value="<%= deployment != null && deployment.getContactTelephone() != null ? deployment.getContactTelephone() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Общая площадь (м²)</div>
                         <label>
-                            <input type="text" name="total_area[]" value="<%= deployment != null ? deployment.getTotalArea() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="total_area" value="<%= deployment != null && deployment.getTotalArea() != null ? deployment.getTotalArea() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div>
                         <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Количество зданий</div>
                         <label>
-                            <input type="text" name="number_buildings[]" value="<%= deployment != null ? deployment.getNumberBuildings() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                            <input type="text" name="number_buildings" value="<%= deployment != null && deployment.getNumberBuildings() != null ? deployment.getNumberBuildings() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Email</div>
                     <label>
-                        <input type="email" name="deployment_email[]" value="<%= deployment != null ? deployment.getEMail() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="email" name="deployment_email" value="<%= deployment != null && deployment.getEMail() != null ? deployment.getEMail() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
             </div>
@@ -483,10 +483,10 @@
 
                                 <% if (!isView) { %>
                                 <div>
-                                    <div class="asf-image-upload-area" onclick="document.getElementById('file_1_0')">
+                                    <div class="asf-image-upload-area" onclick="document.getElementById('file_1_0').click()">
                                         📁 <%= firstImage1 != null ? "Заменить" : "Загрузить" %>
                                     </div>
-                                    <input type="file" id="file_1_0" name="image_file_1_0" accept="image/png" style="display: none;" onchange="validateImageSize(this, 985, 1414, '1', 0)">
+                                    <input type="file" id="file_1_0" name="image_upload" accept="image/png" style="display: none;" onchange="validateImageSize(this, 985, 1414, '1', 0)">
                                     <div id="preview_1_0" style="margin-top: 10px;"></div>
                                 </div>
                                 <% } %>
@@ -523,10 +523,10 @@
                                     <% if (!isView) { %>
                                     <div style="margin-top: 8px; text-align: center;">
                                         <div class="asf-image-upload-area" style="font-size: 11px; padding: 3px;"
-                                             onclick="document.getElementById('file_1_<%= pos %>')">
+                                             onclick="document.getElementById('file_1_<%= pos %>').click()">
                                             📁 Заменить
                                         </div>
-                                        <input type="file" id="file_1_<%= pos %>" name="image_file_1_<%= pos %>" accept="image/png" style="display: none;"
+                                        <input type="file" id="file_1_<%= pos %>" name="image_upload" accept="image/png" style="display: none;"
                                                onchange="validateImageSize(this, 1047, 1480, '1', <%= pos %>)">
                                         <div id="preview_1_<%= pos %>" style="margin-top: 5px;"></div>
                                     </div>
@@ -587,10 +587,10 @@
 
                                 <% if (!isView) { %>
                                 <div>
-                                    <div class="asf-image-upload-area" onclick="document.getElementById('file_2_0')">
+                                    <div class="asf-image-upload-area" onclick="document.getElementById('file_2_0').click()">
                                         📁 <%= firstImage2 != null ? "Заменить" : "Загрузить" %>
                                     </div>
-                                    <input type="file" id="file_2_0" name="image_file_2_0" accept="image/png" style="display: none;" onchange="validateImageSize(this, 985, 1414, '2', 0)">
+                                    <input type="file" id="file_2_0" name="image_upload" accept="image/png" style="display: none;" onchange="validateImageSize(this, 985, 1414, '2', 0)">
                                     <div id="preview_2_0" style="margin-top: 10px;"></div>
                                 </div>
                                 <% } %>
@@ -627,10 +627,10 @@
                                     <% if (!isView) { %>
                                     <div style="margin-top: 8px; text-align: center;">
                                         <div class="asf-image-upload-area" style="font-size: 11px; padding: 3px;"
-                                             onclick="document.getElementById('file_2_<%= pos %>')">
+                                             onclick="document.getElementById('file_2_<%= pos %>').click()">
                                             📁 Заменить
                                         </div>
-                                        <input type="file" id="file_2_<%= pos %>" name="image_file_2_<%= pos %>" accept="image/png" style="display: none;"
+                                        <input type="file" id="file_2_<%= pos %>" name="image_upload" accept="image/png" style="display: none;"
                                                onchange="validateImageSize(this, 1047, 1480, '2', <%= pos %>)">
                                         <div id="preview_2_<%= pos %>" style="margin-top: 5px;"></div>
                                     </div>
@@ -650,6 +650,19 @@
             </div>
 
             <div id="imageDataContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для просмотра изображения -->
+<div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+    <div style="background-color: white; margin: 5% auto; padding: 0; width: 80%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid #ddd;">
+            <span id="imageModalTitle" style="font-weight: bold; font-size: 18px;">Просмотр</span>
+            <span onclick="document.getElementById('imageModal').style.display='none'" style="font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        </div>
+        <div style="padding: 20px; text-align: center;">
+            <img id="modalImage" src="" style="max-width: 100%; max-height: 70vh;">
         </div>
     </div>
 </div>

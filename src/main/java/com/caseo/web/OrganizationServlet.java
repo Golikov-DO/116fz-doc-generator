@@ -30,6 +30,7 @@ public class OrganizationServlet extends HttpServlet {
 
         String mode = req.getParameter("mode");
         String orgId = req.getParameter("orgId");
+
         if (orgId != null && !orgId.isEmpty()) {
             req.getSession().setAttribute("orgId", orgId);
         }

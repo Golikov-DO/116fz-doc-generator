@@ -107,24 +107,17 @@ public class AsfSaveHelper {
     // ---------------- IMAGES ----------------
 
     public void mapImage(HttpServletRequest req, int index, AsfDocumentImage image) {
-
         String group = param(req, "image_group[]", index);
+        String name = param(req, "image_name[]", index);
+
         image.setGroupKey(group);
 
-        if ("1".equals(group)) image.setNameDocument("Свидетельство");
-        else if ("2".equals(group)) image.setNameDocument("Паспорт");
-        try {
-            Part filePart = req.getPart("image_file_" + group + "_" + index);
-
-            if (filePart != null && filePart.getSize() > 0) {
-                image.setImageBlob(filePart.getInputStream().readAllBytes());
-            }
-
-        } catch (Exception ignored) {}
+        if (name != null && !name.isEmpty()) {
+            image.setNameDocument(name);
+        }
     }
 
     public List<AsfDocumentImage> mapImages(HttpServletRequest req) {
-
         return MapListUtils.mapList(
                 req,
                 "image_id[]",

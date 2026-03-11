@@ -8,7 +8,6 @@ import com.caseo.web.helper.AsfSaveHelper;
 import com.caseo.web.util.SyncListUtils;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +18,6 @@ import java.util.List;
 import static com.caseo.web.util.RequestUtils.paramInt;
 
 @WebServlet("/createAsf")
-@MultipartConfig(
-        maxFileSize = 1024 * 1024 * 8,
-        maxRequestSize = 1024 * 1024 * 20
-)
 public class CreateAsfServlet extends HttpServlet {
 
     private ParentService<Asf> asfService;
@@ -32,7 +27,6 @@ public class CreateAsfServlet extends HttpServlet {
     private ChildService<AsfCompositionDeploymentFunds> deploymentService;
     private ChildService<AsfSigner> signerService;
     private ChildService<AsfWorkType> workTypeService;
-    private ChildService<AsfDocumentImage> imageService;
 
     private AsfSaveHelper saveHelper;
 
@@ -52,7 +46,6 @@ public class CreateAsfServlet extends HttpServlet {
         deploymentService = services.getChildService(AsfCompositionDeploymentFunds.class);
         signerService = services.getChildService(AsfSigner.class);
         workTypeService = services.getChildService(AsfWorkType.class);
-        imageService = services.getChildService(AsfDocumentImage.class);
 
         saveHelper = new AsfSaveHelper();
     }
@@ -62,10 +55,9 @@ public class CreateAsfServlet extends HttpServlet {
             throws ServletException {
 
         try {
-            System.out.println("=== createAsf called ===");
-            System.out.println("mode: " + req.getParameter("mode"));
-            System.out.println("asfId: " + req.getParameter("asfId"));
+
             Integer asfId = paramInt(req, "asfId");
+            String returnObjectId = req.getParameter("returnObjectId");
 
             Asf asf;
 
@@ -146,23 +138,27 @@ public class CreateAsfServlet extends HttpServlet {
             }
 
             // 8. Изображения
-            List<AsfDocumentImage> images = saveHelper.mapImages(req);
+//            List<AsfDocumentImage> images = saveHelper.mapImages(req);
+//
+//            List<AsfDocumentImage> oldImages = imageService.getManyByParentId(asf.getId());
+//
+//            SyncListUtils.syncList(
+//                    images,
+//                    oldImages,
+//                    AsfDocumentImage::getId,
+//                    imageService::deleteById
+//            );
+//
+//            for (AsfDocumentImage image : images) {
+//                image.setAsf(asf);
+//                imageService.save(image);
+//            }
 
-            List<AsfDocumentImage> oldImages = imageService.getManyByParentId(asf.getId());
-
-            SyncListUtils.syncList(
-                    images,
-                    oldImages,
-                    AsfDocumentImage::getId,
-                    imageService::deleteById
-            );
-
-            for (AsfDocumentImage image : images) {
-                image.setAsf(asf);
-                imageService.save(image);
+            if (returnObjectId != null && !returnObjectId.isEmpty()) {
+                resp.sendRedirect("objects?mode=edit&orgId=" + req.getSession().getAttribute("orgId"));
+            } else {
+                resp.sendRedirect("asf?mode=view&asfId=" + asf.getId());
             }
-
-            resp.sendRedirect("asf?mode=view&asfId=" + asf.getId());
 
         } catch (Exception e) {
 

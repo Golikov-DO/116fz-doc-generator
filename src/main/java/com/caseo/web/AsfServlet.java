@@ -32,17 +32,27 @@ public class AsfServlet extends HttpServlet {
 
         String mode = req.getParameter("mode");
         String asfId = req.getParameter("asfId");
+        String returnObjectId = req.getParameter("returnObjectId");
+
+
+        if (asfId != null && !asfId.isEmpty()) {
+            req.getSession().setAttribute("asfId", asfId);
+            req.setAttribute("asfId", asfId);
+        }
+        if ((asfId == null || asfId.isEmpty()) && req.getSession().getAttribute("asfId") != null) {
+            asfId = req.getSession().getAttribute("asfId").toString();
+
+        }
 
         req.setAttribute("mode", mode);
+        req.setAttribute("returnObjectId", returnObjectId);
 
         try {
             if (("view".equals(mode) || "edit".equals(mode)) && asfId != null && !asfId.isEmpty()) {
                 int id = Integer.parseInt(asfId);
 
-                // Одна строка вместо 30!
                 AsfData data = dataLoader.loadAsf(id);
 
-                // Раскладываем изображения по группам
                 List<AsfDocumentImage> appendix1Images = data.images().stream()
                         .filter(img -> "1".equals(img.getGroupKey()))
                         .toList();
@@ -71,8 +81,8 @@ public class AsfServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/fragments/asf/asf.jsp")
                     .forward(req, resp);
         } else {
-            req.getRequestDispatcher("/WEB-INF/pages/asf-page.jsp")
-                    .forward(req, resp);
+            req.setAttribute("contentPage", "/WEB-INF/pages/asf-page.jsp");
+            req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
         }
     }
 }

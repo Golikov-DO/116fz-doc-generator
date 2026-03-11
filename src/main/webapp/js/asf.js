@@ -108,8 +108,10 @@ function validateImageSize(input, targetWidth, targetHeight, group, position) {
         img.src = e.target.result;
         img.onload = function() {
             if (img.width === targetWidth && img.height === targetHeight) {
+                alert("Изображение будет автоматически приведено к размеру " + targetWidth + "x" + targetHeight);
                 showImagePreview(e.target.result, group, position, file.name);
-                saveImageData(group, position, file.name, e.target.result.split(',')[1]);
+                uploadImageToServer(file, group, position);
+                saveImageData(group, position, file.name);
                 return;
             }
             resizeImage(img, targetWidth, targetHeight, file.name, group, position);
@@ -141,10 +143,11 @@ function resizeImage(img, targetWidth, targetHeight, fileName, group, position) 
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(resizedFile);
         fileInput.files = dataTransfer.files;
+        validateImageSize(fileInput, targetWidth, targetHeight, group, position);
 
         const resizedDataUrl = canvas.toDataURL('image/png');
         showImagePreview(resizedDataUrl, group, position, fileName);
-        saveImageData(group, position, fileName, resizedDataUrl.split(',')[1]);
+        saveImageData(group, position, fileName);
     }, 'image/png', 1.0);
 }
 
@@ -189,14 +192,6 @@ function saveImageData(group, position, fileName, base64Data) {
     groupInput.name = `image_group_${group}_${position}`;
     groupInput.value = group;
     container.appendChild(groupInput);
-
-    if (base64Data) {
-        const dataInput = document.createElement('input');
-        dataInput.type = 'hidden';
-        dataInput.name = `image_data_${group}_${position}`;
-        dataInput.value = base64Data;
-        container.appendChild(dataInput);
-    }
 }
 
 // Добавление поля изображения
@@ -221,7 +216,7 @@ function addImageField(group) {
             </div>
             <span style="font-size: 11px; color: #999;">PNG, 8MB макс</span>
         </div>
-        <input type="file" id="file_${group}_${position}" name="image_file_${group}_${position}" accept="image/png" style="display: none;" onchange="validateImageSize(this, 1047, 1480, '${group}', ${position})">
+        <input type="file" id="file_${group}_${position}" name=name="image_upload" accept="image/png" style="display: none;" onchange="validateImageSize(this, 1047, 1480, '${group}', ${position})">
         <div id="preview_${group}_${position}" style="margin-top: 10px;"></div>
     `;
     container.appendChild(div);
@@ -262,4 +257,48 @@ function initAsfForm()  {
             }
         });
     }
+}
+
+function uploadImageToServer(file, group, position) {
+
+    const formData = new FormData();
+    const asfId = document.querySelector('input[name="asfId"]').value;
+
+    formData.append("file", file);
+    formData.append("group", group);
+    formData.append("name", file.name);
+    formData.append("asfId", asfId);
+
+    fetch("uploadAsfImage", {
+        method: "POST",
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+
+            const container = document.getElementById('imageDataContainer');
+
+            const idInput = document.createElement("input");
+            idInput.type = "hidden";
+            idInput.name = "image_id[]";
+            idInput.value = data.id;
+
+            const groupInput = document.createElement("input");
+            groupInput.type = "hidden";
+            groupInput.name = "image_group[]";
+            groupInput.value = group;
+
+            const indexInput = document.createElement("input");
+            indexInput.type = "hidden";
+            indexInput.name = "image_index[]";
+            indexInput.value = "0";
+
+            container.appendChild(indexInput);
+            container.appendChild(idInput);
+            container.appendChild(groupInput);
+        })
+        .catch(err => {
+            alert("Ошибка загрузки изображения");
+            console.error(err);
+        });
 }

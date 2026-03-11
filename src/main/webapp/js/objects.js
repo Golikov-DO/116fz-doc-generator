@@ -271,8 +271,8 @@ document.addEventListener('change', function(e) {
         }
 
         if (asfId === 'new_asf') {
-            // Открываем модальное окно для создания нового АСФ
-            openAsfModal(null, elements.objectItem);
+            // раньше: openAsfModal(null, elements.objectItem);
+            openAsfFullPage(null, elements.objectItem);
             return;
         }
 
@@ -296,4 +296,11 @@ document.addEventListener('change', function(e) {
 function autoResize(el) {
     el.style.height = "auto";
     el.style.height = el.scrollHeight + "px";
+}
+
+// открытие АСФ
+function openAsfFullPage(asfId, objectItem) {
+    const objectId = objectItem.dataset.objectId;
+
+    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnObjectId=' + objectId;
 }

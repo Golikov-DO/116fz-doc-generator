@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
     String mode = (String) request.getAttribute("mode");
-    String asfId = request.getParameter("asfId");
-
+    String asfId = (String) request.getAttribute("asfId");
+    String returnObjectId = request.getParameter("returnObjectId");
     String pageTitle, badgeText;
 
     if ("view".equals(mode)) {
@@ -15,8 +15,6 @@
         pageTitle = "Добавление АСФ";
         badgeText = "Новая запись";
     }
-
-    request.setAttribute("isFullPage", true);
 %>
 <html>
 <head>
@@ -36,12 +34,23 @@
         <span>Режим <%= "view".equals(mode) ? "просмотра" : "редактирования" %></span>
     </div>
 
-    <form action="createAsf" method="post" enctype="multipart/form-data" id="asfForm">
+    <form action="createAsf" method="post" id="asfForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="asfId" value="<%= asfId != null ? asfId : "" %>">
-        <input type="hidden" name="returnMode" value="<%= mode %>">
+        <input type="hidden" name="returnObjectId" value="<%= returnObjectId != null ? returnObjectId : "" %>">
 
         <jsp:include page="/WEB-INF/fragments/asf/asf.jsp" />
+
+        <div class="form-footer">
+            <% if (!"view".equals(mode)) { %>
+            <button type="submit" class="btn-primary">Сохранить</button>
+            <% } else { %>
+            <a href="?mode=edit&asfId=<%= asfId %>" class="btn-primary">Редактировать</a>
+            <% } %>
+            <button type="button" onclick="goBack()" class="btn-secondary">
+                Отменить
+            </button>
+        </div>
     </form>
 </div>
 

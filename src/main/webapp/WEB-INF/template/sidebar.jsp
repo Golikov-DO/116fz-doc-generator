@@ -3,5 +3,4 @@
   <li><a href="/">Личный кабинет</a></li>
   <li><a href="/organization?mode=view&orgId=${sessionScope.orgId}">Организация</a></li>
   <li><a href="/objects?mode=view&orgId=${sessionScope.orgId}">Объекты</a></li>
-  <li><a href="/asf?mode=edit&asfId=${sessionScope.asfId}">АСФ</a></li>
 </ul>

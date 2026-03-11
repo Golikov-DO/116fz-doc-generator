@@ -10,6 +10,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects/objects.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/organization/organization.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/organization" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/asf-page.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/objects-page.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/organization-page.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/create-object.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />

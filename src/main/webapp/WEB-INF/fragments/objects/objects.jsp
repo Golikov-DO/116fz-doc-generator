@@ -73,7 +73,7 @@
                     ObjectModel object = objects.get(i);
                     ObjectAddress addr = objectAddresses.get(i);
             %>
-            <div class="object-item">
+            <div class="object-item" data-object-id="<%=object.getId()%>">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                     <span style="font-weight: bold;">Объект #<%= i + 1 %></span>
                 </div>
@@ -172,7 +172,7 @@
                                 </label>
                                 <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
                                 <button type="button" class="edit-asf-btn"
-                                        onclick="openAsfModal(<%= object.getAsf().getId() %>, this.closest('.object-item'))"
+                                        onclick="openAsfFullPage(<%= object.getAsf().getId() %>, this.closest('.object-item'))"
                                         style="padding: 5px 10px; background-color: #e0e0e0; color: black; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap;">
                                     Редактировать
                                 </button>
@@ -575,7 +575,7 @@
 
 <template id="object-template">
 
-    <div class="object-item">
+    <div class="object-item" data-object-id="">
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span style="font-weight: bold;">Объект #__NUMBER__</span>
         </div>
@@ -649,7 +649,7 @@
                         </label>
                         <button type="button"
                                 class="edit-asf-btn"
-                                onclick="openAsfModal(null, this.closest('.object-item'))"
+                                onclick="openAsfFullPage(null, this.closest('.object-item'))"
                                 style="padding:5px 10px;background-color:#e0e0e0;color:black;border:1px solid #ccc;border-radius:3px;cursor:pointer;font-size:12px;white-space:nowrap;">
                             Редактировать
                         </button>
