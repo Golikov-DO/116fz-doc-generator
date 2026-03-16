@@ -10,7 +10,9 @@ public class HibernateAsfDocumentImageRepository implements ChildRepository<AsfD
     @Override
     public AsfDocumentImage findOneByParentId(int asfId) {
         return HibernateUtil.inSession(session ->
-                session.get(AsfDocumentImage.class, asfId)
+                session.createQuery("from AsfDocumentImage where asf.id = :asfId", AsfDocumentImage.class)
+                        .setParameter("asfId", asfId)
+                        .uniqueResult()
         );
     }
 
@@ -25,8 +27,14 @@ public class HibernateAsfDocumentImageRepository implements ChildRepository<AsfD
     }
 
     @Override
-    public void save(AsfDocumentImage asfDocumentImage) {
-        HibernateUtil.inTransaction(session -> session.merge(asfDocumentImage));
+    public void save(AsfDocumentImage entity) {
+        HibernateUtil.inTransaction(session -> {
+            if (entity.getId() == null) {
+                session.persist(entity);  // persist присваивает ID
+            } else {
+                session.merge(entity);
+            }
+        });
     }
 
     @Override

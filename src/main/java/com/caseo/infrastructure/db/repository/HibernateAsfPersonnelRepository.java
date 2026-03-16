@@ -10,7 +10,12 @@ public class HibernateAsfPersonnelRepository implements ChildRepository<AsfPerso
     @Override
     public AsfPersonnel findOneByParentId(int asfId) {
         return HibernateUtil.inSession(session ->
-                session.get(AsfPersonnel.class, asfId)
+                session.createQuery(
+                                "from AsfPersonnel where asf.id = :asfId",
+                                AsfPersonnel.class
+                        )
+                        .setParameter("asfId", asfId)
+                        .uniqueResult()
         );
     }
 

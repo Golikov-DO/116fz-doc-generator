@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.caseo.web.util.RequestUtils.param;
+import static com.caseo.web.util.RequestUtils.paramInt;
+
 @WebServlet("/asf")
 public class AsfServlet extends HttpServlet {
 
@@ -30,28 +33,33 @@ public class AsfServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String mode = req.getParameter("mode");
-        String asfId = req.getParameter("asfId");
-        String returnObjectId = req.getParameter("returnObjectId");
-
-
-        if (asfId != null && !asfId.isEmpty()) {
-            req.getSession().setAttribute("asfId", asfId);
-            req.setAttribute("asfId", asfId);
-        }
-        if ((asfId == null || asfId.isEmpty()) && req.getSession().getAttribute("asfId") != null) {
-            asfId = req.getSession().getAttribute("asfId").toString();
-
-        }
-
-        req.setAttribute("mode", mode);
-        req.setAttribute("returnObjectId", returnObjectId);
-
         try {
-            if (("view".equals(mode) || "edit".equals(mode)) && asfId != null && !asfId.isEmpty()) {
-                int id = Integer.parseInt(asfId);
+            String mode = param(req, "mode");
+            String returnOrgId = param(req, "returnOrgId");
+            Integer asfId = paramInt(req, "asfId");
 
-                AsfData data = dataLoader.loadAsf(id);
+            // 0 означает создание новой АСФ
+            if (asfId != null && asfId == 0) {
+                asfId = null;
+                mode = "create";
+            }
+
+            if (asfId != null) {
+                req.getSession().setAttribute("asfId", asfId);
+                req.setAttribute("asfId", asfId.toString());
+            }
+
+            if (asfId == null && req.getSession().getAttribute("asfId") != null) {
+                asfId = (Integer) req.getSession().getAttribute("asfId");
+            }
+
+            req.setAttribute("mode", mode);
+            req.setAttribute("returnOrgId", returnOrgId);
+
+            // Загружаем данные только для режимов просмотра/редактирования и если есть ID
+            if (("view".equals(mode) || "edit".equals(mode)) && asfId != null) {
+
+                AsfData data = dataLoader.loadAsf(asfId);
 
                 List<AsfDocumentImage> appendix1Images = data.images().stream()
                         .filter(img -> "1".equals(img.getGroupKey()))
@@ -71,18 +79,19 @@ public class AsfServlet extends HttpServlet {
                 req.setAttribute("appendix2Images", appendix2Images);
             }
 
+            String requestedWith = req.getHeader("X-Requested-With");
+
+            if ("XMLHttpRequest".equals(requestedWith)) {
+                req.getRequestDispatcher("/WEB-INF/fragments/asf/asf.jsp")
+                        .forward(req, resp);
+            } else {
+                req.setAttribute("contentPage", "/WEB-INF/pages/asf-page.jsp");
+                req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
+            }
+
         } catch (Exception e) {
             getServletContext().log("Ошибка при загрузке АСФ", e);
-        }
-
-        String requestedWith = req.getHeader("X-Requested-With");
-
-        if ("XMLHttpRequest".equals(requestedWith)) {
-            req.getRequestDispatcher("/WEB-INF/fragments/asf/asf.jsp")
-                    .forward(req, resp);
-        } else {
-            req.setAttribute("contentPage", "/WEB-INF/pages/asf-page.jsp");
-            req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
+            throw new ServletException("Ошибка при загрузке АСФ", e);
         }
     }
 }

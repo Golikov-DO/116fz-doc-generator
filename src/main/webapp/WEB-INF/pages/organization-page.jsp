@@ -23,7 +23,7 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/organization.css">
 </head>
 <body>
@@ -45,11 +45,11 @@
 
         <div class="form-footer">
             <% if (!"view".equals(mode)) { %>
-            <button type="submit" class="btn-primary"><%= buttonText %></button>
+            <button type="submit" class="btn"><%= buttonText %></button>
             <% } else { %>
-            <a href="?mode=edit&orgId=<%= orgId %>" class="btn-primary"><%= buttonText %></a>
+            <a href="?mode=edit&orgId=<%= orgId %>" class="btn"><%= buttonText %></a>
             <% } %>
-            <button type="button" onclick="goBack()" class="btn-secondary">
+            <button type="button" onclick="goBack()" class="btn">
                 Отменить
             </button>
         </div>

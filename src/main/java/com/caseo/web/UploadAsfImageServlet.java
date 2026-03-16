@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.caseo.web.util.RequestUtils.param;
@@ -45,6 +44,7 @@ public class UploadAsfImageServlet extends HttpServlet {
             Integer asfId = paramInt(req, "asfId");
             String group = param(req, "group");
             Part filePart = req.getPart("file");
+            Integer imageId = paramInt(req, "imageId");
 
             if (asfId == null) {
                 throw new ServletException("asfId is required");
@@ -67,25 +67,46 @@ public class UploadAsfImageServlet extends HttpServlet {
             List<AsfDocumentImage> images = imageService.getManyByParentId(asfId);
 
             // Считаем сколько уже есть изображений в этой группе
-            long count = images.stream()
+            int nextNumber = images.stream()
                     .filter(i -> group.equals(i.getGroupKey()))
-                    .count() + 1;
+                    .map(i -> i.getNameDocument())
+                    .filter(n -> n != null)
+                    .map(n -> n.replaceAll("\\D+", ""))
+                    .filter(s -> !s.isEmpty())
+                    .mapToInt(Integer::parseInt)
+                    .max()
+                    .orElse(0) + 1;
 
             // Генерируем имя: "Свидетельство 1", "Свидетельство 2" или "Паспорт 1", "Паспорт 2"
-            String prefix = "1".equals(group) ? "Свидетельство " : "Паспорт ";
-            String imageName = prefix + count;
+            // Генерируем имя
+            String prefix = "1".equals(group) ? "Свидетелappendixьство " : "Паспорт ";
+            String imageName = prefix + nextNumber;
 
-            AsfDocumentImage image = new AsfDocumentImage();
-            image.setGroupKey(group);
-            image.setNameDocument(imageName);  // Сохраняем полное имя с номером
+            AsfDocumentImage image;
+
+            if (imageId != null) {
+
+                image = images.stream()
+                        .filter(i -> i.getId() == imageId)
+                        .findFirst()
+                        .orElseThrow(() -> new ServletException("Image not found: " + imageId));
+
+            } else {
+
+                image = new AsfDocumentImage();
+                image.setGroupKey(group);
+                image.setAsf(asf);
+
+            }
+
+            image.setNameDocument(imageName);
             image.setImageBlob(data);
-            image.setAsf(asf);
 
             imageService.save(image);
 
             // Возвращаем ID и сгенерированное имя
             resp.setContentType("application/json");
-            resp.getWriter().write("{\"id\":" + image.getId() + ", \"name\":\"" + imageName + "\"}");
+            resp.getWriter().write("{\"id\":" + image.getId() + "}");
 
         } catch (Exception e) {
             getServletContext().log("Ошибка при загрузке изображения АСФ", e);

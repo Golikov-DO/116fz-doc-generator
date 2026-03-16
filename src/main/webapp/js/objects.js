@@ -7,7 +7,7 @@ function copySelectOptions(selector, className, objectElement) {
     if (!target) return;
 
     target.innerHTML = existing.innerHTML;
-    target.selectedIndex = 0;
+    //target.selectedIndex = 0;
 }
 
 // Добавление объекта
@@ -271,9 +271,8 @@ document.addEventListener('change', function(e) {
         }
 
         if (asfId === 'new_asf') {
-            // раньше: openAsfModal(null, elements.objectItem);
-            openAsfFullPage(null, elements.objectItem);
-            return;
+            addNewAsf(e.target.closest('.object-item'));
+            e.target.value = ''; // сбрасываем выбор
         }
 
         loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
@@ -299,8 +298,51 @@ function autoResize(el) {
 }
 
 // открытие АСФ
-function openAsfFullPage(asfId, objectItem) {
-    const objectId = objectItem.dataset.objectId;
+function openAsfFullPage(asfId) {
+    // Получаем orgId из URL текущей страницы (objects?mode=edit&orgId=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get('orgId');
 
-    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnObjectId=' + objectId;
+    if (asfId) {
+        window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId;
+    } else {
+        window.location.href = 'asf?mode=edit&asfId=0&returnOrgId=' + orgId;
+    }
+}
+
+function openAsfFullPageFromSelect(objectItem) {
+    const asfSelect = objectItem.querySelector('.asf-select');
+    const asfId = asfSelect.value;
+
+    // Получаем orgId из URL текущей страницы (objects?mode=edit&orgId=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get('orgId');
+
+    if (!asfId || asfId === 'new_asf') {
+        alert('Выберите АСФ для редактирования');
+        return;
+    }
+
+    // Передаем returnOrgId, а не returnObjectId!
+    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId;
+}
+
+function addNewAsf(objectItem) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get('orgId');
+
+    // Создаем скрытую форму для POST запроса
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'createEmptyAsf';
+    form.style.display = 'none';
+
+    const returnOrgIdInput = document.createElement('input');
+    returnOrgIdInput.type = 'hidden';
+    returnOrgIdInput.name = 'returnOrgId';
+    returnOrgIdInput.value = orgId;
+
+    form.appendChild(returnOrgIdInput);
+    document.body.appendChild(form);
+    form.submit();
 }

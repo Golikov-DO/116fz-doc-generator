@@ -1,23 +1,10 @@
-/* Стили только для организации */
+/* webapp/css/organization.css */
+/* Только специфичные для организации стили */
+
 .organization-section {
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
-}
-
-.organization-section .section-header {
-    padding: 8px 15px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-    font-weight: bold;
-    font-size: 13px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.organization-section .section-body {
-    padding: 15px;
 }
 
 .organization-form-row {
@@ -43,23 +30,4 @@
     background-color: #fafafa;
     padding: 10px;
     border-radius: 4px;
-}
-
-.organization-contacts-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-}
-
-.organization-contacts-table th {
-    background-color: #f5f5f5;
-    padding: 6px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-weight: normal;
-}
-
-.organization-contacts-table td {
-    padding: 6px;
-    border-bottom: 1px solid #eee;
 }

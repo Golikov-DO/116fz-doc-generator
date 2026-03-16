@@ -65,7 +65,7 @@ public class TextPlaceholderService {
         map.put("ORG_TYPE_ACTIVITY", org.getOrganizationTypeActivity());
 
         // ---------- ASF TEXT BLOCK ----------
-        var asfSigner = asfSignerService.getOneByParentId(asf.getId());
+        var asfSigner = asfSignerService.getOneByParentId(obj.getAsfSignerId());
         var cert = asfCertificateService.getOneByParentId(asf.getId());
         var funds = asfCompositionDeploymentFundsService.getOneByParentId(asf.getId());
         var personnel = asfPersonnelService.getOneByParentId(asf.getId());

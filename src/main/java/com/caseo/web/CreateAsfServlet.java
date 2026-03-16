@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
+import static com.caseo.web.util.RequestUtils.param;
 import static com.caseo.web.util.RequestUtils.paramInt;
 
 @WebServlet("/createAsf")
@@ -27,6 +28,7 @@ public class CreateAsfServlet extends HttpServlet {
     private ChildService<AsfCompositionDeploymentFunds> deploymentService;
     private ChildService<AsfSigner> signerService;
     private ChildService<AsfWorkType> workTypeService;
+    private ChildService<AsfDocumentImage> imageService; // Добавили
 
     private AsfSaveHelper saveHelper;
 
@@ -46,6 +48,7 @@ public class CreateAsfServlet extends HttpServlet {
         deploymentService = services.getChildService(AsfCompositionDeploymentFunds.class);
         signerService = services.getChildService(AsfSigner.class);
         workTypeService = services.getChildService(AsfWorkType.class);
+        imageService = services.getChildService(AsfDocumentImage.class); // Инициализируем
 
         saveHelper = new AsfSaveHelper();
     }
@@ -55,26 +58,31 @@ public class CreateAsfServlet extends HttpServlet {
             throws ServletException {
 
         try {
-
             Integer asfId = paramInt(req, "asfId");
-            String returnObjectId = req.getParameter("returnObjectId");
+            String returnOrgId = param(req, "returnOrgId");
+
+            // Получаем ID организации из сессии для редиректа
+            Integer orgId =paramInt  (req, "orgId");
 
             Asf asf;
 
-            if (asfId != null) {
-                asf = asfService.getOneById(asfId);
-            } else {
+            // 0 или null означает создание новой АСФ
+            if (asfId == null || asfId == 0) {
                 asf = new Asf();
+            } else {
+                asf = asfService.getOneById(asfId);
+                if (asf == null) {
+                    throw new ServletException("Asf not found with id: " + asfId);
+                }
             }
 
             // 1. Основные данные
             saveHelper.mapAsf(req, asf);
-            asfService.save(asf);
+            asfService.save(asf); // После save у asf уже есть ID
 
             // 2. Сертификат
             AsfCertificate certificate = certificateService.getOneByParentId(asf.getId());
             if (certificate == null) certificate = new AsfCertificate();
-
             saveHelper.mapCertificate(req, certificate);
             certificate.setAsf(asf);
             certificateService.save(certificate);
@@ -82,7 +90,6 @@ public class CreateAsfServlet extends HttpServlet {
             // 3. Персонал
             AsfPersonnel personnel = personnelService.getOneByParentId(asf.getId());
             if (personnel == null) personnel = new AsfPersonnel();
-
             saveHelper.mapPersonnel(req, personnel);
             personnel.setAsf(asf);
             personnelService.save(personnel);
@@ -90,7 +97,6 @@ public class CreateAsfServlet extends HttpServlet {
             // 4. Специалисты
             AsfSpecialists specialists = specialistsService.getOneByParentId(asf.getId());
             if (specialists == null) specialists = new AsfSpecialists();
-
             saveHelper.mapSpecialists(req, specialists);
             specialists.setAsf(asf);
             specialistsService.save(specialists);
@@ -98,14 +104,12 @@ public class CreateAsfServlet extends HttpServlet {
             // 5. Места дислокации
             AsfCompositionDeploymentFunds deployment = deploymentService.getOneByParentId(asf.getId());
             if (deployment == null) deployment = new AsfCompositionDeploymentFunds();
-
             saveHelper.mapDeployment(req, deployment);
             deployment.setAsf(asf);
             deploymentService.save(deployment);
 
             // 6. Подписанты
             List<AsfSigner> signers = saveHelper.mapSigners(req);
-
             List<AsfSigner> oldSigners = signerService.getManyByParentId(asf.getId());
 
             SyncListUtils.syncList(
@@ -122,7 +126,6 @@ public class CreateAsfServlet extends HttpServlet {
 
             // 7. Типы работ
             List<AsfWorkType> workTypes = saveHelper.mapWorkTypes(req);
-
             List<AsfWorkType> oldWorkTypes = workTypeService.getManyByParentId(asf.getId());
 
             SyncListUtils.syncList(
@@ -137,9 +140,8 @@ public class CreateAsfServlet extends HttpServlet {
                 workTypeService.save(workType);
             }
 
-            // 8. Изображения
+            // 8. Изображения - раскомментируем
 //            List<AsfDocumentImage> images = saveHelper.mapImages(req);
-//
 //            List<AsfDocumentImage> oldImages = imageService.getManyByParentId(asf.getId());
 //
 //            SyncListUtils.syncList(
@@ -154,14 +156,14 @@ public class CreateAsfServlet extends HttpServlet {
 //                imageService.save(image);
 //            }
 
-            if (returnObjectId != null && !returnObjectId.isEmpty()) {
-                resp.sendRedirect("objects?mode=edit&orgId=" + req.getSession().getAttribute("orgId"));
+            // Редирект
+            if (returnOrgId != null && !returnOrgId.isEmpty()) {
+                resp.sendRedirect("objects?mode=edit&orgId=" + returnOrgId);
             } else {
                 resp.sendRedirect("asf?mode=view&asfId=" + asf.getId());
             }
 
         } catch (Exception e) {
-
             getServletContext().log("Ошибка при сохранении АСФ", e);
             throw new ServletException("Ошибка при сохранении АСФ", e);
         }

@@ -37,7 +37,7 @@
             <div class="asf-form-label">Краткое наименование *:</div>
             <div class="asf-form-field">
                 <label>
-                    <input type="text" name="short_name" value="<%= hasData ? asf.getShortName() : "" %>" <%= disabled %>>
+                    <input type="text" name="short_name" value="<%= hasData && asf.getShortName() != null ? asf.getShortName() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -45,7 +45,7 @@
             <div class="asf-form-label">Полное наименование *:</div>
             <div class="asf-form-field">
                 <label>
-                    <textarea name="full_name" rows="2" <%= disabled %>><%= hasData ? asf.getFullName() : "" %></textarea>
+                    <textarea name="full_name" rows="2" <%= disabled %>><%= hasData && asf.getFullName() != null ? asf.getFullName() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -53,7 +53,7 @@
             <div class="asf-form-label">Полное наименование (родительный падеж):</div>
             <div class="asf-form-field">
                 <label>
-                    <textarea name="full_name_gen" rows="2" <%= disabled %>><%= hasData ? asf.getFullNameGen() : "" %></textarea>
+                    <textarea name="full_name_gen" rows="2" <%= disabled %>><%= hasData && asf.getFullNameGen() != null ? asf.getFullNameGen() : "" %></textarea>
                 </label>
             </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="asf-form-label">Email:</div>
             <div class="asf-form-field">
                 <label>
-                    <input type="email" name="email" value="<%= hasData ? asf.getEmail() : "" %>" <%= disabled %>>
+                    <input type="email" name="email" value="<%= hasData && asf.getEmail() != null ? asf.getEmail() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -69,7 +69,7 @@
             <div class="asf-form-label">Статус (кратко):</div>
             <div class="asf-form-field">
                 <label>
-                    <input type="text" name="status_short" value="<%= hasData ? asf.getStatusShort() : "" %>" <%= disabled %>>
+                    <input type="text" name="status_short" value="<%= hasData && asf.getStatusShort() != null ? asf.getStatusShort() : "" %>" <%= disabled %>>
                 </label>
             </div>
         </div>
@@ -119,37 +119,37 @@
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Номер свидетельства:</div>
                     <label>
-                        <input type="text" name="cert_number" value="<%= certificate != null ? certificate.getCertNumber() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="text" name="cert_number" value="<%= certificate != null && certificate.getCertSeries() != null ? certificate.getCertNumber() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Серия:</div>
                     <label>
-                        <input type="text" name="cert_series" value="<%= certificate != null ? certificate.getCertSeries() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="text" name="cert_series" value="<%= certificate != null && certificate.getCertSeries() != null ? certificate.getCertSeries() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Кем выдано:</div>
                     <label>
-                        <input type="text" name="issued_by" value="<%= certificate != null ? certificate.getIssuedBy() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="text" name="issued_by" value="<%= certificate != null && certificate.getIssuedBy() != null ? certificate.getIssuedBy() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Основание выдачи:</div>
                     <label>
-                        <input type="text" name="issue_basis" value="<%= certificate != null ? certificate.getIssueBasis() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="text" name="issue_basis" value="<%= certificate != null && certificate.getIssueBasis() != null ? certificate.getIssueBasis() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Дата выдачи:</div>
                     <label>
-                        <input type="date" name="issue_date" value="<%= certificate != null ? certificate.getIssueDate() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="date" name="issue_date" value="<%= certificate != null && certificate.getIssueDate() != null ? certificate.getIssueDate() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Действителен до:</div>
                     <label>
-                        <input type="date" name="valid_until" value="<%= certificate != null ? certificate.getValidUntil() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="date" name="valid_until" value="<%= certificate != null && certificate.getValidUntil() != null ? certificate.getValidUntil() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
             </div>
@@ -231,49 +231,49 @@
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">По штату:</div>
                     <label>
-                        <input type="number" name="staff_by_staffing" value="<%= personnel != null ? personnel.getStaffByStaffing() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="staff_by_staffing" value="<%= personnel != null ? personnel.getStaffByStaffing() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">По списку:</div>
                     <label>
-                        <input type="number" name="staff_by_list" value="<%= personnel != null ? personnel.getStaffByList() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="staff_by_list" value="<%= personnel != null ? personnel.getStaffByList() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Аттестовано всего:</div>
                     <label>
-                        <input type="number" name="certified_total" value="<%= personnel != null ? personnel.getCertifiedTotal() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="certified_total" value="<%= personnel != null ? personnel.getCertifiedTotal() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Квалифицировано всего:</div>
                     <label>
-                        <input type="number" name="qualified_total" value="<%= personnel != null ? personnel.getQualifiedTotal() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="qualified_total" value="<%= personnel != null ? personnel.getQualifiedTotal() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">3 класс:</div>
                     <label>
-                        <input type="number" name="third_class" value="<%= personnel != null ? personnel.getThirdClass() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="third_class" value="<%= personnel != null ? personnel.getThirdClass() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">2 класс:</div>
                     <label>
-                        <input type="number" name="second_class" value="<%= personnel != null ? personnel.getSecondClass() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="second_class" value="<%= personnel != null ? personnel.getSecondClass() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">1 класс:</div>
                     <label>
-                        <input type="number" name="first_class" value="<%= personnel != null ? personnel.getFirstClass() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="first_class" value="<%= personnel != null ? personnel.getFirstClass() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Международный класс:</div>
                     <label>
-                        <input type="number" name="international_class" value="<%= personnel != null ? personnel.getInternationalClass() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="international_class" value="<%= personnel != null ? personnel.getInternationalClass() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
             </div>
@@ -293,43 +293,43 @@
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">АСР ТП:</div>
                     <label>
-                        <input type="number" name="asr_tp" value="<%= specialists != null ? specialists.getAsrTp() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="asr_tp" value="<%= specialists != null && specialists.getAsrTp() != 0 ? specialists.getAsrTp() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">АСР ЛРН(тер.):</div>
                     <label>
-                        <input type="number" name="asr_lrn_ter" value="<%= specialists != null ? specialists.getAsrLrnTer() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="asr_lrn_ter" value="<%= specialists != null && specialists.getAsrLrnTer() != 0 ? specialists.getAsrLrnTer() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">ГзСР:</div>
                     <label>
-                        <input type="number" name="gzsr" value="<%= specialists != null ? specialists.getGzsr() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="gzsr" value="<%= specialists != null && specialists.getGzsr() != 0 ? specialists.getGzsr() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">ПСР:</div>
                     <label>
-                        <input type="number" name="psr" value="<%= specialists != null ? specialists.getPsr() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="psr" value="<%= specialists != null && specialists.getPsr() != 0 ? specialists.getPsr() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Водитель:</div>
                     <label>
-                        <input type="number" name="driver" value="<%= specialists != null ? specialists.getDriver() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="driver" value="<%= specialists != null && specialists.getDriver() != 0 ? specialists.getDriver() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">АСР ЛРН(море):</div>
                     <label>
-                        <input type="number" name="asr_lrn_sea" value="<%= specialists != null ? specialists.getAsrLrnSea() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="asr_lrn_sea" value="<%= specialists != null && specialists.getAsrLrnSea() != 0 ? specialists.getAsrLrnSea() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
                 <div>
                     <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Всего специалистов:</div>
                     <label>
-                        <input type="number" name="specialists_total" value="<%= specialists != null ? specialists.getTotalCount() : "" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        <input type="number" name="specialists_total" value="<%= specialists != null && specialists.getTotalCount() != 0 ? specialists.getTotalCount() : "0" %>" value="0" min="0" style="width: 100%; padding: 5px;" <%= disabled %>>
                     </label>
                 </div>
             </div>
@@ -348,34 +348,58 @@
             <div id="signersContainer">
                 <%
                     List<AsfSigner> signersList = (hasData && signers != null) ? signers : new ArrayList<>();
-                    if (signersList.isEmpty()) {
-                        signersList = new ArrayList<>();
-                        signersList.add(null); // Добавляем один пустой элемент для отображения
-                    }
 
+                    if (signersList.isEmpty()) {
+                        // Показываем одну пустую строку
+                %>
+                <div class="asf-signer-item">
+                    <input type="hidden" name="signer_id[]" value="">
+                    <div>
+                        <div class="asf-form-label">ФИО подписанта</div>
+                        <label>
+                            <input type="text" name="signer_name[]" value="" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        </label>
+                    </div>
+                    <div>
+                        <div class="asf-form-label">Должность</div>
+                        <label>
+                            <input type="text" name="signer_position[]" value="" style="width: 100%; padding: 5px;" <%= disabled %>>
+                        </label>
+                    </div>
+                    <% if (!isView) { %>
+                    <div>
+                        <span class="delete-row" onclick="removeSigner(this)">✖</span>
+                    </div>
+                    <% } %>
+                </div>
+                <%
+                } else {
                     for (AsfSigner signer : signersList) {
                 %>
                 <div class="asf-signer-item">
                     <input type="hidden" name="signer_id[]" value="<%= signer.getId() %>">
                     <div>
-                        <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">ФИО подписанта</div>
+                        <div class="asf-form-label">ФИО подписанта</div>
                         <label>
                             <input type="text" name="signer_name[]" value="<%= signer.getName() != null ? signer.getName() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <div>
-                        <div class="asf-form-label" style="width: auto; margin-bottom: 3px;">Должность</div>
+                        <div class="asf-form-label">Должность</div>
                         <label>
                             <input type="text" name="signer_position[]" value="<%= signer.getPosition() != null ? signer.getPosition() : "" %>" style="width: 100%; padding: 5px;" <%= disabled %>>
                         </label>
                     </div>
                     <% if (!isView) { %>
                     <div>
-                        <span class="delete-row" onclick="removeSigner(this)" style="color: #f44336; cursor: pointer; font-size: 18px;">✖</span>
+                        <span class="delete-row" onclick="removeSigner(this)">✖</span>
                     </div>
                     <% } %>
                 </div>
-                <% } %>
+                <%
+                        }
+                    }
+                %>
             </div>
 
             <% if (!isView) { %>
@@ -513,7 +537,11 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                         <span style="font-size: 11px; color: #666;">Изображение <%= pos %></span>
                                         <% if (!isView) { %>
-                                        <span class="delete-row" onclick="removeImageDiv(this)" style="color: #f44336; cursor: pointer;">✖</span>
+                                        <span class="delete-row"
+                                              onclick="deleteImage(<%= img.getId() %>, this)"
+                                              style="color:#f44336; cursor:pointer;">
+                                            ✖
+                                        </span>
                                         <% } %>
                                     </div>
                                     <img src="data:image/png;base64,<%= java.util.Base64.getEncoder().encodeToString(img.getImageBlob()) %>"
@@ -523,6 +551,7 @@
                                     <% if (!isView) { %>
                                     <div style="margin-top: 8px; text-align: center;">
                                         <div class="asf-image-upload-area" style="font-size: 11px; padding: 3px;"
+                                             data-image-id="<%= img.getId() %>"
                                              onclick="document.getElementById('file_1_<%= pos %>').click()">
                                             📁 Заменить
                                         </div>
@@ -662,7 +691,7 @@
             <span onclick="document.getElementById('imageModal').style.display='none'" style="font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
         </div>
         <div style="padding: 20px; text-align: center;">
-            <img id="modalImage" src="" style="max-width: 100%; max-height: 70vh;">
+            <img id="modalImage" src="" style="max-width: 100%; max-height: 70vh;" alt="">
         </div>
     </div>
 </div>

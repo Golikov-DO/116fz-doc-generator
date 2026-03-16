@@ -20,7 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/portal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asf.css">
 </head>
 <body>
@@ -37,17 +37,17 @@
     <form action="createAsf" method="post" id="asfForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="asfId" value="<%= asfId != null ? asfId : "" %>">
-        <input type="hidden" name="returnObjectId" value="<%= returnObjectId != null ? returnObjectId : "" %>">
+        <input type="hidden" name="returnOrgId" value="<%= request.getAttribute("returnOrgId") != null ? request.getAttribute("returnOrgId") : "" %>">
 
         <jsp:include page="/WEB-INF/fragments/asf/asf.jsp" />
 
         <div class="form-footer">
             <% if (!"view".equals(mode)) { %>
-            <button type="submit" class="btn-primary">Сохранить</button>
+            <button type="submit" class="btn">Сохранить</button>
             <% } else { %>
-            <a href="?mode=edit&asfId=<%= asfId %>" class="btn-primary">Редактировать</a>
+            <a href="?mode=edit&asfId=<%= asfId %>" class="btn">Редактировать</a>
             <% } %>
-            <button type="button" onclick="goBack()" class="btn-secondary">
+            <button type="button" onclick="goBack()" class="btn">
                 Отменить
             </button>
         </div>

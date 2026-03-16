@@ -78,11 +78,6 @@ function removeWorkType(element) {
         }
     }
 }
-
-// Переменные для счетчиков изображений
-let appendix1Counter = 1;
-let appendix2Counter = 1;
-
 // Валидация и автоматическое сжатие изображения
 function validateImageSize(input, targetWidth, targetHeight, group, position) {
     if (!input.files || !input.files[0]) return;
@@ -110,7 +105,10 @@ function validateImageSize(input, targetWidth, targetHeight, group, position) {
             if (img.width === targetWidth && img.height === targetHeight) {
                 alert("Изображение будет автоматически приведено к размеру " + targetWidth + "x" + targetHeight);
                 showImagePreview(e.target.result, group, position, file.name);
-                uploadImageToServer(file, group, position);
+                const uploadArea = input.closest('[data-image-id]');
+                const imageId = uploadArea?.dataset.imageId;
+
+                uploadImageToServer(file, group, imageId);
                 saveImageData(group, position, file.name);
                 return;
             }
@@ -143,7 +141,10 @@ function resizeImage(img, targetWidth, targetHeight, fileName, group, position) 
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(resizedFile);
         fileInput.files = dataTransfer.files;
-        validateImageSize(fileInput, targetWidth, targetHeight, group, position);
+        const uploadArea = fileInput.closest('[data-image-id]');
+        const imageId = uploadArea?.dataset.imageId;
+
+        uploadImageToServer(resizedFile, group, imageId);
 
         const resizedDataUrl = canvas.toDataURL('image/png');
         showImagePreview(resizedDataUrl, group, position, fileName);
@@ -175,7 +176,7 @@ function showImagePreview(dataUrl, group, position, fileName) {
 }
 
 // Сохранение данных изображения
-function saveImageData(group, position, fileName, base64Data) {
+function saveImageData(group, position, fileName) {
     const container = document.getElementById('imageDataContainer');
 
     const oldName = document.querySelector(`input[name="image_name_${group}_${position}"]`);
@@ -197,18 +198,20 @@ function saveImageData(group, position, fileName, base64Data) {
 // Добавление поля изображения
 function addImageField(group) {
     const container = document.getElementById(`appendix${group}_container`);
-    const counter = group === '1' ? appendix1Counter++ : appendix2Counter++;
-    const position = counter;
+    const position =
+        document.querySelectorAll(`#appendix${group}_container .asf-image-item`).length + 1;
+
+    const currentIndex =
+        document.querySelectorAll(`#appendix${group}_container .asf-image-item`).length;
 
     const div = document.createElement('div');
     div.className = 'asf-image-item';
+    div.setAttribute('data-image-index', currentIndex);
+
     div.innerHTML = `
-    <input type="hidden" name="image_index[]" value="0">
-    <input type="hidden" name="image_id[]" value="">
-    <input type="hidden" name="image_group[]" value="${group}">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 11px; color: #666;">Изображение ${counter} (1047x1480px)</span>
-            <span class="delete-row" onclick="removeImageField(this, '${group}', ${position})" style="color: #f44336; cursor: pointer;">✖</span>
+            <span style="font-size: 11px; color: #666;">1047x1480px</span>
+            <span class="delete-row" onclick="removeImageField(this)" style="color: #f44336; cursor: pointer;">✖</span>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
             <div class="asf-image-upload-area" onclick="document.getElementById('file_${group}_${position}').click()">
@@ -216,9 +219,10 @@ function addImageField(group) {
             </div>
             <span style="font-size: 11px; color: #999;">PNG, 8MB макс</span>
         </div>
-        <input type="file" id="file_${group}_${position}" name=name="image_upload" accept="image/png" style="display: none;" onchange="validateImageSize(this, 1047, 1480, '${group}', ${position})">
+        <input type="file" id="file_${group}_${position}" name="image_upload" accept="image/png" style="display: none;" onchange="validateImageSize(this, 1047, 1480, '${group}', ${position})">
         <div id="preview_${group}_${position}" style="margin-top: 10px;"></div>
     `;
+
     container.appendChild(div);
 }
 
@@ -245,6 +249,23 @@ function removeImageDiv(element) {
 // Инициализация при загрузке
 function initAsfForm()  {
     // Валидация формы
+    if (sessionStorage.getItem("openImagesBlock")) {
+
+        const headers = document.querySelectorAll('.asf-collapse-header');
+
+        headers.forEach(header => {
+            const text = header.textContent.toLowerCase();
+
+            if (text.includes("прилож")){
+                const content = header.nextElementSibling;
+                if (content && !content.classList.contains("expanded")) {
+                    toggleCollapse(header);
+                }
+            }
+        });
+
+        sessionStorage.removeItem("openImagesBlock");
+    }
     const form = document.getElementById('asfForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -259,46 +280,70 @@ function initAsfForm()  {
     }
 }
 
-function uploadImageToServer(file, group, position) {
+function uploadImageToServer(file, group, imageId) {
 
     const formData = new FormData();
-    const asfId = document.querySelector('input[name="asfId"]').value;
+    const form = document.getElementById("asfForm");
+    const asfId = form.querySelector('input[name="asfId"]').value;
 
     formData.append("file", file);
     formData.append("group", group);
     formData.append("name", file.name);
     formData.append("asfId", asfId);
 
+    if (imageId) {
+        formData.append("imageId", imageId);
+    }
+
     fetch("uploadAsfImage", {
         method: "POST",
         body: formData
     })
-        .then(response => response.json())
-        .then(data => {
-
-            const container = document.getElementById('imageDataContainer');
-
-            const idInput = document.createElement("input");
-            idInput.type = "hidden";
-            idInput.name = "image_id[]";
-            idInput.value = data.id;
-
-            const groupInput = document.createElement("input");
-            groupInput.type = "hidden";
-            groupInput.name = "image_group[]";
-            groupInput.value = group;
-
-            const indexInput = document.createElement("input");
-            indexInput.type = "hidden";
-            indexInput.name = "image_index[]";
-            indexInput.value = "0";
-
-            container.appendChild(indexInput);
-            container.appendChild(idInput);
-            container.appendChild(groupInput);
+        .then(() => {
+            sessionStorage.setItem("openImagesBlock", "true");
+            location.reload();
         })
         .catch(err => {
             alert("Ошибка загрузки изображения");
             console.error(err);
         });
 }
+
+function deleteImage(id, element) {
+
+    if (!confirm("Удалить изображение?")) return;
+
+    fetch("deleteAsfImage?id=" + id, { method: "POST" })
+        .then(() => {
+
+            const imageDiv = element.closest('.asf-image-item');
+            const container = imageDiv.parentElement;
+
+            imageDiv.remove();
+
+            renumberImages(container.id);
+
+        })
+        .catch(err => {
+            alert("Ошибка удаления изображения");
+            console.error(err);
+        });
+}
+
+function renumberImages(containerId) {
+
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const items = container.querySelectorAll('.asf-image-item');
+
+    items.forEach((item, index) => {
+        const label = item.querySelector('span');
+        if (label) {
+            label.textContent = "Изображение " + (index + 1);
+        }
+    });
+
+}
+
+document.addEventListener("DOMContentLoaded", initAsfForm);

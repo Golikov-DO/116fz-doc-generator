@@ -158,12 +158,9 @@
                                     <select name="object_asf_id[]" class="asf-select" style="width:100%;" <%= disabled %>>
                                         <option value="">Выберите АСФ</option>
                                         <% if (asfList != null) {
-                                            Asf selectedAsf = object.getAsf();
-                                            Integer selectedAsfId = selectedAsf != null ? selectedAsf.getId() : null;
-                                            for (Asf asf : asfList) {
-                                                boolean isSelected = selectedAsfId != null && Objects.equals(selectedAsfId, asf.getId());
-                                        %>
-                                        <option value="<%= asf.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                            for (Asf asf : asfList) { %>
+                                        <option value="<%= asf.getId() %>"
+                                            <%= (object.getAsf() != null && object.getAsf().getId() == asf.getId()) ? "selected" : "" %>>
                                             <%= asf.getShortName() %>
                                         </option>
                                         <% }} %>
@@ -172,7 +169,7 @@
                                 </label>
                                 <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
                                 <button type="button" class="edit-asf-btn"
-                                        onclick="openAsfFullPage(<%= object.getAsf().getId() %>, this.closest('.object-item'))"
+                                        onclick="openAsfFullPageFromSelect(this.closest('.object-item'))"
                                         style="padding: 5px 10px; background-color: #e0e0e0; color: black; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap;">
                                     Редактировать
                                 </button>
@@ -507,7 +504,7 @@
                             </tbody>
                         </table>
                         <% if (!isView) { %>
-                        <button type="button" class="add-row" onclick="addEquipment(this)">Добавить оборудование</button>
+                        <button type="button" class="add-row" onclick="addEquipment(this)">яДобавить оборудование</button>
                         <% } %>
                     </div>
                 </div>
@@ -649,7 +646,7 @@
                         </label>
                         <button type="button"
                                 class="edit-asf-btn"
-                                onclick="openAsfFullPage(null, this.closest('.object-item'))"
+                                onclick="openAsfFullPage(null)"
                                 style="padding:5px 10px;background-color:#e0e0e0;color:black;border:1px solid #ccc;border-radius:3px;cursor:pointer;font-size:12px;white-space:nowrap;">
                             Редактировать
                         </button>

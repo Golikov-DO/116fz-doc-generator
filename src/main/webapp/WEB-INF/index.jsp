@@ -8,6 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CASEO - Личный кабинет</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/index.css">
 </head>
 <body>
@@ -45,20 +46,20 @@
 
             <!-- Кнопки Просмотр и Редактировать -->
             <div class="button-group">
-                <button type="button" class="btn btn-green" onclick="openDocument('view')">
+                <button type="button" class="btn" onclick="openDocument('view')">
                     Просмотр
                 </button>
-                <button type="button" class="btn btn-blue" onclick="openDocument('edit')">
+                <button type="button" class="btn" onclick="openDocument('edit')">
                     Редактировать
                 </button>
             </div>
 
             <!-- Кнопки Разработать план и Добавить новую организацию -->
             <div class="button-group">
-                <button type="button" class="btn btn-purple" onclick="developPlan()">
+                <button type="button" class="btn" onclick="developPlan()">
                     Разработать план
                 </button>
-                <a href="portal?mode=create" class="btn btn-orange">
+                <a href="organization?mode=create" class="btn">
                     Добавить новую организацию
                 </a>
             </div>

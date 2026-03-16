@@ -24,9 +24,14 @@ public class HibernateAsfRepository implements ParentRepository<Asf> {
 
     @Override
     public void save(Asf asf) {
-        HibernateUtil.inTransaction(session -> session.merge(asf));
+        HibernateUtil.inTransaction(session -> {
+            if (asf.getId() == null) {
+                session.persist(asf);  // persist присваивает ID
+            } else {
+                session.merge(asf);     // merge для обновления
+            }
+        });
     }
-
     @Override
     public void deleteById(int id) {
         HibernateUtil.inTransaction(session -> {
