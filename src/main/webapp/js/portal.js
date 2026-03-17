@@ -37,3 +37,29 @@ function toggleCollapse(header) {
 function goBack() {
     window.history.back();
 }
+
+function createNewObject() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get("orgId");
+
+    if (!orgId) {
+        alert("Сначала выберите организацию");
+        return;
+    }
+
+    const form = document.createElement("form");
+
+    form.method = "POST";
+    form.action = "createEmptyObject";
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "orgId";
+    input.value = orgId;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+
+    form.submit();
+}

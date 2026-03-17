@@ -395,3 +395,35 @@ td {
 .mb-20 {
     margin-bottom: 20px;
 }
+
+.sidebar-section {
+    margin-top: 15px;
+}
+
+.sidebar-title {
+    font-weight: bold;
+    cursor: pointer;
+    padding: 6px 10px;
+}
+
+.sidebar-title:hover {
+    background: #f2f2f2;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.sidebar-list li {
+    margin: 4px 0;
+}
+
+.sidebar-list a {
+    text-decoration: none;
+    color: #333;
+}
+
+.sidebar-list a:hover {
+    text-decoration: underline;
+}

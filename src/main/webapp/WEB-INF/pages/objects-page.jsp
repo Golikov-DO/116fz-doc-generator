@@ -40,6 +40,7 @@
     <form action="createObjects" method="post" id="objectsForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
+        <input type="hidden" name="objectId" value="<%= request.getParameter("id") != null ? request.getParameter("id") : "" %>">
 
         <jsp:include page="/WEB-INF/fragments/objects/objects.jsp" />
 

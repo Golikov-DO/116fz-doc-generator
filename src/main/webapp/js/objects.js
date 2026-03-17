@@ -10,62 +10,68 @@ function copySelectOptions(selector, className, objectElement) {
     //target.selectedIndex = 0;
 }
 
-// Добавление объекта
-function addObject() {
-
-    const container = document.getElementById('objectsContainer');
-    const objectCount = container.querySelectorAll('.object-item').length + 1;
-    const template = document.getElementById('object-template');
-    let html = template.innerHTML.replaceAll('__NUMBER__', String(objectCount));
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    const objectElement = wrapper.firstElementChild;
-
-    container.appendChild(objectElement);
-
-    copySelectOptions('select[name="hazardous_substance_id[]"]', '.substance-select', objectElement);
-    copySelectOptions('select[name="object_asf_id[]"]', '.asf-select', objectElement);
-    copySelectOptions('select[name="object_city_id[]"]', '.city-select', objectElement);
-    const kchsSelect = objectElement.querySelector('select[name="emergency_commission[]"]');
-    toggleKchsVisibility(kchsSelect);
-}
-
 // Добавление члена КЧС
 function addKchs(button) {
-    const tbody = button.closest('.object-collapse-content').querySelector('.kchs-body');
-    const number = tbody.dataset.objectIndex;
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td>
-            <input type="hidden" name="kchs_object_index[]" value="${number}">
-            <input type="hidden" name="kchs_id[]" value="">
-            <input type="number" name="kchs_number[]" placeholder="1" style="width:60px;"></td>
-        <td><input type="text" name="kchs_position[]" placeholder="Должность в КЧС" style="width: 100%;"></td>
-        <td><input type="text" name="kchs_name[]" placeholder="ФИО с должностью" style="width: 100%;"></td>
-        <td><input type="text" name="kchs_phone[]" placeholder="Сотовый Телефон" style="width: 100%;"></td>
-        <td><input type="text" name="kchs_work_phone[]" placeholder="Рабочи Телефон" style="width: 100%;"></td>
-        <td><input type="text" name="kchs_address[]" placeholder="Домашний адрес" style="width: 100%;"></td>
-        <td class="delete-row" onclick="deleteRow(this)">✖</td>
-    `;
-    tbody.appendChild(newRow);
+
+    const tbody = button
+        .closest(".object-collapse-content")
+        .querySelector(".kchs-body");
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+<td>
+<input type="hidden" name="kchs_id[]" value="">
+<input type="hidden" name="kchs_object_index[]" value="0">
+<input type="number" name="kchs_number[]" style="width:60px;">
+</td>
+
+<td><input type="text" name="kchs_position[]" style="width:100%;"></td>
+
+<td><input type="text" name="kchs_name[]" style="width:100%;"></td>
+
+<td><input type="text" name="kchs_phone[]" style="width:100%;"></td>
+
+<td><input type="text" name="kchs_work_phone[]" style="width:100%;"></td>
+
+<td><input type="text" name="kchs_address[]" style="width:100%;"></td>
+
+<td class="delete-row" onclick="deleteRow(this)">✖</td>
+`;
+
+    tbody.appendChild(row);
 }
 
 // Добавление оборудования
 function addEquipment(button) {
-    const tbody = button.closest('.object-collapse-content').querySelector('.equipment-body');
-    const number = tbody.dataset.objectIndex;
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td>
-            <input type="hidden" name="techno_object_index[]" value="${number}">
-            <input type="hidden" name="techno_id[]" value="">
-            <input type="number" name="techno_number[]" style="width:60px;">
-        </td>
-        <td><input type="text" name="techno_name[]" placeholder="Наименование" style="width: 100%;"></td>
-        <td><textarea name="techno_characteristics[]" rows="3" placeholder="Характеристики" style="width: 100%;"></textarea></td>
-        <td class="delete-row" onclick="deleteRow(this)">Удалить</td>
-    `;
-    tbody.appendChild(newRow);
+
+    const tbody = button
+        .closest(".object-collapse-content")
+        .querySelector(".equipment-body");
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+<td>
+<input type="hidden" name="techno_id[]" value="">
+<input type="hidden" name="techno_object_index[]" value="0">
+<input type="number" name="techno_number[]" style="width:60px;">
+</td>
+
+<td>
+<input type="text" name="techno_name[]" style="width:100%;">
+</td>
+
+<td>
+<textarea name="techno_characteristics[]" rows="2"
+oninput="autoResize(this)"
+style="width:100%;resize:none;overflow:hidden;"></textarea>
+</td>
+
+<td class="delete-row" onclick="deleteRow(this)">✖</td>
+`;
+
+    tbody.appendChild(row);
 }
 
 // Загрузка подписантов

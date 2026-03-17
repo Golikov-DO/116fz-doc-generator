@@ -3,7 +3,6 @@ package com.caseo.web.helper;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.*;
 import com.caseo.domain.service.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataLoader {
@@ -31,46 +30,47 @@ public class DataLoader {
         return new OrganizationData(org, addr, signer, contacts);
     }
 
-    // Загрузка объектов
-    public ObjectsData loadObjects(int orgId) {
-        ChildService<ObjectModel> objService = services.getChildService(ObjectModel.class);
-        List<ObjectModel> objects = objService.getManyByParentId(orgId);
+    // Загрузка объекта
+    public ObjectData loadObject(int objectId) {
 
-        ChildService<ObjectAddress> objAddrService = services.getChildService(ObjectAddress.class);
+        ParentService<ObjectModel> objService = services.getParentService(ObjectModel.class);
+        ObjectModel object = objService.getOneById(objectId);
+
+        ChildService<ObjectAddress> addrService = services.getChildService(ObjectAddress.class);
+        ObjectAddress address = addrService.getOneByParentId(objectId);
+
         ChildService<ObjectCompositionKchs> kchsService = services.getChildService(ObjectCompositionKchs.class);
+        List<ObjectCompositionKchs> kchsList = kchsService.getManyByParentId(objectId);
+
         ChildService<ObjectTechnologicalEquipment> equipService = services.getChildService(ObjectTechnologicalEquipment.class);
+        List<ObjectTechnologicalEquipment> equipmentList = equipService.getManyByParentId(objectId);
+
         ChildService<ObjectStructure> structService = services.getChildService(ObjectStructure.class);
+        List<ObjectStructure> structureList = structService.getManyByParentId(objectId);
+
         ChildService<ObjectFireEquipment> fireService = services.getChildService(ObjectFireEquipment.class);
+        List<ObjectFireEquipment> fireList = fireService.getManyByParentId(objectId);
+
         ChildService<ObjectRegionalAuthorities> regionalService = services.getChildService(ObjectRegionalAuthorities.class);
+        List<ObjectRegionalAuthorities> authoritiesList = regionalService.getManyByParentId(objectId);
+
         ChildService<ObjectInsurancePolicy> policyService = services.getChildService(ObjectInsurancePolicy.class);
+        ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);
+
         ChildService<ObjectOrderMinimumBalance> balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
+        ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectId);
+
         ChildService<ObjectType> typeService = services.getChildService(ObjectType.class);
+        ObjectType type = typeService.getOneByParentId(objectId);
 
-        List<ObjectAddress> addresses = new ArrayList<>();
-        List<List<ObjectCompositionKchs>> kchsLists = new ArrayList<>();
-        List<List<ObjectTechnologicalEquipment>> equipmentLists = new ArrayList<>();
-        List<List<ObjectStructure>> structureLists = new ArrayList<>();
-        List<List<ObjectFireEquipment>> fireLists = new ArrayList<>();
-        List<List<ObjectRegionalAuthorities>> authoritiesLists = new ArrayList<>();
-        List<ObjectInsurancePolicy> policies = new ArrayList<>();
-        List<ObjectOrderMinimumBalance> balances = new ArrayList<>();
-        List<ObjectType> types = new ArrayList<>();
+        return new ObjectData(object, address, kchsList, equipmentList, structureList,
+                fireList, authoritiesList, policy, balance, type
+        );
+    }
 
-        for (ObjectModel obj : objects) {
-            addresses.add(objAddrService.getOneByParentId(obj.getId()));
-            kchsLists.add(kchsService.getManyByParentId(obj.getId()));
-            equipmentLists.add(equipService.getManyByParentId(obj.getId()));
-            structureLists.add(structService.getManyByParentId(obj.getId()));
-            fireLists.add(fireService.getManyByParentId(obj.getId()));
-            authoritiesLists.add(regionalService.getManyByParentId(obj.getId()));
-            policies.add(policyService.getOneByParentId(obj.getId()));
-            balances.add(balanceService.getOneByParentId(obj.getId()));
-            types.add(typeService.getOneByParentId(obj.getId()));
-        }
-
-        return new ObjectsData(objects, addresses, kchsLists, equipmentLists, 
-                              structureLists, fireLists, authoritiesLists, 
-                              policies, balances, types);
+    public List<ObjectModel> loadObjects(int orgId) {
+        ChildService<ObjectModel> objService = services.getChildService(ObjectModel.class);
+        return objService.getManyByParentId(orgId);
     }
 
     // Загрузка АСФ
@@ -111,15 +111,18 @@ public class DataLoader {
     public record OrganizationData(Organization org, OrganizationAddress addr, 
                                    OrganizationSigner signer, List<OrganizationContact> contacts) {}
 
-    public record ObjectsData(List<ObjectModel> objects, List<ObjectAddress> addresses,
-                              List<List<ObjectCompositionKchs>> kchsLists,
-                              List<List<ObjectTechnologicalEquipment>> equipmentLists,
-                              List<List<ObjectStructure>> structureLists,
-                              List<List<ObjectFireEquipment>> fireLists,
-                              List<List<ObjectRegionalAuthorities>> authoritiesLists,
-                              List<ObjectInsurancePolicy> policies,
-                              List<ObjectOrderMinimumBalance> balances,
-                              List<ObjectType> types) {}
+    public record ObjectData(
+            ObjectModel object,
+            ObjectAddress address,
+            List<ObjectCompositionKchs> kchsList,
+            List<ObjectTechnologicalEquipment> equipmentList,
+            List<ObjectStructure> structureList,
+            List<ObjectFireEquipment> fireList,
+            List<ObjectRegionalAuthorities> authoritiesList,
+            ObjectInsurancePolicy policy,
+            ObjectOrderMinimumBalance balance,
+            ObjectType type
+    ) {}
 
     public record AsfData(Asf asf, AsfCertificate certificate, 
                           AsfCompositionDeploymentFunds deployment,

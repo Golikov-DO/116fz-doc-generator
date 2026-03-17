@@ -8,8 +8,8 @@ public class AsfCertificateTextBuilder {
 
         if (cert == null) return "";
 
-        return "серия № " + cert.getCertSeries() +
-                ", рег. номер " + cert.getCertNumber() +
+        return "серия № " + cert.getCertNumber() +
+                ", рег. номер " + cert.getCertSeries() +
                 " от " + DocumentOutputFormatter.dotDate(String.valueOf(cert.getIssueDate())) +
                 " г., выданное на основании протокола заседания " +
                 cert.getIssuedBy() + " " + cert.getIssueBasis() +
