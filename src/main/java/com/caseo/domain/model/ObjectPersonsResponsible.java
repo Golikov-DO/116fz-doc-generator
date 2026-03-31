@@ -1,38 +1,27 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "object")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "object_responsible_persons")
-public class ObjectPersonsResponsible {
+public class ObjectPersonsResponsible implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @OneToOne
     @JoinColumn(name = "object_id")
-    private ObjectModel object;  // вместо objectId
+    private ObjectModel object;
 
     private int number;
     private String fullName;
     private String position;
-
-    public ObjectPersonsResponsible() {}
-
-    // Геттеры и сеттеры
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public ObjectModel getObject() { return object; }
-    public void setObject(ObjectModel object) { this.object = object; }
-
-    public int getNumber() { return number; }
-    public void setNumber(int number) { this.number = number; }
-
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
-
-    public String getPosition() { return position; }
-    public void setPosition(String position) { this.position = position; }
 }

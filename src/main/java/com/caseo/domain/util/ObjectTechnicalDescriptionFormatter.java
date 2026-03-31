@@ -15,7 +15,7 @@ public class ObjectTechnicalDescriptionFormatter {
         addParagraph(paragraphs, "Район расположения объекта", city.getCityName(), city.getAdminStatus());
         addParagraph(paragraphs, "Рельеф местности", city.getGeoRelief());
         addParagraph(paragraphs, "Геологическое строение участка", city.getGeoGeology());
-        addParagraph(paragraphs, "Климатические условия", city.getClimateDesc());
+        addParagraph(paragraphs, "Климатические условия", city.getClimatDesc());
         addParagraph(paragraphs, "Гидрографическая сеть представлена", city.getHydroDesc());
         addParagraph(paragraphs, "Транспортная доступность", city.getInfraTransport());
         addParagraph(paragraphs, "Инженерные коммуникации района", city.getInfraEngineering());

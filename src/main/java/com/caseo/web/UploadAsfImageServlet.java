@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.caseo.web.util.RequestUtils.param;
 import static com.caseo.web.util.RequestUtils.paramInt;
@@ -41,12 +42,12 @@ public class UploadAsfImageServlet extends HttpServlet {
             throws ServletException {
 
         try {
-            Integer asfId = paramInt(req, "asfId");
+            int asfId = paramInt(req, "asfId");
             String group = param(req, "group");
             Part filePart = req.getPart("file");
-            Integer imageId = paramInt(req, "imageId");
+            int imageId = paramInt(req, "imageId");
 
-            if (asfId == null) {
+            if (asfId == 0) {
                 throw new ServletException("asfId is required");
             }
 
@@ -69,38 +70,39 @@ public class UploadAsfImageServlet extends HttpServlet {
             // Считаем сколько уже есть изображений в этой группе
             int nextNumber = images.stream()
                     .filter(i -> group.equals(i.getGroupKey()))
-                    .map(i -> i.getNameDocument())
-                    .filter(n -> n != null)
+                    .map(AsfDocumentImage::getNameDocument)
+                    .filter(Objects::nonNull)
                     .map(n -> n.replaceAll("\\D+", ""))
                     .filter(s -> !s.isEmpty())
                     .mapToInt(Integer::parseInt)
                     .max()
                     .orElse(0) + 1;
 
-            // Генерируем имя: "Свидетельство 1", "Свидетельство 2" или "Паспорт 1", "Паспорт 2"
-            // Генерируем имя
-            String prefix = "1".equals(group) ? "Свидетелappendixьство " : "Паспорт ";
-            String imageName = prefix + nextNumber;
-
             AsfDocumentImage image;
 
-            if (imageId != null) {
-
+            if (imageId > 0) {
+                // ЗАМЕНА - ищем существующее
                 image = images.stream()
                         .filter(i -> i.getId() == imageId)
                         .findFirst()
                         .orElseThrow(() -> new ServletException("Image not found: " + imageId));
 
-            } else {
+                // ТОЛЬКО обновляем картинку, имя НЕ трогаем!
+                image.setImageBlob(data);
+                // НЕ вызываем setNameDocument() - оставляем как было
 
+            } else {
+                // НОВОЕ - создаем
                 image = new AsfDocumentImage();
                 image.setGroupKey(group);
                 image.setAsf(asf);
 
+                // Генерируем имя только для нового
+                String prefix = "1".equals(group) ? "Свидетельство " : "Паспорт ";
+                String imageName = prefix + nextNumber;
+                image.setNameDocument(imageName);
+                image.setImageBlob(data);
             }
-
-            image.setNameDocument(imageName);
-            image.setImageBlob(data);
 
             imageService.save(image);
 

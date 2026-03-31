@@ -21,8 +21,7 @@ public class Main {
 
         ApplicationContext context = Bootstrap.init();
 
-        // ID организации (раньше был documentId)
-        int orgId = 2;
+        int orgId = 6;
 
         InternalServices services = context.internalServices();
 
@@ -48,7 +47,7 @@ public class Main {
                             object.getId()
                     );
 
-            Path output = DocumentPathSet.buildOutputFile(org, object);
+            Path output = DocumentPathSet.buildOutputFile(org, object, objects);
             document.save(output.toFile());
         }
         // ===================== PLACEHOLDER =======================

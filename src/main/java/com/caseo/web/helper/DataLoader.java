@@ -36,6 +36,9 @@ public class DataLoader {
         ParentService<ObjectModel> objService = services.getParentService(ObjectModel.class);
         ObjectModel object = objService.getOneById(objectId);
 
+        ParentService<ReferenceCity> cityService = services.getParentService(ReferenceCity.class);
+        ReferenceCity city = cityService.getOneById(objectId);
+
         ChildService<ObjectAddress> addrService = services.getChildService(ObjectAddress.class);
         ObjectAddress address = addrService.getOneByParentId(objectId);
 
@@ -52,7 +55,7 @@ public class DataLoader {
         List<ObjectFireEquipment> fireList = fireService.getManyByParentId(objectId);
 
         ChildService<ObjectRegionalAuthorities> regionalService = services.getChildService(ObjectRegionalAuthorities.class);
-        List<ObjectRegionalAuthorities> authoritiesList = regionalService.getManyByParentId(objectId);
+        List<ObjectRegionalAuthorities> authoritiesList = regionalService.getManyByParentId(city.getId());
 
         ChildService<ObjectInsurancePolicy> policyService = services.getChildService(ObjectInsurancePolicy.class);
         ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);

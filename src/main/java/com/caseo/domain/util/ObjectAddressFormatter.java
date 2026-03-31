@@ -10,23 +10,23 @@ public class ObjectAddressFormatter {
 
     public static String format(Addressable addr)  {
         // 1. Если есть готовый "ручной" адрес - выдаем его сразу
-        if (addr.rawAddress() != null && !addr.rawAddress().isBlank()) {
-            return addr.rawAddress().trim();
+        if (addr.getRawAddress() != null && !addr.getRawAddress().isBlank()) {
+            return addr.getRawAddress().trim();
         }
 
         StringJoiner addressLine = new StringJoiner(", ");
 
         // 2. Индекс
-        if (addr.addressIndex() != null && addr.addressIndex() > 0) {
-            addressLine.add(String.valueOf(addr.addressIndex()));
+        if (addr.getAddressIndex() != null && addr.getAddressIndex() > 0) {
+            addressLine.add(String.valueOf(addr.getAddressIndex()));
         }
 
         // 3. Субъект (Край/Область)
-        addIfNotEmpty(addressLine, addr.constituentEntity());
+        addIfNotEmpty(addressLine, addr.getConstituentEntity());
 
         // 4. Территориальная иерархия и Город (Умная склейка)
-        String hierarchy = (addr.areaHierarchy() != null) ? addr.areaHierarchy().trim() : "";
-        String city = (addr.city() != null) ? addr.city().trim() : "";
+        String hierarchy = (addr.getAreaHierarchy() != null) ? addr.getAreaHierarchy().trim() : "";
+        String city = (addr.getCity() != null) ? addr.getCity().trim() : "";
 
         if (!hierarchy.isEmpty()) {
             addressLine.add(hierarchy);
@@ -38,13 +38,13 @@ public class ObjectAddressFormatter {
         }
 
         // 5. Улица (с проверкой префиксов)
-        if (addr.street() != null && !addr.street().isBlank()) {
-            addressLine.add(applyStreetPrefix(addr.street().trim()));
+        if (addr.getStreet() != null && !addr.getStreet().isBlank()) {
+            addressLine.add(applyStreetPrefix(addr.getStreet().trim()));
         }
 
         // 6. Дом / Помещение (с проверкой префиксов)
-        if (addr.house() != null && !addr.house().isBlank()) {
-            addressLine.add(applyHousePrefix(addr.house().trim()));
+        if (addr.getHouse() != null && !addr.getHouse().isBlank()) {
+            addressLine.add(applyHousePrefix(addr.getHouse().trim()));
         }
 
         return addressLine.toString();

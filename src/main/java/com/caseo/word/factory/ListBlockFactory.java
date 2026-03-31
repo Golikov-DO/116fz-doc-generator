@@ -11,14 +11,14 @@ import java.util.Map;
 
 public class ListBlockFactory {
 
-    private final ChildService<ObjectModel> objectService;
+    private final ParentService<ObjectModel> objectService;
     private final ChildService<ObjectStructure> objectStructureService;
     private final ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService;
     private final ChildService<ObjectAddress> objectAddressService;
     private final ParentService<ReferenceCity> referenceCityService;
 
     public ListBlockFactory(
-            ChildService<ObjectModel> objectService,
+            ParentService<ObjectModel> objectService,
             ChildService<ObjectStructure> objectStructureService,
             ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService,
             ChildService<ObjectAddress> objectAddressService,
@@ -35,12 +35,10 @@ public class ListBlockFactory {
 
         Map<String,Object> data = new HashMap<>();
 
-        ObjectModel object = objectService.getOneByParentId(objectId);
+        ObjectModel object = objectService.getOneById(objectId);
 
         // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
-        var objAddr = objectAddressService.getOneByParentId(object.getId());
-        var city = referenceCityService.getOneById(objAddr.getObject().getId());
-        String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(city);
+        String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(object.getCity());
 
         if (descriptionParagraphs.length > 0) {
             data.put("OBJ_AREA_LOCATION_LIST", descriptionParagraphs);
@@ -68,7 +66,7 @@ public class ListBlockFactory {
         if (items == null || items.isEmpty()) return new String[0];
         String[] result = new String[items.size()];
         for (int i = 0; i < items.size(); i++) {
-            result[i] = items.get(i).name();
+            result[i] = items.get(i).getName();
         }
         return result;
     }

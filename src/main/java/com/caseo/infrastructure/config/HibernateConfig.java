@@ -6,6 +6,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
 
+import java.io.File;
+import java.net.URL;
+import java.util.Enumeration;
+
 public class HibernateConfig {
     private static SessionFactory sessionFactory;
 
@@ -14,59 +18,42 @@ public class HibernateConfig {
             try {
                 Configuration config = getConfiguration();
 
-                Class<?>[] entityClasses = {
-                        Asf.class,
-                        AsfCertificate.class,
-                        AsfCompositionDeploymentFunds.class,
-                        AsfDocumentImage.class,
-                        AsfPersonnel.class,
-                        AsfSigner.class,
-                        AsfSpecialists.class,
-                        AsfWorkType.class,
-                        ObjectAccidentScenarios.class,
-                        ObjectAddress.class,
-                        ObjectCompositionKchs.class,
-                        ObjectFireEquipment.class,
-                        ObjectHazardousParam.class,
-                        ObjectHazardousParamValue.class,
-                        ObjectHazardousSubstance.class,
-                        ObjectImage.class,
-                        ObjectInsurancePolicy.class,
-                        ObjectMainScenarios.class,
-                        ObjectModel.class,
-                        ObjectOrderMinimumBalance.class,
-                        ObjectPersonsResponsible.class,
-                        ObjectRegionalAuthorities.class,
-                        ObjectStructure.class,
-                        ObjectTechnologicalBlock.class,
-                        ObjectTechnologicalEquipment.class,
-                        ObjectType.class,
-                        Organization.class,
-                        OrganizationAddress.class,
-                        OrganizationContact.class,
-                        OrganizationSigner.class,
-                        ReferenceCity.class,
-                        ReferenceEmergencyServices.class,
-                        ReferenceTableTitle.class
-                };
-
-                for (Class<?> entityClass : entityClasses) {
-                    config.addAnnotatedClass(entityClass);
-                }
+                // АВТОПОИСК
+                scanAndAddEntities(config);
 
                 sessionFactory = config.buildSessionFactory();
 
             } catch (Exception e) {
-                System.err.println(">>> ОШИБКА при создании SessionFactory:");
-                e.printStackTrace();
-                if (e.getCause() != null) {
-                    System.err.println(">>> ПРИЧИНА:");
-                    e.getCause().printStackTrace();
-                }
-                throw new RuntimeException("Ошибка", e);
+                throw new RuntimeException("Критический сбой Hibernate: " + e.getMessage(), e);
             }
         }
         return sessionFactory;
+    }
+
+    private static void scanAndAddEntities(Configuration config) throws Exception {
+        String packageName = "com.caseo.domain.model";
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(path);
+
+        while (resources.hasMoreElements()) {
+            File directory = new File(resources.nextElement().getFile());
+            if (directory.exists() && directory.isDirectory()) {
+                String[] files = directory.list();
+                if (files != null) {
+                    for (String file : files) {
+                        if (file.endsWith(".class")) {
+                            String className = packageName + "." + file.substring(0, file.length() - 6);
+                            Class<?> clazz = Class.forName(className);
+
+                            // ФИЛЬТР: Добавляем только те классы, над которыми стоит @Entity
+                            if (clazz.isAnnotationPresent(jakarta.persistence.Entity.class)) {
+                                config.addAnnotatedClass(clazz);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static @NonNull Configuration getConfiguration() {
@@ -82,7 +69,6 @@ public class HibernateConfig {
         config.setProperty("hibernate.format_sql", "true");
         config.setProperty("hibernate.hbm2ddl.auto", "validate");
 
-        // Волшебная строчка - сама преобразует camelCase в snake_case
         config.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         return config;
     }

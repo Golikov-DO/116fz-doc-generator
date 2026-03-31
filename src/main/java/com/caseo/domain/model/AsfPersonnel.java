@@ -1,13 +1,20 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "asf")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "asf_personnel")
-public class AsfPersonnel {
+public class AsfPersonnel implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @OneToOne
@@ -22,36 +29,4 @@ public class AsfPersonnel {
     private int thirdClass;
     private int secondClass;
     private int internationalClass;
-
-    public AsfPersonnel() {}
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Asf getAsf() { return asf; }
-    public void setAsf(Asf asf) { this.asf = asf; }
-
-    public int getStaffByStaffing() { return staffByStaffing; }
-    public void setStaffByStaffing(int staffByStaffing) { this.staffByStaffing = staffByStaffing; }
-
-    public int getStaffByList() { return staffByList; }
-    public void setStaffByList(int staffByList) { this.staffByList = staffByList; }
-
-    public int getCertifiedTotal() { return certifiedTotal; }
-    public void setCertifiedTotal(int certifiedTotal) { this.certifiedTotal = certifiedTotal; }
-
-    public int getQualifiedTotal() { return qualifiedTotal; }
-    public void setQualifiedTotal(int qualifiedTotal) { this.qualifiedTotal = qualifiedTotal; }
-
-    public int getThirdClass() { return thirdClass; }
-    public void setThirdClass(int thirdClass) { this.thirdClass = thirdClass; }
-
-    public int getSecondClass() { return secondClass; }
-    public void setSecondClass(int secondClass) { this.secondClass = secondClass; }
-
-    public int getFirstClass() { return firstClass; }
-    public void setFirstClass(int firstClass) { this.firstClass = firstClass; }
-
-    public int getInternationalClass() { return internationalClass; }
-    public void setInternationalClass(int internationalClass) { this.internationalClass = internationalClass; }
 }

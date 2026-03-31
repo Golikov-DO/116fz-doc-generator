@@ -3,6 +3,7 @@ package com.caseo.app;
 import com.caseo.domain.repository.*;
 
 import java.util.Map;
+import java.util.Set;
 
 public record RepositoryContext(
         Map<Class<?>, ParentRepository<?>> parentRepos,
@@ -17,4 +18,13 @@ public record RepositoryContext(
     public <T> ChildRepository<T> getChild(Class<T> entityClass) {
         return (ChildRepository<T>) childRepos.get(entityClass);
     }
+
+    public Set<Class<?>> getAllParentClasses() {
+        return parentRepos.keySet();
+    }
+
+    public Set<Class<?>> getAllChildClasses() {
+        return childRepos.keySet();
+    }
+
 }

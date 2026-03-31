@@ -4,8 +4,6 @@ import com.caseo.app.ApplicationContext;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.ObjectModel;
 import com.caseo.domain.model.Organization;
-import com.caseo.domain.service.ChildService;
-import com.caseo.domain.service.ParentService;
 import com.caseo.domain.util.DocumentPathSet;
 import com.caseo.word.strategy.FillStrategy;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,7 +14,6 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,93 +23,60 @@ import java.util.List;
 public class GeneratePlanServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
-        // 1. Устанавливаем временную папку СРАЗУ в начале
-        String catalinaBase = System.getProperty("catalina.base");
-        if (catalinaBase != null) {
-            String tomcatTemp = catalinaBase + File.separator + "temp";
-            File tempDir = new File(tomcatTemp);
-            if (!tempDir.exists()) {
-                tempDir.mkdirs();
-            }
-
-            // Важно: для Docx4j нужно установить ОБА свойства
-            System.setProperty("java.io.tmpdir", tomcatTemp);
-            System.setProperty("docx4j.tmpdir", tomcatTemp);
-            System.setProperty("org.docx4j.tmpdir", tomcatTemp);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 1. Сначала проверяем ID, не открывая никаких потоков (PrintWriter)
+        String objectIdParam = req.getParameter("objectId");
+        if (objectIdParam == null || objectIdParam.isEmpty()) {
+            resp.sendError(400, "ID объекта обязателен");
+            return;
         }
 
-        resp.setContentType("text/plain;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-
         try {
-            String orgIdParam = req.getParameter("orgId");
-
-            if (orgIdParam == null || orgIdParam.isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Organization ID is required");
-                return;
-            }
-
-            int orgId = Integer.parseInt(orgIdParam);
-
-            ApplicationContext context = (ApplicationContext) getServletContext()
-                    .getAttribute("appContext");
-
+            int objectId = Integer.parseInt(objectIdParam);
+            ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("appContext");
             InternalServices services = context.internalServices();
 
-            // Загружаем организацию
-            ParentService<Organization> organizationService = services.getParentService(Organization.class);
-            Organization org = organizationService.getOneById(orgId);
-
-            if (org == null) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Organization not found");
-                return;
-            }
-
-            // Загружаем объекты организации
-            ChildService<ObjectModel> objectService = services.getChildService(ObjectModel.class);
-            List<ObjectModel> objects = objectService.getManyByParentId(orgId);
-
-            if (objects == null || objects.isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No objects found for this organization");
-                return;
-            }
-
+            // 2. Читаем шаблон ОДИН РАЗ перед циклом
             String templatePath = getServletContext().getRealPath("/WEB-INF/template/tagtemplate.docx");
-
-            if (templatePath == null) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template file not found");
-                return;
-            }
-
+            if (templatePath == null) throw new IOException("Файл шаблона не найден");
             byte[] template = Files.readAllBytes(Paths.get(templatePath));
 
-            int generatedCount = 0;
-            for (ObjectModel object : objects) {
+            // 3. Загружаем данные
+            ObjectModel object = services.getParentService(ObjectModel.class).getOneById(objectId);
+            Organization org = services.getParentService(Organization.class).getOneById(object.getOrganization().getId());
 
-                WordprocessingMLPackage document = context.wordGenerationService().generate(
-                        FillStrategy.TAG,
-                        template,
-                        object.getId()  // только objectId!
-                );
+            // 4. Генерация
+            WordprocessingMLPackage document = context.wordGenerationService().generate(
+                    FillStrategy.TAG, template, object.getId()
+            );
 
-                Path outputPath = DocumentPathSet.buildOutputFile(org, object);
-                document.save(outputPath.toFile());
-                generatedCount++;
+            List<ObjectModel> objects = services.getChildService(ObjectModel.class)
+                    .getManyByParentId(org.getId());
+
+            Path outputPath = DocumentPathSet.buildOutputFile(org, object, objects);
+            File parentDir = outputPath.getParent().toFile();
+
+            if (!parentDir.exists()) {
+                boolean created = parentDir.mkdirs();
+                if (!created) {
+                    getServletContext().log("Не удалось создать директорию: " + parentDir.getAbsolutePath());
+                }
             }
 
-            resp.setStatus(HttpServletResponse.SC_OK);
-            out.println("План успешно разработан. Сгенерировано файлов: " + generatedCount);
+            document.save(outputPath.toFile());
 
-        } catch (NumberFormatException e) {
-            // ИСПРАВЛЕНО: текст ошибки соответствует параметру
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid organization ID format");
+            resp.setContentType("text/plain;charset=UTF-8");
+            resp.getWriter().println("План успешно разработан");
+
         } catch (Exception e) {
             e.printStackTrace();
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error generating plan: " + e.getMessage());
+
+            getServletContext().log("Ошибка генерации", e);
+
+            if (!resp.isCommitted()) {
+                resp.setContentType("text/plain;charset=UTF-8");
+                resp.getWriter().println("Ошибка: " + e.getMessage());
+            }
         }
     }
 }

@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 public class ImageBlockFactory {
     private final ChildService<ObjectImage> objectImageService;
     private final ChildService<AsfDocumentImage> asfDocumentImageService;
-    private final ChildService<ObjectModel> objectService;
+    private final ParentService<ObjectModel> objectService;
 
     public ImageBlockFactory(ChildService<ObjectImage> objectImageService,
                              ChildService<AsfDocumentImage> asfDocumentImageService,
-                             ChildService<ObjectModel> objectService) {
+                             ParentService<ObjectModel> objectService) {
         this.objectImageService = objectImageService;
         this.asfDocumentImageService = asfDocumentImageService;
         this.objectService = objectService;
@@ -24,7 +24,7 @@ public class ImageBlockFactory {
 
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
-        Asf asf = objectService.getOneByParentId(objectId).getAsf();
+        Asf asf = objectService.getOneById(objectId).getAsf();
         List<AsfDocumentImage> asfImage = asfDocumentImageService.getManyByParentId(asf.getId());
         List<ObjectImage> objectImages = objectImageService.getManyByParentId(objectId);
 

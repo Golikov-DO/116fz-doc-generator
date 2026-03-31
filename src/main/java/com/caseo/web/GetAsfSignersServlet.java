@@ -4,6 +4,7 @@ import com.caseo.app.ApplicationContext;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.AsfSigner;
 import com.caseo.domain.service.ChildService;
+import com.caseo.web.dto.AsfSignerDto;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
@@ -48,15 +49,18 @@ public class GetAsfSignersServlet extends HttpServlet {
 
         try {
             int asfId = Integer.parseInt(asfIdParam);
-            // Получаем ОДНОГО подписанта для этого АСФ
             List<AsfSigner> signers = signerService.getManyByParentId(asfId);
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
-            resp.getWriter().write(gson.toJson(signers));
+            List<AsfSignerDto> dtoList = signers.stream()
+                    .map(AsfSignerDto::new)
+                    .toList();
+
+            resp.getWriter().write(gson.toJson(dtoList));
 
         } catch (Exception e) {
-            log("Ошибка при получении подписантов ASF", e);
+            getServletContext().log("Ошибка при получении подписантов ASF", e);
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
         }

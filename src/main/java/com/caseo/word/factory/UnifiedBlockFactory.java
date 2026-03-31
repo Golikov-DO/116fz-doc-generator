@@ -1,6 +1,6 @@
 package com.caseo.word.factory;
 import com.caseo.domain.model.ObjectModel;
-import com.caseo.domain.service.ChildService;
+import com.caseo.domain.service.ParentService;
 import com.caseo.word.blocks.Block;
 import com.caseo.word.blocks.image.ImageBlock;
 import com.caseo.word.blocks.list.ListBlock;
@@ -26,7 +26,7 @@ public class UnifiedBlockFactory {
     private final ImageBlockFactory imageBlockFactory;
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
-    private final ChildService<ObjectModel> objectService;  // вместо ObjectService
+    private final ParentService<ObjectModel> objectService;
 
     // Карта стратегий создания блоков
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
@@ -38,7 +38,7 @@ public class UnifiedBlockFactory {
             ListBlockFactory listBlockFactory,
             HazardTableLayoutService hazardTableLayoutService,
             ContactTableLayoutService contactTableLayoutService,
-            ChildService<ObjectModel> objectService  // вот здесь!
+            ParentService<ObjectModel> objectService
     ) {
         this.tableBlockFactory = tableBlockFactory;
         this.listBlockFactory = listBlockFactory;
@@ -124,7 +124,7 @@ public class UnifiedBlockFactory {
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> result = new LinkedHashMap<>();
 
-        ObjectModel obj = objectService.getOneByParentId(objectId);
+        ObjectModel obj = objectService.getOneById(objectId);
         if (obj == null) {
             return result;
         }

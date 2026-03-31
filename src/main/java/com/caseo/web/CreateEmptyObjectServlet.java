@@ -11,8 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import java.io.IOException;
-
 import static com.caseo.web.util.RequestUtils.paramInt;
 
 @WebServlet("/createEmptyObject")
@@ -35,13 +33,13 @@ public class CreateEmptyObjectServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws ServletException {
 
         try {
 
-            Integer orgId = paramInt(req, "orgId");
+            int orgId = paramInt(req, "orgId");
 
-            if (orgId == null) {
+            if (orgId == 0) {
                 throw new ServletException("orgId is required");
             }
 

@@ -27,12 +27,12 @@ public class TextPlaceholderService {
         ChildService<OrganizationAddress> addrService = internalServices.getChildService(OrganizationAddress.class);
         ChildService<OrganizationSigner> orgSignerService = internalServices.getChildService(OrganizationSigner.class);
 
-        ChildService<ObjectModel> objService = internalServices.getChildService(ObjectModel.class);
+        ParentService<ObjectModel> objService = internalServices.getParentService(ObjectModel.class);
         ChildService<ObjectAddress> objectAddressService = internalServices.getChildService(ObjectAddress.class);
         ParentService<ObjectHazardousSubstance> objectHazardousSubstanceService = internalServices.getParentService(ObjectHazardousSubstance.class);
         ChildService<ObjectOrderMinimumBalance> objectOrderMinimumBalanceService = internalServices.getChildService(ObjectOrderMinimumBalance.class);
         ChildService<ObjectInsurancePolicy> objectInsurancePolicyService = internalServices.getChildService(ObjectInsurancePolicy.class);
-        ChildService<ObjectType> objectTypeService = internalServices.getChildService(ObjectType.class);
+        ParentService<ObjectType> objectTypeService = internalServices.getParentService(ObjectType.class);
         ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService = internalServices.getChildService(ObjectTechnologicalBlock.class);
         ChildService<ObjectImage> objectImageService = internalServices.getChildService(ObjectImage.class);
         ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService = internalServices.getChildService(ObjectTechnologicalEquipment.class);
@@ -51,7 +51,7 @@ public class TextPlaceholderService {
         ChildService<AsfWorkType> asfWorkTypeService = internalServices.getChildService(AsfWorkType.class);
 
         Organization org = orgService.getOneById(orgId);
-        ObjectModel obj = objService.getOneByParentId(objectId);
+        ObjectModel obj = objService.getOneById(objectId);
         Asf asf = asfService.getOneById(obj.getAsf().getId());
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
@@ -65,7 +65,13 @@ public class TextPlaceholderService {
         map.put("ORG_TYPE_ACTIVITY", org.getOrganizationTypeActivity());
 
         // ---------- ASF TEXT BLOCK ----------
-        var asfSigner = asfSignerService.getOneByParentId(obj.getAsfSignerId());
+        var asfSigners = asfSignerService.getManyByParentId(asf.getId());
+        AsfSigner asfSigner = asfSigners.stream()
+                .filter(s -> s.getId() == obj.getAsfSignerId())
+                .findFirst()
+                .orElseThrow(() ->
+                        new RuntimeException("ASF signer not found for objectId=" + obj.getId())
+                );
         var cert = asfCertificateService.getOneByParentId(asf.getId());
         var funds = asfCompositionDeploymentFundsService.getOneByParentId(asf.getId());
         var personnel = asfPersonnelService.getOneByParentId(asf.getId());
@@ -102,7 +108,7 @@ public class TextPlaceholderService {
         var policy = objectInsurancePolicyService.getOneByParentId(obj.getId());
         var substance = objectHazardousSubstanceService.getOneById(obj.getHazardousSubstance().getId());
         var techBlocks = objectTechnologicalBlockService.getManyByParentId(obj.getId()).size();
-        var type = objectTypeService.getOneByParentId(obj.getId());
+        var type = objectTypeService.getOneById(obj.getType().getId());
 
         map.put("OBJ_ADDRESS_FULL", ObjectAddressFormatter.format(objAddr));
         map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", obj.getAmountOfHazardousSubstance());
@@ -110,7 +116,7 @@ public class TextPlaceholderService {
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.getDepartmentGoChsCity());
         map.put("OBJ_EMERGENCY_COMMISSION", obj.isEmergencyCommission() ? "создана" : "не создана");
         map.put("OBJ_HAZARDOUS_SUBSTANCE", substance.getName());
-        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance.getName_gen());
+        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance.getNameGen());
         map.put("OBJ_HAZARD_CLASS", DocumentOutputFormatter.toRoman(String.valueOf(obj.getHazardClass())));
         map.put("OBJ_INSURANCE_POLICY_DATE", DocumentOutputFormatter.russDate(String.valueOf(policy.getValidUntil())));
         map.put("OBJ_INSURANCE_POLICY_NUMBER", String.valueOf(policy.getNumber()));
@@ -118,7 +124,7 @@ public class TextPlaceholderService {
         map.put("OBJ_NEAREST_FIRE_STATION", obj.getNearestFireStation());
         map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DocumentOutputFormatter.russDate(String.valueOf(balance.getDate())));
         map.put("OBJ_ORDER_MINIMUM_BALANCE_NUMBER", String.valueOf(balance.getNumber()));
-        map.put("OBJ_SHORT_NAME", obj.getObjectShortName());
+        map.put("OBJ_SHORT_NAME", type.getType());
         map.put("OBJ_TYPE_DIFINITION", type.getTypeDefinition());
 
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------

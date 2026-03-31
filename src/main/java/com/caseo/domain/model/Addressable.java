@@ -1,11 +1,11 @@
 package com.caseo.domain.model;
 
 public interface Addressable {
-    Integer addressIndex();
-    String constituentEntity();
-    String areaHierarchy();
-    String city();
-    String street();
-    String house();
-    String rawAddress();
+    Integer getAddressIndex();
+    String getConstituentEntity();
+    String getAreaHierarchy();
+    String getCity();
+    String getStreet();
+    String getHouse();
+    String getRawAddress();
 }

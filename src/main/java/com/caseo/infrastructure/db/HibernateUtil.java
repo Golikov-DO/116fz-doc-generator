@@ -12,22 +12,22 @@ public class HibernateUtil {
 
     private static final SessionFactory sessionFactory = HibernateConfig.getSessionFactory();
 
-    // Для чтения данных (уже есть)
+    // Для чтения данных
     public static <R> R inSession(Function<Session, R> action) {
         try (Session session = sessionFactory.openSession()) {
             return action.apply(session);
         }
     }
 
-    // ДОБАВЛЯЕМ для сохранения/удаления
+    // сохранения/удаления
     public static void inTransaction(Consumer<Session> action) {
         try (Session session = sessionFactory.openSession()) {
-            Transaction tx = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             try {
                 action.accept(session);
-                tx.commit();
+                transaction.commit();
             } catch (Exception e) {
-                tx.rollback();
+                transaction.rollback();
                 throw e;
             }
         }

@@ -10,7 +10,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static com.caseo.web.util.RequestUtils.param;
@@ -31,33 +30,43 @@ public class AsfServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws ServletException {
 
         try {
             String mode = param(req, "mode");
             String returnOrgId = param(req, "returnOrgId");
-            Integer asfId = paramInt(req, "asfId");
 
-            // 0 означает создание новой АСФ
-            if (asfId != null && asfId == 0) {
-                asfId = null;
-                mode = "create";
+            // 1. Получаем ID из запроса
+            int asfId = paramInt(req, "asfId");
+
+            // 2. Если в запросе ID нет, пробуем достать из сессии
+            if (asfId == 0) {
+                Object sessionAsfId = req.getSession().getAttribute("asfId");
+                if (sessionAsfId != null) {
+                    asfId = (Integer) sessionAsfId;
+                }
             }
 
-            if (asfId != null) {
+            // 3. Определяем режим работы
+            if (asfId > 0) {
+                // Если ID есть — сохраняем/обновляем в сессии и ставим режим просмотра, если не задан
                 req.getSession().setAttribute("asfId", asfId);
-                req.setAttribute("asfId", asfId.toString());
-            }
-
-            if (asfId == null && req.getSession().getAttribute("asfId") != null) {
-                asfId = (Integer) req.getSession().getAttribute("asfId");
+                req.setAttribute("asfId", String.valueOf(asfId));
+                if (mode == null || mode.isEmpty()) {
+                    mode = "view";
+                }
+            } else {
+                // Если ID всё еще 0 — это создание нового
+                mode = "create";
+                // Очищаем сессию, чтобы при "Создать" не всплывал старый ID
+                //req.getSession().removeAttribute("asfId");
             }
 
             req.setAttribute("mode", mode);
             req.setAttribute("returnOrgId", returnOrgId);
 
             // Загружаем данные только для режимов просмотра/редактирования и если есть ID
-            if (("view".equals(mode) || "edit".equals(mode)) && asfId != null) {
+            if (("view".equals(mode) || "edit".equals(mode))) {
 
                 AsfData data = dataLoader.loadAsf(asfId);
 
@@ -86,7 +95,7 @@ public class AsfServlet extends HttpServlet {
                         .forward(req, resp);
             } else {
                 req.setAttribute("contentPage", "/WEB-INF/pages/asf-page.jsp");
-                req.getRequestDispatcher("/WEB-INF/template/layout.jsp").forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
             }
 
         } catch (Exception e) {

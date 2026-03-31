@@ -6,21 +6,25 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
+import java.io.File;
+
 @WebListener
 public class AppInitializer implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
         try {
-            // Принудительно регистрируем драйвер PostgreSQL в Tomcat
             Class.forName("org.postgresql.Driver");
 
-            // Теперь инициализируем контекст
+            // Настройка путей для docx4j
+            String tomcatTemp = System.getProperty("catalina.base") + File.separator + "temp";
+            System.setProperty("docx4j.tmpdir", tomcatTemp);
+            System.setProperty("java.io.tmpdir", tomcatTemp);
+
             ApplicationContext context = Bootstrap.init();
             sce.getServletContext().setAttribute("appContext", context);
-
-            System.out.println(">>> CASEO Bootstrap initialized");
         } catch (Exception e) {
-            e.printStackTrace();
+            sce.getServletContext().log("Ошибка инициализации", e);
         }
     }
+
 }

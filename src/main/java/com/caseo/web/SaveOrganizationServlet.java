@@ -17,7 +17,7 @@ import java.util.List;
 import static com.caseo.web.util.RequestUtils.paramInt;
 
 @WebServlet("/createOrganization")
-public class CreateOrganizationServlet extends HttpServlet {
+public class SaveOrganizationServlet extends HttpServlet {
 
     private ParentService<Organization> organizationService;
     private OrganizationSaveHelper saveHelper;
@@ -44,9 +44,9 @@ public class CreateOrganizationServlet extends HttpServlet {
 
         try {
 
-            Integer orgId = paramInt(req,"orgId");
+            int orgId = paramInt(req,"orgId");
             Organization org;
-            if (orgId != null) org = organizationService.getOneById(orgId);
+            if (orgId > 0) org = organizationService.getOneById(orgId);
             else org = new Organization();
 
             // 1. Основные данные

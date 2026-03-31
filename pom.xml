@@ -71,6 +71,14 @@
       <version>6.5.2.Final</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version> <!-- проверьте актуальную версию -->
+      <scope>provided</scope>
+    </dependency>
+
+
     <!-- Логирование (docx4j активно его использует) -->
     <dependency>
       <groupId>ch.qos.logback</groupId>

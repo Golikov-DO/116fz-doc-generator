@@ -1,77 +1,91 @@
-function copySelectOptions(selector, className, objectElement) {
+// универсальное добавление строки
+function addTableRow(button, type) {
 
-    const existing = document.querySelector(selector);
-    if (!existing) return;
+    const table = button.closest('.collapse-content').querySelector('tbody');
+    if (!table) {
+        console.error('tbody not found');
+        return;
+    }
 
-    const target = objectElement.querySelector(className);
-    if (!target) return;
+    const index = table.querySelectorAll('tr').length + 1;
 
-    target.innerHTML = existing.innerHTML;
-    //target.selectedIndex = 0;
-}
+    let row = document.createElement('tr');
 
-// Добавление члена КЧС
-function addKchs(button) {
+    if (type === 'kchs') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="kchs_id[]" value="">
+                <input type="number" name="kchs_number[]" value="${index}" min="1">
+            </td>
+            <td><input type="text" name="kchs_position[]"></td>
+            <td><input type="text" name="kchs_name[]"></td>
+            <td><input type="text" name="kchs_work_phone[]"></td>
+            <td><input type="text" name="kchs_phone[]"></td>
+            <td><input type="text" name="kchs_address[]"></td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
 
-    const tbody = button
-        .closest(".object-collapse-content")
-        .querySelector(".kchs-body");
+    if (type === 'equipment') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="techno_id[]" value="">
+                <input type="number" name="techno_number[]" value="${index}" min="1">
+            </td>
+            <td>
+                <textarea class="auto-resize" name="techno_name[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td>
+                <textarea class="auto-resize" name="techno_characteristics[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
 
-    const row = document.createElement("tr");
+    if (type === 'structure') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="structurre_id[]" value="">
+                <input type="number" name="structurre_number[]" value="${index}" min="1">
+            </td>
+            <td>
+                <textarea class="auto-resize" name="structurre_name[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
 
-    row.innerHTML = `
-<td>
-<input type="hidden" name="kchs_id[]" value="">
-<input type="hidden" name="kchs_object_index[]" value="0">
-<input type="number" name="kchs_number[]" style="width:60px;">
-</td>
+    if (type === 'techno-block') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="techno_blocke_id[]" value="">
+                <input type="number" name="techno_blocke_number[]" value="${index}" min="1">
+            </td>
+            <td>
+                <textarea class="auto-resize" name="techno_blocke_name[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
 
-<td><input type="text" name="kchs_position[]" style="width:100%;"></td>
+    if (type === 'persons_response') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="persons_response_id[]" value="">
+                <input type="number" name="persons_response_number[]" value="${index}" min="1">
+            </td>
+            <td>
+                <textarea class="auto-resize" name="persons_response_full_name[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td>
+                <textarea class="auto-resize" name="persons_response_position[]" rows="1" oninput="autoResize(this)"></textarea>
+            </td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
 
-<td><input type="text" name="kchs_name[]" style="width:100%;"></td>
-
-<td><input type="text" name="kchs_phone[]" style="width:100%;"></td>
-
-<td><input type="text" name="kchs_work_phone[]" style="width:100%;"></td>
-
-<td><input type="text" name="kchs_address[]" style="width:100%;"></td>
-
-<td class="delete-row" onclick="deleteRow(this)">✖</td>
-`;
-
-    tbody.appendChild(row);
-}
-
-// Добавление оборудования
-function addEquipment(button) {
-
-    const tbody = button
-        .closest(".object-collapse-content")
-        .querySelector(".equipment-body");
-
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-<td>
-<input type="hidden" name="techno_id[]" value="">
-<input type="hidden" name="techno_object_index[]" value="0">
-<input type="number" name="techno_number[]" style="width:60px;">
-</td>
-
-<td>
-<input type="text" name="techno_name[]" style="width:100%;">
-</td>
-
-<td>
-<textarea name="techno_characteristics[]" rows="2"
-oninput="autoResize(this)"
-style="width:100%;resize:none;overflow:hidden;"></textarea>
-</td>
-
-<td class="delete-row" onclick="deleteRow(this)">✖</td>
-`;
-
-    tbody.appendChild(row);
+    table.appendChild(row);
+    resizeAllTextareas();
 }
 
 // Загрузка подписантов
@@ -120,6 +134,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
 
 function openAsfModal(asfId, objectItem, addSignerMode = false) {
     const modal = document.getElementById('asfModal');
+    if (!modal) return;
     const content = document.getElementById('asfModalContent');
     const title = document.getElementById('asfModalTitle');
 
@@ -172,8 +187,6 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
 }
 
 function viewAsf(asfId, objectItem) {
-    console.log('viewAsf called with asfId:', asfId);
-
     const modal = document.getElementById('asfModal');
     const content = document.getElementById('asfModalContent');
     const title = document.getElementById('asfModalTitle');
@@ -204,15 +217,11 @@ function viewAsf(asfId, objectItem) {
         });
 }
 
-function closeAsfModal() {
-    document.getElementById('asfModal').style.display = 'none';
-}
-
 // Вспомогательные функции
 function getObjectElements(element) {
     let objectItem;
     if (element instanceof HTMLElement) {
-        objectItem = element.closest('.object-item');
+        objectItem = element.closest('.card');
     } else {
         objectItem = element;
     }
@@ -231,15 +240,14 @@ function resetSignerSelect(signerSelect) {
 
 // Переключение видимости блока КЧС в зависимости от выбора
 function toggleKchsVisibility(select) {
+    const objectItem = select.closest('.card');
+    if (!objectItem) return;
 
-    const objectItem = select.closest('.object-item');
-    const tbody = objectItem.querySelector('.kchs-body');
-    const objectIndex = tbody.dataset.objectIndex;
-    const kchsBlock = document.getElementById('kchs-block-' + objectIndex);
-
+    const kchsBlock = [...objectItem.querySelectorAll('.collapse-block')]
+        .find(block => block.textContent.includes('КЧС'));
     if (!kchsBlock) return;
 
-    if (select.value === '' || select.value === 'false') {
+    if (!select.value || select.value === 'false') {
         kchsBlock.style.display = 'none';
     } else {
         kchsBlock.style.display = 'block';
@@ -256,20 +264,42 @@ document.addEventListener('DOMContentLoaded', function() {
         loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
     });
 
-    document.querySelectorAll('select[name="emergency_commission[]"]').forEach(select => {
+    document.querySelectorAll('select[name="emergency_commission"]').forEach(select => {
         toggleKchsVisibility(select);
+
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('asfModal');
+
+    if (!modal) return;
+
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            if (mutation.attributeName === 'style' && modal.style.display === 'block') {
+                const isViewMode = modal.getAttribute('data-view-mode') === 'true';
+                const saveButton = document.getElementById('saveAsfButton');
+
+                if (saveButton) {
+                    saveButton.style.display = isViewMode ? 'none' : 'inline-block';
+                }
+            }
+        });
+    });
+
+    observer.observe(modal, {attributes: true});
+});
+
 // Обработчик изменений
-document.addEventListener('change', function(e) {
-    if (e.target?.name === 'emergency_commission[]') {
-        toggleKchsVisibility(e.target);
+document.addEventListener('change', function(event) {
+    if (event.target?.name === 'emergency_commission') {
+        toggleKchsVisibility(event.target);
     }
     // Обработка выбора АСФ
-    if (e.target?.classList.contains('asf-select')) {
-        const asfId = e.target.value;
-        const elements = getObjectElements(e.target);
+    if (event.target?.classList.contains('asf-select')) {
+        const asfId = event.target.value;
+        const elements = getObjectElements(event.target);
 
         if (!asfId) {
             resetSignerSelect(elements.signerSelect);
@@ -277,16 +307,16 @@ document.addEventListener('change', function(e) {
         }
 
         if (asfId === 'new_asf') {
-            addNewAsf(e.target.closest('.object-item'));
-            e.target.value = ''; // сбрасываем выбор
+            addNewAsf();
+            event.target.value = ''; // сбрасываем выбор
         }
 
         loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
     }
 
     // Обработка выбора подписанта
-    if (e.target?.classList.contains('signer-select') && e.target.value === 'add_new_signer') {
-        const elements = getObjectElements(e.target);
+    if (event.target?.classList.contains('signer-select') && event.target.value === 'add_new_signer') {
+        const elements = getObjectElements(event.target);
         // Открываем модальное окно для создания нового подписанта
         // Но сначала нужно получить выбранное АСФ
         const asfSelect = elements.asfSelect;
@@ -298,24 +328,6 @@ document.addEventListener('change', function(e) {
     }
 });
 
-function autoResize(el) {
-    el.style.height = "auto";
-    el.style.height = el.scrollHeight + "px";
-}
-
-// открытие АСФ
-function openAsfFullPage(asfId) {
-    // Получаем orgId из URL текущей страницы (objects?mode=edit&orgId=1)
-    const urlParams = new URLSearchParams(window.location.search);
-    const orgId = urlParams.get('orgId');
-
-    if (asfId) {
-        window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId;
-    } else {
-        window.location.href = 'asf?mode=edit&asfId=0&returnOrgId=' + orgId;
-    }
-}
-
 function openAsfFullPageFromSelect(objectItem) {
     const asfSelect = objectItem.querySelector('.asf-select');
     const asfId = asfSelect.value;
@@ -323,6 +335,7 @@ function openAsfFullPageFromSelect(objectItem) {
     // Получаем orgId из URL текущей страницы (objects?mode=edit&orgId=1)
     const urlParams = new URLSearchParams(window.location.search);
     const orgId = urlParams.get('orgId');
+    const objectId = urlParams.get('id');
 
     if (!asfId || asfId === 'new_asf') {
         alert('Выберите АСФ для редактирования');
@@ -330,10 +343,10 @@ function openAsfFullPageFromSelect(objectItem) {
     }
 
     // Передаем returnOrgId, а не returnObjectId!
-    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId;
+    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId + '&returnObjectId=' + objectId;
 }
 
-function addNewAsf(objectItem) {
+function addNewAsf() {
     const urlParams = new URLSearchParams(window.location.search);
     const orgId = urlParams.get('orgId');
 
@@ -351,4 +364,97 @@ function addNewAsf(objectItem) {
     form.appendChild(returnOrgIdInput);
     document.body.appendChild(form);
     form.submit();
+}
+
+// === ЗАГРУЗКА КАРТИНОК ОБЪЕКТА ===
+
+// клик по "загрузить"
+document.addEventListener('click', function(e) {
+    const upload = e.target.closest('.asf-image-upload-area');
+    if (!upload) return;
+
+    const input = upload.querySelector('.file-input');
+    if (input) input.click();
+});
+
+// выбор файла
+document.addEventListener('change', function(e) {
+    if (!e.target.classList.contains('file-input')) return;
+
+    const input = e.target;
+    const block = input.closest('.image-block');
+
+    const file = input.files[0];
+    if (!file) return;
+
+    const group = block.dataset.group;
+
+    const objectId = document.querySelector('[name="objectId"]').value;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('group', group);
+    formData.append('objectId', objectId);
+
+    fetch('uploadObjectImage', {
+        method: 'POST',
+        body: formData
+    })
+        .then(r => r.json())
+        .then(() => {
+            previewImage(block, file);
+        });
+});
+
+function previewImage(block, file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const preview = block.querySelector('.image-preview');
+        preview.innerHTML = `<img src="${e.target.result}" style="max-width:100px;" alt="">`;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function generatePlan(form) {
+
+    const objectId = form.querySelector('[name="objectId"]').value;
+
+    // 👇 контейнер с кнопками (td -> div)
+    const actionsDiv = form.closest('td').querySelector('div');
+
+    // сохраним старое содержимое
+    const originalContent = actionsDiv.innerHTML;
+
+    // 👇 заменяем ВСЁ на текст
+    actionsDiv.innerHTML = '⏳ План разрабатывается...';
+
+    fetch('generatePlan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'objectId=' + objectId
+    })
+        .then(r => {
+            if (!r.ok) throw new Error();
+            return r.text();
+        })
+        .then(data => {
+            // 👇 возвращаем кнопки
+            actionsDiv.innerHTML = originalContent;
+
+            alert('✅ ' + data);
+        })
+        .catch(err => {
+            console.error(err);
+
+            // вернуть кнопки даже при ошибке
+            actionsDiv.innerHTML = originalContent;
+
+            alert('Ошибка при разработке плана');
+        });
+
+    return false;
 }

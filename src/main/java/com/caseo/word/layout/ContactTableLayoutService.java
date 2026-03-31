@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactTableLayoutService {
-    private final ChildService<ObjectModel> objectService;
+    private final ParentService<ObjectModel> objectService;
     private final ParentService<ReferenceEmergencyServices> emergencyService;
     private final ChildService<ObjectRegionalAuthorities> regionalService;
-    private final ChildService<OrganizationContact> organizationContactService;  // ИЗМЕНЕНО!
+    private final ChildService<OrganizationContact> organizationContactService;
     private final ParentService<Organization> organizationService;
 
     public ContactTableLayoutService(
-            ChildService<ObjectModel> objectService,
+            ParentService<ObjectModel> objectService,
             ParentService<ReferenceEmergencyServices> emergencyService,
             ChildService<ObjectRegionalAuthorities> regionalService,
-            ChildService<OrganizationContact> organizationContactService,  // ИЗМЕНЕНО!
+            ChildService<OrganizationContact> organizationContactService,
             ParentService<Organization> organizationService) {
         this.objectService = objectService;
         this.emergencyService = emergencyService;
@@ -27,28 +27,26 @@ public class ContactTableLayoutService {
     }
 
     public List<String[]> getContactTableData(int orgId, int objectId) {
-        ObjectModel obj = objectService.getOneByParentId(objectId);
+        ObjectModel obj = objectService.getOneById(objectId);
         List<String[]> tableRows = new ArrayList<>();
         int counter = 1;
 
         // --- Секция 1: Emergency (1-5) ---
         for (ReferenceEmergencyServices es : emergencyService.getMany()) {
-            tableRows.add(new String[]{String.valueOf(counter++), es.getServiceName(), es.getPositionContact(), es.getPhone(), es.getAddress()});
+            tableRows.add(new String[]{
+                    String.valueOf(counter++), es.getServiceName(), es.getPositionContact(), es.getPhone(), es.getAddress()});
         }
 
         // --- Секция 2: Regional (6-9) ---
-        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(obj.getId());
+        ReferenceCity city = obj.getCity();
+        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(city.getId());
         for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
             String numStr;
-
-            // ВАЖНО: Условие по индексу в списке (0-3 для 6,7,8,9)
-            // Чтобы 8 и 9 визуально стали "одной восьмеркой"
             if (counter == 8) {
                 numStr = "V_MERGE_START:8";
-                counter++; // Прыгаем на 9, но для следующей строки сделаем проверку
+                counter++;
             } else if (counter == 9) {
                 numStr = "V_MERGE_CONT";
-                // counter НЕ увеличиваем, чтобы следующая строка (после разделителя) стала 9-й
             } else {
                 numStr = String.valueOf(counter++);
             }

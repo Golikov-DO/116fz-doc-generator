@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class TableBlockFactory {
 
     private final ChildService<ObjectCompositionKchs> objectCompositionKchsService;
-    private final ChildService<ObjectModel> objectService;
+    private final ParentService<ObjectModel> objectService;
     private final ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService;
     private final ChildService<ObjectAccidentScenarios> objectAccidentScenariosService;
     private final ChildService<ObjectMainScenarios> objectMainScenariosService;
@@ -22,7 +22,7 @@ public class TableBlockFactory {
 
     public TableBlockFactory(
             ChildService<ObjectCompositionKchs> objectCompositionKchsService,
-            ChildService<ObjectModel> objectService,
+            ParentService<ObjectModel> objectService,
             ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService,
             ChildService<ObjectAccidentScenarios> objectAccidentScenariosService,
             ChildService<ObjectMainScenarios> objectMainScenariosService,
@@ -40,7 +40,7 @@ public class TableBlockFactory {
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
 
-        ObjectModel obj = objectService.getOneByParentId(objectId);
+        ObjectModel obj = objectService.getOneById(objectId);
 
         for (int i = 1; i <= 9; i++) {
             if (i == 2 || i == 6) continue;

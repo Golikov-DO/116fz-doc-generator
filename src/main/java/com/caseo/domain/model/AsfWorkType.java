@@ -1,29 +1,25 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "asf")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "asf_work_type")
-public class AsfWorkType {
+public class AsfWorkType implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "asf_id")
-    private Asf asf;  // вместо int asfId
+    private Asf asf;
 
     private String name;
-
-    public AsfWorkType() {}
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Asf getAsf() { return asf; }
-    public void setAsf(Asf asf) { this.asf = asf; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 }

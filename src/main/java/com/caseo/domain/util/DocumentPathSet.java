@@ -6,6 +6,8 @@ import com.caseo.domain.model.Organization;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
 
 public class DocumentPathSet {
 
@@ -13,34 +15,40 @@ public class DocumentPathSet {
     private static final String OUTPUT_DIR = System.getProperty("user.home") + "/documents";
 
     // ===== TEMPLATES =====
-    public static final String PLACEHOLDER_TEMPLATE_PATH = "template/template.docx";
+    //public static final String PLACEHOLDER_TEMPLATE_PATH = "template/template.docx";
     public static final String TAG_TEMPLATE_PATH = "src/main/webapp/WEB-INF/template/tagtemplate.docx";
 
+
     // ===== OUTPUT FILE =====
-    public static Path buildOutputFile(Organization org, ObjectModel object) throws IOException {
+    public static Path buildOutputFile(Organization org, ObjectModel object,
+                                       List<ObjectModel> allObjects) throws IOException {
+
         Path dirPath = Path.of(OUTPUT_DIR, org.getOrganizationShortName());
         Files.createDirectories(dirPath);
 
-        String name = object.getObjectShortName();
-        Path filePath = dirPath.resolve(name + " ПМЛЛПА.docx");
+        String typeName = object.getType().getType();
 
-        int count = 2;
-        // Если файл есть — мы его просто сносим.
-        // Если это "старый" файл — место станет свободным.
-        // Если мы уже создали такой файл в этом цикле — место тоже станет свободным (перезапись).
-        while (Files.exists(filePath)) {
-            try {
-                Files.delete(filePath);
-                // Удалили? Значит имя свободно, выходим из цикла и возвращаем filePath
+        // фильтруем объекты того же типа
+        var sameTypeObjects = allObjects.stream()
+                .filter(o -> o.getType() != null
+                        && o.getType().getType().equals(typeName))
+                .sorted(Comparator.comparing(ObjectModel::getId))
+                .toList();
+
+        int index = 1;
+
+        for (int i = 0; i < sameTypeObjects.size(); i++) {
+            if (sameTypeObjects.get(i).getId().equals(object.getId())) {
+                index = i + 1;
                 break;
-            } catch (IOException e) {
-                // Если файл удалить нельзя (например, он открыт в Word),
-                // тогда и только тогда идем на следующий номер
-                filePath = dirPath.resolve(name + " " + count + " ПМЛЛПА.docx");
-                count++;
             }
         }
 
-        return filePath;
+        String baseName = typeName + " ПМЛЛПА";
+        String fileName = (index == 1)
+                ? baseName + ".docx"
+                : baseName + " " + index + ".docx";
+
+        return dirPath.resolve(fileName);
     }
 }

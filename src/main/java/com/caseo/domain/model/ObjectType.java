@@ -1,30 +1,23 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "object_type")
-public class ObjectType {
+public class ObjectType implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
-
-    @OneToOne
-    @JoinColumn(name = "object_id")
-    private ObjectModel object;
 
     @Column(name = "object_type_definitions")
     private String typeDefinition;
-
-    public ObjectType() {}
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public ObjectModel getObject() { return object; }
-    public void setObject(ObjectModel object) { this.object = object; }
-
-    public String getTypeDefinition() { return typeDefinition; }
-    public void setTypeDefinition(String typeDefinition) { this.typeDefinition = typeDefinition; }
+    private String type;
 }

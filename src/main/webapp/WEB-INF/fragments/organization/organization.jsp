@@ -18,214 +18,179 @@
 %>
 
 <!-- Организация -->
-<div class="organization-section">
+<div class="section">
     <div class="section-header">
         <span>Организация</span>
     </div>
     <div class="section-body">
-        <div class="organization-form-row">
-            <div class="organization-form-label">Полное наименование:</div>
-            <div class="organization-form-field">
-                <label>
-                    <textarea name="organization_full_name"
-                              rows="2"
-                            <%= disabled %>><%= hasData && org.getOrganizationName() != null ? org.getOrganizationName() : "" %></textarea>
-                </label>
+        <div class="card">
+
+        <div class="form-row">
+            <label class="form-label" for="organization_full_name">Полное наименование:</label>
+            <div class="form-field">
+                <textarea class="auto-resize" id="organization_full_name" name="organization_full_name"
+                          rows="1" <%= disabled %>><%= hasData && org.getOrganizationName() != null ? org.getOrganizationName() : "" %></textarea>
             </div>
         </div>
-        <div class="organization-form-row">
-            <div class="organization-form-label">Краткое наименование:</div>
-            <div class="organization-form-field">
-                <label>
-                    <input type="text" name="organization_short_name"
-                           value="<%= hasData && org.getOrganizationShortName() != null ? org.getOrganizationShortName() : "" %>" <%= disabled %>>
-                </label>
+
+        <div class="form-row">
+            <label class="form-label" for="organization_short_name">Краткое наименование:</label>
+            <div class="form-field">
+                <input type="text" name="organization_short_name" id="organization_short_name"
+                       value="<%= hasData && org.getOrganizationShortName() != null ? org.getOrganizationShortName() : "" %>" <%= disabled %>>
             </div>
         </div>
-        <div class="organization-form-row">
-            <div class="organization-form-label">Вид деятельности:</div>
-            <div class="organization-form-field">
-                <label>
-                    <textarea name="organization_type_activity"
-                              rows="2" <%= disabled %>><%= hasData && org.getOrganizationTypeActivity() != null ? org.getOrganizationTypeActivity() : "" %></textarea>
-                </label>
+
+        <div class="form-row">
+            <label class="form-label" for="organization_type_activity">Вид деятельности:</label>
+            <div class="form-field">
+                <textarea class="auto-resize" id="organization_type_activity" name="organization_type_activity"
+                          rows="1" <%= disabled %>><%= hasData && org.getOrganizationTypeActivity() != null ? org.getOrganizationTypeActivity() : "" %></textarea>
             </div>
         </div>
-        <div class="organization-form-row">
-            <div class="organization-form-label">ОПО на одной территории:</div>
-            <div class="organization-form-field">
+
+        <div class="form-row">
+            <div class="form-label">ОПО на одной территории:</div>
+            <div class="form-field">
                 <label class="checkbox-label">
                     <input type="checkbox" name="opo_single_territory"
-                           value="1" <%= hasData && org.isOneTerritory() ? "checked" : "" %> <%= disabled %>>
+                           value="0" <%= hasData && org.isOneTerritory() ? "checked" : "" %> <%= disabled %>>
                     Да
                 </label>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Подписант -->
-<div class="organization-section">
-    <div class="section-header">
-        <span>Подписант</span>
-    </div>
-    <div class="section-body">
-        <div class="organization-form-row">
-            <div class="organization-form-label">Должность:</div>
-            <div class="organization-form-field">
-                <label>
-                    <input type="text" name="signer_position"
+    <!-- Подписант -->
+    <div class="section">
+        <div class="section-header">
+            <span>Подписант</span>
+        </div>
+        <div class="section-body">
+
+            <div class="form-row">
+                <label class="form-label" for="signer_position">Должность:</label>
+                <div class="form-field">
+                    <input type="text" name="signer_position" id="signer_position"
                            value="<%= hasData && signer.getPosition() != null ? signer.getPosition() : "" %>" <%= disabled %>>
-                </label>
+                </div>
             </div>
-        </div>
-        <div class="organization-form-row">
-            <div class="organization-form-label">ФИО:</div>
-            <div class="organization-form-field">
-                <label>
-                    <input type="text" name="signer_name" value="<%= hasData && signer.getName() != null ? signer.getName() : "" %>" <%= disabled %>>
-                </label>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Адрес организации -->
-<div class="organization-section">
-    <div class="section-header">
-        <span>Адрес организации</span>
-    </div>
-    <div class="section-body">
-        <div class="organization-compact-block">
-            <div>
-                <label style="font-size: 11px;">Индекс</label>
-                <label>
-                    <input type="text" name="org_index" value="<%= hasData && addr.addressIndex() != null ? addr.addressIndex() : "" %>"
-                    <%= disabled %>>
-                </label>
+            <div class="form-row">
+                <label class="form-label" for="signer_name">ФИО:</label>
+                <div class="form-field">
+                    <input type="text" name="signer_name" id="signer_name"
+                           value="<%= hasData && signer.getName() != null ? signer.getName() : "" %>" <%= disabled %>>
+                </div>
             </div>
-            <div>
-                <label style="font-size: 11px;">Субъект РФ</label>
-                <label>
-                    <input type="text" name="org_constituent_entity"
-                           value="<%= hasData && addr.constituentEntity() != null ? addr.constituentEntity() : "" %>" <%= disabled %>>
-                </label>
-            </div>
-            <div>
-                <label style="font-size: 11px;">Город</label>
-                <label>
-                    <input type="text" name="org_city" value="<%= hasData && addr.city() != null ? addr.city() : "" %>" <%= disabled %>>
-                </label>
-            </div>
-            <div>
-                <label style="font-size: 11px;">Улица</label>
-                <label>
-                    <input type="text" name="org_street" value="<%= hasData && addr.street() != null ? addr.street() : "" %>" <%= disabled %>>
-                </label>
-            </div>
-            <div>
-                <label style="font-size: 11px;">Дом</label>
-                <label>
-                    <input type="text" name="org_house" value="<%= hasData && addr.house() != null ? addr.house() : "" %>" <%= disabled %>>
-                </label>
-            </div>
+
         </div>
     </div>
-</div>
 
-<!-- Контакты организации -->
-<div class="collapse-block">
-    <div class="collapse-header" onclick="toggleCollapse(this)">
-        <span>Контакты организации</span>
-        <span>▼</span>
+    <!-- Адрес организации -->
+    <div class="section">
+        <div class="section-header">
+            <span>Адрес организации</span>
+        </div>
+        <div class="section-body">
+
+            <div class="compact-block">
+                <div>
+                    <label for="org_index">Индекс</label>
+                    <input type="text" name="org_index" id="org_index"
+                           value="<%= hasData && addr.getAddressIndex() != null ? addr.getAddressIndex() : "" %>" <%= disabled %>>
+                </div>
+
+                <div>
+                    <label for="org_constituent_entity">Субъект РФ</label>
+                    <input type="text" name="org_constituent_entity" id="org_constituent_entity"
+                           value="<%= hasData && addr.getConstituentEntity() != null ? addr.getConstituentEntity() : "" %>" <%= disabled %>>
+                </div>
+
+                <div>
+                    <label for="org_city">Город</label>
+                    <input type="text" name="org_city" id="org_city"
+                           value="<%= hasData && addr.getCity() != null ? addr.getCity() : "" %>" <%= disabled %>>
+                </div>
+
+                <div>
+                    <label for="org_street">Улица</label>
+                    <input type="text" name="org_street" id="org_street"
+                           value="<%= hasData && addr.getStreet() != null ? addr.getStreet() : "" %>" <%= disabled %>>
+                </div>
+
+                <div>
+                    <label for="org_house">Дом</label>
+                    <input type="text" name="org_house" id="org_house"
+                           value="<%= hasData && addr.getHouse() != null ? addr.getHouse() : "" %>" <%= disabled %>>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="collapse-content">
-        <table class="organization-contacts-table" style="margin-top: 10px;">
-            <thead>
-            <tr>
-                <th>ФИО</th>
-                <th>Должность</th>
-                <th>Телефон</th>
-                <th>Адрес</th>
-                <% if (!isView) { %>
-                <th></th>
-                <% } %>
-            </tr>
-            </thead>
-            <tbody class="org-contacts-body">
-            <%
-                if (hasData && contacts != null && !contacts.isEmpty()) {
-                    for (OrganizationContact contact : contacts) {
-            %>
-            <tr>
-                <td>
-                    <label>
+
+    <!-- Контакты организации -->
+    <div class="collapse-block">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span>Контакты организации</span>
+            <span>▼</span>
+        </div>
+
+        <div class="collapse-content">
+
+            <table class="form-table">
+                <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Должность</th>
+                    <th>Телефон</th>
+                    <th>Адрес</th>
+                    <% if (!isView) { %>
+                    <th style="width:40px;"></th>
+                    <% } %>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% if (hasData && contacts != null && !contacts.isEmpty()) {
+                    for (OrganizationContact contact : contacts) { %>
+
+                <tr>
+                    <td>
                         <input type="hidden" name="contact_id[]" value="<%= contact.getId() %>">
-                        <input type="text" name="org_contact_name[]"
-                               value="<%= contact != null && contact.getFullName() != null ? contact.getFullName() : "" %>"
-                               style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_position[]"
-                               value="<%= contact != null && contact.getPosition() != null ? contact.getPosition() : ""%>"
-                               style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_phone[]"
-                               value="<%= contact != null && contact.getPhones() != null ? contact.getPhones() : "" %>"
-                               style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td><label>
-                    <input type="text" name="org_contact_address[]"
-                           value="<%= contact != null && contact.getAddress() != null ? contact.getAddress() : "" %>"
-                           style="width:100%;" <%= disabled %>>
-                </label>
-                </td>
-                <% if (!isView) { %>
-                <td class="delete-row" onclick="deleteRow(this)">✖</td>
-                <% } %>
-            </tr>
-            <%
-                }
-            } else {
-            %>
-            <tr>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_name[]" style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_position[]" style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_phone[]" style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <td>
-                    <label>
-                        <input type="text" name="org_contact_address[]" style="width:100%;" <%= disabled %>>
-                    </label>
-                </td>
-                <% if (!isView) { %>
-                <td class="delete-row" onclick="deleteRow(this)">✖</td>
-                <% } %>
-            </tr>
-            <%
-                }
-            %>
-            </tbody>
-        </table>
-        <% if (!isView) { %>
-        <button type="button" class="add-row" onclick="addOrgContact(this)">Добавить контакт</button>
-        <% } %>
+                        <textarea class="auto-resize" name="org_contact_name[]" aria-label="ФИО"
+                                  rows="1" <%= disabled %>><%= contact.getFullName() != null ? contact.getFullName() : "" %></textarea>
+                    </td>
+                    <td>
+                        <textarea class="auto-resize" name="org_contact_position[]" aria-label="Должность"
+                                  rows="1" <%= disabled %>><%= contact.getPosition() != null ? contact.getPosition() : "" %></textarea>
+                    </td>
+                    <td>
+                        <textarea class="auto-resize" name="org_contact_phone[]" aria-label="Телефон"
+                                  rows="1" <%= disabled %>><%= contact.getPhones() != null ? contact.getPhones() : "" %></textarea>
+                    </td>
+                    <td>
+                        <textarea class="auto-resize" name="org_contact_address[]" aria-label="Адрес"
+                                  rows="1" <%= disabled %>><%= contact.getAddress() != null ? contact.getAddress() : "" %></textarea>
+                    </td>
+
+                    <% if (!isView) { %>
+                    <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+                    <% } %>
+                </tr>
+
+                <% }} %>
+
+                </tbody>
+            </table>
+
+            <% if (!isView) { %>
+            <button type="button" class="btn btn-add" onclick="addOrgContact(this)">
+                Добавить контакт
+            </button>
+            <% } %>
+
+            </div>
+        </div>
+        </div>
     </div>
 </div>

@@ -9,8 +9,9 @@ public class DocumentOutputFormatter {
 
     private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DOT_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private static final DateTimeFormatter RUS_DATE = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("ru"));
-    private static final DateTimeFormatter TIME_INPUT = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final DateTimeFormatter RUS_DATE = DateTimeFormatter.ofPattern("dd MMMM yyyy",
+            Locale.forLanguageTag("ru"));
+    private static final DateTimeFormatter TIME_INPUT = DateTimeFormatter.ofPattern("HH:mm[:ss]");
 
       public static String format(String input) {
         if (input == null || input.isEmpty()) return "";
@@ -19,7 +20,7 @@ public class DocumentOutputFormatter {
         if (input.matches("\\d{4}-\\d{2}-\\d{2}")) return russDate(input);
 
         // 2. Время (02:30:00) -> "2 часа 30 минут"
-        if (input.matches("\\d{2}:\\d{2}:\\d{2}")) return formatAsTime(input);
+        if (input.matches("\\d{2}:\\d{2}(:\\d{2})?")) return formatAsTime(input);
 
         // 3. Число + текст (5 водитель) -> склоняем
         if (input.matches("\\d+\\s+.+")) return formatAsObject(input);

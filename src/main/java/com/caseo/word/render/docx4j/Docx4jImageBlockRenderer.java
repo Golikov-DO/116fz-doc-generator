@@ -5,7 +5,6 @@ import com.caseo.word.blocks.image.ImageBlock;
 import com.caseo.word.render.BlockRenderer;
 import com.caseo.word.render.RenderContext;
 import com.caseo.word.util.DocxTraversalUtil;
-import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.docx4j.TextUtils;
 import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.jaxb.Context;
@@ -68,23 +67,24 @@ public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
                         BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(
                                 (WordprocessingMLPackage) mdp.getPackage(), imageData);
 
-                        // Получаем родной DPI картинки (обычно 72 или 96, если не задан)
-                        ImageSize size = imagePart.getImageInfo().getSize();
+                        long targetWidth;
+                        long targetHeight;
 
-                        // Получаем DPI (обычно возвращает массив [x, y])
-                        double dpi = size.getDpiHorizontal();
-                        if (dpi <= 0) dpi = 96; // Страховка, если DPI не определен
+                        if (i == 0) {
+                            // Первая картинка (лицевая сторона)
+                            targetWidth = 6026400L;  // 16.74 см
+                            targetHeight = 8650800L; // 24.03 см
+                        } else {
+                            // Остальные картинки (оборотная сторона, доп. страницы)
+                            targetWidth = 6382800L;  // 17.73 см
+                            targetHeight = 9021600L; // 25.06 см
+                        }
 
-                        // Пересчитываем в EMU
-                        long cx = (long) (size.getWidthPx() * 914400 / dpi);
-                        long cy = (long) (size.getHeightPx() * 914400 / dpi);
-
-                        // Вставляем с явными размерами
                         Inline inlineImage = imagePart.createImageInline(
                                 block.key(), block.key(),
                                 idCounter.incrementAndGet(),
                                 idCounter.incrementAndGet(),
-                                cx, cy, false);
+                                targetWidth, targetHeight, false);
 
                         Drawing drawing = factory.createDrawing();
                         drawing.getAnchorOrInline().add(inlineImage);

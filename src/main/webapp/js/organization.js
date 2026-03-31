@@ -1,20 +1,30 @@
 // Добавление контакта организации
 function addOrgContact(button) {
-  const tbody = button.closest('.collapse-content').querySelector('.org-contacts-body');
-  const newRow = document.createElement('tr');
-  newRow.innerHTML = `
-        <input type="hidden" name="contact_id[]" value="">
-        <td><input type="text" name="org_contact_name[]" placeholder="ФИО" style="width: 100%;"></td>
-        <td><input type="text" name="org_contact_position[]" placeholder="Должность" style="width: 100%;"></td>
-        <td><input type="text" name="org_contact_phone[]" placeholder="Телефон" style="width: 100%;"></td>
-        <td><input type="text" name="org_contact_address[]" placeholder="Адрес" style="width: 100%;"></td>
-        <td class="delete-row" onclick="deleteRow(this)">✖</td>
-    `;
-  tbody.appendChild(newRow);
+
+  const table = button.closest('.collapse-content').querySelector('tbody');
+  if (!table) {
+    console.error('tbody not found');
+    return;
+  }
+
+  let row = document.createElement('tr');
+
+  row.innerHTML = `
+            <td>
+                <input type="hidden" name="contact_id[]" value="">
+                <input type="text" name="org_contact_name[]">
+            </td>
+            <td><input type="text" name="org_contact_position[]"></td>
+            <td><input type="text" name="org_contact_phone[]"></td>
+            <td><input type="text" name="org_contact_address[]"></td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+
+  table.appendChild(row);
 }
 
 // Инициализация для страницы организации (если нужно)
 document.addEventListener('DOMContentLoaded', function() {
   // Специфичная для организации логика
-  console.log('Organization fragment loaded');
+  resizeAllTextareas();
 });

@@ -1,0 +1,248 @@
+/* ===== СТРОКИ ФОРМ ===== */
+.form-row {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.form-label {
+    width: 150px;
+    font-size: 12px;
+    color: #666;
+}
+
+.form-field {
+    flex: 1;
+}
+
+/* ===== КНОПКИ ===== */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #e0e0e0;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    width: 200px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #d0d0d0;
+    border-color: #bbb;
+}
+
+.btn:active {
+    background-color: #c0c0c0;
+    transform: translateY(1px);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-small {
+    width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.btn-large {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+.btn-add {
+    margin-top: 10px;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-delete:hover {
+    color: #f44336;
+}
+
+/* Чекбоксы */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+}
+
+/* ===== СЕКЦИИ ===== */
+.section {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.section-header {
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-body {
+    padding: 10px;
+}
+
+/* ===== РАСКРЫВАЮЩИЕСЯ БЛОКИ ===== */
+.collapse-block {
+    margin-top: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.collapse-header {
+    padding: 6px 10px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.collapse-content {
+    padding: 10px;
+    display: none;
+}
+
+.collapse-content.expanded {
+    display: block;
+}
+
+/* ===== ТАБЛИЦЫ ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+th {
+    background-color: #f5f5f5;
+    padding: 6px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-weight: normal;
+}
+
+td {
+    padding: 6px;
+    border-bottom: 1px solid #eee;
+}
+
+/* ===== РАМКА ===== */
+.card {
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fafafa;
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 8px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-title {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.close {
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    color: #999;
+    transition: color 0.2s ease;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* ===== УДАЛЕНИЕ СТРОКИ ===== */
+.delete-row {
+    color: #999;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: color 0.2s ease;
+}
+
+.delete-row:hover {
+    color: #f44336;
+}
+
+.badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    background-color: #e0e0e0;
+    color: #666;
+    margin-right: 10px;
+}
+
+/* ===== ПОДВАЛ ФОРМЫ ===== */
+.form-footer {
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+input[type="date"] {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px;
+    height: auto;
+    line-height: normal;
+}

@@ -3,7 +3,6 @@ package com.caseo.web.helper;
 import com.caseo.domain.model.*;
 import com.caseo.web.util.MapListUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.Part;
 
 import java.util.List;
 
@@ -11,27 +10,18 @@ import static com.caseo.web.util.RequestUtils.*;
 
 public class AsfSaveHelper {
 
-    // ---------------- ASF ----------------
+    // АСФ
     public void mapAsf(HttpServletRequest req, Asf asf) {
 
         asf.setFullName(param(req, "full_name"));
         asf.setFullNameGen(param(req, "full_name_gen"));
         asf.setShortName(param(req, "short_name"));
-        asf.setEmail(param(req, "email"));
         asf.setStatusShort(param(req, "status_short"));
 
-        String hours = param(req, "arrival_hours");
-        String minutes = param(req, "arrival_minutes");
-        if (hours != null && !hours.isEmpty()) {
-
-            int h = Integer.parseInt(hours);
-            int m = (minutes != null && !minutes.isEmpty()) ? Integer.parseInt(minutes) : 0;
-
-            asf.setArrivalTime(java.time.LocalTime.of(h, m));
-        }
+        asf.setArrivalTime(paramTime(req, "arrival_hours", "arrival_minutes"));
     }
 
-    // ---------------- CERTIFICATE ----------------
+    // Свидетельство АСФ
     public void mapCertificate(HttpServletRequest req, AsfCertificate cert) {
         cert.setCertNumber(param(req, "cert_number"));
         cert.setCertSeries(param(req, "cert_series"));
@@ -41,7 +31,7 @@ public class AsfSaveHelper {
         cert.setValidUntil(paramDate(req, "valid_until"));
     }
 
-    // ---------------- PERSONNEL ----------------
+    // Классность специалистов
     public void mapPersonnel(HttpServletRequest req, AsfPersonnel personnel) {
         personnel.setStaffByStaffing(paramInt(req, "staff_by_staffing"));
         personnel.setStaffByList(paramInt(req, "staff_by_list"));
@@ -53,7 +43,7 @@ public class AsfSaveHelper {
         personnel.setInternationalClass(paramInt(req, "international_class"));
     }
 
-    // ---------------- SPECIALISTS ----------------
+    // Специалисты
     public void mapSpecialists(HttpServletRequest req, AsfSpecialists specialists) {
         specialists.setTotalCount(paramInt(req, "specialists_total"));
         specialists.setAsrTp(paramInt(req, "asr_tp"));
@@ -64,7 +54,7 @@ public class AsfSaveHelper {
         specialists.setAsrLrnSea(paramInt(req, "asr_lrn_sea"));
     }
 
-    // ---------------- DEPLOYMENT ----------------
+    // Доп. информация
     public void mapDeployment(HttpServletRequest req, AsfCompositionDeploymentFunds deployment) {
         deployment.setResponsibilityArea(param(req, "responsibility_area"));
         deployment.setDeploymentPlace(param(req, "deployment_place"));
@@ -75,7 +65,7 @@ public class AsfSaveHelper {
         deployment.setTotalArea(param(req, "total_area"));
     }
 
-    // ---------------- SIGNER ----------------
+    // Подписант от АСФ
     public void mapSigner(HttpServletRequest req, int index, AsfSigner signer) {
         signer.setName(param(req, "signer_name[]", index));
         signer.setPosition(param(req, "signer_position[]", index));
@@ -90,7 +80,7 @@ public class AsfSaveHelper {
         );
     }
 
-    // ---------------- WORK TYPES ----------------
+    // Тип работ по свидетельству
     public void mapWorkType(HttpServletRequest req, int index, AsfWorkType workType) {
         workType.setName(param(req, "work_type_name[]", index));
     }
@@ -101,28 +91,6 @@ public class AsfSaveHelper {
                 "work_type_id[]",
                 AsfWorkType::new,
                 (ctx, type) -> mapWorkType(ctx.req, ctx.index, type)
-        );
-    }
-
-    // ---------------- IMAGES ----------------
-
-    public void mapImage(HttpServletRequest req, int index, AsfDocumentImage image) {
-        String group = param(req, "image_group[]", index);
-        String name = param(req, "image_name[]", index);
-
-        image.setGroupKey(group);
-
-        if (name != null && !name.isEmpty()) {
-            image.setNameDocument(name);
-        }
-    }
-
-    public List<AsfDocumentImage> mapImages(HttpServletRequest req) {
-        return MapListUtils.mapList(
-                req,
-                "image_id[]",
-                AsfDocumentImage::new,
-                (ctx, img) -> mapImage(ctx.req, ctx.index, img)
         );
     }
 }

@@ -1,12 +1,19 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table (name = "table_title")
-public class ReferenceTableTitle {
+@Table(name = "table_title")
+public class ReferenceTableTitle implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @Column(name = "table_linc")
@@ -14,30 +21,4 @@ public class ReferenceTableTitle {
 
     @Column(name = "table_name")
     private String tableTextName;
-
-    public ReferenceTableTitle() {}
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTableTextLinc() {
-        return tableTextLinc;
-    }
-
-    public void setTableTextLinc(String tableTextLinc) {
-        this.tableTextLinc = tableTextLinc;
-    }
-
-    public String getTableTextName() {
-        return tableTextName;
-    }
-
-    public void setTableTextName(String tableTextName) {
-        this.tableTextName = tableTextName;
-    }
 }

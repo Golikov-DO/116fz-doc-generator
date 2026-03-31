@@ -12,13 +12,13 @@
 <div class="layout">
 
     <header>
-        <%@ include file="/WEB-INF/template/header.jsp" %>
+        <%@ include file="/WEB-INF/header.jsp" %>
     </header>
 
     <div style="display:flex;">
 
         <aside style="width:220px;">
-            <%@ include file="/WEB-INF/template/sidebar.jsp" %>
+            <%@ include file="/WEB-INF/sidebar.jsp" %>
         </aside>
 
         <main style="flex:1;">

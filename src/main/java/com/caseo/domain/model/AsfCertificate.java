@@ -1,18 +1,25 @@
 package com.caseo.domain.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "asf")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "asf_certificate")
-public class AsfCertificate {
+public class AsfCertificate implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asf_id")
     private Asf asf;
 
@@ -22,71 +29,4 @@ public class AsfCertificate {
     private String issueBasis;
     private LocalDate issueDate;
     private LocalDate validUntil;
-
-    public AsfCertificate() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Asf getAsf() {
-        return asf;
-    }
-
-    public void setAsf(Asf asf) {
-        this.asf = asf;
-    }
-
-    public String getCertNumber() {
-        return certNumber;
-    }
-
-    public void setCertNumber(String certNumber) {
-        this.certNumber = certNumber;
-    }
-
-    public String getCertSeries() {
-        return certSeries;
-    }
-
-    public void setCertSeries(String certSeries) {
-        this.certSeries = certSeries;
-    }
-
-    public String getIssuedBy() {
-        return issuedBy;
-    }
-
-    public void setIssuedBy(String issuedBy) {
-        this.issuedBy = issuedBy;
-    }
-
-    public String getIssueBasis() {
-        return issueBasis;
-    }
-
-    public void setIssueBasis(String issueBasis) {
-        this.issueBasis = issueBasis;
-    }
-
-    public LocalDate getIssueDate() {
-        return issueDate;
-    }
-
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
-    }
-
-    public LocalDate getValidUntil() {
-        return validUntil;
-    }
-
-    public void setValidUntil(LocalDate validUntil) {
-        this.validUntil = validUntil;
-    }
 }

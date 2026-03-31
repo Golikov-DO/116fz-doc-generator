@@ -2,18 +2,14 @@
 <%
     String mode = (String) request.getAttribute("mode");
     String asfId = (String) request.getAttribute("asfId");
-    String returnObjectId = request.getParameter("returnObjectId");
-    String pageTitle, badgeText;
+    String pageTitle;
 
     if ("view".equals(mode)) {
         pageTitle = "Просмотр АСФ";
-        badgeText = "Просмотр";
     } else if ("edit".equals(mode)) {
         pageTitle = "Редактирование АСФ";
-        badgeText = "Редактирование";
     } else {
         pageTitle = "Добавление АСФ";
-        badgeText = "Новая запись";
     }
 %>
 <html>
@@ -21,17 +17,14 @@
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asf.css">
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><%= pageTitle %></h1>
-    </div>
-
-    <div class="status-bar">
-        <span class="badge"><%= badgeText %></span>
-        <span>Режим <%= "view".equals(mode) ? "просмотра" : "редактирования" %></span>
     </div>
 
     <form action="createAsf" method="post" id="asfForm">

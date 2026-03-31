@@ -3,6 +3,7 @@ package com.caseo.word.layout;
 import com.caseo.domain.model.*;
 import com.caseo.domain.service.ChildService;
 import com.caseo.domain.service.ObjectHazardService;
+import com.caseo.domain.service.ParentService;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -12,14 +13,14 @@ import static com.caseo.word.util.LayoutUtil.calcLines;
 import static com.caseo.word.util.LayoutUtil.rootSection;
 
 public class HazardTableLayoutService {
-    private final ChildService<ObjectModel> objectService;  // вместо ObjectService
+    private final ParentService<ObjectModel> objectService;  // вместо ObjectService
     private final ObjectHazardService objectHazardService;
     private static final int NAME_LIMIT = 26;
     private static final int VALUE_LIMIT = 20;
     private static final int SECTION_LIMIT = 5;
 
     public HazardTableLayoutService(
-            ChildService<ObjectModel> objectService,
+            ParentService<ObjectModel> objectService,
             ObjectHazardService objectHazardService) {
         this.objectService = objectService;
         this.objectHazardService = objectHazardService;
@@ -27,7 +28,7 @@ public class HazardTableLayoutService {
 
     public List<String[]> getHazardTableData(int objectId) throws SQLException {
         // 2. Сбор данных (переехало из HazardTableBlockFactory)
-        ObjectModel obj = objectService.getOneByParentId(objectId);
+        ObjectModel obj = objectService.getOneById(objectId);
         List<ObjectHazardousParam> params = objectHazardService.getAllParamsOrdered(
                 obj.getHazardousSubstance().getId());
 
