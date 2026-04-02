@@ -328,6 +328,20 @@ document.addEventListener('change', function(event) {
     }
 });
 
+document.addEventListener('change', function(event) {
+
+    if (event.target?.classList.contains('hazard-select')) {
+
+        const value = event.target.value;
+
+        if (value === 'new_hazard') {
+            addNewHazardous();
+            event.target.value = '';
+        }
+    }
+
+});
+
 function openAsfFullPageFromSelect(objectItem) {
     const asfSelect = objectItem.querySelector('.asf-select');
     const asfId = asfSelect.value;
@@ -378,10 +392,10 @@ document.addEventListener('click', function(e) {
 });
 
 // выбор файла
-document.addEventListener('change', function(e) {
-    if (!e.target.classList.contains('file-input')) return;
+document.addEventListener('change', function(event) {
+    if (!event.target.classList.contains('file-input')) return;
 
-    const input = e.target;
+    const input = event.target;
     const block = input.closest('.image-block');
 
     const file = input.files[0];
@@ -457,4 +471,39 @@ function generatePlan(form) {
         });
 
     return false;
+}
+
+function addNewHazardous() {
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'createEmptyHazardousSubstance';
+    form.style.display = 'none';
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function editHazardousFromSelect(button) {
+
+    const select = document.getElementById('hazardous_substance_id');
+
+    if (!select) {
+        console.error('select not found');
+        return;
+    }
+
+    const hazardId = select.value;
+
+    if (!hazardId || hazardId === 'new_hazard') {
+        alert('Выберите вещество');
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const objectId = urlParams.get('id');
+
+    window.location.href =
+        'hazardousSubstance?id=' + hazardId +
+        '&returnObjectId=' + objectId;
 }

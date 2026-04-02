@@ -7,6 +7,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/createData.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/document.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/asf/asf.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/asf" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/hazardous/hazardous-substance.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/hazardous" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects/objects-list.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects/objects.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/objects" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/organization/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/fragments/organization" />

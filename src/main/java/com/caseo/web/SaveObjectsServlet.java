@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 import static com.caseo.web.util.RequestUtils.*;
@@ -83,16 +84,20 @@ public class SaveObjectsServlet extends HttpServlet {
             if (orgId == 0) throw new ServletException("orgId is required");
 
             Organization organization = orgService.getOneById(orgId);
-
-            // Получаем данные из формы
-            String[] objectFullNames = req.getParameterValues("object_full_name");
-            if (objectFullNames == null) return;
+            if (organization == null) {
+                throw new ServletException("Организация с id: " + orgId + " не найдена!");
+            }
 
             // Получаем все объекты этой организации
             ObjectModel object = objectParentService.getOneById(objectId);
 
             if (object == null) {
                 throw new ServletException("Объект с id: " + objectId + " не найден в базе!");
+            }
+
+            Integer objectIdValue = object.getId();
+            if (objectIdValue == null) {
+                throw new ServletException("ID объекта не может быть null!");
             }
 
             object.setOrganization(organization);
@@ -103,20 +108,20 @@ public class SaveObjectsServlet extends HttpServlet {
             int cityId = paramInt(req, "object_city_id", 0);
             if (cityId > 0) object.setCity(cityService.getOneById(cityId));
 
-            int asfId = paramInt(req,"object_asf_id", 0);
+            int asfId = paramInt(req, "object_asf_id", 0);
             if (asfId > 0) object.setAsf(asfService.getOneById(asfId));
 
-            int substanceId = paramInt(req,"hazardous_substance_id", 0);
+            int substanceId = paramInt(req, "hazardous_substance_id", 0);
             if (substanceId > 0) object.setHazardousSubstance(substanceService.getOneById(substanceId));
 
-            int typeId = paramInt(req,"object_type_id", 0);
+            int typeId = paramInt(req, "object_type_id", 0);
             if (typeId > 0) object.setType(typeService.getOneById(typeId));
 
             // сохраняем
             objectService.save(object);
 
             // адрес
-            ObjectAddress address = addressService.getOneByParentId(object.getId());
+            ObjectAddress address = addressService.getOneByParentId(objectIdValue);
             if (address == null) address = new ObjectAddress();
             saveHelper.mapAddress(req, address);
             address.setObject(object);
@@ -126,7 +131,7 @@ public class SaveObjectsServlet extends HttpServlet {
             if (object.isEmergencyCommission()) {
                 List<ObjectCompositionKchs> kchsList = saveHelper.mapKchsList(req);
 
-                List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(object.getId());
+                List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(objectIdValue);
                 SyncListUtils.syncList(kchsList, oldDbList, ObjectCompositionKchs::getId, kchsService::deleteById);
 
                 for (ObjectCompositionKchs kchs : kchsList) {
@@ -134,23 +139,24 @@ public class SaveObjectsServlet extends HttpServlet {
                     kchsService.save(kchs);
                 }
             } else {
-                List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(object.getId());
+                List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(objectIdValue);
                 if (oldDbList != null && !oldDbList.isEmpty()) {
-                    for (ObjectCompositionKchs oldKchs : oldDbList) {
-                        kchsService.deleteById(oldKchs.getId());
-                    }
+                    SyncListUtils.syncList(
+                            List.of(),
+                            oldDbList,
+                            ObjectCompositionKchs::getId,
+                            kchsService::deleteById
+                    );
                 }
             }
 
             // оборудование
             List<ObjectTechnologicalEquipment> equipmentList = saveHelper.mapEquipmentList(req);
-            if (object.getId() != null) {
-                List<ObjectTechnologicalEquipment> oldDbList = equipmentService.getManyByParentId(object.getId());
-                SyncListUtils.syncList(equipmentList, oldDbList,
-                        ObjectTechnologicalEquipment::getId,
-                        equipmentService::deleteById
-                );
-            }
+            List<ObjectTechnologicalEquipment> oldTechnoList = equipmentService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(equipmentList, oldTechnoList,
+                    ObjectTechnologicalEquipment::getId,
+                    equipmentService::deleteById
+            );
             for (ObjectTechnologicalEquipment equipment : equipmentList) {
                 equipment.setObject(object);
                 equipmentService.save(equipment);
@@ -158,13 +164,11 @@ public class SaveObjectsServlet extends HttpServlet {
 
             // структура
             List<ObjectStructure> structureList = saveHelper.mapStructureList(req);
-            if (object.getId() != null) {
-                List<ObjectStructure> oldDbList = structureService.getManyByParentId(object.getId());
-                SyncListUtils.syncList(structureList, oldDbList,
-                        ObjectStructure::getId,
-                        equipmentService::deleteById
-                );
-            }
+            List<ObjectStructure> oldStructureList = structureService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(structureList, oldStructureList,
+                    ObjectStructure::getId,
+                    structureService::deleteById
+            );
             for (ObjectStructure structure : structureList) {
                 structure.setObject(object);
                 structureService.save(structure);
@@ -172,13 +176,11 @@ public class SaveObjectsServlet extends HttpServlet {
 
             // технологические блоки
             List<ObjectTechnologicalBlock> technoBlockList = saveHelper.mapTechnoBlockList(req);
-            if (object.getId() != null) {
-                List<ObjectTechnologicalBlock> oldDbList = technoBlockService.getManyByParentId(object.getId());
-                SyncListUtils.syncList(technoBlockList, oldDbList,
-                        ObjectTechnologicalBlock::getId,
-                        technoBlockService::deleteById
-                );
-            }
+            List<ObjectTechnologicalBlock> oldBlockList = technoBlockService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(technoBlockList, oldBlockList,
+                    ObjectTechnologicalBlock::getId,
+                    technoBlockService::deleteById
+            );
             for (ObjectTechnologicalBlock technoBlock : technoBlockList) {
                 technoBlock.setObject(object);
                 technoBlockService.save(technoBlock);
@@ -186,19 +188,17 @@ public class SaveObjectsServlet extends HttpServlet {
 
             // ответственные за план
             List<ObjectPersonsResponsible> personsResponsiblesList = saveHelper.mapPersonsResponseList(req);
-            if (object.getId() != null) {
-                List<ObjectPersonsResponsible> oldDbList = personsResponsibleService.getManyByParentId(object.getId());
-                SyncListUtils.syncList(personsResponsiblesList, oldDbList,
-                        ObjectPersonsResponsible::getId,
-                        equipmentService::deleteById
-                );
-            }
+            List<ObjectPersonsResponsible> oldPersonsList = personsResponsibleService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(personsResponsiblesList, oldPersonsList,
+                    ObjectPersonsResponsible::getId,
+                    personsResponsibleService::deleteById
+            );
             for (ObjectPersonsResponsible personsResponsible : personsResponsiblesList) {
                 personsResponsible.setObject(object);
                 personsResponsibleService.save(personsResponsible);
             }
 
-            List<ObjectImage> images = imageService.getManyByParentId(object.getId());
+            List<ObjectImage> images = imageService.getManyByParentId(objectIdValue);
 
             saveHelper.mapImages(req, images);
 
@@ -207,20 +207,20 @@ public class SaveObjectsServlet extends HttpServlet {
             }
 
             // страховка
-            ObjectInsurancePolicy policy = policyService.getOneByParentId(object.getId());
+            ObjectInsurancePolicy policy = policyService.getOneByParentId(objectIdValue);
             if (policy == null) policy = new ObjectInsurancePolicy();
             saveHelper.mapInsurancePolicy(req, policy);
             policy.setObject(object);
             policyService.save(policy);
 
             // приказ
-            ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(object.getId());
+            ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectIdValue);
             if (balance == null) balance = new ObjectOrderMinimumBalance();
             saveHelper.mapOrderMinimumBalance(req, balance);
             balance.setObject(object);
             balanceService.save(balance);
 
-            resp.sendRedirect("objects?mode=view&orgId=" + orgId + "&id=" + object.getId());
+            resp.sendRedirect("objects?mode=view&orgId=" + orgId + "&id=" + objectIdValue);
         } catch (Exception e) {
             getServletContext().log("Ошибка при сохранении объектов", e);
             throw new ServletException("Ошибка при сохранении объектов", e);

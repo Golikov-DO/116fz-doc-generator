@@ -74,7 +74,38 @@
                         </option>
                         <% }
                         } %>
+                        <option>— добавить —</option>
                     </select>
+                </div>
+
+                <div style="display:flex; align-items:end;">
+                    <button type="button" class="btn btn-small">
+                        Редактировать
+                    </button>
+                </div>
+
+                <div>
+                    <label for="hazardous_substance_id">Опасное вещество</label>
+                    <select id="hazardous_substance_id" name="hazardous_substance_id" class="hazard-select" <%= disabled %>>
+                        <option value="">— выберите —</option>
+                        <% if (substances != null) {
+                            Integer selectedId = object.getHazardousSubstance() != null ? object.getHazardousSubstance().getId() : null;
+                            for (ReferenceHazardousSubstance s : substances) { %>
+                        <option value="<%= s.getId() %>" <%= Objects.equals(selectedId, s.getId()) ? "selected" : "" %>>
+                            <%= s.getName() %>
+                        </option>
+                        <% }
+                        } %>
+                        <option value="new_hazard">— добавить —</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; align-items:end;">
+                    <button type="button"
+                            class="btn btn-small"
+                            onclick="editHazardousFromSelect(this)">
+                        Редактировать
+                    </button>
                 </div>
 
                 <div>
@@ -87,21 +118,9 @@
                     </select>
                 </div>
 
-                <div>
-                    <label for="hazardous_substance_id">Опасное вещество</label>
-                    <select id="hazardous_substance_id" name="hazardous_substance_id" <%= disabled %>>
-                        <option value="">— выберите —</option>
-                        <% if (substances != null) {
-                            Integer selectedId = object.getHazardousSubstance() != null ? object.getHazardousSubstance().getId() : null;
-                            for (ReferenceHazardousSubstance s : substances) { %>
-                        <option value="<%= s.getId() %>" <%= Objects.equals(selectedId, s.getId()) ? "selected" : "" %>>
-                            <%= s.getName() %>
-                        </option>
-                        <% }
-                        } %>
-                    </select>
-                </div>
+            </div>
 
+            <div class="compact-block">
                 <div>
                     <label for="emergency_commission">Наличие КЧС</label>
                     <select id="emergency_commission" name="emergency_commission" <%= disabled %>>
@@ -111,13 +130,12 @@
                     </select>
                 </div>
 
-            </div>
-
-            <div>
-                <label for="amount_of_hazardous_substance">Количество</label>
-                <textarea class="auto-resize" id="amount_of_hazardous_substance"
-                          name="amount_of_hazardous_substance"
-                          rows="1" <%= disabled %>><%= object.getAmountOfHazardousSubstance() != null ? object.getAmountOfHazardousSubstance() : "" %></textarea>
+                <div>
+                    <label for="amount_of_hazardous_substance">Количество опасного вещества</label>
+                    <textarea class="auto-resize" id="amount_of_hazardous_substance"
+                              name="amount_of_hazardous_substance"
+                              rows="1" <%= disabled %>><%= object.getAmountOfHazardousSubstance() != null ? object.getAmountOfHazardousSubstance() : "" %></textarea>
+                </div>
             </div>
 
             <div class="compact-block">
@@ -145,7 +163,7 @@
                         <div>
                             <label for="object_asf_id">АСФ</label>
                             <select id="object_asf_id" name="object_asf_id" class="asf-select" <%= disabled %>>
-                                <option value="">Выберите АСФ</option>
+                                <option value="">— выберите —</option>
                                 <% if (asfList != null) {
                                     for (Asf asf : asfList) { %>
                                 <option value="<%= asf.getId() %>"
@@ -154,7 +172,7 @@
                                 </option>
                                 <% }
                                 } %>
-                                <option value="new_asf">Добавить новое АСФ</option>
+                                <option value="new_asf">— добавить —</option>
                             </select>
                         </div>
 
