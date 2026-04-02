@@ -1,11 +1,10 @@
 package com.caseo.word.layout;
 
 import com.caseo.domain.model.*;
-import com.caseo.domain.service.ChildService;
 import com.caseo.domain.service.ObjectHazardService;
 import com.caseo.domain.service.ParentService;
+import com.caseo.web.dto.HazardParamDto;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,7 @@ import static com.caseo.word.util.LayoutUtil.calcLines;
 import static com.caseo.word.util.LayoutUtil.rootSection;
 
 public class HazardTableLayoutService {
-    private final ParentService<ObjectModel> objectService;  // вместо ObjectService
+    private final ParentService<ObjectModel> objectService;
     private final ObjectHazardService objectHazardService;
     private static final int NAME_LIMIT = 26;
     private static final int VALUE_LIMIT = 20;
@@ -26,64 +25,42 @@ public class HazardTableLayoutService {
         this.objectHazardService = objectHazardService;
     }
 
-    public List<String[]> getHazardTableData(int objectId) throws SQLException {
-        // 2. Сбор данных (переехало из HazardTableBlockFactory)
+    public List<String[]> getHazardTableData(int objectId) {
+
         ObjectModel obj = objectService.getOneById(objectId);
-        List<ObjectHazardousParam> params = objectHazardService.getAllParamsOrdered(
-                obj.getHazardousSubstance().getId());
 
-        Map<Integer, ObjectHazardousParamValue> values = new HashMap<>();
-        for (ObjectHazardousParam param : params) {
-            values.putAll(objectHazardService.getValuesByParam(param.getId()));
-        }
+        List<HazardParamDto> params = objectHazardService.getHazardParamsWithValues(
+                        obj.getHazardousSubstance().getId()
+                );
 
-        // 3. Вызов твоей логики расчета (существующий метод)
-        // Но теперь пусть он сразу возвращает List<String[]>
-        return buildVisualRowsAsArray(params, values);
+        return buildVisualRowsAsArray(params);
     }
 
-    private List<String[]> buildVisualRowsAsArray(
-            List<ObjectHazardousParam> params,
-            Map<Integer,
-            ObjectHazardousParamValue> values) {
+    private List<String[]> buildVisualRowsAsArray(List<HazardParamDto> params) {
 
-        Map<Integer, List<ObjectHazardousParam>> grouped =
-                params.stream()
-                        .collect(Collectors.groupingBy(
-                                p -> rootSection(p.getSectionNo()),
-                                TreeMap::new,
-                                Collectors.toList()
-                        ));
+        Map<Integer, List<HazardParamDto>> grouped = params.stream()
+                .collect(Collectors.groupingBy(
+                        p -> rootSection(p.getSection()),
+                        TreeMap::new,
+                        Collectors.toList()
+                ));
 
         List<String[]> tableRows = new ArrayList<>();
 
-        for (List<ObjectHazardousParam> group : grouped.values()) {
+        for (List<HazardParamDto> group : grouped.values()) {
 
             List<TableRowModel> rows = new ArrayList<>();
 
             // ---------- ШАГ 1 ----------
-            for (ObjectHazardousParam objectHazardousParam : group) {
+            for (HazardParamDto dto : group) {
 
                 TableRowModel tableRow = new TableRowModel();
 
-                tableRow.isRoot = !objectHazardousParam.getSectionNo().contains(".");
-                tableRow.section = objectHazardousParam.getSectionNo();
-                tableRow.name = (objectHazardousParam.getSubtitle() != null)
-                        ? objectHazardousParam.getSubtitle()
-                        : objectHazardousParam.getTitle() + ":";
-
-                ObjectHazardousParamValue objectHazardousParamValue = values.get(
-                        objectHazardousParam.getId());
-
-                tableRow.value = (objectHazardousParamValue != null
-                        && objectHazardousParamValue.getValueText() != null)
-                        ? objectHazardousParamValue.getValueText()
-                        : "";
-
-                tableRow.source = (objectHazardousParamValue != null
-                        && objectHazardousParamValue.getSourceInfo() != null)
-                        ? objectHazardousParamValue.getSourceInfo()
-                        : "";
+                tableRow.isRoot = !dto.getSection().contains(".");
+                tableRow.section = dto.getSection();
+                tableRow.name = dto.getTitle() + ":";
+                tableRow.value = dto.getValue();
+                tableRow.source = dto.getSource();
 
                 rows.add(tableRow);
             }
@@ -112,18 +89,18 @@ public class HazardTableLayoutService {
 
                 int currentSecLines = calcLines(tableRowModel.section, SECTION_LIMIT);
                 if (currentSecLines < tableRowModel.visualLines) {
-                    secBuf.append("\n".repeat(Math.max(
-                            0, tableRowModel.visualLines - currentSecLines)));
+                    secBuf.repeat("\n", Math.max(
+                            0, tableRowModel.visualLines - currentSecLines));
                 }
 
                 if (tableRowModel.nameLines < tableRowModel.visualLines) {
-                    nameBuf.append("\n".repeat(Math.max(
-                            0, tableRowModel.visualLines - tableRowModel.nameLines)));
+                    nameBuf.repeat("\n", Math.max(
+                            0, tableRowModel.visualLines - tableRowModel.nameLines));
                 }
 
                 if (tableRowModel.valueLines < tableRowModel.visualLines) {
-                    valueBuf.append("\n".repeat(Math.max(
-                            0, tableRowModel.visualLines - tableRowModel.valueLines)));
+                    valueBuf.repeat("\n", Math.max(
+                            0, tableRowModel.visualLines - tableRowModel.valueLines));
                 }
 
                 if (i < rows.size() - 1) {

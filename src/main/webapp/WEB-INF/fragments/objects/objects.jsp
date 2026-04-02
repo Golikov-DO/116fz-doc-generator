@@ -17,7 +17,7 @@
     @SuppressWarnings("unchecked")
     List<ReferenceCity> cities = (List<ReferenceCity>) request.getAttribute("cities");
     @SuppressWarnings("unchecked")
-    List<ObjectHazardousSubstance> substances = (List<ObjectHazardousSubstance>) request.getAttribute("substances");
+    List<ReferenceHazardousSubstance> substances = (List<ReferenceHazardousSubstance>) request.getAttribute("substances");
     @SuppressWarnings("unchecked")
     List<Asf> asfList = (List<Asf>) request.getAttribute("asfList");
     @SuppressWarnings("unchecked")
@@ -93,7 +93,7 @@
                         <option value="">— выберите —</option>
                         <% if (substances != null) {
                             Integer selectedId = object.getHazardousSubstance() != null ? object.getHazardousSubstance().getId() : null;
-                            for (ObjectHazardousSubstance s : substances) { %>
+                            for (ReferenceHazardousSubstance s : substances) { %>
                         <option value="<%= s.getId() %>" <%= Objects.equals(selectedId, s.getId()) ? "selected" : "" %>>
                             <%= s.getName() %>
                         </option>

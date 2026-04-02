@@ -1,9 +1,9 @@
 package com.caseo.domain.service;
 
-import com.caseo.domain.model.ObjectHazardousParam;
+import com.caseo.domain.model.ReferenceHazardousParam;
 import com.caseo.domain.model.ObjectHazardousParamValue;
+import com.caseo.web.dto.HazardParamDto;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -11,29 +11,35 @@ import java.util.stream.Collectors;
 
 public class ObjectHazardService {
 
-    private final ChildService<ObjectHazardousParam> paramService;
+    private final ParentService<ReferenceHazardousParam> paramService;
     private final ChildService<ObjectHazardousParamValue> valueService;
 
     public ObjectHazardService(
-            ChildService<ObjectHazardousParam> paramService,
+            ParentService<ReferenceHazardousParam> paramService,
             ChildService<ObjectHazardousParamValue> valueService
     ) {
         this.paramService = paramService;
         this.valueService = valueService;
     }
 
-    public List<ObjectHazardousParam> getAllParamsOrdered(int substanceId) throws SQLException {
-        return paramService.getManyByParentId(substanceId);
-    }
+    public List<HazardParamDto> getHazardParamsWithValues(int substanceId) {
 
-    public Map<Integer, ObjectHazardousParamValue> getValuesByParam(int paramId) throws SQLException {
-        return valueService.getManyByParentId(paramId)
-                .stream()
-                .collect(Collectors.toMap(
-                        v -> v.getParam().getId(),
-                        Function.identity()
-                ));
+        List<ReferenceHazardousParam> params = paramService.getMany();
 
+        Map<Integer, ObjectHazardousParamValue> values =
+                valueService.getManyByParentId(substanceId)
+                        .stream()
+                        .collect(Collectors.toMap(
+                                value -> value.getParam().getId(),
+                                Function.identity()
+                        ));
+
+        return params.stream()
+                .map(param -> new HazardParamDto(
+                        param,
+                        values.get(param.getId())
+                ))
+                .toList();
     }
 }
 

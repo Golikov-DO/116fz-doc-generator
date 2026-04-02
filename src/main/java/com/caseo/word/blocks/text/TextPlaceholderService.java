@@ -29,7 +29,7 @@ public class TextPlaceholderService {
 
         ParentService<ObjectModel> objService = internalServices.getParentService(ObjectModel.class);
         ChildService<ObjectAddress> objectAddressService = internalServices.getChildService(ObjectAddress.class);
-        ParentService<ObjectHazardousSubstance> objectHazardousSubstanceService = internalServices.getParentService(ObjectHazardousSubstance.class);
+        ParentService<ReferenceHazardousSubstance> objectHazardousSubstanceService = internalServices.getParentService(ReferenceHazardousSubstance.class);
         ChildService<ObjectOrderMinimumBalance> objectOrderMinimumBalanceService = internalServices.getChildService(ObjectOrderMinimumBalance.class);
         ChildService<ObjectInsurancePolicy> objectInsurancePolicyService = internalServices.getChildService(ObjectInsurancePolicy.class);
         ParentService<ObjectType> objectTypeService = internalServices.getParentService(ObjectType.class);

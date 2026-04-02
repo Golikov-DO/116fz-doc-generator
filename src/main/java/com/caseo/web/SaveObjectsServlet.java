@@ -27,7 +27,7 @@ public class SaveObjectsServlet extends HttpServlet {
     private ParentService<Organization> orgService;
     private ParentService<ReferenceCity> cityService;
     private ParentService<Asf> asfService;
-    private ParentService<ObjectHazardousSubstance> substanceService;
+    private ParentService<ReferenceHazardousSubstance> substanceService;
     private ParentService<ObjectModel> objectParentService;
     private ParentService<ObjectType> typeService;
 
@@ -53,7 +53,7 @@ public class SaveObjectsServlet extends HttpServlet {
         orgService = services.getParentService(Organization.class);
         cityService = services.getParentService(ReferenceCity.class);
         asfService = services.getParentService(Asf.class);
-        substanceService = services.getParentService(ObjectHazardousSubstance.class);
+        substanceService = services.getParentService(ReferenceHazardousSubstance.class);
         typeService = services.getParentService(ObjectType.class);
 
         objectService = services.getChildService(ObjectModel.class);

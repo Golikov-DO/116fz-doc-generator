@@ -54,7 +54,7 @@ public class ObjectsServlet extends HttpServlet {
             ParentService<ReferenceCity> cityService = services.getParentService(ReferenceCity.class);
             req.setAttribute("cities", cityService.getMany());
 
-            ParentService<ObjectHazardousSubstance> substanceService = services.getParentService(ObjectHazardousSubstance.class);
+            ParentService<ReferenceHazardousSubstance> substanceService = services.getParentService(ReferenceHazardousSubstance.class);
             req.setAttribute("substances", substanceService.getMany());
 
             ParentService<ObjectType> typeService = services.getParentService(ObjectType.class);

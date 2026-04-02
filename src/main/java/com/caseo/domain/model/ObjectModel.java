@@ -35,7 +35,7 @@ public class ObjectModel implements BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "hazardous_substance_id")
-    private ObjectHazardousSubstance hazardousSubstance;
+    private ReferenceHazardousSubstance hazardousSubstance;
 
     private int asfSignerId;
     private int hazardClass;

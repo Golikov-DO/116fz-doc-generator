@@ -37,13 +37,13 @@ public class Bootstrap {
         // РОДИТЕЛИ
         parentRepos.put(Organization.class, new GenericHibernateRepository<>(Organization.class, null, "organizationShortName"));
         parentRepos.put(Asf.class, new GenericHibernateRepository<>(Asf.class, null, "shortName"));
-        parentRepos.put(ObjectHazardousSubstance.class, new GenericHibernateRepository<>(ObjectHazardousSubstance.class, null, "name"));
+        parentRepos.put(ReferenceHazardousSubstance.class, new GenericHibernateRepository<>(ReferenceHazardousSubstance.class, null, "name"));
         parentRepos.put(ReferenceCity.class, new GenericHibernateRepository<>(ReferenceCity.class, null, "cityName"));
         parentRepos.put(ReferenceEmergencyServices.class, new GenericHibernateRepository<>(ReferenceEmergencyServices.class, null, "id"));
         parentRepos.put(ReferenceTableTitle.class, new GenericHibernateRepository<>(ReferenceTableTitle.class, null, "id"));
         parentRepos.put(ObjectType.class, new GenericHibernateRepository<>(ObjectType.class, null, "id"));
         parentRepos.put(ObjectModel.class, new GenericHibernateRepository<>(ObjectModel.class, null, "id"));
-
+        parentRepos.put(ReferenceHazardousParam.class, new GenericHibernateRepository<>(ReferenceHazardousParam.class, null, "id"));
 
         // СПЕЦИАЛЬНЫЙ СЛУЧАЙ: Объекты
         var objectRepo = new GenericHibernateRepository<>(ObjectModel.class, "organization", "id");
@@ -69,8 +69,7 @@ public class Bootstrap {
         childRepos.put(AsfSigner.class, new GenericHibernateRepository<>(AsfSigner.class, "asf", "name"));
         childRepos.put(ObjectTechnologicalEquipment.class, new GenericHibernateRepository<>(ObjectTechnologicalEquipment.class, "object", "num"));
         childRepos.put(ObjectCompositionKchs.class, new GenericHibernateRepository<>(ObjectCompositionKchs.class, "object", "number"));
-        childRepos.put(ObjectHazardousParam.class, new GenericHibernateRepository<>(ObjectHazardousParam.class, "substance", "id"));
-        childRepos.put(ObjectHazardousParamValue.class, new GenericHibernateRepository<>(ObjectHazardousParamValue.class, "param", "id"));
+        childRepos.put(ObjectHazardousParamValue.class, new GenericHibernateRepository<>(ObjectHazardousParamValue.class, "substance", "id"));
         childRepos.put(OrganizationContact.class, new GenericHibernateRepository<>(OrganizationContact.class, "organization", "id"));
         childRepos.put(OrganizationSigner.class, new GenericHibernateRepository<>(OrganizationSigner.class, "organization", "id"));
         childRepos.put(AsfDocumentImage.class, new GenericHibernateRepository<>(AsfDocumentImage.class, "asf", "groupKey, id"));
@@ -90,7 +89,7 @@ public class Bootstrap {
     private static WordGenerationService initWordService(InternalServices services) {
         // Специфические сервисы для Word
         ObjectHazardService objectHazardService = new ObjectHazardService(
-                services.getChildService(ObjectHazardousParam.class),
+                services.getParentService(ReferenceHazardousParam.class),
                 services.getChildService(ObjectHazardousParamValue.class)
         );
 
