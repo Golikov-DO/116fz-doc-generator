@@ -484,7 +484,7 @@ function addNewHazardous() {
     form.submit();
 }
 
-function editHazardousFromSelect(button) {
+function editHazardousFromSelect() {
 
     const select = document.getElementById('hazardous_substance_id');
 
