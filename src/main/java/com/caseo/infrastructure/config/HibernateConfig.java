@@ -60,9 +60,12 @@ public class HibernateConfig {
         Configuration config = new Configuration();
 
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        config.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/PMLLPA");
-        config.setProperty("hibernate.connection.username", "Admin");
-        config.setProperty("hibernate.connection.password", "Dimon678");
+        config.setProperty("hibernate.connection.url", "jdbc:postgresql://maglev.proxy.rlwy.net:43448/railway");
+        config.setProperty("hibernate.connection.username", "postgres");
+        config.setProperty("hibernate.connection.password", "SWtVkqzxdUqWVpJxwnybRXxDfvJCJTna");
+//        config.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/PMLLPA");
+//        config.setProperty("hibernate.connection.username", "Admin");
+//        config.setProperty("hibernate.connection.password", "Dimon678");
 
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         config.setProperty("hibernate.show_sql", "false");
