@@ -33,6 +33,12 @@ public class SaveUserServlet extends HttpServlet {
 
         service.save(user);
 
-        resp.sendRedirect("user?mode=view&id=" + user.getId());
+        String source = req.getParameter("source");
+
+        if ("register".equals(source)) {
+            resp.sendRedirect("/?login=true");
+        } else {
+            resp.sendRedirect("user?mode=view&id=" + user.getId());
+        }
     }
 }

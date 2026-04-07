@@ -82,6 +82,10 @@ function resizeAllTextareas() {
 
 window.addEventListener('load', function () {
     resizeAllTextareas();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("login") === "true") {
+        openLoginModal();
+    }
 });
 
 document.addEventListener('input', function(e) {
@@ -103,13 +107,22 @@ let isLogin = true;
 function switchMode() {
     isLogin = !isLogin;
 
-    document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
-    document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+    const form = document.getElementById("authForm");
+    const title = document.getElementById("modalTitle");
+    const btn = document.getElementById("submitBtn");
+    const link = document.getElementById("switchLink");
 
-    document.getElementById("modalTitle").innerText =
-        isLogin ? "Вход" : "Регистрация";
+    if (!form || !title || !btn || !link) return;
 
-    document.getElementById("switchLink").innerText =
-        isLogin ? "Нет аккаунта? Зарегистрироваться"
-            : "Уже есть аккаунт? Войти";
+    if (isLogin) {
+        form.action = "login";
+        title.innerText = "Вход";
+        btn.innerText = "Войти";
+        link.innerText = "Нет аккаунта? Зарегистрироваться";
+    } else {
+        form.action = "saveUser";
+        title.innerText = "Регистрация";
+        btn.innerText = "Зарегистрироваться";
+        link.innerText = "Уже есть аккаунт? Войти";
+    }
 }

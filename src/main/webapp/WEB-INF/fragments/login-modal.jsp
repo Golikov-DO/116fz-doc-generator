@@ -8,26 +8,21 @@
         </div>
 
         <!-- LOGIN -->
-        <form method="post" action="login" class="gh-form">
+        <form id="authForm" method="post" action="login" class="gh-form">
+
             <label>Логин</label>
-            <input type="text" name="login" autocomplete="username" required>
+            <input type="hidden" name="source" value="register">
+            <input type="text" name="login" required>
+
             <label>Пароль</label>
             <input type="password" name="password" autocomplete="current-password" required>
-            <button type="submit" class="gh-btn-primary">
+
+            <input type="hidden" name="role" value="USER">
+
+            <button type="submit" class="gh-btn-primary" id="submitBtn">
                 Войти
             </button>
 
-        </form>
-
-        <!-- REGISTER -->
-        <form id="registerForm" class="gh-form" style="display:none;">
-            <label>Логин</label>
-            <input type="text" required>
-
-            <label>Пароль</label>
-            <input type="password" required>
-
-            <button type="submit" class="gh-btn-primary">Зарегистрироваться</button>
         </form>
 
         <div class="gh-switch">
