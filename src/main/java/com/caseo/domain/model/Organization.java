@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "user")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "organization")
@@ -23,4 +23,8 @@ public class Organization implements BaseEntity {
     private String organizationShortName;
     private String organizationTypeActivity;
     private boolean oneTerritory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

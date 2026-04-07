@@ -16,10 +16,6 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asf.css">
 </head>
 <body>
 <div class="container">

@@ -79,14 +79,23 @@
                 </div>
 
                 <div style="display:flex; align-items:end;">
-                    <button type="button" class="btn btn-small">
-                        Редактировать
+                    <% if (!isView && object.getType() != null && object.getType().getId() > 0) { %>
+                    <button type="button" class="btn"
+                            onclick="editType(this)">
+                        Редактировать тип
                     </button>
+                    <% } else if (isView && object.getType() != null && object.getType().getId() > 0) { %>
+                    <button type="button" class="btn"
+                            onclick="viewType(<%= object.getType().getId() %>, this.closest('.card'))">
+                        Просмотр типа
+                    </button>
+                    <% } %>
                 </div>
 
                 <div>
                     <label for="hazardous_substance_id">Опасное вещество</label>
-                    <select id="hazardous_substance_id" name="hazardous_substance_id" class="hazard-select" <%= disabled %>>
+                    <select id="hazardous_substance_id" name="hazardous_substance_id"
+                            class="hazard-select" <%= disabled %>>
                         <option value="">— выберите —</option>
                         <% if (substances != null) {
                             Integer selectedId = object.getHazardousSubstance() != null ? object.getHazardousSubstance().getId() : null;
@@ -101,11 +110,17 @@
                 </div>
 
                 <div style="display:flex; align-items:end;">
-                    <button type="button"
-                            class="btn btn-small"
+                    <% if (!isView && object.getHazardousSubstance() != null && object.getHazardousSubstance().getId() > 0) { %>
+                    <button type="button" class="btn"
                             onclick="editHazardousFromSelect(this)">
-                        Редактировать
+                        Редактировать вещество
                     </button>
+                    <% } else if (isView && object.getHazardousSubstance() != null && object.getHazardousSubstance().getId() > 0) { %>
+                    <button type="button" class="btn"
+                            onclick="viewSubstance(<%= object.getHazardousSubstance().getId() %>, this.closest('.card'))">
+                        Просмотр вещества
+                    </button>
+                    <% } %>
                 </div>
 
                 <div>

@@ -3,6 +3,8 @@ package com.caseo.web;
 import com.caseo.app.ApplicationContext;
 import com.caseo.app.InternalServices;
 import com.caseo.domain.model.Organization;
+import com.caseo.domain.model.User;
+import com.caseo.domain.service.OrganizationSecurityService;
 import com.caseo.domain.service.ParentService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,10 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
-@WebServlet(value = "", loadOnStartup = 1)
-public class HomeServlet extends HttpServlet {
+@WebServlet("/home")
+public class OrganizationsServlet extends HttpServlet {
 
     private InternalServices services;
+    private final OrganizationSecurityService securityService = new OrganizationSecurityService();
 
     @Override
     public void init() {
@@ -28,7 +31,19 @@ public class HomeServlet extends HttpServlet {
             ParentService<Organization> orgService =
                     services.getParentService(Organization.class);
 
-            List<Organization> organizations = orgService.getMany();
+            User user = (User) req.getSession().getAttribute("user");
+            Boolean guest = (Boolean) req.getSession().getAttribute("guest");
+
+            List<Organization> organizations;
+
+            if (guest != null && guest) {
+                organizations = List.of();
+            } else if (user != null) {
+                organizations = securityService.getOrganizationsForUser(user);
+            } else {
+                resp.sendRedirect("/");
+                return;
+            }
 
             req.setAttribute("organizations", organizations);
             req.setAttribute("mode", null);

@@ -1,135 +1,60 @@
-/* webapp/css/index.css */
-
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f0f0;
+/* ===== WELCOME PAGE ===== */
+.welcome-page {
+    max-width: 900px;
+    margin: 30px auto;
 }
 
-.container {
-    display: flex;
-    gap: 60px;
-    align-items: flex-start;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.box {
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    background: #f9f9f9;
-    min-width: 350px;
-}
-
-h2 {
-    margin-top: 0;
-    color: #2c3e50;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    font-size: 16px;
-}
-
-.file-list {
-    list-style: none;
-    padding-left: 20px;
-    margin: 5px 0;
-}
-
-.org-dir {
-    margin-bottom: 15px;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-.file-item {
-    font-weight: normal;
-    font-size: 0.9em;
-    color: #555;
-    margin-top: 3px;
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #333;
-    text-decoration: none;
-    border-radius: 4px;
+/* КАРТОЧКА */
+.welcome-card {
+    background: white;
+    padding: 25px;
+    border-radius: 6px;
     text-align: center;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: background-color 0.2s ease;
-    background-color: #e0e0e0;
-}
-
-.btn:hover {
-    background-color: #d0d0d0;
-}
-
-/* Стили для ссылки-кнопки */
-a.btn {
-    color: #333;
-}
-
-select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
     border: 1px solid #ddd;
+}
+
+.welcome-card h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* КНОПКА (используем твою систему кнопок) */
+.btn-primary {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #4CAF50;
+    color: white;
     border-radius: 4px;
+    text-decoration: none;
     font-size: 13px;
 }
 
-label {
-    display: block;
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 5px;
+.btn-primary:hover {
+    background: #45a049;
 }
 
-.left-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 350px;
-}
-
-.button-group {
+/* ФИЧИ */
+.features {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
-    width: 100%;
-    margin-top: 10px;
 }
 
-.button-group .btn {
+.feature {
     flex: 1;
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    text-align: center;
 }
 
-/* Скрываем старые стили */
-.develop-button,
-.bottom-button {
-    display: none;
-}
-
-.right-box {
-    flex: 1;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-/* Добавьте в index.css */
-
-.file-link-copy {
-    cursor: pointer;
-    color: #0066cc;
-    text-decoration: underline;
-    text-decoration-style: dotted;
-}
-
-.file-link-copy:hover {
-    color: #004499;
+.feature .icon {
+    font-size: 20px;
+    margin-bottom: 5px;
 }

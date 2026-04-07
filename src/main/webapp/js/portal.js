@@ -89,3 +89,27 @@ document.addEventListener('input', function(e) {
         autoResize(e.target);
     }
 });
+
+function openLoginModal() {
+    document.getElementById("loginModal").style.display = "flex";
+}
+
+function closeLoginModal() {
+    document.getElementById("loginModal").style.display = "none";
+}
+
+let isLogin = true;
+
+function switchMode() {
+    isLogin = !isLogin;
+
+    document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+    document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+
+    document.getElementById("modalTitle").innerText =
+        isLogin ? "Вход" : "Регистрация";
+
+    document.getElementById("switchLink").innerText =
+        isLogin ? "Нет аккаунта? Зарегистрироваться"
+            : "Уже есть аккаунт? Войти";
+}

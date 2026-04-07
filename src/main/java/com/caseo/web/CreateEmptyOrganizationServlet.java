@@ -2,6 +2,7 @@ package com.caseo.web;
 
 import com.caseo.app.ApplicationContext;
 import com.caseo.domain.model.Organization;
+import com.caseo.domain.model.User;
 import com.caseo.domain.service.ParentService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,7 +30,8 @@ public class CreateEmptyOrganizationServlet extends HttpServlet {
         try {
             Organization org = new Organization();
             orgService.save(org);
-
+            User currentUser = (User) req.getSession().getAttribute("user");
+            org.setUser(currentUser);
             resp.sendRedirect("organization?mode=edit&orgId=" + org.getId());
 
         } catch (Exception e) {
