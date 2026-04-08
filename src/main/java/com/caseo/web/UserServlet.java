@@ -15,7 +15,6 @@ public class UserServlet extends HttpServlet {
 
         String mode = req.getParameter("mode");
 
-        // 🔥 ЕСЛИ mode НЕТ → это список
         if (mode == null || mode.isEmpty()) {
 
             var users = service.getAllUsers();
@@ -32,7 +31,6 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // 🔥 ДАЛЬШЕ твоя старая логика
         String idStr = req.getParameter("id");
 
         User user = null;

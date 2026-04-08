@@ -27,11 +27,29 @@ public class SaveUserServlet extends HttpServlet {
             user = new User();
         }
 
+        String login = req.getParameter("login");
+
+        // проверка на дубликат
+        User existing = service.findByLogin(login);
+
+        if (existing != null && (user.getId() == null || !existing.getId().equals(user.getId()))) {
+            resp.sendRedirect("/?error=login_taken");
+            return;
+        }
+
         user.setLogin(req.getParameter("login"));
         user.setPassword(req.getParameter("password"));
-        user.setRole(Role.valueOf(req.getParameter("role")));
+        String roleParam = req.getParameter("role");
 
-        service.save(user);
+        if (roleParam != null) {
+            user.setRole(Role.valueOf(roleParam));
+        }
+
+        try {
+            service.save(user);
+        } catch (Exception e) {
+            resp.sendRedirect("/?error=login_taken");
+        }
 
         String source = req.getParameter("source");
 

@@ -1,6 +1,7 @@
 package com.caseo.web;
 
 import com.caseo.domain.model.User;
+import com.caseo.infrastructure.config.HibernateConfig;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
@@ -17,6 +18,15 @@ public class AuthFilter implements Filter {
     );
 
     @Override
+    public void init(FilterConfig filterConfig) {
+        try {
+            HibernateConfig.getSessionFactory().openSession().close();
+        } catch (Exception e) {
+            filterConfig.getServletContext().log("Ошибка при инициализации Hibernate", e);
+        }
+    }
+
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
@@ -27,7 +37,7 @@ public class AuthFilter implements Filter {
         String context = req.getContextPath();
         String relativePath = path.substring(context.length());
 
-        // 🔓 разрешённые пути
+        // разрешённые пути
         boolean allowed = ALLOWED_PATHS.stream().anyMatch(relativePath::startsWith);
 
         if (allowed) {

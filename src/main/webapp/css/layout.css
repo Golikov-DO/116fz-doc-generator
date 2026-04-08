@@ -144,6 +144,17 @@
     text-decoration: underline;
 }
 
+.gh-btn-primary:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* убираем hover-эффект */
+.gh-btn-primary:disabled:hover {
+    background-color: #9e9e9e;
+}
+
 .header-container {
     display: flex;
     justify-content: space-between;

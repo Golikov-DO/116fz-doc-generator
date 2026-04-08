@@ -13,6 +13,7 @@
             <label>Логин</label>
             <input type="hidden" name="source" value="register">
             <input type="text" name="login" required>
+            <div id="loginCheck"></div>
 
             <label>Пароль</label>
             <input type="password" name="password" autocomplete="current-password" required>

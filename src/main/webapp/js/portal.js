@@ -82,9 +82,19 @@ function resizeAllTextareas() {
 
 window.addEventListener('load', function () {
     resizeAllTextareas();
+
     const params = new URLSearchParams(window.location.search);
+
     if (params.get("login") === "true") {
         openLoginModal();
+    }
+
+    if (params.get("error") === "1") {
+        const msg = document.getElementById("loginCheck");
+        if (msg) {
+            msg.innerText = "❌ неверный логин или пароль";
+            msg.style.color = "red";
+        }
     }
 });
 
@@ -103,6 +113,7 @@ function closeLoginModal() {
 }
 
 let isLogin = true;
+let loginAvailable = false;
 
 function switchMode() {
     isLogin = !isLogin;
@@ -111,18 +122,83 @@ function switchMode() {
     const title = document.getElementById("modalTitle");
     const btn = document.getElementById("submitBtn");
     const link = document.getElementById("switchLink");
+    const msg = document.getElementById("loginCheck");
+    const sourceInput = document.querySelector('input[name="source"]');
 
-    if (!form || !title || !btn || !link) return;
+    if (msg) msg.innerText = "";
+
+    const loginInput = document.querySelector('[name="login"]');
+    if (loginInput) loginInput.value = "";
 
     if (isLogin) {
         form.action = "login";
         title.innerText = "Вход";
         btn.innerText = "Войти";
         link.innerText = "Нет аккаунта? Зарегистрироваться";
+        sourceInput.value = "login";
+
+        btn.disabled = false;
+        loginAvailable = false;
+        msg.innerText = "";
+
     } else {
         form.action = "saveUser";
         title.innerText = "Регистрация";
         btn.innerText = "Зарегистрироваться";
         link.innerText = "Уже есть аккаунт? Войти";
+        sourceInput.value = "register";
+
+        btn.disabled = true;
+        loginAvailable = false;
     }
 }
+
+document.addEventListener('input', function(e) {
+
+    if (e.target.name === 'login' && !isLogin) {
+
+        const login = e.target.value;
+        const btn = document.getElementById('submitBtn');
+        const msg = document.getElementById('loginCheck');
+
+        if (login.length < 3) {
+            loginAvailable = false;
+            msg.innerText = "";
+            btn.disabled = true;
+            return;
+        }
+
+        fetch('checkLogin?login=' + encodeURIComponent(login))
+            .then(r => {
+                if (!r.ok) throw new Error();
+                return r.text();
+            })
+            .then(result => {
+
+                if (result === 'free') {
+                    loginAvailable = true;
+                    msg.innerText = "✅ свободен";
+                    msg.style.color = "green";
+                    btn.disabled = false;
+                } else {
+                    loginAvailable = false;
+                    msg.innerText = "❌ занят";
+                    msg.style.color = "red";
+                    btn.disabled = true;
+                }
+            })
+            .catch(() => {
+                loginAvailable = false;
+                msg.innerText = "⚠ ошибка";
+                msg.style.color = "orange";
+                btn.disabled = true;
+            });
+    }
+});
+
+document.getElementById("authForm").addEventListener("submit", function(e) {
+
+    if (!isLogin && !loginAvailable) {
+        e.preventDefault();
+    }
+});

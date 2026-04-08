@@ -15,17 +15,6 @@ public class LoginServlet extends HttpServlet {
     private UserAdminService service = new UserAdminService();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-
-        try {
-            req.setAttribute("contentPage", "/WEB-INF/pages/login.jsp");
-            req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
@@ -34,13 +23,13 @@ public class LoginServlet extends HttpServlet {
 
         User user = service.findByLogin(login);
 
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && password != null && password.equals(user.getPassword())) {
 
             req.getSession().setAttribute("user", user);
             resp.sendRedirect("/home");
 
         } else {
-            resp.sendRedirect("/login");
+            resp.sendRedirect("/?login=true&error=1");
         }
     }
 }

@@ -33,6 +33,11 @@
                     </td>
                 </tr>
 
+                <%
+                    boolean showRole = user == null || user.getRole() != Role.USER;
+                %>
+
+                <% if (showRole) { %>
                 <tr>
                     <td>Роль:</td>
                     <td>
@@ -50,6 +55,7 @@
                         </select>
                     </td>
                 </tr>
+                <% } %>
 
             </table>
 
