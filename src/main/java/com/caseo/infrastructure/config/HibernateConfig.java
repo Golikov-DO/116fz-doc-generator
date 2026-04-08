@@ -56,13 +56,37 @@ public class HibernateConfig {
         }
     }
 
+    private static String resolveEnv(String value) {
+        if (value == null) return null;
+
+        if (value.startsWith("${") && value.endsWith("}")) {
+            String content = value.substring(2, value.length() - 1);
+            String[] parts = content.split(":", 2);
+
+            String key = parts[0];
+            String defaultValue = parts.length > 1 ? parts[1] : null;
+
+            String envValue = System.getenv(key);
+
+            return envValue != null ? envValue : defaultValue;
+        }
+
+        return value;
+    }
+
     private static @NonNull Configuration getConfiguration() {
         Configuration config = new Configuration();
 
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        config.setProperty("hibernate.connection.url", "jdbc:postgresql://postgres.railway.internal:5432/railway");
-        config.setProperty("hibernate.connection.username", "postgres");
-        config.setProperty("hibernate.connection.password", "SWtVkqzxdUqWVpJxwnybRXxDfvJCJTna");
+
+        config.setProperty("hibernate.connection.url", resolveEnv("${POSTGRES_URL:jdbc:postgresql://127.0.0.1:5432/PMLLPA}"));
+        config.setProperty("hibernate.connection.username", resolveEnv("${POSTGRES_USER:postgres}"));
+        config.setProperty("hibernate.connection.password", resolveEnv("${POSTGRES_PASSWORD:password}"));
+
+//        config.setProperty("hibernate.connection.url", "jdbc:postgresql://postgres.railway.internal:5432/railway");
+//        config.setProperty("hibernate.connection.username", "postgres");
+//        config.setProperty("hibernate.connection.password", "SWtVkqzxdUqWVpJxwnybRXxDfvJCJTna");
+
 //        config.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/PMLLPA");
 //        config.setProperty("hibernate.connection.username", "Admin");
 //        config.setProperty("hibernate.connection.password", "Dimon678");
