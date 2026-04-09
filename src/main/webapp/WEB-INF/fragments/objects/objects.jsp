@@ -233,7 +233,7 @@
                         <div>
                             <label for="object_index">Индекс</label>
                             <input type="text" id="object_index" name="object_index"
-                                   value="<%= addr != null ? addr.getAddressIndex() : "" %>" <%= disabled %>>
+                                   value="<%= addr != null && addr.getAddressIndex() != null ? addr.getAddressIndex() : "" %>" <%= disabled %>>
                         </div>
 
                         <div>
@@ -268,7 +268,7 @@
                         <div>
                             <label for="object_house">Дом</label>
                             <textarea class="auto-resize" id="object_house" name="object_house"
-                                      rows="1" <%= disabled %>><%= addr != null ? addr.getHouse() : "" %></textarea>
+                                      rows="1" <%= disabled %>><%= addr != null && addr.getHouse() != null ? addr.getHouse() : "" %></textarea>
                         </div>
 
                         <div>
