@@ -1,4 +1,4 @@
-<%@ page import="com.caseo.domain.model.User" %>
+<%@ page import="ru.ecospas.domain.model.User" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
@@ -49,7 +49,7 @@
               </form>
 
               <%-- Удалить --%>
-              <form method="post" action="deleteUser" style="margin:0;">
+              <form method="post" action="delete-user" style="margin:0;">
                 <input type="hidden" name="id" value="<%= u.getId() %>">
                 <button class="btn-delete" title="Удалить">✖</button>
               </form>

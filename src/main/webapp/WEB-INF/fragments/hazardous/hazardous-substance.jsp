@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.caseo.domain.model.*" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="ru.ecospas.domain.model.ReferenceHazardousParam" %>
+<%@ page import="ru.ecospas.domain.model.ObjectHazardousParamValue" %>
+<%@ page import="ru.ecospas.domain.model.ReferenceHazardousSubstance" %>
 
 <%
     ReferenceHazardousSubstance substance =

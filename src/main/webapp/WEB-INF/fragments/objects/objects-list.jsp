@@ -1,4 +1,4 @@
-<%@ page import="com.caseo.domain.model.ObjectModel" %>
+<%@ page import="ru.ecospas.domain.model.ObjectModel" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
@@ -58,7 +58,7 @@
 
                             <%-- Разработать план --%>
                                 <form method="post"
-                                      action="generatePlan"
+                                      action="generate-plan"
                                       style="margin:0;"
                                       onsubmit="return generatePlan(this);">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
@@ -68,7 +68,7 @@
                             </form>
 
                             <%-- Скачать план --%>
-                            <form method="get" action="downloadPlan" style="margin:0;">
+                            <form method="get" action="download-plan" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <button title="Скачать">
                                     <i class="fa fa-download"></i>
@@ -76,7 +76,7 @@
                             </form>
 
                             <%-- Удалить объект --%>
-                            <form method="post" action="deleteObject" style="margin:0;">
+                            <form method="post" action="delete-object" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="returnUrl" value="objects?orgId=<%= orgId %>">

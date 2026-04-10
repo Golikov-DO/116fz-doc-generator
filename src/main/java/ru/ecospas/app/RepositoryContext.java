@@ -1,0 +1,31 @@
+package ru.ecospas.app;
+
+import ru.ecospas.domain.repository.ChildRepository;
+import ru.ecospas.domain.repository.ParentRepository;
+
+import java.util.Map;
+import java.util.Set;
+
+public record RepositoryContext(
+        Map<Class<?>, ParentRepository<?>> parentRepos,
+        Map<Class<?>, ChildRepository<?>> childRepos
+) {
+    @SuppressWarnings("unchecked")
+    public <T> ParentRepository<T> getParent(Class<T> entityClass) {
+        return (ParentRepository<T>) parentRepos.get(entityClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ChildRepository<T> getChild(Class<T> entityClass) {
+        return (ChildRepository<T>) childRepos.get(entityClass);
+    }
+
+    public Set<Class<?>> getAllParentClasses() {
+        return parentRepos.keySet();
+    }
+
+    public Set<Class<?>> getAllChildClasses() {
+        return childRepos.keySet();
+    }
+
+}

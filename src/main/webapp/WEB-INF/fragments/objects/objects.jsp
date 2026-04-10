@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.caseo.domain.model.*" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Objects" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 
 <%
     ObjectModel object = (ObjectModel) request.getAttribute("object");

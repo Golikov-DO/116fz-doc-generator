@@ -96,7 +96,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
         return;
     }
 
-    fetch('getAsfSigners?asfId=' + asfId)
+    fetch('/get-asf-signers?asfId=' + asfId)
         .then(response => response.json())
         .then(signers => {
             let options = '<option value="">Выберите подписанта</option>';
@@ -367,7 +367,7 @@ function addNewAsf() {
     // Создаем скрытую форму для POST запроса
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'createEmptyAsf';
+    form.action = 'create-empty-asf';
     form.style.display = 'none';
 
     const returnOrgIdInput = document.createElement('input');
@@ -410,7 +410,7 @@ document.addEventListener('change', function(event) {
     formData.append('group', group);
     formData.append('objectId', objectId);
 
-    fetch('uploadObjectImage', {
+    fetch('upload-object-image', {
         method: 'POST',
         body: formData
     })
@@ -444,7 +444,7 @@ function generatePlan(form) {
     // 👇 заменяем ВСЁ на текст
     actionsDiv.innerHTML = '⏳ План разрабатывается...';
 
-    fetch('generatePlan', {
+    fetch('generate-plan', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -504,6 +504,6 @@ function editHazardousFromSelect() {
     const objectId = urlParams.get('id');
 
     window.location.href =
-        'hazardousSubstance?id=' + hazardId +
+        '/hazardous-substance?id=' + hazardId +
         '&returnObjectId=' + objectId;
 }

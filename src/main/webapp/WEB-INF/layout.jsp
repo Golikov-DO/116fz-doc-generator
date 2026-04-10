@@ -22,8 +22,7 @@
     </header>
 
     <%
-        com.caseo.domain.model.User login =
-                (com.caseo.domain.model.User) session.getAttribute("user");
+        User login = (User) session.getAttribute("user");
     %>
 
     <div class="main-content" style="display:flex;">

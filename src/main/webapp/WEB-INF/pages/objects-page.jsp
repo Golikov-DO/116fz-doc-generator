@@ -1,5 +1,5 @@
-<%@ page import="com.caseo.app.ApplicationContext" %>
-<%@ page import="com.caseo.domain.model.Organization" %>
+<%@ page import="ru.ecospas.app.ApplicationContext" %>
+<%@ page import="ru.ecospas.domain.model.Organization" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
     String mode = (String) request.getAttribute("mode");
@@ -69,7 +69,7 @@
 
     <% } else { %>
 
-    <form action="createObjects" method="post" id="objectsForm">
+    <form action="create-objects" method="post" id="objectsForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
         <input type="hidden" name="objectId" value="<%= objId %>">

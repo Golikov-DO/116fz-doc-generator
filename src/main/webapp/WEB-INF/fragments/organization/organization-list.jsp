@@ -1,4 +1,4 @@
-<%@ page import="com.caseo.domain.model.Organization" %>
+<%@ page import="ru.ecospas.domain.model.Organization" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
@@ -52,7 +52,7 @@
                                 <button title="Объекты"><i class="fa fa-cube"></i></button>
                             </form>
 
-                            <form method="post" action="deleteOrganization" style="margin:0;">
+                            <form method="post" action="delete-organization" style="margin:0;">
                                 <input type="hidden" name="orgId" value="<%= org.getId() %>">
                                 <button class="btn-delete" title="Удалить">
                                     ✖

@@ -1,5 +1,5 @@
-<%@ page import="com.caseo.domain.model.User" %>
-<%@ page import="com.caseo.domain.model.Role" %>
+<%@ page import="ru.ecospas.domain.model.User" %>
+<%@ page import="ru.ecospas.domain.model.Role" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%

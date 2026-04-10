@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.caseo.domain.model.*" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 
 <%
     String mode = (String) request.getAttribute("mode");

@@ -24,7 +24,7 @@
         <h1><%= pageTitle %></h1>
     </div>
 
-    <form action="saveHazardousSubstance" method="post">
+    <form action="save-hazardous-substance" method="post">
 
         <input type="hidden" name="substanceId"
                value="<%= id != null ? id : "" %>">

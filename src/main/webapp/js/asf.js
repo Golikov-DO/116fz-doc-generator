@@ -148,7 +148,7 @@ function handleAsfImageUpload(input, group, position, targetWidth, targetHeight)
 }
 
 function sendAsfImage(formData, group, position, fileName, input) {
-    fetch('uploadAsfImage', {
+    fetch('upload-asf-image', {
         method: 'POST',
         body: formData
     })
@@ -208,7 +208,7 @@ function addAsfImageField(group) {
 function deleteAsfImage(id, element) {
     if (!confirm("Удалить изображение?")) return;
 
-    fetch("deleteAsfImage?id=" + id, { method: "POST" })
+    fetch("/delete-asf-image?id=" + id, { method: "POST" })
         .then(() => {
             const imageDiv = element.closest('.asf-image-item');
             imageDiv.remove();
@@ -216,7 +216,7 @@ function deleteAsfImage(id, element) {
             location.reload();
         })
         .catch(err => {
-            alert("Ошибка удаления изображения");
+            alert("Error deleting Image");
             console.error(err);
         });
 }

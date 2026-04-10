@@ -1,6 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.caseo.domain.model.*" %>
+<%@ page import="ru.ecospas.domain.model.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ru.ecospas.domain.model.OrganizationSigner" %>
+<%@ page import="ru.ecospas.domain.model.OrganizationAddress" %>
+<%@ page import="ru.ecospas.domain.model.Organization" %>
+<%@ page import="ru.ecospas.domain.model.OrganizationContact" %>
 
 <%
     String mode = (String) request.getAttribute("mode");

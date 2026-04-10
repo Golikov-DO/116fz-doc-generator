@@ -1,4 +1,4 @@
-// Раскрытие/сворачивание блоков
+// expanding/collapsing blocks
 function toggleCollapse(header) {
     const content = header.nextElementSibling;
     if (!content) return;
@@ -12,47 +12,21 @@ function goBack() {
     window.history.back();
 }
 
-function createNewObject() {
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const orgId = urlParams.get("orgId");
-
-    if (!orgId) {
-        alert("Сначала выберите организацию");
-        return;
-    }
-
-    const form = document.createElement("form");
-
-    form.method = "POST";
-    form.action = "createEmptyObject";
-
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "orgId";
-    input.value = orgId;
-
-    form.appendChild(input);
-    document.body.appendChild(form);
-
-    form.submit();
-}
-
-// удаление строки для таблиц
+// delete row for tables
 function deleteTableRow(el) {
     const row = el.closest('tr');
     const tbody = row.closest('tbody');
 
     row.remove();
 
-    // перенумерация
+    // renumbering
     tbody.querySelectorAll('tr').forEach((tr, i) => {
         const num = tr.querySelector('input[type="number"]');
         if (num) num.value = i + 1;
     });
 }
 
-// удаление строки
+// deleting a row
 function removeItem(el) {
     const item = el.closest('.asf-signer-item, .asf-work-type-item');
     if (!item) return;
@@ -142,7 +116,7 @@ function switchMode() {
         msg.innerText = "";
 
     } else {
-        form.action = "saveUser";
+        form.action = "save-user";
         title.innerText = "Регистрация";
         btn.innerText = "Зарегистрироваться";
         link.innerText = "Уже есть аккаунт? Войти";
@@ -168,7 +142,7 @@ document.addEventListener('input', function(e) {
             return;
         }
 
-        fetch('checkLogin?login=' + encodeURIComponent(login))
+        fetch('/check-login?login=' + encodeURIComponent(login))
             .then(r => {
                 if (!r.ok) throw new Error();
                 return r.text();
