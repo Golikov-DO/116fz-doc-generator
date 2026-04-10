@@ -22,6 +22,18 @@ public class RequestUtils {
         }
     }
 
+    public static Integer paramInteger(HttpServletRequest req, String name) {
+        try {
+            String value = req.getParameter(name);
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static Boolean paramBool(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return v != null && (v.equals("true") || v.equals("on") || v.equals("1"));
@@ -50,20 +62,6 @@ public class RequestUtils {
         } catch (Exception e) {
             return 0;
         }
-    }
-
-    public static LocalDate paramDate(HttpServletRequest req, String name, int index) {
-        try {
-            String value = param(req, name, index);
-            return value != null && !value.isBlank() ? LocalDate.parse(value) : null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Boolean paramBool(HttpServletRequest req, String name, int index) {
-        String v = param(req, name, index);
-        return v != null && (v.equals("true") || v.equals("on") || v.equals("1"));
     }
 
     public static LocalTime paramTime(HttpServletRequest req, String hName, String mName) {

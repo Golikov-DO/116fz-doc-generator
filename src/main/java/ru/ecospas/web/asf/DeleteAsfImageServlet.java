@@ -1,13 +1,12 @@
 package ru.ecospas.web.asf;
 
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.web.BaseServlet;
 
-@WebServlet("/delete-asf-image")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class DeleteAsfImageServlet extends BaseServlet {
 
     private ChildService<AsfDocumentImage> imageService;

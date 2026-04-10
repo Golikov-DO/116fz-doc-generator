@@ -1,7 +1,6 @@
 package ru.ecospas.web.asf;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.Asf;
@@ -10,7 +9,7 @@ import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.param;
 
-@WebServlet("/create-empty-asf")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class CreateEmptyAsfServlet extends BaseServlet {
 
     private ParentService<Asf> asfService;

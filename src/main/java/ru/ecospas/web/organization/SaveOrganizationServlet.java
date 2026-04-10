@@ -1,7 +1,6 @@
 package ru.ecospas.web.organization;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.Organization;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/create-organization")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class SaveOrganizationServlet extends BaseServlet {
 
     private ParentService<Organization> organizationService;

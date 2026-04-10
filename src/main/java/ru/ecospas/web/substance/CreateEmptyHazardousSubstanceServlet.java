@@ -1,14 +1,13 @@
 package ru.ecospas.web.substance;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 
-@WebServlet("/createEmptyHazardousSubstance")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class CreateEmptyHazardousSubstanceServlet extends BaseServlet {
 
     private ParentService<ReferenceHazardousSubstance> hazardousSubstanceService;

@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CASEO</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asf.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
@@ -39,7 +40,10 @@
 
     </div>
 </div>
-<jsp:include page="/WEB-INF/fragments/login-modal.jsp" />
+<script src="${pageContext.request.contextPath}/js/asf.js"></script>
+<script src="${pageContext.request.contextPath}/js/objects.js"></script>
 <script src="${pageContext.request.contextPath}/js/portal.js"></script>
+<script src="${pageContext.request.contextPath}/js/organization.js"></script>
+<jsp:include page="/WEB-INF/fragments/login-modal.jsp" />
 </body>
 </html>

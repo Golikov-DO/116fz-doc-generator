@@ -1,7 +1,6 @@
 package ru.ecospas.web.substance;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.ObjectHazardousParamValue;
@@ -16,7 +15,7 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/save-hazardous-substance")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class SaveHazardousSubstanceServlet extends BaseServlet {
 
     private ParentService<ReferenceHazardousSubstance> substanceService;

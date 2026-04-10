@@ -10,7 +10,6 @@
         objId = "";
     }
 
-    // ===== ПОЛУЧАЕМ НАЗВАНИЕ ОРГАНИЗАЦИИ =====
     String orgShortName = "";
 
     if (orgId != null && !orgId.isEmpty()) {
@@ -69,7 +68,7 @@
 
     <% } else { %>
 
-    <form action="create-objects" method="post" id="objectsForm">
+    <form action="save-objects" method="post" id="objectsForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
         <input type="hidden" name="objectId" value="<%= objId %>">
@@ -88,10 +87,7 @@
     <% } %>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/portal.js"></script>
-<script src="${pageContext.request.contextPath}/js/objects.js"></script>
-<script src="${pageContext.request.contextPath}/js/asf.js"></script>
-<!-- Модальное окно для просмотра АСФ -->
+<!-- Modal window for viewing ASF -->
 <div id="asfModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">

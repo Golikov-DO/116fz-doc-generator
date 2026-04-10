@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.AsfSigner;
@@ -16,8 +15,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 
-
-@WebServlet("/get-asf-signers")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class GetAsfSignersServlet extends BaseServlet {
 
     private ChildService<AsfSigner> signerService;

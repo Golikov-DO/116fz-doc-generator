@@ -1,7 +1,6 @@
 package ru.ecospas.web.object;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.service.ObjectDeleteService;
@@ -9,7 +8,7 @@ import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/delete-object")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class DeleteObjectServlet extends BaseServlet {
 
     private ObjectDeleteService deleteService;

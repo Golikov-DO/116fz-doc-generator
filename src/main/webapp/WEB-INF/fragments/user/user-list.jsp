@@ -3,6 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%
+  @SuppressWarnings("unchecked")
   List<User> users = (List<User>) request.getAttribute("users");
 %>
 
@@ -34,21 +35,21 @@
           <td>
             <div style="display: flex; gap: 8px;">
 
-              <%-- Просмотр --%>
+              <%-- View --%>
               <form method="get" action="user" style="margin:0;">
                 <input type="hidden" name="mode" value="view">
                 <input type="hidden" name="id" value="<%= u.getId() %>">
                 <button title="Просмотр"><i class="fa fa-eye"></i></button>
               </form>
 
-              <%-- Редактировать --%>
+              <%-- Edit --%>
               <form method="get" action="user" style="margin:0;">
                 <input type="hidden" name="mode" value="edit">
                 <input type="hidden" name="id" value="<%= u.getId() %>">
                 <button title="Редактировать"><i class="fa fa-pen"></i></button>
               </form>
 
-              <%-- Удалить --%>
+              <%-- Delit --%>
               <form method="post" action="delete-user" style="margin:0;">
                 <input type="hidden" name="id" value="<%= u.getId() %>">
                 <button class="btn-delete" title="Удалить">✖</button>

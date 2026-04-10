@@ -11,10 +11,6 @@
 <head>
     <meta charset="UTF-8">
     <title><%= pageTitle %></title>
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/basic.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
 </head>
 
 <body>
@@ -43,6 +39,5 @@
 
 </div>
 
-<script src="${pageContext.request.contextPath}/js/portal.js"></script>
 </body>
 </html>

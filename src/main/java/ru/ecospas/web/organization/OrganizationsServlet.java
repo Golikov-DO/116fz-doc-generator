@@ -1,6 +1,5 @@
 package ru.ecospas.web.organization;
 
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.Organization;
@@ -10,7 +9,7 @@ import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
 
-@WebServlet("/home")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class OrganizationsServlet extends BaseServlet {
 
     private final OrganizationSecurityService securityService = new OrganizationSecurityService();

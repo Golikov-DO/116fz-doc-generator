@@ -2,7 +2,6 @@ package ru.ecospas.web.object;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
@@ -17,7 +16,7 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/upload-object-image")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 @MultipartConfig
 public class UploadObjectImageServlet extends BaseServlet {
 

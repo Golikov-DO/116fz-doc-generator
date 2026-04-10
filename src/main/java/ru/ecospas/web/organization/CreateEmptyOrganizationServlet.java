@@ -1,7 +1,6 @@
 package ru.ecospas.web.organization;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.Organization;
@@ -9,7 +8,7 @@ import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 
-@WebServlet("/create-empty-organization")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class CreateEmptyOrganizationServlet extends BaseServlet {
 
     private ParentService<Organization> orgService;

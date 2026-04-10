@@ -1,7 +1,6 @@
 package ru.ecospas.web.object;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.*;
@@ -12,7 +11,7 @@ import ru.ecospas.web.helper.DataLoader;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/objects")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class ObjectsServlet extends BaseServlet {
 
     private DataLoader dataLoader;

@@ -1,7 +1,6 @@
 package ru.ecospas.web.organization;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.ObjectModel;
@@ -16,7 +15,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/delete-organization")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class DeleteOrganizationServlet extends BaseServlet {
 
     private ParentService<Organization> organizationService;

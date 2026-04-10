@@ -1,4 +1,4 @@
-// универсальное добавление строки
+// universal row append
 function addTableRow(button, type) {
 
     const table = button.closest('.collapse-content').querySelector('tbody');
@@ -59,10 +59,10 @@ function addTableRow(button, type) {
         row.innerHTML = `
             <td>
                 <input type="hidden" name="techno_blocke_id[]" value="">
-                <input type="number" name="techno_blocke_number[]" value="${index}" min="1">
+                <input type="number" name="techno_block_number[]" value="${index}" min="1">
             </td>
             <td>
-                <textarea class="auto-resize" name="techno_blocke_name[]" rows="1" oninput="autoResize(this)"></textarea>
+                <textarea class="auto-resize" name="techno_block_name[]" rows="1" oninput="autoResize(this)"></textarea>
             </td>
             <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
         `;
@@ -88,7 +88,7 @@ function addTableRow(button, type) {
     resizeAllTextareas();
 }
 
-// Загрузка подписантов
+// loading signatories
 function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
     if (!asfId) {
         signerSelect.innerHTML = '<option value="">Сначала выберите АСФ</option>';
@@ -118,7 +118,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
 
             signerSelect.innerHTML = options;
 
-            // Разблокируем только если НЕ режим просмотра
+            // unlock if it is NOT viewing mode.
             signerSelect.disabled = (window.currentMode === 'view');
 
             if (selectedValue) {
@@ -138,13 +138,13 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
     const content = document.getElementById('asfModalContent');
     const title = document.getElementById('asfModalTitle');
 
-    // Сохраняем ссылку на объект для обратного вызова
+    // save a reference to the object for the callback
     modal._objectItem = objectItem;
     modal.setAttribute('data-add-signer-mode', addSignerMode ? 'true' : 'false');
     modal.setAttribute('data-view-mode', window.currentMode === 'view' ? 'true' : 'false');
     modal.setAttribute('data-asf-id', asfId ? asfId : '');
 
-    // Меняем заголовок
+    // changing the title
     if (window.currentMode === 'view') {
         title.textContent = 'Просмотр АСФ';
     } else if (addSignerMode) {
@@ -162,12 +162,12 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
         .then(html => {
             content.innerHTML = html;
 
-            // Инициализируем форму АСФ
+            // initializing the ASF form
             if (typeof initAsfForm === 'function') {
                 initAsfForm();
             }
 
-            // Если это режим добавления подписанта, скрываем ненужные блоки
+            // if this is the signer addition mode, hide unnecessary blocks
             if (addSignerMode) {
                 const blocks = content.querySelectorAll('.asf-collapse-block');
                 blocks.forEach(block => {
@@ -191,9 +191,9 @@ function viewAsf(asfId, objectItem) {
     const content = document.getElementById('asfModalContent');
     const title = document.getElementById('asfModalTitle');
 
-    // Сохраняем ссылку на объект для обратного вызова
+    // save a reference to the object for the callback
     modal._objectItem = objectItem;
-    modal.setAttribute('data-view-mode', 'true'); // Отмечаем, что это режим просмотра
+    modal.setAttribute('data-view-mode', 'true'); // note that this is a viewing mode.
 
     title.textContent = 'Просмотр АСФ';
 
@@ -205,19 +205,14 @@ function viewAsf(asfId, objectItem) {
         .then(response => response.text())
         .then(html => {
             content.innerHTML = html;
-
-            // В режиме просмотра все поля должны быть disabled
-            // asf.jsp уже обрабатывает это через параметр mode=view
-
             modal.style.display = 'block';
         })
         .catch(error => {
-            console.error('Ошибка загрузки АСФ:', error);
-            alert('Ошибка при загрузке данных АСФ');
+            console.error('Error loading ASF data:', error);
+            alert('Error loading ASF data');
         });
 }
 
-// Вспомогательные функции
 function getObjectElements(element) {
     let objectItem;
     if (element instanceof HTMLElement) {
@@ -238,7 +233,7 @@ function resetSignerSelect(signerSelect) {
     signerSelect.disabled = true;
 }
 
-// Переключение видимости блока КЧС в зависимости от выбора
+// Switching the visibility of the KChS block depending on the selection
 function toggleKchsVisibility(select) {
     const objectItem = select.closest('.card');
     if (!objectItem) return;
@@ -254,7 +249,6 @@ function toggleKchsVisibility(select) {
     }
 }
 
-// Инициализация
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.asf-select').forEach(select => {
         const asfId = select.value;
@@ -291,12 +285,11 @@ document.addEventListener('DOMContentLoaded', function () {
     observer.observe(modal, {attributes: true});
 });
 
-// Обработчик изменений
 document.addEventListener('change', function(event) {
     if (event.target?.name === 'emergency_commission') {
         toggleKchsVisibility(event.target);
     }
-    // Обработка выбора АСФ
+    // processing of ASF selection
     if (event.target?.classList.contains('asf-select')) {
         const asfId = event.target.value;
         const elements = getObjectElements(event.target);
@@ -308,20 +301,18 @@ document.addEventListener('change', function(event) {
 
         if (asfId === 'new_asf') {
             addNewAsf();
-            event.target.value = ''; // сбрасываем выбор
+            event.target.value = ''; // reset the selection
         }
 
         loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
     }
 
-    // Обработка выбора подписанта
+    // processing signatory selection
     if (event.target?.classList.contains('signer-select') && event.target.value === 'add_new_signer') {
         const elements = getObjectElements(event.target);
-        // Открываем модальное окно для создания нового подписанта
-        // Но сначала нужно получить выбранное АСФ
         const asfSelect = elements.asfSelect;
         if (asfSelect && asfSelect.value && asfSelect.value !== 'new_asf') {
-            openAsfModal(asfSelect.value, elements.objectItem, true); // true = добавляем подписанта
+            openAsfModal(asfSelect.value, elements.objectItem, true); // true = adding a signatory
         } else {
             alert('Сначала выберите АСФ');
         }
@@ -346,7 +337,7 @@ function openAsfFullPageFromSelect(objectItem) {
     const asfSelect = objectItem.querySelector('.asf-select');
     const asfId = asfSelect.value;
 
-    // Получаем orgId из URL текущей страницы (objects?mode=edit&orgId=1)
+    // get orgId from the URL of the current page
     const urlParams = new URLSearchParams(window.location.search);
     const orgId = urlParams.get('orgId');
     const objectId = urlParams.get('id');
@@ -356,7 +347,6 @@ function openAsfFullPageFromSelect(objectItem) {
         return;
     }
 
-    // Передаем returnOrgId, а не returnObjectId!
     window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId + '&returnObjectId=' + objectId;
 }
 
@@ -364,7 +354,7 @@ function addNewAsf() {
     const urlParams = new URLSearchParams(window.location.search);
     const orgId = urlParams.get('orgId');
 
-    // Создаем скрытую форму для POST запроса
+    // create a hidden form for a POST request
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'create-empty-asf';
@@ -380,18 +370,17 @@ function addNewAsf() {
     form.submit();
 }
 
-// === ЗАГРУЗКА КАРТИНОК ОБЪЕКТА ===
-
-// клик по "загрузить"
+// Upload images
+// click "upload"
 document.addEventListener('click', function(e) {
-    const upload = e.target.closest('.asf-image-upload-area');
+    const upload = e.target.closest('.image-upload-area');
     if (!upload) return;
 
     const input = upload.querySelector('.file-input');
     if (input) input.click();
 });
 
-// выбор файла
+// select file
 document.addEventListener('change', function(event) {
     if (!event.target.classList.contains('file-input')) return;
 
@@ -403,7 +392,7 @@ document.addEventListener('change', function(event) {
 
     const group = block.dataset.group;
 
-    const objectId = document.querySelector('[name="objectId"]').value;
+    const objectId = document.querySelector('[name="id"]').value;
 
     const formData = new FormData();
     formData.append('file', file);
@@ -432,16 +421,15 @@ function previewImage(block, file) {
 }
 
 function generatePlan(form) {
-
     const objectId = form.querySelector('[name="objectId"]').value;
 
-    // 👇 контейнер с кнопками (td -> div)
+    // Container with buttons (td -> div)
     const actionsDiv = form.closest('td').querySelector('div');
 
-    // сохраним старое содержимое
+    // Save original content
     const originalContent = actionsDiv.innerHTML;
 
-    // 👇 заменяем ВСЁ на текст
+    // Replace everything with status text
     actionsDiv.innerHTML = '⏳ План разрабатывается...';
 
     fetch('generate-plan', {
@@ -456,7 +444,7 @@ function generatePlan(form) {
             return r.text();
         })
         .then(data => {
-            // 👇 возвращаем кнопки
+            // Restore buttons
             actionsDiv.innerHTML = originalContent;
 
             alert('✅ ' + data);
@@ -464,7 +452,7 @@ function generatePlan(form) {
         .catch(err => {
             console.error(err);
 
-            // вернуть кнопки даже при ошибке
+            // Restore buttons even if an error occurs
             actionsDiv.innerHTML = originalContent;
 
             alert('Ошибка при разработке плана');
@@ -477,7 +465,7 @@ function addNewHazardous() {
 
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'createEmptyHazardousSubstance';
+    form.action = 'create-empty-hazardous-substance';
     form.style.display = 'none';
 
     document.body.appendChild(form);

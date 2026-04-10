@@ -26,7 +26,6 @@ public class MapListUtils {
         for (int i = 0; i < length; i++) {
             T entity = creator.get();
 
-            // Прямая установка ID без рефлексии!
             if (ids != null && ids[i] != null && !ids[i].isEmpty()) {
                 try {
                     entity.setId(Integer.parseInt(ids[i]));

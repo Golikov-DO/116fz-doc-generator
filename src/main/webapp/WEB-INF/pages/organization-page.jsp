@@ -30,7 +30,7 @@
 
     <% } else { %>
 
-    <form action="saveOrganization" method="post" id="organizationForm">
+    <form action="save-organization" method="post" id="organizationForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
 
@@ -48,7 +48,5 @@
     <% } %>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/portal.js"></script>
-<script src="${pageContext.request.contextPath}/js/organization.js"></script>
 </body>
 </html>

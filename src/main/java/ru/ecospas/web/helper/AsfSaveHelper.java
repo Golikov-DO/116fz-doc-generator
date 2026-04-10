@@ -10,7 +10,7 @@ import static ru.ecospas.web.util.RequestUtils.*;
 
 public class AsfSaveHelper {
 
-    // АСФ
+    // ASF
     public void mapAsf(HttpServletRequest req, Asf asf) {
 
         asf.setFullName(param(req, "full_name"));
@@ -21,7 +21,7 @@ public class AsfSaveHelper {
         asf.setArrivalTime(paramTime(req, "arrival_hours", "arrival_minutes"));
     }
 
-    // Свидетельство АСФ
+    // Asf certificate
     public void mapCertificate(HttpServletRequest req, AsfCertificate cert) {
         cert.setCertNumber(param(req, "cert_number"));
         cert.setCertSeries(param(req, "cert_series"));
@@ -31,7 +31,7 @@ public class AsfSaveHelper {
         cert.setValidUntil(paramDate(req, "valid_until"));
     }
 
-    // Классность специалистов
+    // The quality of the specialists
     public void mapPersonnel(HttpServletRequest req, AsfPersonnel personnel) {
         personnel.setStaffByStaffing(paramInt(req, "staff_by_staffing"));
         personnel.setStaffByList(paramInt(req, "staff_by_list"));
@@ -43,7 +43,7 @@ public class AsfSaveHelper {
         personnel.setInternationalClass(paramInt(req, "international_class"));
     }
 
-    // Специалисты
+    // СSpecialists
     public void mapSpecialists(HttpServletRequest req, AsfSpecialists specialists) {
         specialists.setTotalCount(paramInt(req, "specialists_total"));
         specialists.setAsrTp(paramInt(req, "asr_tp"));
@@ -54,7 +54,7 @@ public class AsfSaveHelper {
         specialists.setAsrLrnSea(paramInt(req, "asr_lrn_sea"));
     }
 
-    // Доп. информация
+    // Additional information on ASF
     public void mapDeployment(HttpServletRequest req, AsfCompositionDeploymentFunds deployment) {
         deployment.setResponsibilityArea(param(req, "responsibility_area"));
         deployment.setDeploymentPlace(param(req, "deployment_place"));
@@ -65,7 +65,7 @@ public class AsfSaveHelper {
         deployment.setTotalArea(param(req, "total_area"));
     }
 
-    // Подписант от АСФ
+    // Asf signers
     public void mapSigner(HttpServletRequest req, int index, AsfSigner signer) {
         signer.setName(param(req, "signer_name[]", index));
         signer.setPosition(param(req, "signer_position[]", index));
@@ -80,7 +80,7 @@ public class AsfSaveHelper {
         );
     }
 
-    // Тип работ по свидетельству
+    // Type of work according to the certificate
     public void mapWorkType(HttpServletRequest req, int index, AsfWorkType workType) {
         workType.setName(param(req, "work_type_name[]", index));
     }

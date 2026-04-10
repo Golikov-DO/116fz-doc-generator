@@ -15,7 +15,7 @@ public class DataLoader {
         this.services = services;
     }
 
-    // Загрузка организации
+    // Organization load
     public OrganizationData loadOrganization(int orgId) {
         ParentService<Organization> orgService = services.getParentService(Organization.class);
         Organization org = orgService.getOneById(orgId);
@@ -32,53 +32,13 @@ public class DataLoader {
         return new OrganizationData(org, addr, signer, contacts);
     }
 
-    // Загрузка объекта
-    public ObjectData loadObject(int objectId) {
-
-        ParentService<ObjectModel> objService = services.getParentService(ObjectModel.class);
-        ObjectModel object = objService.getOneById(objectId);
-
-        ParentService<ReferenceCity> cityService = services.getParentService(ReferenceCity.class);
-        ReferenceCity city = cityService.getOneById(objectId);
-
-        ChildService<ObjectAddress> addrService = services.getChildService(ObjectAddress.class);
-        ObjectAddress address = addrService.getOneByParentId(objectId);
-
-        ChildService<ObjectCompositionKchs> kchsService = services.getChildService(ObjectCompositionKchs.class);
-        List<ObjectCompositionKchs> kchsList = kchsService.getManyByParentId(objectId);
-
-        ChildService<ObjectTechnologicalEquipment> equipService = services.getChildService(ObjectTechnologicalEquipment.class);
-        List<ObjectTechnologicalEquipment> equipmentList = equipService.getManyByParentId(objectId);
-
-        ChildService<ObjectStructure> structService = services.getChildService(ObjectStructure.class);
-        List<ObjectStructure> structureList = structService.getManyByParentId(objectId);
-
-        ChildService<ObjectFireEquipment> fireService = services.getChildService(ObjectFireEquipment.class);
-        List<ObjectFireEquipment> fireList = fireService.getManyByParentId(objectId);
-
-        ChildService<ObjectRegionalAuthorities> regionalService = services.getChildService(ObjectRegionalAuthorities.class);
-        List<ObjectRegionalAuthorities> authoritiesList = regionalService.getManyByParentId(city.getId());
-
-        ChildService<ObjectInsurancePolicy> policyService = services.getChildService(ObjectInsurancePolicy.class);
-        ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);
-
-        ChildService<ObjectOrderMinimumBalance> balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
-        ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectId);
-
-        ChildService<ObjectType> typeService = services.getChildService(ObjectType.class);
-        ObjectType type = typeService.getOneByParentId(objectId);
-
-        return new ObjectData(object, address, kchsList, equipmentList, structureList,
-                fireList, authoritiesList, policy, balance, type
-        );
-    }
-
+    // Objects load
     public List<ObjectModel> loadObjects(int orgId) {
         ChildService<ObjectModel> objService = services.getChildService(ObjectModel.class);
         return objService.getManyByParentId(orgId);
     }
 
-    // Загрузка АСФ
+    // ASF load
     public AsfData loadAsf(int asfId) {
         ParentService<Asf> asfService = services.getParentService(Asf.class);
         Asf asf = asfService.getOneById(asfId);
@@ -112,22 +72,9 @@ public class DataLoader {
                           specialists, signers, workTypes);
     }
 
-    // Классы-обертки для данных
+    // Data wrapper classes
     public record OrganizationData(Organization org, OrganizationAddress addr, 
                                    OrganizationSigner signer, List<OrganizationContact> contacts) {}
-
-    public record ObjectData(
-            ObjectModel object,
-            ObjectAddress address,
-            List<ObjectCompositionKchs> kchsList,
-            List<ObjectTechnologicalEquipment> equipmentList,
-            List<ObjectStructure> structureList,
-            List<ObjectFireEquipment> fireList,
-            List<ObjectRegionalAuthorities> authoritiesList,
-            ObjectInsurancePolicy policy,
-            ObjectOrderMinimumBalance balance,
-            ObjectType type
-    ) {}
 
     public record AsfData(Asf asf, AsfCertificate certificate, 
                           AsfCompositionDeploymentFunds deployment,

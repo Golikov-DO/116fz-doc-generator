@@ -11,7 +11,7 @@
             Личный кабинет
         </a>
         <% } %>
-        <li><a href="${pageContext.request.contextPath}/home">Организации</a></li>
+        <li><a href="${pageContext.request.contextPath}/organizations">Организации</a></li>
 
         <% if (usera != null && usera.getRole().name().equals("ADMIN")) { %>
         <li><a href="${pageContext.request.contextPath}/users">Админ панель</a></li>

@@ -1,6 +1,5 @@
 package ru.ecospas.web;
 
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.ObjectModel;
@@ -13,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-@WebServlet("/download-plan")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class DownloadPlanServlet extends BaseServlet {
 
     @Override

@@ -50,9 +50,10 @@
     </div>
 
     <div class="section-body">
+        <input type="hidden" name="id" value="<%= object.getId() %>">
         <div class="card" data-object-id="<%=object.getId()%>">
 
-            <!-- Названия -->
+            <!-- Names -->
             <div class="form-row">
                 <label class="form-label" for="object_full_name">Полное наименование</label>
                 <div class="form-field">
@@ -61,7 +62,7 @@
                 </div>
             </div>
 
-            <!-- Опасность -->
+            <!-- Danger -->
             <div class="compact-block">
                 <div>
                     <label for="object_type_id">Тип объекта</label>
@@ -169,7 +170,7 @@
 
             </div>
 
-            <!-- АСФ -->
+            <!-- ASF -->
             <div class="section">
                 <div class="section-header">
                     <span>Обслуживающая АСФ</span>
@@ -223,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- Адрес -->
+            <!-- Adress -->
             <div class="section">
                 <div class="section-header">
                     <span>Местонахождение объекта</span>
@@ -328,7 +329,7 @@
 
             </div>
 
-            <!-- КЧС -->
+            <!-- KChS -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Состав КЧС</span>
@@ -368,7 +369,7 @@
                                        value="<%= kchs.getFullName() != null ? kchs.getFullName() : "" %>" <%= disabled %>>
                             </td>
                             <td><input type="text" name="kchs_work_phone[]" aria-label="Рабочий"
-                                       value="<%= kchs.getWorkPhone() %>" <%= disabled %>></td>
+                                       value="<%=  kchs.getWorkPhone() != null ? kchs.getWorkPhone() : "" %>" <%= disabled %>></td>
                             <td><input type="text" name="kchs_phone[]" aria-label="Сотовый"
                                        value="<%= kchs.getCellPhone() != null ? kchs.getCellPhone() : "" %>" <%= disabled %>>
                             </td>
@@ -395,7 +396,7 @@
                 </div>
             </div>
 
-            <!-- Структура объекта -->
+            <!-- Object structure -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Структура объекта</span>
@@ -447,7 +448,7 @@
                 </div>
             </div>
 
-            <!-- Технологический блок объекта -->
+            <!-- Technological blocks of the facility -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Технологические блоки объекта</span>
@@ -478,7 +479,7 @@
                                        value="<%= technoBlock.getNum() %>" <%= disabled %>>
                             </td>
                             <td>
-                                <textarea class="auto-resize" name="techno_blocke_name[]" aria-label="Наименование"
+                                <textarea class="auto-resize" name="techno_block_name[]" aria-label="Наименование"
                                           rows="1" <%= disabled %>><%= technoBlock.getName() != null ? technoBlock.getName() : "" %></textarea>
                             </td>
 
@@ -499,7 +500,7 @@
                 </div>
             </div>
 
-            <!-- Оборудование -->
+            <!-- Equipment -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Оборудование</span>
@@ -556,7 +557,7 @@
                 </div>
             </div>
 
-            <!-- Ответственные за план -->
+            <!-- Responsible for the plan -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Ответственные за план</span>
@@ -589,11 +590,11 @@
                                        value="<%= personsResponse.getNumber() %>" <%= disabled %>>
                             </td>
                             <td>
-                        <textarea class="auto-resize" name="persons_response_full_name[]" aria-label="Наименование"
+                        <textarea class="auto-resize" name="persons_response_full_name[]" aria-label="ФИО"
                                   rows="1" <%= disabled %>><%= personsResponse.getFullName() != null ? personsResponse.getFullName() : "" %></textarea>
                             </td>
                             <td>
-                        <textarea class="auto-resize" name="persons_response_position[]" aria-label="Характеристика"
+                        <textarea class="auto-resize" name="persons_response_position[]" aria-label="Должность"
                                   rows="1" <%= disabled %>><%= personsResponse.getPosition() != null ? personsResponse.getPosition() : "" %></textarea>
                             </td>
 
@@ -614,7 +615,7 @@
                 </div>
             </div>
 
-            <!-- ИЗОБРАЖЕНИЯ ОБЪЕКТА -->
+            <!-- Images of the object -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Изображения</span>
@@ -656,12 +657,12 @@
                                             <% } %>
                                         </div>
                                         <div style="margin-top: 13px;">
-                                            <% if (!isView) { %>
-                                            <button type="button" class="btn btn-small"
-                                                    onclick="this.nextElementSibling.click()">
-                                                <%= currentImage != null ? "Заменить" : "Загрузить" %>
-                                            </button>
-                                            <% } %>
+                                            <div class="image-upload-area"> <% if (!isView) { %>
+                                                <button type="button" class="btn btn-small">
+                                                    <%= currentImage != null ? "Заменить" : "Загрузить" %>
+                                                </button>
+                                                <input type="file" class="file-input" style="display:none;" accept="image/png"> <% } %>
+                                            </div>
                                         </div>
                                     </div>
                                     <label>

@@ -1,7 +1,6 @@
 package ru.ecospas.web;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -18,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@WebServlet("/generate-plan")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class GeneratePlanServlet extends BaseServlet {
 
     @Override

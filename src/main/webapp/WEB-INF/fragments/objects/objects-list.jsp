@@ -3,7 +3,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%
-    // Достаем список объектов, который положил сервлет
     @SuppressWarnings("unchecked")
     List<ObjectModel> objects = (List<ObjectModel>) request.getAttribute("objects");
     String orgId = request.getParameter("orgId");

@@ -1,6 +1,5 @@
 package ru.ecospas.web.auth;
 
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,7 +8,7 @@ import ru.ecospas.domain.service.UserAdminService;
 
 import java.io.IOException;
 
-@WebServlet("/login")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class LoginServlet extends HttpServlet {
 
     private final UserAdminService service = new UserAdminService();
@@ -26,7 +25,7 @@ public class LoginServlet extends HttpServlet {
         if (user != null && password != null && password.equals(user.getPassword())) {
 
             req.getSession().setAttribute("user", user);
-            resp.sendRedirect("/home");
+            resp.sendRedirect("/organizations");
 
         } else {
             resp.sendRedirect("/?login=true&error=1");

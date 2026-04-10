@@ -21,7 +21,7 @@ public class ObjectSaveHelper {
     }
 
     public void mapAddress(HttpServletRequest req, ObjectAddress address) {
-        address.setAddressIndex(paramInt(req, "object_index"));
+        address.setAddressIndex(paramInteger(req, "object_index"));
         address.setConstituentEntity(param(req, "object_constituent_entity"));
         address.setAreaHierarchy(param(req, "object_area"));
         address.setCity(param(req, "object_city"));
@@ -82,7 +82,7 @@ public class ObjectSaveHelper {
         else personsResponse.setNumber(num);
 
         personsResponse.setFullName(param(ctx.req, "persons_response_full_name[]", i));
-        personsResponse.setPosition(param(ctx.req, "persons_response_positipn[]", i));
+        personsResponse.setPosition(param(ctx.req, "persons_response_position[]", i));
     }
 
     public void mapInsurancePolicy(HttpServletRequest req, ObjectInsurancePolicy policy) {

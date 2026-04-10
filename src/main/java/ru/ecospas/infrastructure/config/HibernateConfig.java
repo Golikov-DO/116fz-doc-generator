@@ -17,13 +17,13 @@ public class HibernateConfig {
             try {
                 Configuration config = getConfiguration();
 
-                // АВТОПОИСК
+                // Auto search
                 scanAndAddEntities(config);
 
                 sessionFactory = config.buildSessionFactory();
 
             } catch (Exception e) {
-                throw new RuntimeException("Критический сбой Hibernate: " + e.getMessage(), e);
+                throw new RuntimeException("Hibernate Critical Failure: " + e.getMessage(), e);
             }
         }
         return sessionFactory;
@@ -44,7 +44,7 @@ public class HibernateConfig {
                             String className = packageName + "." + file.substring(0, file.length() - 6);
                             Class<?> clazz = Class.forName(className);
 
-                            // ФИЛЬТР: Добавляем только те классы, над которыми стоит @Entity
+                            // FILTER: Add only those classes that have @Entity above them
                             if (clazz.isAnnotationPresent(jakarta.persistence.Entity.class)) {
                                 config.addAnnotatedClass(clazz);
                             }
@@ -78,17 +78,9 @@ public class HibernateConfig {
 
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
 
-        config.setProperty("hibernate.connection.url", resolveEnv("${POSTGRES_URL:jdbc:postgresql://127.0.0.1:5432/PMLLPA}"));
-        config.setProperty("hibernate.connection.username", resolveEnv("${POSTGRES_USER:postgres}"));
-        config.setProperty("hibernate.connection.password", resolveEnv("${POSTGRES_PASSWORD:password}"));
-
-//        config.setProperty("hibernate.connection.url", "jdbc:postgresql://postgres.railway.internal:5432/railway");
-//        config.setProperty("hibernate.connection.username", "postgres");
-//        config.setProperty("hibernate.connection.password", "SWtVkqzxdUqWVpJxwnybRXxDfvJCJTna");
-
-//        config.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/PMLLPA");
-//        config.setProperty("hibernate.connection.username", "Admin");
-//        config.setProperty("hibernate.connection.password", "Dimon678");
+        config.setProperty("hibernate.connection.url", resolveEnv("${POSTGRES_URL:jdbc:postgresql://localhost:5432/PMLLPA}"));
+        config.setProperty("hibernate.connection.username", resolveEnv("${POSTGRES_USER:Admin}"));
+        config.setProperty("hibernate.connection.password", resolveEnv("${POSTGRES_PASSWORD:Dimon678}"));
 
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         config.setProperty("hibernate.show_sql", "false");

@@ -1,7 +1,6 @@
 package ru.ecospas.web.organization;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.web.BaseServlet;
@@ -10,7 +9,7 @@ import ru.ecospas.web.helper.DataLoader.OrganizationData;
 
 import java.io.IOException;
 
-@WebServlet("/organization")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class OrganizationServlet extends BaseServlet {
 
     private DataLoader dataLoader;

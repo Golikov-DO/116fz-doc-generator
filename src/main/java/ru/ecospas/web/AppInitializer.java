@@ -15,7 +15,7 @@ public class AppInitializer implements ServletContextListener {
         try {
             Class.forName("org.postgresql.Driver");
 
-            // Настройка путей для docx4j
+            // Setting up paths for docx4j
             String tomcatTemp = System.getProperty("catalina.base") + File.separator + "temp";
             System.setProperty("docx4j.tmpdir", tomcatTemp);
             System.setProperty("java.io.tmpdir", tomcatTemp);

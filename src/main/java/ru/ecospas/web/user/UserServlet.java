@@ -1,13 +1,12 @@
 package ru.ecospas.web.user;
 
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.UserAdminService;
 
-@WebServlet("/user")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class UserServlet extends HttpServlet {
 
     private final UserAdminService service = new UserAdminService();

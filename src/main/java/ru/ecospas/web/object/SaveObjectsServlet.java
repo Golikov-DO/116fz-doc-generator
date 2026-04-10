@@ -1,7 +1,6 @@
 package ru.ecospas.web.object;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.*;
@@ -15,7 +14,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/create-objects")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class SaveObjectsServlet extends BaseServlet {
 
     private ObjectSaveHelper saveHelper;

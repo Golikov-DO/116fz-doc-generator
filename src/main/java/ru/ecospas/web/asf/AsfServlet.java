@@ -1,7 +1,6 @@
 package ru.ecospas.web.asf;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.AsfDocumentImage;
@@ -14,7 +13,7 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@WebServlet("/asf")
+@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class AsfServlet extends BaseServlet {
 
     private DataLoader dataLoader;
