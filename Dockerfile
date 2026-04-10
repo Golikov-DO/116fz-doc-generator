@@ -6,7 +6,7 @@ RUN mvn clean package -DskipTests
 FROM tomcat:10.1-jdk21
 WORKDIR /usr/local/tomcat/webapps/
 
-COPY --from=build /app/target/pmllpa-1.0-SNAPSHOT.war ./ROOT.war
+COPY --from=build /app/target/116fz-doc-generator-1.0-SNAPSHOT.war ./ROOT.war
 
-ENV JAVA_OPTS="-Xms256m -Xmx384m -XX:+UseContainerSupport"
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport"
 EXPOSE 8080
