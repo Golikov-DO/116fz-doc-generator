@@ -1,4 +1,4 @@
-/* ===== ОБЩИЕ СТИЛИ ===== */
+/* ===== GENERAL STYLES ===== */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -6,7 +6,7 @@ body {
     background-color: #f0f0f0;
 }
 
-/* ===== ЗАГОЛОВКИ ===== */
+/* ===== HEADERS ===== */
 h1 {
     margin: 0;
     font-size: 16px;
@@ -32,7 +32,7 @@ h2 {
     color: #333;
 }
 
-/* ===== ФОРМЫ ===== */
+/* ===== FORMS ===== */
 input[type="text"],
 input[type="number"],
 input[type="email"],
@@ -75,7 +75,7 @@ label {
     margin-bottom: 5px;
 }
 
-/* Отключенные поля */
+/* Disabled fields */
 input:disabled,
 select:disabled,
 textarea:disabled {
@@ -85,7 +85,7 @@ textarea:disabled {
     cursor: not-allowed;
 }
 
-/* ===== КОМПАКТНЫЙ БЛОК ===== */
+/* ===== COMPACT UNIT ===== */
 .compact-block {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -95,7 +95,7 @@ textarea:disabled {
     margin-bottom: 10px;
 }
 
-/* ===== УТИЛИТЫ ===== */
+/* ===== UTILITIES ===== */
 .text-center {
     text-align: center;
 }

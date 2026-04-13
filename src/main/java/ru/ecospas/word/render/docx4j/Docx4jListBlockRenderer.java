@@ -32,14 +32,14 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
     public void render(ListBlock block, RenderContext context) {
         MainDocumentPart mdp = context.getDocument().getMainDocumentPart();
 
-        // 1. Получаем все параграфы и делаем КОПИЮ списка для безопасной итерации
+        // 1. Get all the paragraphs and make a COPY of the list for safe iteration
         List<Object> allParagraphs = docxTraversalUtil.getAllElementFromObject(mdp, P.class);
         List<Object> paragraphsToProcess = new ArrayList<>(allParagraphs);
 
         for (Object paragraphObject : paragraphsToProcess) {
             P paragraph = (P) paragraphObject;
 
-            // 2. Ищем тег через toString() — это решает проблему с "разрывами" и символом '№'
+            // 2. Look for the tag using toString() - this solves the problem with “breaks” and the symbol '№'
             if (paragraph.toString().contains(block.key())) {
 
                 Object parentObj = paragraph.getParent();
@@ -49,19 +49,19 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
                 int paragraphIndex = content.indexOf(paragraph);
 
                 if (paragraphIndex != -1) {
-                    // 3. Запоминаем стиль (шрифт/размер) из исходного параграфа
+                    // 3. Remember the style (font/size) from the original paragraph
                     RPr runProperties = paragraphFormatUtil.getFirstRPr(paragraph);
 
-                    // 4. Удаляем параграф с тегом
+                    // 4. Delete a paragraph with a tag
                     content.remove(paragraphIndex);
 
-                    // 5. Вставляем элементы списка один за другим
+                    // 5. Inserting list items one by one
                     for (int i = 0; i < block.items().length; i++) {
                         String prefix = buildListPrefix(block.key(), i + 1);
                         String itemText = block.items()[i];
                         P listParagraph = createNumberedParagraph(prefix, itemText, runProperties);
 
-                        // Вставляем по индексу (сдвигаемся вправо на каждый новый элемент)
+                        // Insert by index (shift to the right for each new element)
                         content.add(paragraphIndex + i, listParagraph);
                     }
                 }
@@ -81,15 +81,15 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
         P paragraph = factory.createP();
         PPr pPr = paragraphFormatUtil.getOrCreatePPr(paragraph);
 
-        // 1. Устанавливаем выравнивание ВСЕГО параграфа по ширине
+        // 1. Set the width alignment of the WHOLE paragraph
         Jc jc = factory.createJc();
-        jc.setVal(JcEnumeration.BOTH); // Это растянет текст по краям
+        jc.setVal(JcEnumeration.BOTH); // This will stretch the text around the edges
         pPr.setJc(jc);
 
-        // 2. Применяем стандартные интервалы
+        // 2. Use standard intervals
         paragraphFormatUtil.applyStandardSpacing(paragraph);
 
-        // 3. Настройка табуляции (оставляем ваш LEFT, это правильно для позиции текста)
+        // 3. Tab setting (leave your LEFT, this is correct for the text position)
         Tabs tabs = factory.createTabs();
         CTTabStop tabStop = factory.createCTTabStop();
         tabStop.setVal(STTabJc.LEFT);
@@ -97,7 +97,7 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
         tabs.getTab().add(tabStop);
         pPr.setTabs(tabs);
 
-        // 4. Создаем Run для номера
+        // 4. Create a Run for the number
         R numberRun = runFactoryUtil.createFormattedRun(runProperties);
         Text numberText = factory.createText();
         numberText.setValue(prefix);
@@ -105,7 +105,7 @@ public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
         numberRun.getContent().add(factory.createRTab());
         paragraph.getContent().add(numberRun);
 
-        // 5. Создаем Run для основного текста
+        // 5. Create a Run for the main text
         R textRun = runFactoryUtil.createFormattedRun(runProperties);
         textInsertUtil.addTextWithBreaks(textRun, text, null);
         paragraph.getContent().add(textRun);

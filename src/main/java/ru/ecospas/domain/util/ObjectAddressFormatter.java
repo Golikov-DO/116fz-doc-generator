@@ -11,22 +11,22 @@ public class ObjectAddressFormatter {
     }
 
     public static String format(Addressable addr)  {
-        // 1. Если есть готовый "ручной" адрес - выдаем его сразу
+        // 1. If there is a ready-made “manual” address, we issue it immediately
         if (addr.getRawAddress() != null && !addr.getRawAddress().isBlank()) {
             return addr.getRawAddress().trim();
         }
 
         StringJoiner addressLine = new StringJoiner(", ");
 
-        // 2. Индекс
+        // 2. Index
         if (addr.getAddressIndex() != null && addr.getAddressIndex() > 0) {
             addressLine.add(String.valueOf(addr.getAddressIndex()));
         }
 
-        // 3. Субъект (Край/Область)
+        // 3. Subject (Region/Region)
         addIfNotEmpty(addressLine, addr.getConstituentEntity());
 
-        // 4. Территориальная иерархия и Город (Умная склейка)
+        // 4. Territorial hierarchy and City (Smart merging)
         String hierarchy = (addr.getAreaHierarchy() != null) ? addr.getAreaHierarchy().trim() : "";
         String city = (addr.getCity() != null) ? addr.getCity().trim() : "";
 
@@ -39,12 +39,12 @@ public class ObjectAddressFormatter {
             addIfNotEmpty(addressLine, city);
         }
 
-        // 5. Улица (с проверкой префиксов)
+        // 5. Street (with prefix checking)
         if (addr.getStreet() != null && !addr.getStreet().isBlank()) {
             addressLine.add(applyStreetPrefix(addr.getStreet().trim()));
         }
 
-        // 6. Дом / Помещение (с проверкой префиксов)
+        // 6. House / Premises (with prefix checking)
         if (addr.getHouse() != null && !addr.getHouse().isBlank()) {
             addressLine.add(applyHousePrefix(addr.getHouse().trim()));
         }

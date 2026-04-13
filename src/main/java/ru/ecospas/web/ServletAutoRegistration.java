@@ -7,6 +7,7 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServlet;
+import ru.ecospas.web.plan.GeneratePlanServlet;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,8 @@ public class ServletAutoRegistration implements ServletContextListener {
 
     // Special cases
     private static final Map<Class<? extends HttpServlet>, String> CUSTOM_PATHS = Map.of(
-            WelcomeServlet.class, ""
+            WelcomeServlet.class, "",
+            GeneratePlanServlet.class, "/generate-plan"
     );
 
     @Override
@@ -34,6 +36,7 @@ public class ServletAutoRegistration implements ServletContextListener {
                 "ru.ecospas.web.auth",
                 "ru.ecospas.web.object",
                 "ru.ecospas.web.organization",
+                "ru.ecospas.web.plan",
                 "ru.ecospas.web.substance",
                 "ru.ecospas.web.user"
         );
@@ -95,7 +98,7 @@ public class ServletAutoRegistration implements ServletContextListener {
 
         var dynamic = ctx.addServlet(servletClass.getSimpleName(), servletClass);
         dynamic.addMapping(urlPattern);
-
+        ctx.log("REGISTER: " + urlPattern + " -> " + servletClass.getName());
         if (servletClass.isAnnotationPresent(MultipartConfig.class)) {
             dynamic.setMultipartConfig(new MultipartConfigElement(""));
         }

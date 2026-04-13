@@ -1,4 +1,4 @@
-/* ===== СТРОКИ ФОРМ ===== */
+/* ===== FORM STRINGS ===== */
 .form-row {
     display: flex;
     margin-bottom: 10px;
@@ -15,7 +15,7 @@
     flex: 1;
 }
 
-/* ===== КНОПКИ ===== */
+/* ===== PUSH BUTTON ===== */
 .btn {
     display: inline-block;
     padding: 8px 16px;
@@ -77,7 +77,7 @@
     color: #f44336;
 }
 
-/* Чекбоксы */
+/* Checkboxes */
 .checkbox-label {
     display: flex;
     align-items: center;
@@ -85,7 +85,7 @@
     font-size: 13px;
 }
 
-/* ===== СЕКЦИИ ===== */
+/* ===== SECTION ===== */
 .section {
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -107,7 +107,7 @@
     padding: 10px;
 }
 
-/* ===== РАСКРЫВАЮЩИЕСЯ БЛОКИ ===== */
+/* ===== DROP DOWN BLOCKS ===== */
 .collapse-block {
     margin-top: 10px;
     border: 1px solid #eee;
@@ -133,7 +133,7 @@
     display: block;
 }
 
-/* ===== ТАБЛИЦЫ ===== */
+/* ===== TABLES ===== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -153,7 +153,7 @@ td {
     border-bottom: 1px solid #eee;
 }
 
-/* ===== РАМКА ===== */
+/* ===== FRAME ===== */
 .card {
     margin-bottom: 5px;
     border: 1px solid #ddd;
@@ -161,7 +161,7 @@ td {
     background-color: #fafafa;
 }
 
-/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+/* ===== MODAL WINDOWS ===== */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -209,7 +209,7 @@ td {
     color: #333;
 }
 
-/* ===== УДАЛЕНИЕ СТРОКИ ===== */
+/* ===== DELETE ROW ===== */
 .delete-row {
     color: #999;
     cursor: pointer;
@@ -231,7 +231,7 @@ td {
     margin-right: 10px;
 }
 
-/* ===== ПОДВАЛ ФОРМЫ ===== */
+/* ===== FOOTER MOLD ===== */
 .form-footer {
     padding-bottom: 10px;
     display: flex;

@@ -8,7 +8,7 @@ import ru.ecospas.word.render.RendererRegistry;
 public class PipelineConfiguration {
 
     /**
-     * Создает строитель документа с регистратором всех рендереров (Image, List, Table и т.д.)
+     * Creates a document builder with a recorder of all renderers (Image, List, Table, etc.)
      */
     public static DocumentBuilder createDocumentBuilder() {
         RendererRegistry registry = RendererConfiguration.createRegistry();
@@ -16,14 +16,14 @@ public class PipelineConfiguration {
     }
 
     /**
-     * Создает стратегию для работы с ТЭГАМИ
+     * Creates a strategy for working with TAGS
      */
     public static TagOpenStrategy createTagStrategy(UnifiedBlockFactory factory) {
         return new TagOpenStrategy(factory);
     }
 
     /**
-     * Создает стратегию для работы с ХОЛДЕРАМИ
+     * Creates a strategy for working with HOLDERS
      */
     public static PlaceholderOpenStrategy createPlaceholderStrategy(UnifiedBlockFactory factory) {
         return new PlaceholderOpenStrategy(factory);

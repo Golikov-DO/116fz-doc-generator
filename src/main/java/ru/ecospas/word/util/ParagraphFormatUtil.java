@@ -11,10 +11,10 @@ public class ParagraphFormatUtil {
     private final DocxTraversalUtil docxTraversalUtil = new DocxTraversalUtil();
 
     public RPr getFirstRPr(P paragraph) {
-        // Достаем все Run (R) из параграфа
+        // We take out all Run (R) from the paragraph
         List<Object> runs = docxTraversalUtil.getAllElementFromObject(paragraph, R.class);
 
-        // Проходим по ним и ищем первый, у которого заданы свойства шрифта (RPr)
+        // We go through them and look for the first one, which has the font properties (RPr) set
         for (Object runObj : runs) {
             R r = (R) runObj;
             if (r.getRPr() != null) {
@@ -22,8 +22,8 @@ public class ParagraphFormatUtil {
             }
         }
 
-        // Если ничего не нашли, просто возвращаем null.
-        // В этом случае рендерер создаст Run со стандартным шрифтом.
+        // If nothing is found, simply return null.
+        // In this case, the renderer will create a Run with a standard font.
         return null;
     }
 
@@ -41,7 +41,7 @@ public class ParagraphFormatUtil {
         PPrBase.Spacing spacing = factory.createPPrBaseSpacing();
         spacing.setBefore(BigInteger.ZERO);
         spacing.setAfter(BigInteger.ZERO);
-        spacing.setLine(BigInteger.valueOf(240)); // 1.0 интервал
+        spacing.setLine(BigInteger.valueOf(240)); // 1.0 interval
         spacing.setLineRule(STLineSpacingRule.AUTO);
         ppr.setSpacing(spacing);
     }

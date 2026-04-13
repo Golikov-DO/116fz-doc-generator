@@ -61,7 +61,7 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
             Tbl table = (Tbl) tableObject;
             Tr templateRow = null;
 
-            // 1. Ищем строку-шаблон
+            // 1. Looking for string-pattern
             for (Object rowObject : table.getContent()) {
                 if (XmlUtils.marshaltoString(rowObject).contains(tag)) {
                     templateRow = (Tr) XmlUtils.unwrap(rowObject);
@@ -70,7 +70,7 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
             }
 
             if (templateRow != null) {
-                // СОХРАНЯЕМ ЧИСТЫЙ КЛОН ДО МОДИФИКАЦИЙ
+                // KEEPING A PURE CLONE BEFORE MODIFICATIONS
                 Tr cleanRowTemplate = XmlUtils.deepCopy(templateRow);
                 int insertIndex = table.getContent().indexOf(templateRow);
                 var schemaColumns = block.schema().columns();
@@ -79,16 +79,16 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
                     Map<String, Object> rowCells = row.cells();
                     String firstColValue = String.valueOf(rowCells.getOrDefault("COL_0", ""));
 
-                    // Создаем новую строку из ЧИСТОГО шаблона
+                    // Create a new row from the PURE template
                     Tr newRow = XmlUtils.deepCopy(cleanRowTemplate);
                     List<Object> cells = newRow.getContent();
 
-                    // --- ЛОГИКА H_MERGE (ОРГАНИЗАЦИЯ) ---
+                    // --- LOGIC H_MERGE (ORGANIZATION) ---
                     if ("H_MERGE_FULL".equals(firstColValue)) {
                         Tc firstCell = (Tc) XmlUtils.unwrap(cells.getFirst());
                         TableMergeUtil.setGridSpan(firstCell, schemaColumns.size());
 
-                        // Удаляем лишние ячейки, чтобы Word 2016 не сошел с ума
+                        // Removing extra cells to prevent Word 2016 from going crazy
                         while (cells.size() > 1) { cells.remove(1); }
 
                         String orgName = String.valueOf(rowCells.getOrDefault("COL_1", ""));
@@ -99,7 +99,7 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
                         continue;
                     }
 
-                    // --- ЛОГИКА ОБЫЧНОЙ СТРОКИ И V_MERGE ---
+                    // --- LOGIC OF REGULAR ROW AND V_MERGE ---
                     for (int i = 0; i < schemaColumns.size(); i++) {
                         if (i < cells.size()) {
                             Tc cell = (Tc) XmlUtils.unwrap(cells.get(i));
@@ -107,13 +107,13 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
                             Object rawValue = rowCells.get(colKey);
                             String value = (rawValue != null) ? rawValue.toString() : "";
 
-                            if (i == 0) { // Колонка №
+                            if (i == 0) { // Column №
                                 if (value.startsWith("V_MERGE_START:")) {
                                     TableMergeUtil.applyVMerge(cell, true);
                                     value = value.substring(value.indexOf(":") + 1);
                                 } else if ("V_MERGE_CONT".equals(value)) {
                                     TableMergeUtil.applyVMerge(cell, false);
-                                    value = ""; // В объединенной ячейке текст не нужен
+                                    value = ""; // No text needed in a merged cell
                                 }
                             }
                             replaceTextOrForce(cell, tag, value);
@@ -121,7 +121,7 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
                     }
                     table.getContent().add(insertIndex++, newRow);
                 }
-                // Удаляем сам шаблон
+                // Remove the template itself
                 table.getContent().remove(templateRow);
                 break;
             }
@@ -133,7 +133,7 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
         if (xml.contains(tag)) {
             fillCellWithText(cell, tag, value);
         } else {
-            // Если тег потерялся при копировании, вставляем текст принудительно
+            // If the tag is lost during copying, force paste the text
             TableMergeUtil.forceInsertText(cell, value, paragraphFormatUtil);
         }
     }
@@ -142,10 +142,10 @@ public class Docx4jTableBlockRenderer implements BlockRenderer<TableBlock> {
         List<Object> all = mdp.getContent();
         for (int i = 0; i < all.size(); i++) {
             Object obj = XmlUtils.unwrap(all.get(i));
-            // Ищем таблицу, в которой "застрял" наш OBJ_TABLE_X_PLACEHOLDER
+            // We are looking for the table in which our OBJ_TABLE_X_PLACEHOLDER is “stuck”
             if (obj instanceof Tbl tbl && XmlUtils.marshaltoString(tbl).contains(tag)) {
-                all.remove(i); // Удаляем таблицу
-                // Удаляем заголовок (абзац ПЕРЕД таблицей), если он есть
+                all.remove(i); // Delete the table
+                // Remove the header (paragraph BEFORE the table), if it exists
                 if (i > 0 && XmlUtils.unwrap(all.get(i - 1)) instanceof P) {
                     all.remove(i - 1);
                 }

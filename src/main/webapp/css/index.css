@@ -4,7 +4,7 @@
     margin: 30px auto;
 }
 
-/* КАРТОЧКА */
+/* CARD */
 .welcome-card {
     background: white;
     padding: 25px;
@@ -23,7 +23,7 @@
     margin-bottom: 15px;
 }
 
-/* КНОПКА (используем твою систему кнопок) */
+/* BUTTON */
 .btn-primary {
     display: inline-block;
     padding: 8px 14px;
@@ -38,7 +38,7 @@
     background: #45a049;
 }
 
-/* ФИЧИ */
+/* FEATURES */
 .features {
     margin-top: 20px;
     display: flex;

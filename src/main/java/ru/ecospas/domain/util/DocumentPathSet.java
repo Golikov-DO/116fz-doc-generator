@@ -32,7 +32,7 @@ public class DocumentPathSet {
 
         String typeName = object.getType().getType();
 
-        // фильтруем объекты того же типа
+        // filter objects of the same type
         var sameTypeObjects = allObjects.stream()
                 .filter(o -> o.getType() != null
                         && o.getType().getType().equals(typeName))

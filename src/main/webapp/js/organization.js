@@ -1,4 +1,4 @@
-// Добавление контакта организации
+// Adding an organization contact
 function addOrgContact(button) {
 
   const table = button.closest('.collapse-content').querySelector('tbody');
@@ -23,8 +23,8 @@ function addOrgContact(button) {
   table.appendChild(row);
 }
 
-// Инициализация для страницы организации (если нужно)
+// Initialization for the organization page
 document.addEventListener('DOMContentLoaded', function() {
-  // Специфичная для организации логика
+  // Organization-specific logic
   resizeAllTextareas();
 });

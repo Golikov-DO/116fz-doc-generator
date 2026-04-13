@@ -22,7 +22,7 @@ public class TextPlaceholderService {
     public Map<String, String> build(int orgId, int objectId) throws SQLException  {
         Map<String, String> map = new HashMap<>();
 
-        // Базовые объекты для получения ID и общих данных
+        // Basic objects for getting ID and general data
         ParentService<Organization> orgService = internalServices.getParentService(Organization.class);
         ChildService<OrganizationAddress> addrService = internalServices.getChildService(OrganizationAddress.class);
         ChildService<OrganizationSigner> orgSignerService = internalServices.getChildService(OrganizationSigner.class);

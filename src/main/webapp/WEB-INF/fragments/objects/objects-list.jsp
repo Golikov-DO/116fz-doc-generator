@@ -39,7 +39,7 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 8px;">
-                            <%-- Кнопка Просмотр объекта --%>
+                            <%-- View object button --%>
                             <form method="get" action="objects">
                                 <input type="hidden" name="mode" value="view">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
@@ -47,7 +47,7 @@
                                 <button title="Просмотр"><i class="fa fa-eye"></i></button>
                             </form>
 
-                            <%-- Кнопка Редактировать объекта --%>
+                            <%-- Edit object button --%>
                             <form method="get" action="objects">
                                 <input type="hidden" name="mode" value="edit">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
@@ -55,9 +55,8 @@
                                 <button title="Редактировать"><i class="fa fa-pen"></i></button>
                             </form>
 
-                            <%-- Разработать план --%>
-                                <form method="post"
-                                      action="generate-plan"
+                            <%-- Develop a plan button --%>
+                                <form method="post" action="generate-plan"
                                       style="margin:0;"
                                       onsubmit="return generatePlan(this);">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
@@ -66,7 +65,7 @@
                                 </button>
                             </form>
 
-                            <%-- Скачать план --%>
+                            <%-- Download plan button --%>
                             <form method="get" action="download-plan" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <button title="Скачать">
@@ -74,7 +73,7 @@
                                 </button>
                             </form>
 
-                            <%-- Удалить объект --%>
+                            <%-- Delete object button --%>
                             <form method="post" action="delete-object" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">

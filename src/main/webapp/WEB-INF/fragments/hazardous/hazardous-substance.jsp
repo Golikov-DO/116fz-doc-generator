@@ -26,7 +26,7 @@
     <div class="section-body">
         <div class="card">
 
-            <!-- ОСНОВНОЕ -->
+            <!-- BASIC -->
             <div class="form-row">
                 <label class="form-label" for="name">Тип опасного вещества</label>
                 <div class="form-field">
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <!-- ТАБЛИЦА -->
+            <!-- TABLE -->
             <div class="mt-20">
                 <table class="form-table">
                     <thead>

@@ -54,7 +54,7 @@ public class HazardTableLayoutService {
 
             List<TableRowModel> rows = new ArrayList<>();
 
-            // ---------- ШАГ 1 ----------
+            // ---------- STEP 1 ----------
             for (HazardParamDto dto : group) {
 
                 TableRowModel tableRow = new TableRowModel();
@@ -68,7 +68,7 @@ public class HazardTableLayoutService {
                 rows.add(tableRow);
             }
 
-            // ---------- ШАГ 2 ----------
+            // ---------- STEP 2 ----------
             for (TableRowModel tableRowModel : rows) {
                 tableRowModel.nameLines = calcLines(tableRowModel.name, NAME_LIMIT);
                 tableRowModel.valueLines = calcLines(tableRowModel.value, VALUE_LIMIT);
@@ -78,7 +78,7 @@ public class HazardTableLayoutService {
                         tableRowModel.valueLines), secLines);
             }
 
-            // ---------- ШАГ 3 ----------
+            // ---------- STEP 3 ----------
             StringBuilder secBuf = new StringBuilder();
             StringBuilder nameBuf = new StringBuilder();
             StringBuilder valueBuf = new StringBuilder();

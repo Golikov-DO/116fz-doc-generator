@@ -42,7 +42,7 @@ public class ObjectsServlet extends BaseServlet {
             }
         }
         try {
-            // Справочники для выпадающих списков
+            // References for dropdown lists
             ParentService<Asf> asfService = services.getParentService(Asf.class);
             req.setAttribute("asfList", asfService.getMany());
 
@@ -55,7 +55,7 @@ public class ObjectsServlet extends BaseServlet {
             ParentService<ObjectType> typeService = services.getParentService(ObjectType.class);
             req.setAttribute("types", typeService.getMany());
 
-            // === СПИСОК ОБЪЕКТОВ (ТАБЛИЦА) ===
+            // === LIST OF OBJECTS (TABLE) ===
             if ((mode == null || mode.isEmpty()) && orgId != null && !orgId.isEmpty()) {
 
                 int id = Integer.parseInt(orgId);
@@ -68,7 +68,7 @@ public class ObjectsServlet extends BaseServlet {
                 req.setAttribute("orgId", orgId);
             }
 
-            // Загружаем объекты
+            // Load objects
             if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
 
                 int id = Integer.parseInt(orgId);

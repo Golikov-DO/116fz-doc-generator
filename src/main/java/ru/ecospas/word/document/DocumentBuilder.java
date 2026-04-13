@@ -27,20 +27,20 @@ public class DocumentBuilder {
         RenderContext context = new RenderContext(document);
         MainDocumentPart mdp = document.getMainDocumentPart();
 
-        // 1. Собираем простые текстовые замены
+        // 1. Collect simple text replacements
         for (Block block : openResult.getBlocks()) {
             if (block instanceof TextBlock(String key, String text)) {
                 context.getTextReplacements().put(key, text);
             }
         }
 
-        // 2. Делаем базовую замену
+        // 2. Make a basic replacement
         if (!context.getTextReplacements().isEmpty()) {
             mdp.variableReplace(context.getTextReplacements());
             new HeaderFooterUtil().processHeadersAndFooters(document, context.getTextReplacements());
         }
 
-        // 3. Запускаем рендереры
+        // 3. Launch renderers
         for (Block block : openResult.getBlocks()) {
             if (block instanceof TextBlock) continue;
             BlockRenderer<?> renderer = rendererRegistry.resolve(block);
@@ -49,21 +49,21 @@ public class DocumentBuilder {
             }
         }
 
-        // 4. ФИНАЛЬНАЯ ЧИСТКА
+        // 4. FINAL CLEANING
         var content = mdp.getContent();
 
         for (int i = 0; i < content.size(); i++) {
 
             Object unwrapped = XmlUtils.unwrap(content.get(i));
 
-            // ===== УДАЛЕНИЕ ТАБЛИЦ =====
+            // ===== DELETING TABLES =====
             if (unwrapped instanceof Tbl tbl) {
                 String text = TextUtils.getText(tbl);
                 if (text != null && text.contains("DELETE_ME")) {
 
                     content.remove(i);
 
-                    // удалить пустой P перед таблицей (но не с sectPr)
+                    // remove empty P before the table (but not with sectPr)
                     if (i - 1 >= 0) {
                         Object prev = XmlUtils.unwrap(content.get(i - 1));
                         if (prev instanceof P prevP) {
@@ -79,7 +79,7 @@ public class DocumentBuilder {
                         }
                     }
 
-                    // удалить пустой P после таблицы (но не с sectPr)
+                    // remove empty P after table (but not with sectPr)
                     if (i < content.size()) {
                         Object next = XmlUtils.unwrap(content.get(i));
                         if (next instanceof P nextP) {
@@ -97,28 +97,28 @@ public class DocumentBuilder {
                 }
             }
 
-            // ===== УДАЛЕНИЕ ПАРАГРАФОВ =====
+            // ===== DELETING PARAGRAPHS =====
             if (unwrapped instanceof P p) {
                 String text = TextUtils.getText(p);
 
                 if (text != null && text.contains("DELETE_ME")) {
 
-                    // Проверяем, не является ли этот параграф последним в документе
-                    // (Последний SectPr удалять нельзя, он описывает параметры всего документа)
+                    // Check if this paragraph is the last one in the document
+                    // (The last SectPr cannot be deleted, it describes the parameters of the entire document)
                     boolean isLastElement = (i == content.size() - 1);
                     boolean currentHasSect = p.getPPr() != null && p.getPPr().getSectPr() != null;
 
                     if (currentHasSect && isLastElement) {
-                        // Если это последний параграф и в нем настройки страницы — только чистим текст
+                        // If this is the last paragraph and there are page settings in it, just clean the text
                         p.getContent().clear();
                     } else {
-                        // В остальных случаях удаляем параграф целиком.
-                        // Это уберет пустую альбомную страницу вместе с её разрывом.
+                        // In other cases, delete the entire paragraph.
+                        // This will remove the empty landscape page along with its break.
                         content.remove(i);
                         i--;
                     }
 
-                    // Удаление идущих подряд пустых строк после удаления основного блока
+                    // Remove consecutive empty lines after deleting the main block
                     while (i + 1 < content.size()) {
                         Object nextObj = XmlUtils.unwrap(content.get(i + 1));
                         if (!(nextObj instanceof P nextP)) break;

@@ -48,7 +48,7 @@ public class TableBlockFactory {
 
             String placeholderKey = "OBJ_TABLE_" + i + "_PLACEHOLDER";
 
-            // Получаем данные для конкретного индекса.
+            // Get data for a specific index.
             switch (i){
                 case 1 -> fillTable(data, placeholderKey, objectTechnologicalEquipmentService.getManyByParentId(obj.getId()),
                         equipment -> new String[]{String.valueOf(equipment.getNum()), equipment.getName(), equipment.getCharacteristics()});

@@ -51,7 +51,7 @@ public class Main {
             document.save(output.toFile());
         }
         // ===================== PLACEHOLDER =======================
-//      Не очень решение, много работы с параграфами если длинный текст вставки
+//      It's not a good solution, a lot of work with paragraphs if the text is long
 //        byte[] placeholderTemplateBytes =
 //                Files.readAllBytes(Path.of(DocumentPathUtil.PLACEHOLDER_TEMPLATE_PATH));
 //

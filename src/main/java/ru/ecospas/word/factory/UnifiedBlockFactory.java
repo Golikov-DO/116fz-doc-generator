@@ -28,7 +28,7 @@ public class UnifiedBlockFactory {
     private final ContactTableLayoutService contactTableLayoutService;
     private final ParentService<ObjectModel> objectService;
 
-    // Карта стратегий создания блоков
+    // Map of block creation strategies
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
 
     public UnifiedBlockFactory(
@@ -51,13 +51,13 @@ public class UnifiedBlockFactory {
     }
 
     private void initCreators() {
-        // Текст
+        // Text
         creators.put(String.class, (key, val) -> new TextBlock(key, (String) val));
 
-        // Списки (String[])
+        // Lists (String[])
         creators.put(String[].class, (key, val) -> new ListBlock(key, (String[]) val));
 
-        // Картинки (byte[])
+        // Pictures (byte[])
         creators.put(byte[].class, (key, val) ->
                 new ImageBlock(key, val,  0)
         );
@@ -86,7 +86,7 @@ public class UnifiedBlockFactory {
                 continue;
             }
 
-            // 2. Обработка списков
+            // 2. List Processing
 
             if (value instanceof List<?> list && !list.isEmpty()) {
                 Object first = list.getFirst();

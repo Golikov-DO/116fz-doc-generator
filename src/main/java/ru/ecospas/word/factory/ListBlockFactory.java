@@ -38,7 +38,7 @@ public class ListBlockFactory {
 
         ObjectModel object = objectService.getOneById(objectId);
 
-        // ===== OBJ_AREA_LOCATION (Теперь как LIST без номеров) =====
+        // ===== OBJ_AREA_LOCATION =====
         String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(object.getCity());
 
         if (descriptionParagraphs.length > 0) {

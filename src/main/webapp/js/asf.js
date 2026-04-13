@@ -1,6 +1,6 @@
-// Инициализация при загрузке
+// Initialize on boot
 function initAsfForm() {
-    // Валидация формы
+    // Validation form
     if (sessionStorage.getItem("openImagesBlock")) {
 
         const headers = document.querySelectorAll('.collapse-header');
@@ -32,7 +32,7 @@ function initAsfForm() {
     }
 }
 
-// Добавление нового подписанта
+// Add a new signer
 function addSigner() {
     const container = document.getElementById('signersContainer');
 
@@ -56,7 +56,7 @@ function addSigner() {
     container.appendChild(newItem);
 }
 
-// Добавление нового типа работ
+// Add a new work type
 function addWorkType() {
     const container = document.getElementById('workTypesContainer');
 
@@ -154,18 +154,18 @@ function sendAsfImage(formData, group, position, fileName, input) {
     })
         .then(response => response.json())
         .then(data => {
-            // Обновляем imageId
+            // Updating imageId
             const imageIdInput = document.querySelector(`input[name="image_id_${group}_${position}"]`);
             if (imageIdInput && data['imageId']) {
                 imageIdInput.value = data['imageId'];
             }
 
-            // очищаем input
+            // cleaning input
             if (input) {
                 input.value = '';
             }
 
-            // перезагрузка
+            // reboot
             sessionStorage.setItem("openImagesBlock", "true");
             location.reload();
         })
@@ -212,7 +212,7 @@ function deleteAsfImage(id, element) {
         .then(() => {
             const imageDiv = element.closest('.asf-image-item');
             imageDiv.remove();
-            // Перезагружаем страницу
+            // Reloading the page
             location.reload();
         })
         .catch(err => {

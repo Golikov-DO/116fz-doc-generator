@@ -20,7 +20,7 @@ public class TagOpenStrategy implements OpenStrategy {
         try {
             WordprocessingMLPackage pkg = WordprocessingMLPackage.load(new ByteArrayInputStream(templateBytes));
             VariablePrepare.prepare(pkg);
-            // Передаем orgId и objectId в фабрику
+            // Pass orgId and objectId to the factory
             List<Block> blocks = blockFactory.buildBlocks(objectId);
             return new OpenResult(pkg, blocks);
         } catch (Exception e) {

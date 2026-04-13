@@ -43,7 +43,7 @@ public class AsfSaveHelper {
         personnel.setInternationalClass(paramInt(req, "international_class"));
     }
 
-    // СSpecialists
+    // Specialists
     public void mapSpecialists(HttpServletRequest req, AsfSpecialists specialists) {
         specialists.setTotalCount(paramInt(req, "specialists_total"));
         specialists.setAsrTp(paramInt(req, "asr_tp"));

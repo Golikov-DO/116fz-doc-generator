@@ -20,19 +20,19 @@ public class DocumentOutputFormatter {
       public static String format(String input) {
         if (input == null || input.isEmpty()) return "";
 
-        // 1. Дата (2023-10-25) -> "25 октября 2023"
+        // 1. Date (2023-10-25) -> "25 october 2023"
         if (input.matches("\\d{4}-\\d{2}-\\d{2}")) return russDate(input);
 
-        // 2. Время (02:30:00) -> "2 часа 30 минут"
+        // 2. Time (02:30:00) -> "2 hours 30 minute"
         if (input.matches("\\d{2}:\\d{2}(:\\d{2})?")) return formatAsTime(input);
 
-        // 3. Число + текст (5 водитель) -> склоняем
+        // 3. Number + text (driver -> decline)
         if (input.matches("\\d+\\s+.+")) return formatAsObject(input);
 
         return input;
     }
 
-    // --- РИМСКИЕ ЦИФРЫ ---
+    // --- Roman numerals ---
     public static String toRoman(String value) {
         if (value == null || value.isEmpty()) return "III";
         return switch (value.trim()) {
@@ -44,7 +44,7 @@ public class DocumentOutputFormatter {
         };
     }
 
-    // --- ДАТЫ ---
+    // --- Date ---
     public static String dotDate(String input) {
         if (input == null || input.isEmpty()) return "";
         return LocalDate.parse(input, ISO_DATE).format(DOT_DATE);
@@ -55,7 +55,7 @@ public class DocumentOutputFormatter {
         return LocalDate.parse(input, ISO_DATE).format(RUS_DATE);
     }
 
-    // --- ВРЕМЯ И ОБЪЕКТЫ ---
+    // --- TIME AND OBJECTS ---
     private static String formatAsTime(String inputTime) {
         LocalTime time = LocalTime.parse(inputTime, TIME_INPUT);
         int h = time.getHour();
@@ -67,18 +67,18 @@ public class DocumentOutputFormatter {
     }
 
     private static String formatAsObject(String input) {
-        // Делим строку "3 Водитель" на ["3", "Водитель"]
+        // Divide the string "Driver" by ["3", "Driver"]
         String[] parts = input.split("\\s+", 2);
-        if (parts.length < 2) return input; // Предохранитель, если пробела нет
+        if (parts.length < 2) return input; // Fuse if there is no space
 
         int count = Integer.parseInt(parts[0]);
-        String originalWord = parts[1]; // "Водитель" или "водитель"
-        String lookup = originalWord.toLowerCase(); // для поиска (всегда маленькие)
+        String originalWord = parts[1]; // "Driver" or "driver"
+        String lookup = originalWord.toLowerCase(); // for searching (always small)
 
-        // Проверяем, прислал ли пользователь слово с Большой буквы
+        // Check if the user sent a word with a capital letter
         boolean isTitleCase = Character.isUpperCase(originalWord.charAt(0));
 
-        // 1. ЛОГИКА ДЛЯ ВОДИТЕЛЕЙ (сохраняем регистр)
+        // 1. LOGIC FOR DRIVERS (preserve register)
         if (lookup.contains("водитель")) {
             return pluralize(count,
                     isTitleCase ? "Водитель" : "водитель",
@@ -86,7 +86,7 @@ public class DocumentOutputFormatter {
                     isTitleCase ? "Водителей" : "водителей");
         }
 
-        // 2. ЛОГИКА ДЛЯ БЛОКОВ (всегда маленькая буква)
+        // 2. LOGIC FOR BLOCKS (always a small letter)
         if (lookup.contains("блок")) {
             return pluralize(count,
                     "технологический блок",
@@ -94,12 +94,12 @@ public class DocumentOutputFormatter {
                     "технологических блоков");
         }
 
-        // 3. ЛОГИКА ДЛЯ ПЛАНОВ
+        // 3. LOGIC FOR PLANS
         if (lookup.contains("план")) {
             return pluralize(count, "план", "плана", "планов");
         }
 
-        // 4. ДОБАВЛЯЕМ ОБЪЕКТЫ
+        // 4. ADDING OBJECTS
         if (lookup.contains("объект")) {
             return pluralize(count, "объекта", "объектов", "объектов");
         }

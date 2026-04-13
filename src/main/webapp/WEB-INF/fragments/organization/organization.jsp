@@ -21,7 +21,7 @@
     boolean hasData = org != null;
 %>
 
-<!-- Организация -->
+<!-- Organization -->
 <div class="section">
     <div class="section-header">
         <span>Организация</span>
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-    <!-- Подписант -->
+    <!-- Signatory -->
     <div class="section">
         <div class="section-header">
             <span>Подписант</span>
@@ -90,7 +90,7 @@
         </div>
     </div>
 
-    <!-- Адрес организации -->
+    <!-- Address of the organization -->
     <div class="section">
         <div class="section-header">
             <span>Адрес организации</span>
@@ -132,7 +132,7 @@
         </div>
     </div>
 
-    <!-- Контакты организации -->
+    <!-- Contacts of the organization -->
     <div class="collapse-block">
         <div class="collapse-header" onclick="toggleCollapse(this)">
             <span>Контакты организации</span>

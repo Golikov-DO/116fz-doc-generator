@@ -33,7 +33,6 @@ public class GeneratePlanServlet extends BaseServlet {
         try {
             int objectId = Integer.parseInt(objectIdParam);
             ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("appContext");
-            super.init();
 
             // 2. Read the template ONCE before the cycle
             String templatePath = getServletContext().getRealPath("/WEB-INF/template/tagtemplate.docx");

@@ -10,7 +10,7 @@
     boolean isCreate = "create".equals(mode);
     String disabled = isView ? "disabled" : "";
 
-    // Загружаем все данные из атрибутов
+    // Loading all the data from the attributes
     Asf asf = (Asf) request.getAttribute("asf");
     AsfCertificate certificate = (AsfCertificate) request.getAttribute("certificate");
     AsfCompositionDeploymentFunds deployment = (AsfCompositionDeploymentFunds) request.getAttribute("deployments");
@@ -28,7 +28,7 @@
     boolean hasData = asf != null;
 %>
 
-<!-- Основная информация -->
+<!-- Basic information -->
 <div class="section">
     <div class="section-header">
         <span>Основная информация</span>
@@ -107,7 +107,7 @@
 
             </div>
 
-            <!-- СВИДЕТЕЛЬСТВО АСФ -->
+            <!-- ASF CERTIFICATE -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Свидетельство АСФ</span>
@@ -152,7 +152,7 @@
                 </div>
             </div>
 
-            <!-- СОСТАВ И РАЗМЕЩЕНИЕ -->
+            <!-- COMPOSITION AND PLACEMENT -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Состав и размещение</span>
@@ -204,7 +204,7 @@
                 </div>
             </div>
 
-            <!-- КАДРОВЫЙ СОСТАВ -->
+            <!-- PERSONNEL -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Кадровый состав</span>
@@ -264,7 +264,7 @@
                 </div>
             </div>
 
-            <!-- СПЕЦИАЛИСТЫ ПО НАПРАВЛЕНИЯМ -->
+            <!-- SPECIALISTS IN THE FOLLOWING AREAS -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Специалисты по направлениям</span>
@@ -318,7 +318,7 @@
                 </div>
             </div>
 
-            <!-- ПОДПИСАНТЫ АСФ -->
+            <!-- SIGNATORIES OF THE ASF -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Подписанты от АСФ</span>
@@ -330,7 +330,7 @@
                             List<AsfSigner> signersList = (hasData && signers != null) ? signers : new ArrayList<>();
 
                             if (signersList.isEmpty()) {
-                                // Показываем одну пустую строку
+                                // Showing one empty line
                         %>
                         <div class="form-grid-3-del asf-signer-item">
                             <input type="hidden" name="signer_id[]" value="">
@@ -385,7 +385,7 @@
                 </div>
             </div>
 
-            <!-- ТИП ВЫПОЛНЯЕМЫХ РАБОТ -->
+            <!-- TYPE OF WORK PERFORMED -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Тип выполняемых работ</span>
@@ -428,7 +428,7 @@
                 </div>
             </div>
 
-            <!-- ПРИЛОЖЕНИЯ -->
+            <!-- APPENDIX -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
                     <span>Приложения</span>
@@ -437,7 +437,7 @@
                 <div class="collapse-content">
                     <div style="padding: 15px;">
                         <div style="display: flex; gap: 20px;">
-                            <!-- ПРИЛОЖЕНИЕ 1 -->
+                            <!-- APPENDIX 1 -->
                             <div style="flex: 1; border: 1px solid #e0e0e0; border-radius: 4px;">
                                 <div style="padding: 10px 15px; background-color: #f5f5f5; border-bottom: 1px solid #e0e0e0;">
                                     <span style="font-weight: bold; font-size: 13px;">ПРИЛОЖЕНИЕ 1</span>
@@ -458,7 +458,7 @@
                                                 group1Images.subList(1, group1Images.size()) : new ArrayList<>();
                                     %>
 
-                                    <!-- Первое изображение -->
+                                    <!-- First Image -->
                                     <div style="margin-bottom: 20px;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                             <span style="font-size: 12px; font-weight: 500;">Скан Свидетельства лицевая сторона</span>
@@ -485,7 +485,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Остальные изображения -->
+                                    <!-- Other images -->
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                             <span style="font-size: 12px; font-weight: 500;">Скан Свидетельства оборотная сторона</span>
@@ -527,7 +527,7 @@
                                 </div>
                             </div>
 
-                            <!-- ПРИЛОЖЕНИЕ 2 (аналогично) -->
+                            <!-- APPENDIX 2 -->
                             <div style="flex: 1; border: 1px solid #e0e0e0; border-radius: 4px;">
                                 <div style="padding: 10px 15px; background-color: #f5f5f5; border-bottom: 1px solid #e0e0e0;">
                                     <span style="font-weight: bold; font-size: 13px;">ПРИЛОЖЕНИЕ 2</span>
@@ -548,7 +548,7 @@
                                                 group2Images.subList(1, group2Images.size()) : new ArrayList<>();
                                     %>
 
-                                    <!-- Первое изображение -->
+                                    <!-- First Image -->
                                     <div style="margin-bottom: 20px;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                             <span style="font-size: 12px; font-weight: 500;">Скан Паспорта первая страница</span>
@@ -575,7 +575,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Остальные изображения -->
+                                    <!-- Other images -->
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                             <span style="font-size: 12px; font-weight: 500;">Скан Паспорта дополнительные страницы</span>
@@ -621,7 +621,7 @@
                 </div>
             </div>
 
-            <!-- Модальное окно для просмотра изображения -->
+            <!-- Modal for viewing the image -->
             <div id="imageModal"
                  style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
                 <div style="background-color: white; margin: 5% auto; padding: 0; width: 80%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">

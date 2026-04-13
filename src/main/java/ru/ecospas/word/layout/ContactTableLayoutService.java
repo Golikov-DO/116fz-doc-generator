@@ -32,13 +32,13 @@ public class ContactTableLayoutService {
         List<String[]> tableRows = new ArrayList<>();
         int counter = 1;
 
-        // --- Секция 1: Emergency (1-5) ---
+        // --- Section 1: Emergency (1-5) ---
         for (ReferenceEmergencyServices es : emergencyService.getMany()) {
             tableRows.add(new String[]{
                     String.valueOf(counter++), es.getServiceName(), es.getPositionContact(), es.getPhone(), es.getAddress()});
         }
 
-        // --- Секция 2: Regional (6-9) ---
+        // --- Section 2: Regional (6-9) ---
         ReferenceCity city = obj.getCity();
         List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(city.getId());
         for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
@@ -55,11 +55,11 @@ public class ContactTableLayoutService {
             tableRows.add(new String[]{numStr, objectRegionalAuthorities.getName(), objectRegionalAuthorities.getDepartment(), objectRegionalAuthorities.getPhoneNumber(), objectRegionalAuthorities.getAddress()});
         }
 
-        // --- Секция 3: Разделитель (БЕЗ СЧЕТЧИКА) ---
+        // --- Section 3: Separator (WITHOUT COUNTER) ---
         var org = organizationService.getOneById(orgId);
         tableRows.add(new String[]{"H_MERGE_FULL", org.getOrganizationShortName(), "", "", ""});
 
-        // --- Секция 4: Organization Contact (Начнется с 9) ---
+        // --- Section 4: Organization Contact (start with 9) ---
         for (OrganizationContact organizationContact : organizationContactService.getManyByParentId(orgId)) {
             tableRows.add(new String[]{String.valueOf(counter++), organizationContact.getFullName(), organizationContact.getPosition(), organizationContact.getPhones(), organizationContact.getAddress()});
         }

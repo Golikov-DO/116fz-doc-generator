@@ -71,13 +71,13 @@ public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
                         long targetHeight;
 
                         if (i == 0) {
-                            // Первая картинка (лицевая сторона)
-                            targetWidth = 6026400L;  // 16.74 см
-                            targetHeight = 8650800L; // 24.03 см
+                            // First picture (front side)
+                            targetWidth = 6026400L;  // 16.74 cm
+                            targetHeight = 8650800L; // 24.03 cm
                         } else {
-                            // Остальные картинки (оборотная сторона, доп. страницы)
-                            targetWidth = 6382800L;  // 17.73 см
-                            targetHeight = 9021600L; // 25.06 см
+                            // Other pictures (reverse side, additional pages)
+                            targetWidth = 6382800L;  // 17.73 cm
+                            targetHeight = 9021600L; // 25.06 cm
                         }
 
                         Inline inlineImage = imagePart.createImageInline(
