@@ -39,8 +39,7 @@ public class ContactTableLayoutService {
         }
 
         // --- Section 2: Regional (6-9) ---
-        ReferenceCity city = obj.getCity();
-        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(city.getId());
+        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(obj.getId());
         for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
             String numStr;
             if (counter == 8) {
