@@ -59,7 +59,7 @@ public class UnifiedBlockFactory {
 
         // Pictures (byte[])
         creators.put(byte[].class, (key, val) ->
-                new ImageBlock(key, val,  0)
+                new ImageBlock(key, val, resolvePictureType(key))
         );
     }
 
@@ -73,7 +73,7 @@ public class UnifiedBlockFactory {
 
             if (value == null) {
                 if (key.contains("IMAGE")) {
-                    blocks.add(new ImageBlock(key, null, 0));
+                    blocks.add(new ImageBlock(key, null, resolvePictureType(key)));
                 } else if (key.contains("TABLE")) {
                     blocks.add(new TableBlock(key, null, null));
                 }
@@ -94,7 +94,7 @@ public class UnifiedBlockFactory {
                 if (first instanceof String[]) {
                     blocks.add(createTableBlock(key, (List<String[]>) list));
                 } else if (first instanceof byte[]) {
-                    blocks.add(new ImageBlock(key, value, 0));
+                    blocks.add(new ImageBlock(key, value, resolvePictureType(key)));
                 }
             }
         }
@@ -146,5 +146,12 @@ public class UnifiedBlockFactory {
         if (source != null && !source.isEmpty()) {
             target.putAll(source);
         }
+    }
+
+    private int resolvePictureType(String key) {
+
+        if (key.startsWith("ASF_IMAGE")) return 0;
+        if (key.startsWith("OBJ_IMAGE")) return 1;
+        return 0;
     }
 }

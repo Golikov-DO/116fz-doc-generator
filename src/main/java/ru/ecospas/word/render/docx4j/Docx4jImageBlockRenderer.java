@@ -70,14 +70,32 @@ public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
                         long targetWidth;
                         long targetHeight;
 
-                        if (i == 0) {
-                            // First picture (front side)
-                            targetWidth = 6026400L;  // 16.74 cm
-                            targetHeight = 8650800L; // 24.03 cm
+
+                        int type = block.pictureType();
+
+                        if (type == 0) {
+                            // ASF
+
+                            if (i == 0) {
+                                targetWidth = 6019200L;
+                                targetHeight = 8082000L;
+                            } else {
+                                targetWidth = 6382800L;
+                                targetHeight = 9021600L;
+                            }
+
                         } else {
-                            // Other pictures (reverse side, additional pages)
-                            targetWidth = 6382800L;  // 17.73 cm
-                            targetHeight = 9021600L; // 25.06 cm
+                            // OBJ
+
+                            String key = block.key();
+
+                            if (key.contains("OBJ_IMAGE_1") || key.contains("OBJ_IMAGE_2")) {
+                                targetWidth = 6264000L;
+                                targetHeight = 5580000L;
+                            } else {
+                                targetWidth = 9252000L;
+                                targetHeight = 4680000L;
+                            }
                         }
 
                         Inline inlineImage = imagePart.createImageInline(
