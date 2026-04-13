@@ -1,4 +1,4 @@
-package ru.ecospas.web;
+package ru.ecospas.web.plan;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +8,7 @@ import ru.ecospas.app.ApplicationContext;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.util.DocumentPathSet;
+import ru.ecospas.web.BaseServlet;
 import ru.ecospas.word.strategy.FillStrategy;
 
 import java.io.File;

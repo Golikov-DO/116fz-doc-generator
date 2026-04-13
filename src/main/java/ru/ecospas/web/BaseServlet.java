@@ -1,8 +1,14 @@
 package ru.ecospas.web;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.app.ApplicationContext;
 import ru.ecospas.app.InternalServices;
+import ru.ecospas.infrastructure.db.HibernateUtil;
+
+import java.io.IOException;
 
 public abstract class BaseServlet extends HttpServlet {
     protected InternalServices services;
@@ -12,5 +18,18 @@ public abstract class BaseServlet extends HttpServlet {
         ApplicationContext context = (ApplicationContext) getServletContext()
                 .getAttribute("appContext");
         this.services = context.internalServices();
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        if (!HibernateUtil.isDbAvailable()) {
+            req.getRequestDispatcher("/WEB-INF/views/db-error.jsp")
+                    .forward(req, resp);
+            return;
+        }
+
+        super.service(req, resp);
     }
 }

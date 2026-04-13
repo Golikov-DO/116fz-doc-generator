@@ -4,6 +4,10 @@ import ru.ecospas.domain.model.AsfSpecialists;
 
 public class AsfSpecialistsTextBuilder {
 
+    private AsfSpecialistsTextBuilder() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static String build(AsfSpecialists specialists) {
 
         if (specialists == null) return "данных по специалистам нет";

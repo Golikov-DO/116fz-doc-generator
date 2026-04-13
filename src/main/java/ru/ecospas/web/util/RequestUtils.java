@@ -7,6 +7,10 @@ import java.time.LocalTime;
 
 public class RequestUtils {
 
+    private RequestUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     // -------- SINGLE VALUE --------
 
     public static String param(HttpServletRequest req, String name) {

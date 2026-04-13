@@ -1,4 +1,4 @@
-package ru.ecospas.web;
+package ru.ecospas.web.auth;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

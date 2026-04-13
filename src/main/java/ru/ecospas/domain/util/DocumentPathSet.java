@@ -11,6 +11,10 @@ import java.util.List;
 
 public class DocumentPathSet {
 
+    private DocumentPathSet() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     // ===== OUTPUT =====
     private static final String OUTPUT_DIR = System.getProperty("user.home") + "/documents";
 

@@ -12,14 +12,14 @@ public class HibernateUtil {
 
     private static final SessionFactory sessionFactory = HibernateConfig.getSessionFactory();
 
-    // Для чтения данных
+    // For read data
     public static <R> R inSession(Function<Session, R> action) {
         try (Session session = sessionFactory.openSession()) {
             return action.apply(session);
         }
     }
 
-    // сохранения/удаления
+    // save/delete
     public static void inTransaction(Consumer<Session> action) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -30,6 +30,20 @@ public class HibernateUtil {
                 transaction.rollback();
                 throw e;
             }
+        }
+    }
+
+    // check valid DB
+    public static boolean isDbAvailable() {
+        try {
+            SessionFactory sf = HibernateConfig.getSessionFactory();
+            if (sf == null) return false;
+
+            inSession(session -> 1);
+            return true;
+
+        } catch (Exception e) {
+            return false;
         }
     }
 }

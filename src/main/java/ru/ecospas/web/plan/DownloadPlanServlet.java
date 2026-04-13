@@ -1,10 +1,11 @@
-package ru.ecospas.web;
+package ru.ecospas.web.plan;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.util.DocumentPathSet;
+import ru.ecospas.web.BaseServlet;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

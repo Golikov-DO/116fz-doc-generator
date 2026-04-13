@@ -6,7 +6,9 @@ import java.util.StringJoiner;
 
 public class ObjectAddressFormatter {
 
-    private ObjectAddressFormatter() {}
+    private ObjectAddressFormatter() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     public static String format(Addressable addr)  {
         // 1. Если есть готовый "ручной" адрес - выдаем его сразу

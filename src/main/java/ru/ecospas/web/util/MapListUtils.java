@@ -10,6 +10,11 @@ import java.util.function.Supplier;
 
 public class MapListUtils {
 
+    private MapListUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+
     public static <T extends BaseEntity> List<T> mapList(
             HttpServletRequest req,
             String idField,

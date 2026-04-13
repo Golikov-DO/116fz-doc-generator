@@ -4,6 +4,10 @@ import ru.ecospas.domain.model.AsfCertificate;
 
 public class AsfCertificateTextBuilder {
 
+    private AsfCertificateTextBuilder() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static String build(AsfCertificate cert) {
 
         if (cert == null) return "";

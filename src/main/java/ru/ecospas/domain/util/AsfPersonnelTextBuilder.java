@@ -4,6 +4,10 @@ import ru.ecospas.domain.model.AsfPersonnel;
 
 public class AsfPersonnelTextBuilder {
 
+    private AsfPersonnelTextBuilder() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static String build(AsfPersonnel personnel) {
 
         if (personnel == null) return "данных по личному составу нет";

@@ -7,6 +7,10 @@ import java.util.Locale;
 
 public class DocumentOutputFormatter {
 
+    private DocumentOutputFormatter() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DOT_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter RUS_DATE = DateTimeFormatter.ofPattern("dd MMMM yyyy",

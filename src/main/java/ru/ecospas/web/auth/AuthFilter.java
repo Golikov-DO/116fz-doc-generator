@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import ru.ecospas.domain.model.User;
-import ru.ecospas.infrastructure.config.HibernateConfig;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,15 +17,6 @@ public class AuthFilter implements Filter {
             "/", "/login", "/guest",
             "/css/", "/js/", "/images/"
     );
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-        try {
-            HibernateConfig.getSessionFactory().openSession().close();
-        } catch (Exception e) {
-            filterConfig.getServletContext().log("Error initializing Hibernate", e);
-        }
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

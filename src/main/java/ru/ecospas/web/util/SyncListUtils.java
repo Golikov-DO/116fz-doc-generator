@@ -6,6 +6,10 @@ import java.util.function.Function;
 
 public class SyncListUtils {
 
+    private SyncListUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static <T> void syncList(
             List<T> newList,
             List<T> oldList,

@@ -22,13 +22,13 @@ import java.util.Map;
 public class Bootstrap {
 
     public static ApplicationContext init() {
-        // 1. Инфраструктура (Репозитории)
+        // 1. Infrastructure (Repositories)
         RepositoryContext repoContext = initRepositories();
 
-        // 2. Бизнес-логика (Сервисы)
+        // 2. Business logic (Services)
         InternalServices services = initServices(repoContext);
 
-        // 3. Генератор документов
+        // 3. Document generation
         var wordService = initWordService(services);
 
         return new ApplicationContext(wordService, services);
@@ -38,50 +38,49 @@ public class Bootstrap {
         Map<Class<?>, ParentRepository<?>> parentRepos = new HashMap<>();
         Map<Class<?>, ChildRepository<?>> childRepos = new HashMap<>();
 
-        // РОДИТЕЛИ
-        parentRepos.put(Organization.class, new GenericHibernateRepository<>(Organization.class, null, "organizationShortName"));
-        parentRepos.put(Asf.class, new GenericHibernateRepository<>(Asf.class, null, "shortName"));
-        parentRepos.put(ReferenceHazardousSubstance.class, new GenericHibernateRepository<>(ReferenceHazardousSubstance.class, null, "name"));
-        parentRepos.put(ReferenceCity.class, new GenericHibernateRepository<>(ReferenceCity.class, null, "cityName"));
-        parentRepos.put(ReferenceEmergencyServices.class, new GenericHibernateRepository<>(ReferenceEmergencyServices.class, null, "id"));
-        parentRepos.put(ReferenceTableTitle.class, new GenericHibernateRepository<>(ReferenceTableTitle.class, null, "id"));
-        parentRepos.put(ObjectType.class, new GenericHibernateRepository<>(ObjectType.class, null, "id"));
-        parentRepos.put(ObjectModel.class, new GenericHibernateRepository<>(ObjectModel.class, null, "id"));
-        parentRepos.put(ReferenceHazardousParam.class, new GenericHibernateRepository<>(ReferenceHazardousParam.class, null, "id"));
+        // PARENTS
+        parent(parentRepos, Organization.class, "organizationShortName");
+        parent(parentRepos, Asf.class,"shortName");
+        parent(parentRepos, ReferenceHazardousSubstance.class, "name");
+        parent(parentRepos, ReferenceCity.class,"cityName");
+        parent(parentRepos, ReferenceEmergencyServices.class,"id");
+        parent(parentRepos, ReferenceTableTitle.class,"id");
+        parent(parentRepos, ObjectType.class, "id");
+        parent(parentRepos, ReferenceHazardousParam.class,"id");
 
-        // СПЕЦИАЛЬНЫЙ СЛУЧАЙ: Объекты
+        // SPECIAL CASE: ObjectModel acts as both parent and child
         var objectRepo = new GenericHibernateRepository<>(ObjectModel.class, "organization", "id");
-        parentRepos.put(ObjectModel.class, objectRepo);  // Регистрируем как родителя
-        childRepos.put(ObjectModel.class, objectRepo); // Регистрируем как ребенка
+        parentRepos.put(ObjectModel.class, objectRepo);  // PARENT
+        childRepos.put(ObjectModel.class, objectRepo); // CHILD
 
-        // ДЕТИ
-        // ОДИНОЧНЫЕ ЗАПИСИ (OneToOne)
-        childRepos.put(AsfCertificate.class, new GenericHibernateRepository<>(AsfCertificate.class, "asf", "id"  ));
-        childRepos.put(AsfCompositionDeploymentFunds.class, new GenericHibernateRepository<>(AsfCompositionDeploymentFunds.class, "asf", "id"));
-        childRepos.put(AsfPersonnel.class, new GenericHibernateRepository<>(AsfPersonnel.class, "asf", "id"));
-        childRepos.put(AsfSpecialists.class, new GenericHibernateRepository<>(AsfSpecialists.class, "asf", "id"));
-        childRepos.put(AsfWorkType.class, new GenericHibernateRepository<>(AsfWorkType.class, "asf", "id"));
-        childRepos.put(ObjectAddress.class, new GenericHibernateRepository<>(ObjectAddress.class, "object", "id"));
-        childRepos.put(ObjectInsurancePolicy.class, new GenericHibernateRepository<>(ObjectInsurancePolicy.class, "object", "id"));
-        childRepos.put(ObjectFireEquipment.class, new GenericHibernateRepository<>(ObjectFireEquipment.class, "object", "id"));
-        childRepos.put(ObjectOrderMinimumBalance.class, new GenericHibernateRepository<>(ObjectOrderMinimumBalance.class, "object", "id"));
-        childRepos.put(ObjectPersonsResponsible.class, new GenericHibernateRepository<>(ObjectPersonsResponsible.class, "object", "id"));
-        childRepos.put(ObjectRegionalAuthorities.class, new GenericHibernateRepository<>(ObjectRegionalAuthorities.class, "objectCity", "id"));
-        childRepos.put(OrganizationAddress.class, new GenericHibernateRepository<>(OrganizationAddress.class, "organization", "id"));
+        // CHILDREN
+        // SINGLE RECORDS (OneToOne)
+        child(childRepos, AsfCertificate.class, "asf", "id"  );
+        child(childRepos, AsfCompositionDeploymentFunds.class, "asf", "id");
+        child(childRepos, AsfPersonnel.class, "asf", "id");
+        child(childRepos, AsfSpecialists.class, "asf", "id");
+        child(childRepos, AsfWorkType.class, "asf", "id");
+        child(childRepos, ObjectAddress.class, "object", "id");
+        child(childRepos, ObjectInsurancePolicy.class, "object", "id");
+        child(childRepos, ObjectFireEquipment.class, "object", "id");
+        child(childRepos, ObjectOrderMinimumBalance.class, "object", "id");
+        child(childRepos, ObjectPersonsResponsible.class, "object", "id");
+        child(childRepos, ObjectRegionalAuthorities.class, "objectCity", "id");
+        child(childRepos, OrganizationAddress.class, "organization", "id");
 
-        // СПИСКИ
-        childRepos.put(AsfSigner.class, new GenericHibernateRepository<>(AsfSigner.class, "asf", "name"));
-        childRepos.put(ObjectTechnologicalEquipment.class, new GenericHibernateRepository<>(ObjectTechnologicalEquipment.class, "object", "num"));
-        childRepos.put(ObjectCompositionKchs.class, new GenericHibernateRepository<>(ObjectCompositionKchs.class, "object", "number"));
-        childRepos.put(ObjectHazardousParamValue.class, new GenericHibernateRepository<>(ObjectHazardousParamValue.class, "substance", "id"));
-        childRepos.put(OrganizationContact.class, new GenericHibernateRepository<>(OrganizationContact.class, "organization", "id"));
-        childRepos.put(OrganizationSigner.class, new GenericHibernateRepository<>(OrganizationSigner.class, "organization", "id"));
-        childRepos.put(AsfDocumentImage.class, new GenericHibernateRepository<>(AsfDocumentImage.class, "asf", "groupKey, id"));
-        childRepos.put(ObjectStructure.class, new GenericHibernateRepository<>(ObjectStructure.class, "object", "id"));
-        childRepos.put(ObjectTechnologicalBlock.class, new GenericHibernateRepository<>(ObjectTechnologicalBlock.class, "object", "num"));
-        childRepos.put(ObjectAccidentScenarios.class, new GenericHibernateRepository<>(ObjectAccidentScenarios.class, "object", "id"));
-        childRepos.put(ObjectImage.class, new GenericHibernateRepository<>(ObjectImage.class, "object", "groupKey, id"));
-        childRepos.put(ObjectMainScenarios.class, new GenericHibernateRepository<>(ObjectMainScenarios.class, "object", "id"));
+        // LISTS
+        child(childRepos, AsfSigner.class, "asf", "name");
+        child(childRepos, ObjectTechnologicalEquipment.class, "object", "num");
+        child(childRepos, ObjectCompositionKchs.class, "object", "number");
+        child(childRepos, ObjectHazardousParamValue.class, "substance", "id");
+        child(childRepos, OrganizationContact.class, "organization", "id");
+        child(childRepos, OrganizationSigner.class, "organization", "id");
+        child(childRepos, AsfDocumentImage.class, "asf", "groupKey, id");
+        child(childRepos, ObjectStructure.class, "object", "id");
+        child(childRepos, ObjectTechnologicalBlock.class, "object", "num");
+        child(childRepos, ObjectAccidentScenarios.class, "object", "id");
+        child(childRepos, ObjectImage.class, "object", "groupKey, id");
+        child(childRepos, ObjectMainScenarios.class, "object", "id");
 
         return new RepositoryContext(parentRepos, childRepos);
     }
@@ -91,7 +90,7 @@ public class Bootstrap {
     }
 
     private static WordGenerationService initWordService(InternalServices services) {
-        // Специфические сервисы для Word
+        // Services for Word document generation
         ObjectHazardService objectHazardService = new ObjectHazardService(
                 services.getParentService(ReferenceHazardousParam.class),
                 services.getChildService(ObjectHazardousParamValue.class)
@@ -145,5 +144,22 @@ public class Bootstrap {
                 PipelineConfiguration.createTagStrategy(unifiedFactory),
                 PipelineConfiguration.createPlaceholderStrategy(unifiedFactory)
         );
+    }
+
+    private static <T extends BaseEntity> void parent(
+            Map<Class<?>, ParentRepository<?>> map,
+            Class<T> clazz,
+            String sortField
+    ) {
+        map.put(clazz, new GenericHibernateRepository<>(clazz, null, sortField));
+    }
+
+    private static <T extends BaseEntity> void child(
+            Map<Class<?>, ChildRepository<?>> map,
+            Class<T> clazz,
+            String parentField,
+            String sortField
+    ) {
+        map.put(clazz, new GenericHibernateRepository<>(clazz, parentField, sortField));
     }
 }

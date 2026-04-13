@@ -6,12 +6,16 @@ import java.util.List;
 
 public class ObjectTechnicalDescriptionFormatter {
 
+    private ObjectTechnicalDescriptionFormatter() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static String[] formatAsParagraphs(ReferenceCity city) {
         if (city == null) return new String[]{"Данные о характеристиках района отсутствуют."};
 
         List<String> paragraphs = new ArrayList<>();
 
-        // Если поле пустое, addParagraph не сработает, и в массив ничего не попадет
+        // If the field is empty, addParagraph will not work, and nothing will get into the array
         addParagraph(paragraphs, "Район расположения объекта", city.getCityName(), city.getAdminStatus());
         addParagraph(paragraphs, "Рельеф местности", city.getGeoRelief());
         addParagraph(paragraphs, "Геологическое строение участка", city.getGeoGeology());
@@ -31,7 +35,7 @@ public class ObjectTechnicalDescriptionFormatter {
         }
     }
 
-    // Перегрузка для первого пункта (город + статус)
+    // Reload for the first point (town + status)
     private static void addParagraph(List<String> list, String label, String value, String status) {
         if (isNotEmpty(value)) {
             String fullStatus = isNotEmpty(status) ? " (" + status + ")" : "";
@@ -42,7 +46,7 @@ public class ObjectTechnicalDescriptionFormatter {
     private static String sanitize(String str) {
         if (str == null) return "";
         str = str.trim();
-        // Убираем точку в конце, если она уже есть, чтобы не было двойных точек
+        // Remove the dot at the end, if it already exists, so that there are no double dots
         if (str.endsWith(".")) {
             str = str.substring(0, str.length() - 1);
         }

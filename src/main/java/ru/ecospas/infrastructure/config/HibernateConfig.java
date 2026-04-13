@@ -13,19 +13,20 @@ public class HibernateConfig {
     private static SessionFactory sessionFactory;
 
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration config = getConfiguration();
+        try {
+            if (sessionFactory == null || sessionFactory.isClosed()) {
 
-                // Auto search
+                Configuration config = getConfiguration();
                 scanAndAddEntities(config);
 
                 sessionFactory = config.buildSessionFactory();
-
-            } catch (Exception e) {
-                throw new RuntimeException("Hibernate Critical Failure: " + e.getMessage(), e);
             }
+
+        } catch (Exception e) {
+            System.err.println("❌ DB not available: " + e.getMessage());
+            sessionFactory = null;
         }
+
         return sessionFactory;
     }
 
@@ -81,11 +82,10 @@ public class HibernateConfig {
         config.setProperty("hibernate.connection.url", resolveEnv("${POSTGRES_URL:jdbc:postgresql://localhost:5432/PMLLPA}"));
         config.setProperty("hibernate.connection.username", resolveEnv("${POSTGRES_USER:Admin}"));
         config.setProperty("hibernate.connection.password", resolveEnv("${POSTGRES_PASSWORD:Dimon678}"));
-
+        config.setProperty("hibernate.hbm2ddl.auto", resolveEnv("${HIBERNATE_DDL:update}"));
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         config.setProperty("hibernate.show_sql", "false");
         config.setProperty("hibernate.format_sql", "true");
-        config.setProperty("hibernate.hbm2ddl.auto", "validate");
 
         config.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         return config;

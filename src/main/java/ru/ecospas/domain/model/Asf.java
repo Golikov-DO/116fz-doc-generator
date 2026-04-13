@@ -20,10 +20,12 @@ public class Asf implements BaseEntity {
     private Integer id;
 
     private String fullName;
+    // Full name in genitive case (used in document templates)
     private String fullNameGen;
     private String shortName;
     private String statusShort;
 
+    // Arrival time of the ASF unit
     @Column(columnDefinition = "time")
     private LocalTime arrivalTime;
 }
