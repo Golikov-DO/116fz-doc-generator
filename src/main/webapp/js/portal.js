@@ -72,12 +72,6 @@ window.addEventListener('load', function () {
     }
 });
 
-document.addEventListener('input', function(e) {
-    if (e.target.matches('textarea.auto-resize')) {
-        autoResize(e.target);
-    }
-});
-
 function openLoginModal() {
     document.getElementById("loginModal").style.display = "flex";
 }
@@ -127,52 +121,53 @@ function switchMode() {
     }
 }
 
-document.addEventListener('input', function(e) {
+function checkLogin(login) {
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('loginCheck');
 
-    if (e.target.name === 'login' && !isLogin) {
+    if (login.length < 3) {
+        loginAvailable = false;
+        msg.innerText = "";
+        btn.disabled = true;
+        return;
+    }
 
-        const login = e.target.value;
-        const btn = document.getElementById('submitBtn');
-        const msg = document.getElementById('loginCheck');
+    fetch('/check-login?login=' + encodeURIComponent(login))
+        .then(r => r.ok ? r.text() : Promise.reject())
+        .then(result => {
+            loginAvailable = result === 'free';
 
-        if (login.length < 3) {
+            msg.innerText = loginAvailable ? "✅ свободен" : "❌ занят";
+            msg.style.color = loginAvailable ? "green" : "red";
+            btn.disabled = !loginAvailable;
+        })
+        .catch(() => {
             loginAvailable = false;
-            msg.innerText = "";
+            msg.innerText = "⚠ ошибка";
+            msg.style.color = "orange";
             btn.disabled = true;
-            return;
+        });
+}
+
+document.addEventListener('input', (e) => {
+
+    // textarea auto-resize
+    if (e.target.matches('textarea.auto-resize')) {
+        autoResize(e.target);
+    }
+
+    // check login
+    if (e.target.name === 'login' && !isLogin) {
+        checkLogin(e.target.value);
+    }
+});
+
+const authForm = document.getElementById("authForm");
+
+if (authForm) {
+    authForm.addEventListener("submit", (event) => {
+        if (!isLogin && !loginAvailable) {
+            event.preventDefault();
         }
-
-        fetch('/check-login?login=' + encodeURIComponent(login))
-            .then(r => {
-                if (!r.ok) throw new Error();
-                return r.text();
-            })
-            .then(result => {
-
-                if (result === 'free') {
-                    loginAvailable = true;
-                    msg.innerText = "✅ свободен";
-                    msg.style.color = "green";
-                    btn.disabled = false;
-                } else {
-                    loginAvailable = false;
-                    msg.innerText = "❌ занят";
-                    msg.style.color = "red";
-                    btn.disabled = true;
-                }
-            })
-            .catch(() => {
-                loginAvailable = false;
-                msg.innerText = "⚠ ошибка";
-                msg.style.color = "orange";
-                btn.disabled = true;
-            });
-    }
-});
-
-document.getElementById("authForm").addEventListener("submit", function(e) {
-
-    if (!isLogin && !loginAvailable) {
-        e.preventDefault();
-    }
-});
+    });
+}

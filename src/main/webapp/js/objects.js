@@ -45,11 +45,11 @@ function addTableRow(button, type) {
     if (type === 'structure') {
         row.innerHTML = `
             <td>
-                <input type="hidden" name="structurre_id[]" value="">
-                <input type="number" name="structurre_number[]" value="${index}" min="1">
+                <input type="hidden" name="structure_id[]" value="">
+                <input type="number" name="structure_number[]" value="${index}" min="1">
             </td>
             <td>
-                <textarea class="auto-resize" name="structurre_name[]" rows="1" oninput="autoResize(this)"></textarea>
+                <textarea class="auto-resize" name="structure_name[]" rows="1" oninput="autoResize(this)"></textarea>
             </td>
             <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
         `;
@@ -58,7 +58,7 @@ function addTableRow(button, type) {
     if (type === 'techno-block') {
         row.innerHTML = `
             <td>
-                <input type="hidden" name="techno_blocke_id[]" value="">
+                <input type="hidden" name="techno_block_id[]" value="">
                 <input type="number" name="techno_block_number[]" value="${index}" min="1">
             </td>
             <td>
