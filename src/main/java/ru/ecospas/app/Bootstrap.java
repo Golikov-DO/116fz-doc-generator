@@ -81,7 +81,6 @@ public class Bootstrap {
         child(childRepos, AsfDocumentImage.class, "asf", "groupKey, id");
         child(childRepos, ObjectStructure.class, "object", "id");
         child(childRepos, ObjectTechnologicalBlock.class, "object", "num");
-        child(childRepos, ObjectAccidentScenarios.class, "object", "id");
         child(childRepos, ObjectImage.class, "object", "groupKey, id");
         child(childRepos, ObjectScenario.class, "structure", "id");
 
@@ -127,7 +126,6 @@ public class Bootstrap {
                         services.getChildService(ObjectCompositionKchs.class),
                         services.getParentService(ObjectModel.class),
                         services.getChildService(ObjectTechnologicalEquipment.class),
-                        services.getChildService(ObjectAccidentScenarios.class),
                         services.getChildService(ObjectFireEquipment.class),
                         services.getChildService(ObjectPersonsResponsible.class)
                 ),

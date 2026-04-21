@@ -16,7 +16,6 @@ public class TableBlockFactory {
     private final ChildService<ObjectCompositionKchs> objectCompositionKchsService;
     private final ParentService<ObjectModel> objectService;
     private final ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService;
-    private final ChildService<ObjectAccidentScenarios> objectAccidentScenariosService;
     private final ChildService<ObjectFireEquipment> objectFireEquipmentService;
     private final ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService;
 
@@ -24,14 +23,12 @@ public class TableBlockFactory {
             ChildService<ObjectCompositionKchs> objectCompositionKchsService,
             ParentService<ObjectModel> objectService,
             ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService,
-            ChildService<ObjectAccidentScenarios> objectAccidentScenariosService,
             ChildService<ObjectFireEquipment> objectFireEquipmentService,
             ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService
     ) {
         this.objectCompositionKchsService = objectCompositionKchsService;
         this.objectService = objectService;
         this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
-        this.objectAccidentScenariosService = objectAccidentScenariosService;
         this.objectFireEquipmentService = objectFireEquipmentService;
         this.objectPersonsResponsibleService = objectPersonsResponsibleService;
     }
