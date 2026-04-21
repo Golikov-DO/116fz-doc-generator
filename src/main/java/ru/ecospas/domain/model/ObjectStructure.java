@@ -23,4 +23,10 @@ public class ObjectStructure implements NumberedItem, BaseEntity {
 
     private int num;
     private String name;
+
+    @Column(name = "likely_scenario_ids")
+    private String likelyIds;
+
+    @Column(name = "dangerous_scenario_ids")
+    private String dangerousIds;
 }

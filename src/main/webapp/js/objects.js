@@ -1,3 +1,45 @@
+let formChanged = false;
+let currentStructureIndex = null;
+let currentScenarioType = null;
+
+// Create and submit hidden POST form
+function postRedirect(action, params = {}) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = action;
+    form.style.display = 'none';
+
+    Object.entries(params).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Build URL with params and redirect
+// Simple redirect with params
+function navigateTo(path, params) {
+
+    let url = path;
+    let query = '';
+
+    for (let key in params) {
+        if (params[key]) {
+            if (query !== '') query += '&';
+            query += key + '=' + encodeURIComponent(params[key]);
+        }
+    }
+
+    if (query) url += '?' + query;
+
+    window.location.href = url;
+}
+
 // universal row append
 function addTableRow(button, type) {
 
@@ -44,15 +86,28 @@ function addTableRow(button, type) {
 
     if (type === 'structure') {
         row.innerHTML = `
-            <td>
-                <input type="hidden" name="structure_id[]" value="">
-                <input type="number" name="structure_number[]" value="${index}" min="1">
-            </td>
-            <td>
-                <textarea class="auto-resize" name="structure_name[]" rows="1" oninput="autoResize(this)"></textarea>
-            </td>
-            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
-        `;
+    <td>
+        <input type="hidden" name="structure_id[]" value="">
+        <input type="number" name="structure_number[]" value="${index}" min="1">
+    </td>
+    <td>
+        <textarea class="auto-resize" name="structure_name[]" rows="1" oninput="autoResize(this)"></textarea>
+    </td>
+
+    <td>
+        <button type="button" onclick="openScenarioModal(${index}, 'likely')">Вероятные</button>
+        <div id="likely_selected_${index}"></div>
+        <input type="hidden" name="likely_${index}" id="likely_input_${index}">
+    </td>
+
+    <td>
+        <button type="button" onclick="openScenarioModal(${index}, 'dangerous')">Опасные</button>
+        <div id="dangerous_selected_${index}"></div>
+        <input type="hidden" name="dangerous_${index}" id="dangerous_input_${index}">
+    </td>
+
+    <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+`;
     }
 
     if (type === 'techno-block') {
@@ -99,7 +154,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
     fetch('/get-asf-signers?asfId=' + asfId)
         .then(response => response.json())
         .then(signers => {
-            let options = '<option value="">Выберите подписанта</option>';
+            let options = '<option value="">— выберите —</option>';
             let selectedValue = hiddenField && hiddenField.value && hiddenField.value !== '0'
                 ? Number(hiddenField.value)
                 : '';
@@ -112,7 +167,7 @@ function loadSigners(asfId, signerSelect, hiddenField, allowAddOption = true) {
 
             if (allowAddOption) {
                 options += `<option value="add_new_signer">
-                    Добавить нового подписанта
+                    — добавить —
                 </option>`;
             }
 
@@ -186,6 +241,33 @@ function openAsfModal(asfId, objectItem, addSignerMode = false) {
         });
 }
 
+function closeAsfModal() {
+    const modal = document.getElementById('asfModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function openAsfFullPageFromSelect(objectItem) {
+    const asfSelect = objectItem.querySelector('.asf-select');
+    const asfId = asfSelect.value;
+
+    // get orgId from the URL of the current page
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get('orgId');
+    const objectId = urlParams.get('id');
+
+    if (!asfId || asfId === 'new_asf') {
+        alert('Выберите АСФ для редактирования');
+        return;
+    }
+
+    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId + '&returnObjectId=' + objectId;
+}
+
+function addNewAsf() {
+    const orgId = new URLSearchParams(window.location.search).get('orgId');
+    postRedirect('create-empty-asf', { returnOrgId: orgId });
+}
+
 function viewAsf(asfId, objectItem) {
     const modal = document.getElementById('asfModal');
     const content = document.getElementById('asfModalContent');
@@ -249,170 +331,59 @@ function toggleKchsVisibility(select) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.asf-select').forEach(select => {
-        const asfId = select.value;
-        if (!asfId || asfId === 'new_asf') return;
+// Update cancel button label depending on form state
+function updateCancelButton() {
+    const btn = document.getElementById('cancelBtn');
+    if (!btn) return;
 
-        const elements = getObjectElements(select);
-        loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
-    });
+    btn.innerText = formChanged ? 'Отменить' : 'Назад к списку';
+}
 
-    document.querySelectorAll('select[name="emergency_commission"]').forEach(select => {
-        toggleKchsVisibility(select);
+// Cancel editing:
+// - if no changes → go back
+// - if changed → reload original data
+function cancelEdit() {
 
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('asfModal');
-
-    if (!modal) return;
-
-    const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            if (mutation.attributeName === 'style' && modal.style.display === 'block') {
-                const isViewMode = modal.getAttribute('data-view-mode') === 'true';
-                const saveButton = document.getElementById('saveAsfButton');
-
-                if (saveButton) {
-                    saveButton.style.display = isViewMode ? 'none' : 'inline-block';
-                }
-            }
-        });
-    });
-
-    observer.observe(modal, {attributes: true});
-});
-
-document.addEventListener('change', function(event) {
-    if (event.target?.name === 'emergency_commission') {
-        toggleKchsVisibility(event.target);
-    }
-    // processing of ASF selection
-    if (event.target?.classList.contains('asf-select')) {
-        const asfId = event.target.value;
-        const elements = getObjectElements(event.target);
-
-        if (!asfId) {
-            resetSignerSelect(elements.signerSelect);
-            return;
-        }
-
-        if (asfId === 'new_asf') {
-            addNewAsf();
-            event.target.value = ''; // reset the selection
-        }
-
-        loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
-    }
-
-    // processing signatory selection
-    if (event.target?.classList.contains('signer-select') && event.target.value === 'add_new_signer') {
-        const elements = getObjectElements(event.target);
-        const asfSelect = elements.asfSelect;
-        if (asfSelect && asfSelect.value && asfSelect.value !== 'new_asf') {
-            openAsfModal(asfSelect.value, elements.objectItem, true); // true = adding a signatory
-        } else {
-            alert('Сначала выберите АСФ');
-        }
-    }
-});
-
-document.addEventListener('change', function(event) {
-
-    if (event.target?.classList.contains('hazard-select')) {
-
-        const value = event.target.value;
-
-        if (value === 'new_hazard') {
-            addNewHazardous();
-            event.target.value = '';
-        }
-    }
-
-});
-
-function openAsfFullPageFromSelect(objectItem) {
-    const asfSelect = objectItem.querySelector('.asf-select');
-    const asfId = asfSelect.value;
-
-    // get orgId from the URL of the current page
-    const urlParams = new URLSearchParams(window.location.search);
-    const orgId = urlParams.get('orgId');
-    const objectId = urlParams.get('id');
-
-    if (!asfId || asfId === 'new_asf') {
-        alert('Выберите АСФ для редактирования');
+    if (formChanged) {
+        window.location.reload();
         return;
     }
 
-    window.location.href = 'asf?mode=edit&asfId=' + asfId + '&returnOrgId=' + orgId + '&returnObjectId=' + objectId;
+    const params = new URLSearchParams(window.location.search);
+
+    // 1. главный сценарий — есть backUrl
+    const backUrl = params.get('backUrl');
+    if (backUrl) {
+        window.location.href = backUrl;
+        return;
+    }
+
+    // 2. fallback — возврат к списку объектов по orgId
+    const orgId = params.get('orgId');
+    if (orgId) {
+        window.location.href = '/objects?orgId=' + orgId;
+        return;
+    }
+
+    // 3. крайний fallback
+    window.location.href = '/objects';
 }
 
-function addNewAsf() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const orgId = urlParams.get('orgId');
+// Centralized handler for form change detection
+function handleFormChange(event) {
+    if (!event.target.closest('form')) return;
 
-    // create a hidden form for a POST request
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'create-empty-asf';
-    form.style.display = 'none';
-
-    const returnOrgIdInput = document.createElement('input');
-    returnOrgIdInput.type = 'hidden';
-    returnOrgIdInput.name = 'returnOrgId';
-    returnOrgIdInput.value = orgId;
-
-    form.appendChild(returnOrgIdInput);
-    document.body.appendChild(form);
-    form.submit();
+    // mark form as changed only once
+    if (!formChanged) {
+        formChanged = true;
+        updateCancelButton();
+    }
 }
-
-// Upload images
-// click "upload"
-document.addEventListener('click', function(e) {
-    const upload = e.target.closest('.image-upload-area');
-    if (!upload) return;
-
-    const input = upload.querySelector('.file-input');
-    if (input) input.click();
-});
-
-// select file
-document.addEventListener('change', function(event) {
-    if (!event.target.classList.contains('file-input')) return;
-
-    const input = event.target;
-    const block = input.closest('.image-block');
-
-    const file = input.files[0];
-    if (!file) return;
-
-    const group = block.dataset.group;
-
-    const objectId = document.querySelector('[name="id"]').value;
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('group', group);
-    formData.append('objectId', objectId);
-
-    fetch('upload-object-image', {
-        method: 'POST',
-        body: formData
-    })
-        .then(r => r.json())
-        .then(() => {
-            previewImage(block, file);
-        });
-});
 
 function previewImage(block, file) {
     const reader = new FileReader();
 
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         const preview = block.querySelector('.image-preview');
         preview.innerHTML = `<img src="${e.target.result}" style="max-width:100px;" alt="">`;
     };
@@ -420,6 +391,7 @@ function previewImage(block, file) {
     reader.readAsDataURL(file);
 }
 
+// Plan generate
 function generatePlan(form) {
     const objectId = form.querySelector('[name="objectId"]').value;
 
@@ -461,37 +433,224 @@ function generatePlan(form) {
     return false;
 }
 
-function addNewHazardous() {
+function openScenarioModal(index, type) {
+    currentStructureIndex = index;
+    currentScenarioType = type;
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'create-empty-hazardous-substance';
-    form.style.display = 'none';
+    const input = document.getElementById(type + '_input_' + index);
+    const selectedIds = input.value ? input.value.split(',') : [];
 
-    document.body.appendChild(form);
-    form.submit();
+    // RESET ALL CHECKBOXES
+    document.querySelectorAll('.scenario-checkbox').forEach(cb => {
+        cb.checked = false;
+    });
+
+    // RESTORATION OF CHOICE
+    document.querySelectorAll('.scenario-checkbox').forEach(cb => {
+        if (selectedIds.includes(cb.value)) {
+            cb.checked = true;
+        }
+    });
+
+    document.getElementById('scenarioModal').style.display = 'block';
 }
 
-function editHazardousFromSelect() {
+function applyScenario() {
 
-    const select = document.getElementById('hazardous_substance_id');
+    const selectedIds = [];
+    const selectedNames = [];
 
-    if (!select) {
-        console.error('select not found');
-        return;
+    document.querySelectorAll('.scenario-checkbox:checked').forEach(cb => {
+        selectedIds.push(cb.value);
+        selectedNames.push(cb.parentElement.innerText.trim());
+    });
+
+    const index = currentStructureIndex;
+    const type = currentScenarioType;
+
+    // hidden input
+    document.getElementById(type + '_input_' + index).value = selectedIds.join(',');
+    // textarea
+    const textarea = document.getElementById(type + '_selected_' + index);
+
+    textarea.value = selectedNames.join('\n');
+
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+
+    // кнопка
+    const btn = document.getElementById(type + '_btn_' + index);
+    if (btn) {
+        btn.innerText = selectedIds.length > 0 ? 'Редактировать' : 'Добавить сценарии';
     }
 
-    const hazardId = select.value;
-
-    if (!hazardId || hazardId === 'new_hazard') {
-        alert('Выберите вещество');
-        return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const objectId = urlParams.get('id');
-
-    window.location.href =
-        '/hazardous-substance?id=' + hazardId +
-        '&returnObjectId=' + objectId;
+    closeScenarioModal();
 }
+
+function closeScenarioModal() {
+    document.getElementById('scenarioModal').style.display = 'none';
+}
+
+// Upload images
+// click "upload"
+document.addEventListener('click', function (e) {
+    const upload = e.target.closest('.image-upload-area');
+    if (!upload) return;
+
+    const input = upload.querySelector('.file-input');
+    if (input) input.click();
+});
+
+// select file
+document.addEventListener('change', function (event) {
+    if (!event.target.classList.contains('file-input')) return;
+
+    const input = event.target;
+    const block = input.closest('.image-block');
+
+    const file = input.files[0];
+    if (!file) return;
+
+    const group = block.dataset.group;
+
+    const objectId = document.querySelector('[name="id"]').value;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('group', group);
+    formData.append('objectId', objectId);
+
+    fetch('upload-object-image', {
+        method: 'POST',
+        body: formData
+    })
+        .then(r => r.json())
+        .then(() => {
+            previewImage(block, file);
+        });
+});
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', function () {
+
+    // restore scenarios
+    document.querySelectorAll('[id^="likely_input_"], [id^="dangerous_input_"]')
+        .forEach(input => {
+
+            if (!input.value) return;
+
+            const ids = input.value.split(',');
+            const parts = input.id.split('_');
+
+            const type = parts[0];
+            const index = parts[2];
+
+            const names = [];
+
+            document.querySelectorAll('.scenario-checkbox').forEach(cb => {
+                if (ids.includes(cb.value)) names.push(cb.parentElement.innerText.trim());
+            });
+
+            const field = document.getElementById(type + '_selected_' + index);
+            if (field) field.value = names.join('\n');
+
+            const btn = document.getElementById(type + '_btn_' + index);
+            if (btn)  btn.innerText = names.length > 0 ? 'Редактировать' : 'Добавить сценарии';
+        });
+
+    // init ASF selects
+    document.querySelectorAll('.asf-select').forEach(select => {
+        const asfId = select.value;
+        if (!asfId || asfId === 'new_asf') return;
+
+        const elements = getObjectElements(select);
+        loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
+    });
+
+    // init KCHS visibility
+    document.querySelectorAll('select[name="emergency_commission"]').forEach(select => {
+        toggleKchsVisibility(select);
+    });
+
+    // modal observer
+    const modal = document.getElementById('asfModal');
+    if (modal) {
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.attributeName === 'style' && modal.style.display === 'block') {
+                    const isViewMode = modal.getAttribute('data-view-mode') === 'true';
+                    const saveButton = document.getElementById('saveAsfButton');
+
+                    if (saveButton) saveButton.style.display = isViewMode ? 'none' : 'inline-block';
+                }
+            });
+        });
+
+        observer.observe(modal, {attributes: true});
+    }
+
+});
+
+// Handle "add new" option in select
+function handleAddNewOption(select, triggerValue, action) {
+    if (select.value !== triggerValue) return false;
+
+    action();
+    select.value = '';
+
+    return true;
+}
+
+// === GLOBAL FORM CHANGE TRACKING ===
+// Detect any change inside form to switch Cancel -> Reset mode
+document.addEventListener('input', function (event) {
+    handleFormChange(event);
+});
+
+document.addEventListener('change', function (event) {
+
+    // === existing logic ===
+    if (event.target?.name === 'emergency_commission') {
+        toggleKchsVisibility(event.target);
+    }
+
+    // ASF select
+    if (event.target?.classList.contains('asf-select')) {
+        const asfId = event.target.value;
+        const elements = getObjectElements(event.target);
+
+        if (!asfId) {
+            resetSignerSelect(elements.signerSelect);
+            return;
+        }
+
+        if (handleAddNewOption(event.target, 'new_asf', addNewAsf)) return;
+
+        loadSigners(asfId, elements.signerSelect, elements.hiddenField, true);
+    }
+
+    // signer select
+    if (event.target?.classList.contains('signer-select') && event.target.value === 'add_new_signer') {
+        const elements = getObjectElements(event.target);
+        const asfSelect = elements.asfSelect;
+
+        if (asfSelect && asfSelect.value && asfSelect.value !== 'new_asf')
+            openAsfModal(asfSelect.value, elements.objectItem, true);
+        else alert('Сначала выберите АСФ');
+    }
+
+    // hazard select
+    if (event.target?.classList.contains('hazard-select'))
+        handleAddNewOption(event.target, 'new_hazard', addNewHazardous);
+
+    // type select
+    if (event.target?.classList.contains('type-select'))
+        handleAddNewOption(event.target, 'new_type', addNewObjectType);
+
+    // region select
+    if (event.target?.classList.contains('region-select'))
+        handleAddNewOption(event.target, 'new_region', addNewRegion);
+
+    // === IMPORTANT: track form changes LAST ===
+    handleFormChange(event);
+});

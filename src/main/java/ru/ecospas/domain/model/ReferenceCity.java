@@ -16,7 +16,6 @@ public class ReferenceCity implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Integer id;
-    private String geoCoords;
     private String geoRelief;
     private String geoGeology;
     private String climatDesc;

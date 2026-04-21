@@ -8,15 +8,15 @@
         </div>
 
         <!-- LOGIN -->
-        <form id="authForm" method="post" action="login" class="gh-form">
+        <form id="authForm" method="post" action="${pageContext.request.contextPath}/login" class="gh-form">
 
-            <label>Логин</label>
+            <label for="loginField">Логин</label>
             <input type="hidden" name="source" value="register">
-            <input type="text" name="login" required>
+            <input type="text" name="login" id="loginField" required>
             <div id="loginCheck"></div>
 
-            <label>Пароль</label>
-            <input type="password" name="password" autocomplete="current-password" required>
+            <label for="passwordField">Пароль</label>
+            <input type="password" name="password" id="passwordField" autocomplete="current-password" required>
 
             <input type="hidden" name="role" value="USER">
 

@@ -38,7 +38,9 @@ public class ServletAutoRegistration implements ServletContextListener {
                 "ru.ecospas.web.organization",
                 "ru.ecospas.web.plan",
                 "ru.ecospas.web.substance",
-                "ru.ecospas.web.user"
+                "ru.ecospas.web.user",
+                "ru.ecospas.web.type",
+                "ru.ecospas.web.region"
         );
 
         try {

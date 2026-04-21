@@ -1,13 +1,15 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="ru.ecospas.domain.model.Role" %>
 <%@ page import="ru.ecospas.domain.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
-    String id = request.getParameter("id");
+    String cityId = request.getParameter("cityId");
     String mode = (String) request.getAttribute("mode");
 
-    String pageTitle = (id != null && !id.isEmpty())
-            ? "Редактирование опасного вещества"
-            : "Добавление опасного вещества";
+    String pageTitle = (cityId != null && !cityId.isEmpty())
+            ? "Редактирование района расположения"
+            : "Добавление района расположения";
+
     User user = (User) session.getAttribute("user");
     boolean isAdmin = false;
 
@@ -27,36 +29,38 @@
         <h1><%= pageTitle %></h1>
     </div>
 
-    <%-- Dynamic servlet registered via ServletAutoRegistration, not static @WebServlet --%>
-    <form action="<%=""%>save-hazardous-substance" method="post">
+    <form action="<%=""%>save-region" method="post">
 
-        <input type="hidden" name="substanceId" value="<%= id != null ? id : "" %>">
+        <input type="hidden" name="cityId" value="<%= cityId != null ? cityId : "" %>">
+
         <input type="hidden" name="backUrl"
                value="<%= request.getParameter("backUrl") != null ? request.getParameter("backUrl") : "" %>">
 
-        <jsp:include page="/WEB-INF/fragments/hazardous/hazardous-substance.jsp" />
+        <jsp:include page="/WEB-INF/fragments/region/region.jsp" />
 
         <div class="form-footer">
+
             <% if (!"view".equals(mode)) { %>
             <button type="submit" class="btn">Сохранить</button>
             <% } else { %>
-            <a href="?id=<%= id %>" class="btn">Редактировать</a>
+            <a href="?cityId=<%= cityId %>" class="btn">Редактировать</a>
             <% } %>
 
             <button type="button" id="cancelBtn" onclick="cancelEdit()" class="btn">
                 Назад к объекту
             </button>
 
-            <% if (id != null && !id.isEmpty() && isAdmin) { %>
-            <button type="button" class="btn danger" onclick="deleteHazardous(<%= id %>)">
+            <% if (cityId != null && !cityId.isEmpty() && isAdmin) { %>
+            <button type="button" class="btn danger"
+                    onclick="deleteRegion(<%= cityId %>)">
                 Удалить
             </button>
             <% } %>
+
         </div>
 
     </form>
 
 </div>
-
 </body>
 </html>

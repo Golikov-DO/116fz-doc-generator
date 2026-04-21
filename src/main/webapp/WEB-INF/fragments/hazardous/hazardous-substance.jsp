@@ -6,16 +6,16 @@
 <%@ page import="ru.ecospas.domain.model.ReferenceHazardousSubstance" %>
 
 <%
-    ReferenceHazardousSubstance substance =
-            (ReferenceHazardousSubstance) request.getAttribute("substance");
+    ReferenceHazardousSubstance substance = (ReferenceHazardousSubstance) request.getAttribute("substance");
     @SuppressWarnings("unchecked")
-    List<ReferenceHazardousParam> params =
-            (List<ReferenceHazardousParam>) request.getAttribute("params");
+    List<ReferenceHazardousParam> params = (List<ReferenceHazardousParam>) request.getAttribute("params");
     @SuppressWarnings("unchecked")
-    Map<Integer, ObjectHazardousParamValue> values =
-            (Map<Integer, ObjectHazardousParamValue>) request.getAttribute("values");
+    Map<Integer, ObjectHazardousParamValue> values = (Map<Integer, ObjectHazardousParamValue>) request.getAttribute("values");
 
     boolean hasData = substance != null;
+    String mode = (String) request.getAttribute("mode");
+    boolean isView = "view".equals(mode);
+    String disabled = isView ? "disabled" : "";
 %>
 
 <div class="section">
@@ -32,16 +32,16 @@
                 <div class="form-field">
                     <textarea class="auto-resize" name="name" id="name"
                               placeholder="природный газ"
-                              rows="1"><%= hasData && substance.getName() != null ? substance.getName() : "" %></textarea>
+                              rows="1" <%= disabled %>><%= hasData && substance.getName() != null ? substance.getName() : "" %></textarea>
                 </div>
             </div>
 
             <div class="form-row">
-                <label class="form-label" for="name-gen">Тип опасного вещества в родительном падеже</label>
+                <label class="form-label" for="name_gen">Тип опасного вещества в родительном падеже</label>
                 <div class="form-field">
-                    <textarea class="auto-resize" name="name-gen" id="name-gen"
+                    <textarea class="auto-resize" name="name_gen" id="name_gen"
                               placeholder="природного газа"
-                              rows="1"><%= hasData && substance.getNameGen() != null ? substance.getNameGen() : "" %></textarea>
+                              rows="1" <%= disabled %>><%= hasData && substance.getNameGen() != null ? substance.getNameGen() : "" %></textarea>
                 </div>
             </div>
 
@@ -81,14 +81,14 @@
                         <td>
                             <label>
                                 <textarea class="auto-resize" name="value_<%= param.getId() %>"
-                                          rows="1"><%= valueText %></textarea>
+                                          rows="1" <%= disabled %>><%= valueText %></textarea>
                             </label>
                         </td>
 
                         <td>
                             <label>
                                 <textarea class="auto-resize" name="source_<%= param.getId() %>"
-                                          rows="1"><%= sourceText %></textarea>
+                                          rows="1" <%= disabled %>><%= sourceText %></textarea>
                             </label>
                         </td>
                     </tr>

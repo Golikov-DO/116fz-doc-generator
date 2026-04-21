@@ -17,8 +17,6 @@ public class AsfSaveHelper {
         asf.setFullNameGen(param(req, "full_name_gen"));
         asf.setShortName(param(req, "short_name"));
         asf.setStatusShort(param(req, "status_short"));
-
-        asf.setArrivalTime(paramTime(req, "arrival_hours", "arrival_minutes"));
     }
 
     // Asf certificate

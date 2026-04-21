@@ -2,9 +2,11 @@ package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.util.MapListUtils;
 import ru.ecospas.web.util.RequestIndexContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.*;
@@ -18,6 +20,7 @@ public class ObjectSaveHelper {
         object.setDepartmentGoChsCity(param(req, "department_gochs"));
         object.setEmergencyCommission(paramBool(req, "emergency_commission"));
         object.setAsfSignerId(paramInt(req,"object_signer_id"));
+        object.setArrivalTime(paramTime(req, "arrival_hours", "arrival_minutes"));
     }
 
     public void mapAddress(HttpServletRequest req, ObjectAddress address) {
@@ -62,6 +65,8 @@ public class ObjectSaveHelper {
         else structure.setNum(num);
 
         structure.setName(param(ctx.req, "structure_name[]", i));
+        structure.setLikelyIds(param(ctx.req, "likely[]", i));
+        structure.setDangerousIds(param(ctx.req, "dangerous[]", i));
     }
 
     public void mapTechnoBlock(RequestIndexContext ctx, ObjectTechnologicalBlock technoBlock) {
@@ -159,5 +164,49 @@ public class ObjectSaveHelper {
                 }
             }
         }
+    }
+
+    public List<ObjectScenario> mapScenarios(
+            HttpServletRequest req,
+            ObjectStructure structure,
+            ParentService<Scenario> scenarioService,
+            int index
+    ) {
+
+        // LIKELY
+        String likely = param(req, "likely[]", index);
+        List<ObjectScenario> result = new ArrayList<>(parseScenarioList(likely, structure, scenarioService, ScenarioType.LIKELY));
+
+        // DANGEROUS
+        String dangerous = param(req, "dangerous[]", index);
+        result.addAll(parseScenarioList(dangerous, structure, scenarioService, ScenarioType.DANGEROUS));
+
+        return result;
+    }
+
+    private List<ObjectScenario> parseScenarioList(
+            String value,
+            ObjectStructure structure,
+            ParentService<Scenario> scenarioService,
+            ScenarioType type
+    ) {
+        List<ObjectScenario> list = new ArrayList<>();
+
+        if (value == null || value.isEmpty()) return list;
+
+        String[] ids = value.split(",");
+
+        for (String idStr : ids) {
+            int id = Integer.parseInt(idStr);
+
+            ObjectScenario item = new ObjectScenario();
+            item.setStructure(structure);
+            item.setScenario(scenarioService.getOneById(id));
+            item.setType(type);
+
+            list.add(item);
+        }
+
+        return list;
     }
 }

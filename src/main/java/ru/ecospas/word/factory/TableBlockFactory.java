@@ -17,7 +17,6 @@ public class TableBlockFactory {
     private final ParentService<ObjectModel> objectService;
     private final ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService;
     private final ChildService<ObjectAccidentScenarios> objectAccidentScenariosService;
-    private final ChildService<ObjectMainScenarios> objectMainScenariosService;
     private final ChildService<ObjectFireEquipment> objectFireEquipmentService;
     private final ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService;
 
@@ -26,14 +25,13 @@ public class TableBlockFactory {
             ParentService<ObjectModel> objectService,
             ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService,
             ChildService<ObjectAccidentScenarios> objectAccidentScenariosService,
-            ChildService<ObjectMainScenarios> objectMainScenariosService,
             ChildService<ObjectFireEquipment> objectFireEquipmentService,
-            ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService) {
+            ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService
+    ) {
         this.objectCompositionKchsService = objectCompositionKchsService;
         this.objectService = objectService;
         this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
         this.objectAccidentScenariosService = objectAccidentScenariosService;
-        this.objectMainScenariosService = objectMainScenariosService;
         this.objectFireEquipmentService = objectFireEquipmentService;
         this.objectPersonsResponsibleService = objectPersonsResponsibleService;
     }
@@ -44,24 +42,34 @@ public class TableBlockFactory {
         ObjectModel obj = objectService.getOneById(objectId);
 
         for (int i = 1; i <= 9; i++) {
-            if (i == 2 || i == 6) continue;
+            if (i == 2 || i == 3 || i == 4 || i == 6) continue;
 
             String placeholderKey = "OBJ_TABLE_" + i + "_PLACEHOLDER";
 
             // Get data for a specific index.
             switch (i){
-                case 1 -> fillTable(data, placeholderKey, objectTechnologicalEquipmentService.getManyByParentId(obj.getId()),
-                        equipment -> new String[]{String.valueOf(equipment.getNum()), equipment.getName(), equipment.getCharacteristics()});
-                case 3 -> fillTable(data, placeholderKey, objectAccidentScenariosService.getManyByParentId(obj.getId()),
-                        accidentScenarios -> new String[]{accidentScenarios.getScenarios(), accidentScenarios.getScheme()});
-                case 4 -> fillTable(data, placeholderKey, objectMainScenariosService.getManyByParentId(obj.getId()),
-                        mainScenarios -> new String[]{mainScenarios.getEquipmentName(), mainScenarios.getEvent(), mainScenarios.getScenariosList()});
-                case 5 -> fillTable(data, placeholderKey, objectFireEquipmentService.getManyByParentId(obj.getId()),
-                        equipment -> new String[]{String.valueOf(equipment.getNumber()), equipment.getProductName(), equipment.getQuantity(), equipment.getLocation()});
-                case 7 -> fillTable(data, placeholderKey, objectPersonsResponsibleService.getManyByParentId(obj.getId()),
-                        personsResponsible -> new String[]{String.valueOf(personsResponsible.getNumber()), personsResponsible.getFullName(), personsResponsible.getPosition()});
-                case 8 -> fillTable(data, placeholderKey, objectCompositionKchsService.getManyByParentId(obj.getId()),
-                        kchs -> new String[]{String.valueOf(kchs.getNumber()), kchs.getPosition(), kchs.getFullName(), kchs.getWorkPhone(), kchs.getCellPhone(), kchs.getHomeAddress()
+                case 1 -> fillTable(data, placeholderKey,
+                        objectTechnologicalEquipmentService.getManyByParentId(obj.getId()),
+                        equipment ->
+                                new String[]{String.valueOf(equipment.getNum()), equipment.getName(),
+                                        equipment.getCharacteristics()});
+                case 5 -> fillTable(data, placeholderKey,
+                        objectFireEquipmentService.getManyByParentId(obj.getId()),
+                        equipment ->
+                                new String[]{String.valueOf(equipment.getNumber()),
+                                        equipment.getProductName(), equipment.getQuantity(), equipment.getLocation()});
+                case 7 -> fillTable(data, placeholderKey,
+                        objectPersonsResponsibleService.getManyByParentId(obj.getId()),
+                        personsResponsible ->
+                                new String[]{String.valueOf(personsResponsible.getNumber()),
+                                        personsResponsible.getFullName(),
+                                        personsResponsible.getPosition()});
+                case 8 -> fillTable(data, placeholderKey,
+                        objectCompositionKchsService.getManyByParentId(obj.getId()),
+                        kchs ->
+                                new String[]{String.valueOf(kchs.getNumber()),
+                                        kchs.getPosition(), kchs.getFullName(),
+                                        kchs.getWorkPhone(), kchs.getCellPhone(), kchs.getHomeAddress()
                 });
                 default -> data.put(placeholderKey, null);
             }

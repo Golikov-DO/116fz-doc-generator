@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
 @SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
@@ -37,6 +38,7 @@ public class HazardousSubstanceServlet extends BaseServlet {
 
         try {
             int id = paramInt(req, "id");
+            String mode = param(req, "mode");
 
             ReferenceHazardousSubstance substance;
             List<ObjectHazardousParamValue> values = List.of();
@@ -59,7 +61,10 @@ public class HazardousSubstanceServlet extends BaseServlet {
             req.setAttribute("substance", substance);
             req.setAttribute("params", params);
             req.setAttribute("values", valueMap);
+            req.setAttribute("mode", mode);
+            String backUrl = req.getParameter("backUrl");
 
+            req.setAttribute("backUrl", backUrl);
             req.setAttribute("contentPage", "/WEB-INF/pages/hazardous-substance-page.jsp");
             req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 

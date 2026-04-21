@@ -32,27 +32,27 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 8px;">
-                            <%-- Кнопка Просмотр --%>
-                            <form method="get" action="organization" style="margin:0;">
+                            <%-- View button --%>
+                            <form method="get" action="<%=""%>organization" style="margin:0;">
                                 <input type="hidden" name="mode" value="view">
                                 <input type="hidden" name="orgId" value="<%= org.getId() %>">
                                 <button title="Просмотр"><i class="fa fa-eye"></i></button>
                             </form>
 
-                            <%-- Кнопка Редактировать --%>
-                            <form method="get" action="organization" style="margin:0;">
+                            <%-- Edit button --%>
+                            <form method="get" action="<%=""%>organization" style="margin:0;">
                                 <input type="hidden" name="mode" value="edit">
                                 <input type="hidden" name="orgId" value="<%= org.getId() %>">
                                 <button title="Редактировать"><i class="fa fa-pen"></i></button>
                             </form>
 
-                            <%-- Кнопка Объекты --%>
-                            <form method="get" action="objects" style="margin:0;">
+                            <%-- Objects button --%>
+                            <form method="get" action="<%=""%>objects" style="margin:0;">
                                 <input type="hidden" name="orgId" value="<%= org.getId() %>">
                                 <button title="Объекты"><i class="fa fa-cube"></i></button>
                             </form>
 
-                            <form method="post" action="delete-organization" style="margin:0;">
+                            <form method="post" action="<%=""%>delete-organization" style="margin:0;">
                                 <input type="hidden" name="orgId" value="<%= org.getId() %>">
                                 <button class="btn-delete" title="Удалить">
                                     ✖
@@ -76,7 +76,7 @@
             </table>
 
             <div class="mt-20">
-                <form method="get" action="organization">
+                <form method="get" action="<%=""%>organization">
                     <input type="hidden" name="mode" value="add">
                     <button type="submit" class="btn">Добавить организацию</button>
                 </form>

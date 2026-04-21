@@ -53,58 +53,17 @@
                 </div>
             </div>
 
-            <div class="compact-block">
-                <div class="section">
-                    <div class="section-body">
-                        <div class="form-row">
-                            <label class="form-label" for="short_name">Краткое наименование</label>
-                            <input type="text" name="short_name" id="short_name"
-                                   value="<%= hasData && asf.getShortName() != null ? asf.getShortName() : "" %>" <%= disabled %>>
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label" for="status_short">Статус</label>
-                            <input type="text" name="status_short" id="status_short"
-                                   value="<%= hasData && asf.getStatusShort() != null ? asf.getStatusShort() : "" %>" <%= disabled %>>
-                        </div>
-                    </div>
+            <div class="form-grid-2">
+                <div>
+                    <label class="form-label" for="short_name">Краткое наименование</label>
+                    <input type="text" name="short_name" id="short_name"
+                           value="<%= hasData && asf.getShortName() != null ? asf.getShortName() : "" %>" <%= disabled %>>
                 </div>
-
-                <div class="section">
-                    <div class="section-header">
-                        <span>Время прибытия</span>
-                    </div>
-                    <div class="section-body">
-
-                        <div class="form-grid-2">
-                            <div>
-                                <label for="arrival_hours">Часы</label>
-                                <select id="arrival_hours" name="arrival_hours" <%= disabled %>>
-                                    <option value="">Час</option>
-                                    <% for (int h = 0; h <= 24; h++) {
-                                        String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().getHour() == h ? "selected" : "";
-                                    %>
-                                    <option value="<%= h %>" <%= selected %>><%= h %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="arrival_minutes">Минуты</label>
-                                <select id="arrival_minutes" name="arrival_minutes" <%= disabled %>>
-                                    <option value="">Мин</option>
-                                    <% for (int m = 0; m < 60; m += 5) {
-                                        String selected = hasData && asf.getArrivalTime() != null && asf.getArrivalTime().getMinute() == m ? "selected" : "";
-                                    %>
-                                    <option value="<%= m %>" <%= selected %>><%= m %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <label class="form-label" for="status_short">Статус</label>
+                    <input type="text" name="status_short" id="status_short"
+                           value="<%= hasData && asf.getStatusShort() != null ? asf.getStatusShort() : "" %>" <%= disabled %>>
                 </div>
-
             </div>
 
             <!-- ASF CERTIFICATE -->
@@ -491,25 +450,32 @@
                                             <span style="font-size: 12px; font-weight: 500;">Скан Свидетельства оборотная сторона</span>
                                             <span style="font-size: 11px; color: #666;">1047x1480px</span>
                                         </div>
-                                        <div id="appendix1_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                                        <div id="appendix1_container"
+                                             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 15px;">
                                             <% for (int i = 0; i < otherImages1.size(); i++) {
                                                 AsfDocumentImage img = otherImages1.get(i);
                                                 int pos = i + 1;
                                             %>
-                                            <div class="asf-image-item" style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
-                                                <input type="hidden" name="image_id_1_<%= pos %>" value="<%= img.getId() %>">
+                                            <div class="asf-image-item"
+                                                 style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
+                                                <input type="hidden" name="image_id_1_<%= pos %>"
+                                                       value="<%= img.getId() %>">
                                                 <input type="hidden" name="image_group_1_<%= pos %>" value="1">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                                     <span style="font-size: 11px; color: #666;">Изображение <%= pos %></span>
                                                     <% if (!isView) { %>
-                                                    <span class="delete-row" onclick="deleteAsfImage(<%= img.getId() %>, this)" style="color:#f44336; cursor:pointer;">✖</span>
+                                                    <span class="delete-row"
+                                                          onclick="deleteAsfImage(<%= img.getId() %>, this)"
+                                                          style="color:#f44336; cursor:pointer;">✖</span>
                                                     <% } %>
                                                 </div>
                                                 <img src="data:image/png;base64,<%= java.util.Base64.getEncoder().encodeToString(img.getImageBlob()) %>"
-                                                     style="width: 100%; max-height: 80px; object-fit: contain; border: 1px solid #ddd; margin-bottom: 5px;" alt="">
+                                                     style="width: 100%; max-height: 80px; object-fit: contain; border: 1px solid #ddd; margin-bottom: 5px;"
+                                                     alt="">
                                                 <% if (!isView) { %>
                                                 <div style="margin-top: 8px; text-align: center;">
-                                                    <button type="button" class="btn btn-small" style="font-size: 11px; padding: 3px 8px;"
+                                                    <button type="button" class="btn btn-small"
+                                                            style="font-size: 11px; padding: 3px 8px;"
                                                             onclick="uploadAsfImage(this, '1', <%= pos %>, <%= img.getId() %>)">
                                                         Заменить
                                                     </button>
@@ -521,7 +487,9 @@
                                             <% } %>
                                         </div>
                                         <% if (!isView) { %>
-                                        <button type="button" class="btn btn-add" onclick="addAsfImageField('1')" style="font-size: 11px; padding: 3px 8px;">+ Добавить</button>
+                                        <button type="button" class="btn btn-add" onclick="addAsfImageField('1')"
+                                                style="font-size: 11px; padding: 3px 8px;">+ Добавить
+                                        </button>
                                         <% } %>
                                     </div>
                                 </div>
@@ -581,25 +549,32 @@
                                             <span style="font-size: 12px; font-weight: 500;">Скан Паспорта дополнительные страницы</span>
                                             <span style="font-size: 11px; color: #666;">1047x1480px</span>
                                         </div>
-                                        <div id="appendix2_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                                        <div id="appendix2_container"
+                                             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 15px;">
                                             <% for (int i = 0; i < otherImages2.size(); i++) {
                                                 AsfDocumentImage img = otherImages2.get(i);
                                                 int pos = i + 1;
                                             %>
-                                            <div class="asf-image-item" style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
-                                                <input type="hidden" name="image_id_2_<%= pos %>" value="<%= img.getId() %>">
+                                            <div class="asf-image-item"
+                                                 style="border: 1px solid #eee; padding: 10px; background-color: #fafafa; border-radius: 4px;">
+                                                <input type="hidden" name="image_id_2_<%= pos %>"
+                                                       value="<%= img.getId() %>">
                                                 <input type="hidden" name="image_group_2_<%= pos %>" value="2">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                                     <span style="font-size: 11px; color: #666;">Изображение <%= pos %></span>
                                                     <% if (!isView) { %>
-                                                    <span class="delete-row" onclick="deleteAsfImage(<%= img.getId() %>, this)" style="color:#f44336; cursor:pointer;">✖</span>
+                                                    <span class="delete-row"
+                                                          onclick="deleteAsfImage(<%= img.getId() %>, this)"
+                                                          style="color:#f44336; cursor:pointer;">✖</span>
                                                     <% } %>
                                                 </div>
                                                 <img src="data:image/png;base64,<%= java.util.Base64.getEncoder().encodeToString(img.getImageBlob()) %>"
-                                                     style="width: 100%; max-height: 80px; object-fit: contain; border: 1px solid #ddd; margin-bottom: 5px;" alt="">
+                                                     style="width: 100%; max-height: 80px; object-fit: contain; border: 1px solid #ddd; margin-bottom: 5px;"
+                                                     alt="">
                                                 <% if (!isView) { %>
                                                 <div style="margin-top: 8px; text-align: center;">
-                                                    <button type="button" class="btn btn-small" style="font-size: 11px; padding: 3px 8px;"
+                                                    <button type="button" class="btn btn-small"
+                                                            style="font-size: 11px; padding: 3px 8px;"
                                                             onclick="uploadAsfImage(this, '2', <%= pos %>, <%= img.getId() %>)">
                                                         Заменить
                                                     </button>
@@ -611,7 +586,9 @@
                                             <% } %>
                                         </div>
                                         <% if (!isView) { %>
-                                        <button type="button" class="btn btn-add" onclick="addAsfImageField('2')" style="font-size: 11px; padding: 3px 8px;">+ Добавить</button>
+                                        <button type="button" class="btn btn-add" onclick="addAsfImageField('2')"
+                                                style="font-size: 11px; padding: 3px 8px;">+ Добавить
+                                        </button>
                                         <% } %>
                                     </div>
                                 </div>

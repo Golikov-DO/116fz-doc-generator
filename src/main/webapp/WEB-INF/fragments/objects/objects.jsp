@@ -66,7 +66,8 @@
             <div class="compact-block">
                 <div>
                     <label for="object_type_id">Тип объекта</label>
-                    <select id="object_type_id" name="object_type_id" <%= disabled %>>
+                    <select id="object_type_id" name="object_type_id"
+                            class="type-select" <%= disabled %>>
                         <option value="">— выберите —</option>
                         <% if (type != null) {
                             Integer selectedId = object.getType() != null ? object.getType().getId() : null;
@@ -76,7 +77,7 @@
                         </option>
                         <% }
                         } %>
-                        <option>— добавить —</option>
+                        <option value="new_type">— добавить —</option>
                     </select>
                 </div>
 
@@ -171,54 +172,93 @@
             </div>
 
             <!-- ASF -->
-            <div class="section">
-                <div class="section-header">
-                    <span>Обслуживающая АСФ</span>
-                </div>
-                <div class="section-body">
-                    <div class="compact-block">
-                        <div>
-                            <label for="object_asf_id">АСФ</label>
-                            <select id="object_asf_id" name="object_asf_id" class="asf-select" <%= disabled %>>
-                                <option value="">— выберите —</option>
-                                <% if (asfList != null) {
-                                    for (Asf asf : asfList) { %>
-                                <option value="<%= asf.getId() %>"
-                                        <%= object.getAsf() != null && object.getAsf().getId().equals(asf.getId()) ? "selected" : "" %>>
-                                    <%= asf.getShortName() %>
-                                </option>
-                                <% }
-                                } %>
-                                <option value="new_asf">— добавить —</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="object_signer_id">Подписант от АСФ</label>
-                            <div class="form-field">
-                                <select id="object_signer_id" name="object_signer_id"
-                                        class="signer-select" <%= disabled %>>
-                                    <option value="">Сначала выберите АСФ</option>
+            <div class="form-grid-2-time">
+                <div class="section">
+                    <div class="section-header">
+                        <span>Обслуживающая АСФ</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid-3-asf">
+                            <div>
+                                <label for="object_asf_id">АСФ</label>
+                                <select id="object_asf_id" name="object_asf_id" class="asf-select" <%= disabled %>>
+                                    <option value="">— выберите —</option>
+                                    <% if (asfList != null) {
+                                        for (Asf asf : asfList) { %>
+                                    <option value="<%= asf.getId() %>"
+                                            <%= object.getAsf() != null && object.getAsf().getId().equals(asf.getId()) ? "selected" : "" %>>
+                                        <%= asf.getShortName() %>
+                                    </option>
+                                    <% }
+                                    } %>
+                                    <option value="new_asf">— добавить —</option>
                                 </select>
-                                <input type="hidden" class="signer-id-hidden"
-                                       value="<%= object.getAsfSignerId() != 0 ? object.getAsfSignerId() : 0 %>">
+                            </div>
+
+                            <div>
+                                <label for="object_signer_id">Подписант от АСФ</label>
+                                <div class="form-field">
+                                    <select id="object_signer_id" name="object_signer_id"
+                                            class="signer-select" <%= disabled %>>
+                                        <option value="">Сначала выберите АСФ</option>
+                                    </select>
+                                    <input type="hidden" class="signer-id-hidden"
+                                           value="<%= object.getAsfSignerId() != 0 ? object.getAsfSignerId() : 0 %>">
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 13px;">
+
+                                <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
+                                <button type="button" class="btn"
+                                        onclick="openAsfFullPageFromSelect(this.closest('.card'))">
+                                    Редактировать АСФ
+                                </button>
+                                <% } else if (isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
+                                <button type="button" class="btn"
+                                        onclick="viewAsf(<%= object.getAsf().getId() %>, this.closest('.card'))">
+                                    Просмотр АСФ
+                                </button>
+                                <% } %>
+
                             </div>
                         </div>
+                    </div>
 
-                        <div style="margin-top: 13px;">
 
-                            <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
-                            <button type="button" class="btn"
-                                    onclick="openAsfFullPageFromSelect(this.closest('.card'))">
-                                Редактировать АСФ
-                            </button>
-                            <% } else if (isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
-                            <button type="button" class="btn"
-                                    onclick="viewAsf(<%= object.getAsf().getId() %>, this.closest('.card'))">
-                                Просмотр АСФ
-                            </button>
-                            <% } %>
+                </div>
+                <div class="section">
+                    <div class="section-header">
+                        <span>Время прибытия</span>
+                    </div>
+                    <div class="section-body">
 
+                        <div class="form-grid-2">
+                            <div>
+                                <label for="arrival_hours">Часы</label>
+                                <select id="arrival_hours" name="arrival_hours" <%= disabled %>>
+                                    <option value="">Час</option>
+                                    <% for (int h = 0; h <= 24; h++) {
+                                        String selected = object.getArrivalTime() != null && object.getArrivalTime().getHour() == h ? "selected" : "";
+                                    %>
+                                    <option value="<%= h %>" <%= selected %>><%= h %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="arrival_minutes">Минуты</label>
+                                <select id="arrival_minutes" name="arrival_minutes" <%= disabled %>>
+                                    <option value="">Мин</option>
+                                    <% for (int m = 0; m < 60; m += 5) {
+                                        String selected = object.getArrivalTime() != null && object.getArrivalTime().getMinute() == m ? "selected" : "";
+                                    %>
+                                    <option value="<%= m %>" <%= selected %>><%= m %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,7 +299,7 @@
 
                     </div>
 
-                    <div class="form-grid-4">
+                    <div class="form-grid-5">
 
                         <div>
                             <label for="object_street">Улица</label>
@@ -281,7 +321,8 @@
 
                         <div>
                             <label for="object_city_id">Район расположения ОПО</label>
-                            <select id="object_city_id" name="object_city_id" <%= disabled %>>
+                            <select id="object_city_id" name="object_city_id"
+                                    class="region-select" <%= disabled %>>
                                 <option value="">— выберите —</option>
                                 <% if (cities != null) {
                                     ReferenceCity selectedCity = object.getCity();
@@ -294,9 +335,22 @@
                                 </option>
                                 <% }
                                 } %>
+                                <option value="new_region">— добавить —</option>
                             </select>
                         </div>
-
+                        <div style="display:flex; align-items:end;">
+                            <% if (!isView && object.getCity() != null && object.getCity().getId() > 0) { %>
+                            <button type="button" class="btn"
+                                    onclick="editRegionFromSelect(this)">
+                                Редактировать район
+                            </button>
+                            <% } else if (isView && object.getCity() != null && object.getCity().getId() > 0) { %>
+                            <button type="button" class="btn"
+                                    onclick="viewRegion(<%= object.getCity().getId() %>, this.closest('.card'))">
+                                Просмотр района
+                            </button>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -369,7 +423,8 @@
                                        value="<%= kchs.getFullName() != null ? kchs.getFullName() : "" %>" <%= disabled %>>
                             </td>
                             <td><input type="text" name="kchs_work_phone[]" aria-label="Рабочий"
-                                       value="<%=  kchs.getWorkPhone() != null ? kchs.getWorkPhone() : "" %>" <%= disabled %>></td>
+                                       value="<%=  kchs.getWorkPhone() != null ? kchs.getWorkPhone() : "" %>" <%= disabled %>>
+                            </td>
                             <td><input type="text" name="kchs_phone[]" aria-label="Сотовый"
                                        value="<%= kchs.getCellPhone() != null ? kchs.getCellPhone() : "" %>" <%= disabled %>>
                             </td>
@@ -410,6 +465,8 @@
                         <tr>
                             <th style="width:60px;">№</th>
                             <th>Наименование</th>
+                            <th>Вероятные сценарии</th>
+                            <th>Опасные сценарии</th>
                             <% if (!isView) { %>
                             <th style="width:40px;"></th>
                             <% } %>
@@ -418,6 +475,7 @@
 
                         <tbody>
                         <% if (structureList != null) {
+                            int i = 1;
                             for (ObjectStructure structure : structureList) { %>
 
                         <tr>
@@ -426,9 +484,36 @@
                                 <input type="number" name="structure_number[]" aria-label="№"
                                        value="<%= structure.getNum() %>" <%= disabled %>>
                             </td>
+
                             <td>
-                                <textarea class="auto-resize" name="structure_name[]" aria-label="Наименование"
+                                <textarea class="auto-resize" name="structure_name[]" aria-label="name"
                                           rows="1" <%= disabled %>><%= structure.getName() != null ? structure.getName() : "" %></textarea>
+                            </td>
+
+                            <td>
+                                <textarea id="likely_selected_<%= i %>" aria-label="likely" class="auto-resize"
+                                          readonly></textarea>
+                                <input type="hidden" name="likely[]" id="likely_input_<%= i %>"
+                                       value="<%= structure.getLikelyIds() != null ? structure.getLikelyIds() : "" %>">
+                                <% if (!isView) { %>
+                                <button type="button" id="likely_btn_<%= i %>"
+                                        onclick="openScenarioModal(<%= i %>, 'likely')">
+                                    Добавить сценарии
+                                </button>
+                                <% } %>
+                            </td>
+
+                            <td>
+                                <textarea id="dangerous_selected_<%= i %>" class="auto-resize" aria-label="dangerous"
+                                          readonly></textarea>
+                                <input type="hidden" name="dangerous[]" id="dangerous_input_<%= i %>"
+                                       value="<%= structure.getDangerousIds() != null ? structure.getDangerousIds() : "" %>">
+                                <% if (!isView) { %>
+                                <button type="button" id="dangerous_btn_<%= i %>"
+                                        onclick="openScenarioModal(<%= i %>, 'dangerous')">
+                                    Добавить сценарии
+                                </button>
+                                <% } %>
                             </td>
 
                             <% if (!isView) { %>
@@ -436,7 +521,8 @@
                             <% } %>
                         </tr>
 
-                        <% }
+                        <% i++;
+                        }
                         } %>
                         </tbody>
                     </table>
@@ -657,11 +743,12 @@
                                             <% } %>
                                         </div>
                                         <div style="margin-top: 13px;">
-                                            <div class="image-upload-area"> <% if (!isView) { %>
+                                            <div class="image-upload-area"><% if (!isView) { %>
                                                 <button type="button" class="btn btn-small">
                                                     <%= currentImage != null ? "Заменить" : "Загрузить" %>
                                                 </button>
-                                                <input type="file" class="file-input" style="display:none;" accept="image/png"> <% } %>
+                                                <input type="file" class="file-input" style="display:none;"
+                                                       accept="image/png"> <% } %>
                                             </div>
                                         </div>
                                     </div>
@@ -690,5 +777,35 @@
             </div>
 
         </div>
+    </div>
+    <div id="scenarioModal"
+         style="display:none; position:fixed; top:10%; left:30%; background:white; border:1px solid #ccc; padding:20px; z-index:1000;">
+
+        <h3>Выбор сценариев</h3>
+
+        <div style="max-height:300px; overflow:auto;">
+            <%
+                @SuppressWarnings("unchecked")
+                java.util.List<ru.ecospas.domain.model.Scenario> scenarios =
+                        (java.util.List<ru.ecospas.domain.model.Scenario>) request.getAttribute("scenarios");
+
+                if (scenarios != null) {
+                    for (ru.ecospas.domain.model.Scenario sc : scenarios) {
+            %>
+            <div>
+                <label>
+                    <input type="checkbox" value="<%= sc.getId() %>" class="scenario-checkbox">
+                    <%= sc.getName() %>
+                </label>
+            </div>
+            <%
+                    }
+                }
+            %>
+        </div>
+
+        <br>
+        <button type="button" onclick="applyScenario()">Применить</button>
+        <button type="button" onclick="closeScenarioModal()">Закрыть</button>
     </div>
 </div>

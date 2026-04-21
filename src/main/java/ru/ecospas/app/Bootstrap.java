@@ -4,6 +4,8 @@ import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.repository.ChildRepository;
 import ru.ecospas.domain.repository.ParentRepository;
 import ru.ecospas.domain.service.ObjectHazardService;
+import ru.ecospas.domain.service.ScenarioNumberService;
+import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.domain.service.WordGenerationService;
 import ru.ecospas.infrastructure.db.repository.GenericHibernateRepository;
 import ru.ecospas.word.blocks.text.TextPlaceholderService;
@@ -47,6 +49,7 @@ public class Bootstrap {
         parent(parentRepos, ReferenceTableTitle.class,"id");
         parent(parentRepos, ObjectType.class, "id");
         parent(parentRepos, ReferenceHazardousParam.class,"id");
+        parent(parentRepos, Scenario.class, "id");
 
         // SPECIAL CASE: ObjectModel acts as both parent and child
         var objectRepo = new GenericHibernateRepository<>(ObjectModel.class, "organization", "id");
@@ -80,7 +83,7 @@ public class Bootstrap {
         child(childRepos, ObjectTechnologicalBlock.class, "object", "num");
         child(childRepos, ObjectAccidentScenarios.class, "object", "id");
         child(childRepos, ObjectImage.class, "object", "groupKey, id");
-        child(childRepos, ObjectMainScenarios.class, "object", "id");
+        child(childRepos, ObjectScenario.class, "structure", "id");
 
         return new RepositoryContext(parentRepos, childRepos);
     }
@@ -109,6 +112,14 @@ public class Bootstrap {
                 services.getParentService(Organization.class)
         );
 
+        ScenarioNumberService scenarioNumberService = new ScenarioNumberService();
+
+        ObjectScenarioTableLayoutService objectScenarioTableLayoutService =
+                new ObjectScenarioTableLayoutService(
+                        services.getChildService(ObjectStructure.class),
+                        services.getParentService(Scenario.class)
+                );
+
         TextPlaceholderService textPlaceholderService = new TextPlaceholderService(services);
 
         UnifiedBlockFactory unifiedFactory = new UnifiedBlockFactory(
@@ -117,7 +128,6 @@ public class Bootstrap {
                         services.getParentService(ObjectModel.class),
                         services.getChildService(ObjectTechnologicalEquipment.class),
                         services.getChildService(ObjectAccidentScenarios.class),
-                        services.getChildService(ObjectMainScenarios.class),
                         services.getChildService(ObjectFireEquipment.class),
                         services.getChildService(ObjectPersonsResponsible.class)
                 ),
@@ -131,11 +141,12 @@ public class Bootstrap {
                         services.getParentService(ObjectModel.class),
                         services.getChildService(ObjectStructure.class),
                         services.getChildService(ObjectTechnologicalBlock.class),
-                        services.getChildService(ObjectAddress.class),
-                        services.getParentService(ReferenceCity.class)
+                        scenarioNumberService,
+                        services.getParentService(Scenario.class)
                 ),
                 hazardTableLayoutService,
                 contactTableLayoutService,
+                objectScenarioTableLayoutService,
                 services.getParentService(ObjectModel.class)
         );
 

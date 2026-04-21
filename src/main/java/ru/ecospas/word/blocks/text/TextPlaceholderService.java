@@ -36,8 +36,6 @@ public class TextPlaceholderService {
         ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService = internalServices.getChildService(ObjectTechnologicalBlock.class);
         ChildService<ObjectImage> objectImageService = internalServices.getChildService(ObjectImage.class);
         ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService = internalServices.getChildService(ObjectTechnologicalEquipment.class);
-        ChildService<ObjectAccidentScenarios> objectAccidentScenariosService = internalServices.getChildService(ObjectAccidentScenarios.class);
-        ChildService<ObjectMainScenarios> objectMainScenariosService = internalServices.getChildService(ObjectMainScenarios.class);
         ChildService<ObjectFireEquipment> objectFireEquipmentService = internalServices.getChildService(ObjectFireEquipment.class);
         ChildService<ObjectCompositionKchs> objectCompositionKchsService = internalServices.getChildService(ObjectCompositionKchs.class);
         ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService = internalServices.getChildService(ObjectPersonsResponsible.class);
@@ -79,7 +77,7 @@ public class TextPlaceholderService {
         var types = asfWorkTypeService.getManyByParentId(asf.getId());
 
         map.put("ASF_AREA_RESPONSIBILITY", funds.getResponsibilityArea());
-        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(String.valueOf(asf.getArrivalTime())));
+        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(String.valueOf(obj.getArrivalTime())));
         map.put("ASF_AVAILABLE_SPECIALISTS", AsfSpecialistsTextBuilder.build(specialists));
         map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
         map.put("ASF_CERTIFIED_RESCUERS", AsfPersonnelTextBuilder.build(personnel));
@@ -162,8 +160,8 @@ public class TextPlaceholderService {
         Map<Integer, Boolean> presenceMap = new HashMap<>();
         presenceMap.put(1, !objectTechnologicalEquipmentService.getManyByParentId(obj.getId()).isEmpty());
         presenceMap.put(2, true);
-        presenceMap.put(3, !objectAccidentScenariosService.getManyByParentId(obj.getId()).isEmpty());
-        presenceMap.put(4, !objectMainScenariosService.getManyByParentId(obj.getId()).isEmpty());
+        presenceMap.put(3, true);
+        presenceMap.put(4, true);
         presenceMap.put(5, !objectFireEquipmentService.getManyByParentId(obj.getId()).isEmpty());
         presenceMap.put(6, true);
         presenceMap.put(7, !objectPersonsResponsibleService.getManyByParentId(obj.getId()).isEmpty());

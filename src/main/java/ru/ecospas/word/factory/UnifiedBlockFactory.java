@@ -1,5 +1,6 @@
 package ru.ecospas.word.factory;
 import ru.ecospas.domain.model.ObjectModel;
+import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
@@ -26,6 +27,7 @@ public class UnifiedBlockFactory {
     private final ImageBlockFactory imageBlockFactory;
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
+    private final ObjectScenarioTableLayoutService objectScenarioTableLayoutService;
     private final ParentService<ObjectModel> objectService;
 
     // Map of block creation strategies
@@ -38,6 +40,7 @@ public class UnifiedBlockFactory {
             ListBlockFactory listBlockFactory,
             HazardTableLayoutService hazardTableLayoutService,
             ContactTableLayoutService contactTableLayoutService,
+            ObjectScenarioTableLayoutService objectScenarioTableLayoutService,
             ParentService<ObjectModel> objectService
     ) {
         this.tableBlockFactory = tableBlockFactory;
@@ -46,6 +49,7 @@ public class UnifiedBlockFactory {
         this.imageBlockFactory = imageBlockFactory;
         this.hazardTableLayoutService = hazardTableLayoutService;
         this.contactTableLayoutService = contactTableLayoutService;
+        this.objectScenarioTableLayoutService = objectScenarioTableLayoutService;
         this.objectService = objectService;
         initCreators();
     }
@@ -136,6 +140,10 @@ public class UnifiedBlockFactory {
         putAllIfPresent(result, imageBlockFactory.build(objectId));
         List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(objectId);
         if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
+        List<String[]> scenarioFullData = objectScenarioTableLayoutService.getObjectScenarioFullData(objectId);
+        if (!scenarioFullData.isEmpty()) result.put("OBJ_TABLE_3_PLACEHOLDER", scenarioFullData);
+        List<String[]> scenarioData = objectScenarioTableLayoutService.getObjectScenarioTableData(objectId);
+        if (!scenarioData.isEmpty()) result.put("OBJ_TABLE_4_PLACEHOLDER", scenarioData);
         List<String[]> contactData = contactTableLayoutService.getContactTableData(orgId, objectId);
         if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
 

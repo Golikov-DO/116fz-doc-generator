@@ -33,7 +33,7 @@
 
     <% } else { %>
 
-    <form action="save-user" method="post">
+    <form action="<%=""%>save-user" method="post">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="id" value="<%= userId != null ? userId : "" %>">
 

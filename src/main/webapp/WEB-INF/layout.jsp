@@ -44,6 +44,9 @@
 <script src="${pageContext.request.contextPath}/js/objects.js"></script>
 <script src="${pageContext.request.contextPath}/js/portal.js"></script>
 <script src="${pageContext.request.contextPath}/js/organization.js"></script>
+<script src="${pageContext.request.contextPath}/js/substance.js"></script>
+<script src="${pageContext.request.contextPath}/js/type.js"></script>
+<script src="${pageContext.request.contextPath}/js/region.js"></script>
 <jsp:include page="/WEB-INF/fragments/login-modal.jsp" />
 </body>
 </html>

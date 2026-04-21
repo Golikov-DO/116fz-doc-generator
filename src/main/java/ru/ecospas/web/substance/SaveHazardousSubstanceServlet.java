@@ -73,7 +73,16 @@ public class SaveHazardousSubstanceServlet extends BaseServlet {
                 valueService.save(entity);
             }
 
-            resp.sendRedirect("/hazardous-substance?id=" + substance.getId());
+            // Build redirect URL
+            String backUrl = req.getParameter("backUrl");
+
+            if (backUrl != null && !backUrl.isEmpty()) {
+                resp.sendRedirect(backUrl);
+                return;
+            }
+
+            // fallback
+            resp.sendRedirect("/objects?mode=edit");
 
         } catch (Exception e) {
             getServletContext().log("Error saving Hazardous Substance", e);

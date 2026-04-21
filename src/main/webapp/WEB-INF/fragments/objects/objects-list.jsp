@@ -40,7 +40,7 @@
                     <td>
                         <div style="display: flex; gap: 8px;">
                             <%-- View object button --%>
-                            <form method="get" action="objects">
+                            <form method="get" action="<%=""%>objects">
                                 <input type="hidden" name="mode" value="view">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="id" value="<%= obj.getId() %>">
@@ -48,7 +48,7 @@
                             </form>
 
                             <%-- Edit object button --%>
-                            <form method="get" action="objects">
+                            <form method="get" action="<%=""%>objects">
                                 <input type="hidden" name="mode" value="edit">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="id" value="<%= obj.getId() %>">
@@ -56,7 +56,7 @@
                             </form>
 
                             <%-- Develop a plan button --%>
-                                <form method="post" action="generate-plan"
+                                <form method="post" action="<%=""%>generate-plan"
                                       style="margin:0;"
                                       onsubmit="return generatePlan(this);">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
@@ -66,7 +66,7 @@
                             </form>
 
                             <%-- Download plan button --%>
-                            <form method="get" action="download-plan" style="margin:0;">
+                            <form method="get" action="<%=""%>download-plan" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <button title="Скачать">
                                     <i class="fa fa-download"></i>
@@ -74,7 +74,7 @@
                             </form>
 
                             <%-- Delete object button --%>
-                            <form method="post" action="delete-object" style="margin:0;">
+                            <form method="post" action="<%=""%>delete-object" style="margin:0;">
                                 <input type="hidden" name="objectId" value="<%= obj.getId() %>">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="returnUrl" value="objects?orgId=<%= orgId %>">
@@ -97,7 +97,7 @@
             </table>
 
             <div class="mt-20">
-                <form method="get" action="objects">
+                <form method="get" action="<%=""%>objects">
                     <input type="hidden" name="mode" value="add">
                     <input type="hidden" name="orgId" value="<%= orgId %>">
                     <button type="submit" class="btn">Добавить объект</button>

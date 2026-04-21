@@ -3,6 +3,8 @@ package ru.ecospas.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,4 +50,8 @@ public class ObjectModel implements BaseEntity {
     @Column(name = "department_gochs_city")
     private String departmentGoChsCity;
     private boolean emergencyCommission;
+
+    // Arrival time of the ASF unit
+    @Column(columnDefinition = "time")
+    private LocalTime arrivalTime;
 }

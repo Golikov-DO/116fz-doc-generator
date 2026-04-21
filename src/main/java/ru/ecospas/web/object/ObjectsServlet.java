@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -52,6 +53,9 @@ public class ObjectsServlet extends BaseServlet {
             ParentService<ReferenceHazardousSubstance> substanceService = services.getParentService(ReferenceHazardousSubstance.class);
             req.setAttribute("substances", substanceService.getMany());
 
+            ParentService<Scenario> scenarioService = services.getParentService(Scenario.class);
+            req.setAttribute("scenarios", scenarioService.getMany());
+
             ParentService<ObjectType> typeService = services.getParentService(ObjectType.class);
             req.setAttribute("types", typeService.getMany());
 
@@ -98,6 +102,8 @@ public class ObjectsServlet extends BaseServlet {
                             .getManyByParentId(objectId);
                     List<ObjectStructure> structureList = services.getChildService(ObjectStructure.class)
                             .getManyByParentId(objectId);
+                    ChildService<ObjectScenario> scenariosService =
+                            services.getChildService(ObjectScenario.class);
                     List<ObjectTechnologicalBlock> technoBlockList = services.getChildService(ObjectTechnologicalBlock.class)
                             .getManyByParentId(objectId);
                     List<ObjectPersonsResponsible> personsResponseList = services.getChildService(ObjectPersonsResponsible.class)

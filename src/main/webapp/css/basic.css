@@ -142,6 +142,13 @@ textarea.auto-resize {
     margin-bottom: 6px;
 }
 
+.form-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
 .form-grid-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -163,6 +170,13 @@ textarea.auto-resize {
     align-items: center;
 }
 
+.form-grid-3-asf {
+    display: grid;
+    grid-template-columns:  1fr 1fr 200px;
+    gap: 10px;
+    align-items: center;
+}
+
 .form-grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -175,6 +189,12 @@ textarea.auto-resize {
     gap: 10px;
     margin-bottom: 10px;
     align-items: center;
+}
+
+.form-grid-2-time {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 10px;
 }
 
 .form-grid-2-del > div:last-child,

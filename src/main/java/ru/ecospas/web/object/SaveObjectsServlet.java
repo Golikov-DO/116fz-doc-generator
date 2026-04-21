@@ -37,6 +37,8 @@ public class SaveObjectsServlet extends BaseServlet {
     private ChildService<ObjectTechnologicalBlock> technoBlockService;
     private ChildService<ObjectPersonsResponsible> personsResponsibleService;
     private ChildService<ObjectImage> imageService;
+    private ChildService<ObjectScenario> scenarioServiceChild;
+    private ParentService<Scenario> scenarioService;
 
     @Override
     public void init() {
@@ -61,6 +63,8 @@ public class SaveObjectsServlet extends BaseServlet {
         technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
         personsResponsibleService = services.getChildService(ObjectPersonsResponsible.class);
         imageService = services.getChildService(ObjectImage.class);
+        scenarioServiceChild = services.getChildService(ObjectScenario.class);
+        scenarioService = services.getParentService(Scenario.class);
     }
 
     @Override
@@ -152,10 +156,6 @@ public class SaveObjectsServlet extends BaseServlet {
                     ObjectStructure::getId,
                     structureService::deleteById
             );
-            for (ObjectStructure structure : structureList) {
-                structure.setObject(object);
-                structureService.save(structure);
-            }
 
             List<ObjectTechnologicalBlock> technoBlockList = saveHelper.mapTechnoBlockList(req);
             List<ObjectTechnologicalBlock> oldBlockList = technoBlockService.getManyByParentId(objectIdValue);
@@ -163,9 +163,28 @@ public class SaveObjectsServlet extends BaseServlet {
                     ObjectTechnologicalBlock::getId,
                     technoBlockService::deleteById
             );
-            for (ObjectTechnologicalBlock technoBlock : technoBlockList) {
-                technoBlock.setObject(object);
-                technoBlockService.save(technoBlock);
+            for (int i = 0; i < structureList.size(); i++) {
+                ObjectStructure structure = structureList.get(i);
+
+                structure.setObject(object);
+                structureService.save(structure);
+                // === SCENARIOS ===
+                List<ObjectScenario> newScenarios =
+                        saveHelper.mapScenarios(req, structure, scenarioService, i);
+
+                List<ObjectScenario> oldScenarios =
+                        scenarioServiceChild.getManyByParentId(structure.getId());
+
+                SyncListUtils.syncList(
+                        newScenarios,
+                        oldScenarios,
+                        ObjectScenario::getId,
+                        scenarioServiceChild::deleteById
+                );
+
+                for (ObjectScenario sc : newScenarios) {
+                    scenarioServiceChild.save(sc);
+                }
             }
 
             List<ObjectPersonsResponsible> personsResponsiblesList = saveHelper.mapPersonsResponseList(req);

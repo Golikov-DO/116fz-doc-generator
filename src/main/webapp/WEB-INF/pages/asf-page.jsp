@@ -23,7 +23,7 @@
         <h1><%= pageTitle %></h1>
     </div>
 
-    <form action="save-asf" method="post" id="asfForm">
+    <form action="<%=""%>save-asf" method="post" id="asfForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="asfId" value="<%= asfId != null ? asfId : "" %>">
         <input type="hidden" name="returnOrgId" value="<%= request.getAttribute("returnOrgId") != null ? request.getAttribute("returnOrgId") : "" %>">
