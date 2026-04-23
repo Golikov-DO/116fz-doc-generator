@@ -15,13 +15,12 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
 @SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
-public class SaveObjectsServlet extends BaseServlet {
+public class SaveObjectServlet extends BaseServlet {
 
     private ObjectSaveHelper saveHelper;
 
     private ChildService<ObjectModel> objectService;
 
-    private ParentService<Organization> orgService;
     private ParentService<ReferenceCity> cityService;
     private ParentService<Asf> asfService;
     private ParentService<ReferenceHazardousSubstance> substanceService;
@@ -45,7 +44,6 @@ public class SaveObjectsServlet extends BaseServlet {
         super.init();
         saveHelper = new ObjectSaveHelper();
 
-        orgService = services.getParentService(Organization.class);
         cityService = services.getParentService(ReferenceCity.class);
         asfService = services.getParentService(Asf.class);
         substanceService = services.getParentService(ReferenceHazardousSubstance.class);
@@ -70,22 +68,37 @@ public class SaveObjectsServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            String orgIdParam = req.getParameter("orgId");
             int objectId = paramInt(req, "objectId");
 
-            int orgId = orgIdParam != null && !orgIdParam.isEmpty() ? Integer.parseInt(orgIdParam) : 0;
+            ObjectModel object;
+            Organization organization;
+            int orgId;
 
-            if (orgId == 0) throw new ServletException("orgId is required");
+            if (objectId > 0) {
 
-            Organization organization = orgService.getOneById(orgId);
-            if (organization == null) {
-                throw new ServletException("Организация с id: " + orgId + " не найдена!");
-            }
+                object = objectParentService.getOneById(objectId);
 
-            ObjectModel object = objectParentService.getOneById(objectId);
+                if (object == null) {
+                    resp.sendError(404);
+                    return;
+                }
 
-            if (object == null) {
-                throw new ServletException("Объект с id: " + objectId + " не найден в базе!");
+                if (requireAccess(req, resp, object.getOrganization().getId()) == null) return;
+
+                organization = object.getOrganization();
+                orgId = organization.getId();
+
+            } else {
+
+                orgId = paramInt(req, "orgId");
+
+                if (orgId == 0) throw new ServletException("orgId is required");
+
+                organization = requireAccess(req, resp, orgId);
+                if (organization == null) return;
+
+                object = new ObjectModel();
+                object.setOrganization(organization);
             }
 
             Integer objectIdValue = object.getId();
@@ -156,13 +169,6 @@ public class SaveObjectsServlet extends BaseServlet {
                     ObjectStructure::getId,
                     structureService::deleteById
             );
-
-            List<ObjectTechnologicalBlock> technoBlockList = saveHelper.mapTechnoBlockList(req);
-            List<ObjectTechnologicalBlock> oldBlockList = technoBlockService.getManyByParentId(objectIdValue);
-            SyncListUtils.syncList(technoBlockList, oldBlockList,
-                    ObjectTechnologicalBlock::getId,
-                    technoBlockService::deleteById
-            );
             for (int i = 0; i < structureList.size(); i++) {
                 ObjectStructure structure = structureList.get(i);
 
@@ -185,6 +191,17 @@ public class SaveObjectsServlet extends BaseServlet {
                 for (ObjectScenario sc : newScenarios) {
                     scenarioServiceChild.save(sc);
                 }
+            }
+
+            List<ObjectTechnologicalBlock> technoBlockList = saveHelper.mapTechnoBlockList(req);
+            List<ObjectTechnologicalBlock> oldBlockList = technoBlockService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(technoBlockList, oldBlockList,
+                    ObjectTechnologicalBlock::getId,
+                    technoBlockService::deleteById
+            );
+            for (ObjectTechnologicalBlock block : technoBlockList) {
+                block.setObject(object);
+                technoBlockService.save(block);
             }
 
             List<ObjectPersonsResponsible> personsResponsiblesList = saveHelper.mapPersonsResponseList(req);
@@ -216,7 +233,7 @@ public class SaveObjectsServlet extends BaseServlet {
             balance.setObject(object);
             balanceService.save(balance);
 
-            resp.sendRedirect("objects?mode=view&orgId=" + orgId + "&id=" + objectIdValue);
+            resp.sendRedirect("object?mode=view&orgId=" + orgId + "&id=" + objectIdValue);
         } catch (Exception e) {
             getServletContext().log("Error saving Object", e);
             throw new ServletException("Error saving Object", e);

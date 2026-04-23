@@ -1,6 +1,6 @@
 package ru.ecospas.word.factory;
+
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
@@ -10,9 +10,9 @@ import ru.ecospas.word.blocks.table.TableColumn;
 import ru.ecospas.word.blocks.table.TableRow;
 import ru.ecospas.word.blocks.table.TableSchema;
 import ru.ecospas.word.blocks.text.TextBlock;
-
 import ru.ecospas.word.layout.ContactTableLayoutService;
 import ru.ecospas.word.layout.HazardTableLayoutService;
+import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.word.strategy.PlaceholderFillStrategy;
 
 import java.sql.SQLException;
@@ -91,12 +91,16 @@ public class UnifiedBlockFactory {
             }
 
             // 2. List Processing
-
             if (value instanceof List<?> list && !list.isEmpty()) {
                 Object first = list.getFirst();
 
                 if (first instanceof String[]) {
-                    blocks.add(createTableBlock(key, (List<String[]>) list));
+                    List<String[]> tableData = new ArrayList<>();
+                    for (Object obj : list) {
+                        tableData.add((String[]) obj);
+                    }
+                    blocks.add(createTableBlock(key, tableData));
+
                 } else if (first instanceof byte[]) {
                     blocks.add(new ImageBlock(key, value, resolvePictureType(key)));
                 }

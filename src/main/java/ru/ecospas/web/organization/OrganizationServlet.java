@@ -3,6 +3,8 @@ package ru.ecospas.web.organization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 import ru.ecospas.web.helper.DataLoader.OrganizationData;
@@ -13,6 +15,7 @@ import java.io.IOException;
 public class OrganizationServlet extends BaseServlet {
 
     private DataLoader dataLoader;
+    private final SecurityService securityService = new SecurityService();
 
     @Override
     public void init() {
@@ -40,12 +43,21 @@ public class OrganizationServlet extends BaseServlet {
             if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
                 int id = Integer.parseInt(orgId);
 
+                Organization orgCheck = services
+                        .getParentService(Organization.class)
+                        .getOneById(id);
+
+                if (requireAccess(req, resp, id) == null) return;
+
                 OrganizationData data = dataLoader.loadOrganization(id);
 
                 req.setAttribute("organization", data.org());
                 req.setAttribute("address", data.addr());
                 req.setAttribute("signer", data.signer());
                 req.setAttribute("contacts", data.contacts());
+            }
+            else {
+                req.setAttribute("organization", new Organization());
             }
 
         } catch (Exception e) {

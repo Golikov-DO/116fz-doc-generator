@@ -7,8 +7,8 @@ import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 
-import static ru.ecospas.web.util.RequestUtils.paramInt;
 import static ru.ecospas.web.util.RequestUtils.param;
+import static ru.ecospas.web.util.RequestUtils.paramInt;
 
 @SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class ObjectTypeServlet extends BaseServlet {

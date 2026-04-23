@@ -1,6 +1,5 @@
 package ru.ecospas.word.factory;
 
-import org.xlsx4j.sml.Col;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
@@ -9,7 +8,6 @@ import ru.ecospas.domain.util.Collect;
 import ru.ecospas.domain.util.ObjectTechnicalDescriptionFormatter;
 import ru.ecospas.domain.util.SubscriptUtils;
 import ru.ecospas.web.dto.ScenarioDTO;
-import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 
 import java.sql.SQLException;
 import java.util.*;

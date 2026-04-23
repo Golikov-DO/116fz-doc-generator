@@ -32,6 +32,53 @@ public class DataLoader {
         return new OrganizationData(org, addr, signer, contacts);
     }
 
+    // Object load
+    public ObjectData loadObject(int objectId) {
+
+        ParentService<ObjectModel> objectService = services.getParentService(ObjectModel.class);
+        ObjectModel object = objectService.getOneById(objectId);
+
+        ChildService<ObjectAddress> addressService = services.getChildService(ObjectAddress.class);
+        ObjectAddress address = addressService.getOneByParentId(objectId);
+
+        ChildService<ObjectCompositionKchs> kchsService = services.getChildService(ObjectCompositionKchs.class);
+        List<ObjectCompositionKchs> kchsList = kchsService.getManyByParentId(objectId);
+
+        ChildService<ObjectTechnologicalEquipment> equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
+        List<ObjectTechnologicalEquipment> equipmentList = equipmentService.getManyByParentId(objectId);
+
+        ChildService<ObjectStructure> structureService = services.getChildService(ObjectStructure.class);
+        List<ObjectStructure> structureList = structureService.getManyByParentId(objectId);
+
+        ChildService<ObjectTechnologicalBlock> technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
+        List<ObjectTechnologicalBlock> technoBlockList = technoBlockService.getManyByParentId(objectId);
+
+        ChildService<ObjectPersonsResponsible> personsService = services.getChildService(ObjectPersonsResponsible.class);
+        List<ObjectPersonsResponsible> personsResponseList = personsService.getManyByParentId(objectId);
+
+        ChildService<ObjectImage> imageService = services.getChildService(ObjectImage.class);
+        List<ObjectImage> images = imageService.getManyByParentId(objectId);
+
+        ChildService<ObjectInsurancePolicy> policyService = services.getChildService(ObjectInsurancePolicy.class);
+        ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);
+
+        ChildService<ObjectOrderMinimumBalance> balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
+        ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectId);
+
+        return new ObjectData(
+                object,
+                address,
+                kchsList,
+                equipmentList,
+                structureList,
+                technoBlockList,
+                personsResponseList,
+                images,
+                policy,
+                balance
+        );
+    }
+
     // Objects load
     public List<ObjectModel> loadObjects(int orgId) {
         ChildService<ObjectModel> objService = services.getChildService(ObjectModel.class);
@@ -68,17 +115,39 @@ public class DataLoader {
         ChildService<AsfWorkType> workTypeService = services.getChildService(AsfWorkType.class);
         List<AsfWorkType> workTypes = workTypeService.getManyByParentId(asfId);
 
-        return new AsfData(asf, certificate, deployment, images, personnel, 
-                          specialists, signers, workTypes);
+        return new AsfData(asf, certificate, deployment, images, personnel, specialists, signers, workTypes);
     }
 
     // Data wrapper classes
-    public record OrganizationData(Organization org, OrganizationAddress addr, 
-                                   OrganizationSigner signer, List<OrganizationContact> contacts) {}
+    public record OrganizationData(
+            Organization org,
+            OrganizationAddress addr,
+            OrganizationSigner signer,
+            List<OrganizationContact> contacts) {
+    }
 
-    public record AsfData(Asf asf, AsfCertificate certificate, 
-                          AsfCompositionDeploymentFunds deployment,
-                          List<AsfDocumentImage> images, AsfPersonnel personnel,
-                          AsfSpecialists specialists, List<AsfSigner> signers,
-                          List<AsfWorkType> workTypes) {}
+    public record ObjectData(
+            ObjectModel object,
+            ObjectAddress address,
+            List<ObjectCompositionKchs> kchsList,
+            List<ObjectTechnologicalEquipment> equipmentList,
+            List<ObjectStructure> structureList,
+            List<ObjectTechnologicalBlock> technoBlockList,
+            List<ObjectPersonsResponsible> personsResponseList,
+            List<ObjectImage> images,
+            ObjectInsurancePolicy policy,
+            ObjectOrderMinimumBalance balance
+    ) {
+    }
+
+    public record AsfData(
+            Asf asf,
+            AsfCertificate certificate,
+            AsfCompositionDeploymentFunds deployment,
+            List<AsfDocumentImage> images,
+            AsfPersonnel personnel,
+            AsfSpecialists specialists,
+            List<AsfSigner> signers,
+            List<AsfWorkType> workTypes) {
+    }
 }

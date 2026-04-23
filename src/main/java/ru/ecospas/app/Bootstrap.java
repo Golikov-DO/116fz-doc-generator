@@ -5,7 +5,6 @@ import ru.ecospas.domain.repository.ChildRepository;
 import ru.ecospas.domain.repository.ParentRepository;
 import ru.ecospas.domain.service.ObjectHazardService;
 import ru.ecospas.domain.service.ScenarioNumberService;
-import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.domain.service.WordGenerationService;
 import ru.ecospas.infrastructure.db.repository.GenericHibernateRepository;
 import ru.ecospas.word.blocks.text.TextPlaceholderService;
@@ -15,6 +14,7 @@ import ru.ecospas.word.factory.TableBlockFactory;
 import ru.ecospas.word.factory.UnifiedBlockFactory;
 import ru.ecospas.word.layout.ContactTableLayoutService;
 import ru.ecospas.word.layout.HazardTableLayoutService;
+import ru.ecospas.word.layout.ObjectScenarioTableLayoutService;
 import ru.ecospas.word.pipeline.PipelineConfiguration;
 import ru.ecospas.word.strategy.PlaceholderFillStrategy;
 
@@ -104,11 +104,11 @@ public class Bootstrap {
         );
 
         ContactTableLayoutService contactTableLayoutService = new ContactTableLayoutService(
+                services.getParentService(Organization.class),
                 services.getParentService(ObjectModel.class),
                 services.getParentService(ReferenceEmergencyServices.class),
                 services.getChildService(ObjectRegionalAuthorities.class),
-                services.getChildService(OrganizationContact.class),
-                services.getParentService(Organization.class)
+                services.getChildService(OrganizationContact.class)
         );
 
         ScenarioNumberService scenarioNumberService = new ScenarioNumberService();

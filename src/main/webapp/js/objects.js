@@ -96,13 +96,13 @@ function addTableRow(button, type) {
 
     <td>
         <button type="button" onclick="openScenarioModal(${index}, 'likely')">Вероятные</button>
-        <div id="likely_selected_${index}"></div>
+        <textarea id="likely_selected_${index}" class="auto-resize" readonly></textarea>
         <input type="hidden" name="likely_${index}" id="likely_input_${index}">
     </td>
 
     <td>
         <button type="button" onclick="openScenarioModal(${index}, 'dangerous')">Опасные</button>
-        <div id="dangerous_selected_${index}"></div>
+        <textarea id="dangerous_selected_${index}" class="auto-resize" readonly></textarea>
         <input type="hidden" name="dangerous_${index}" id="dangerous_input_${index}">
     </td>
 
@@ -141,6 +141,27 @@ function addTableRow(button, type) {
 
     table.appendChild(row);
     resizeAllTextareas();
+    initStructureRow(index);
+}
+
+function initStructureRow(index) {
+
+    ['likely', 'dangerous'].forEach(type => {
+
+        const input = document.getElementById(type + '_input_' + index);
+        const textarea = document.getElementById(type + '_selected_' + index);
+        const btn = document.getElementById(type + '_btn_' + index);
+
+        if (!input || !textarea) return;
+
+        textarea.value = '';
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+
+        if (btn) {
+            btn.innerText = 'Добавить сценарии';
+        }
+    });
 }
 
 // loading signatories
@@ -527,6 +548,22 @@ document.addEventListener('change', function (event) {
         .then(r => r.json())
         .then(() => {
             previewImage(block, file);
+
+            const group = block.dataset.group;
+            const template = imageTemplates[group];
+
+            if (!template) return;
+
+            const captionField = block.querySelector(`[name="caption_${group}"]`);
+            const linkField = block.querySelector(`[name="link_${group}"]`);
+
+            if (captionField && !captionField.value.trim()) {
+                captionField.value = template.caption;
+            }
+
+            if (linkField && !linkField.value.trim()) {
+                linkField.value = template.link;
+            }
         });
 });
 
@@ -606,6 +643,25 @@ function handleAddNewOption(select, triggerValue, action) {
 document.addEventListener('input', function (event) {
     handleFormChange(event);
 });
+
+const imageTemplates = {
+    1: {
+        caption: 'План схема ОПО',
+        link: 'Расположение ОПО приведено на рисунке'
+    },
+    2: {
+        caption: 'Схема размещения оборудования на объекте',
+        link: 'Размещение оборудования показано на рисунке'
+    },
+    3: {
+        caption: 'Схема сценариев развития аварий на ОПО с указанием основных причин их возникновения при разгерметизации оборудования',
+        link: 'Схемы сценариев развития аварий с указанием основных причин их возникновения применительно к технологическому оборудованию ОПО приведены на рисунке'
+    },
+    4: {
+        caption: 'Схема взаимодействия и оповещения при возникновении ЧС',
+        link: 'Схема взаимодействия и оповещения ПАСФ при возникновении ЧС приведена на рисунке'
+    }
+};
 
 document.addEventListener('change', function (event) {
 

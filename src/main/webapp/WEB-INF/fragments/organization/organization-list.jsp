@@ -77,8 +77,7 @@
 
             <div class="mt-20">
                 <form method="get" action="<%=""%>organization">
-                    <input type="hidden" name="mode" value="add">
-                    <button type="submit" class="btn">Добавить организацию</button>
+                    <button type="submit">Добавить организацию</button>
                 </form>
             </div>
         </div>

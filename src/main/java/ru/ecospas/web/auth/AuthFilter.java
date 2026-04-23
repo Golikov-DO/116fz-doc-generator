@@ -14,7 +14,7 @@ import java.util.List;
 public class AuthFilter implements Filter {
 
     private static final List<String> ALLOWED_PATHS = List.of(
-            "/", "/login", "/guest",
+            "/login", "/guest",
             "/css/", "/js/", "/images/"
     );
 
@@ -28,6 +28,12 @@ public class AuthFilter implements Filter {
         String path = req.getRequestURI();
         String context = req.getContextPath();
         String relativePath = path.substring(context.length());
+
+        // allow only the main page
+        if (relativePath.equals("/")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // permitted paths
         boolean allowed = ALLOWED_PATHS.stream().anyMatch(relativePath::startsWith);

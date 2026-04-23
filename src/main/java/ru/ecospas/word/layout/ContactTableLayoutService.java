@@ -8,23 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactTableLayoutService {
+    private final ParentService<Organization> organizationService;
     private final ParentService<ObjectModel> objectService;
     private final ParentService<ReferenceEmergencyServices> emergencyService;
     private final ChildService<ObjectRegionalAuthorities> regionalService;
     private final ChildService<OrganizationContact> organizationContactService;
-    private final ParentService<Organization> organizationService;
+
 
     public ContactTableLayoutService(
+            ParentService<Organization> organizationService,
             ParentService<ObjectModel> objectService,
             ParentService<ReferenceEmergencyServices> emergencyService,
             ChildService<ObjectRegionalAuthorities> regionalService,
-            ChildService<OrganizationContact> organizationContactService,
-            ParentService<Organization> organizationService) {
+            ChildService<OrganizationContact> organizationContactService) {
+        this.organizationService = organizationService;
         this.objectService = objectService;
         this.emergencyService = emergencyService;
         this.regionalService = regionalService;
         this.organizationContactService = organizationContactService;
-        this.organizationService = organizationService;
     }
 
     public List<String[]> getContactTableData(int orgId, int objectId) {
@@ -39,7 +40,7 @@ public class ContactTableLayoutService {
         }
 
         // --- Section 2: Regional (6-9) ---
-        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(obj.getId());
+        List<ObjectRegionalAuthorities> regionalList = regionalService.getManyByParentId(obj.getCity().getId());
         for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
             String numStr;
             if (counter == 8) {

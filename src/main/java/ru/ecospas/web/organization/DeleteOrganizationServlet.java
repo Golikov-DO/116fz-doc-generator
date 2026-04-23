@@ -41,6 +41,8 @@ public class DeleteOrganizationServlet extends BaseServlet {
 
             if (orgId == 0) throw new ServletException("orgId is required");
 
+            if (requireAccess(req, resp, orgId) == null) return;
+
             orgDeleteService.delete(orgId);
 
             List<ObjectModel> objects = objectService.getManyByParentId(orgId);

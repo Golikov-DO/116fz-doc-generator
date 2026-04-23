@@ -26,7 +26,20 @@ public class DeleteObjectServlet extends BaseServlet {
 
             if (objectId == 0) throw new ServletException("objectId is required");
 
+            var object = services
+                    .getParentService(ru.ecospas.domain.model.ObjectModel.class)
+                    .getOneById(objectId);
+
+            if (object == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            if (requireAccess(req, resp, object.getOrganization().getId()) == null) return;
+
             String returnUrl = req.getParameter("returnUrl");
+
+            deleteService.delete(objectId);
 
             deleteService.delete(objectId);
 

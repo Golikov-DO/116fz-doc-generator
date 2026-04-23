@@ -58,7 +58,7 @@
                 <label class="form-label" for="object_full_name">Полное наименование</label>
                 <div class="form-field">
                     <input type="text" id="object_full_name" name="object_full_name"
-                           value="<%= object.getObjectFullName() %>" <%= disabled %>>
+                           value="<%= object.getObjectFullName() != null ? object.getObjectFullName() : ""%>" <%= disabled %>>
                 </div>
             </div>
 
@@ -82,12 +82,12 @@
                 </div>
 
                 <div style="display:flex; align-items:end;">
-                    <% if (!isView && object.getType() != null && object.getType().getId() > 0) { %>
+                    <% if (!isView) { %>
                     <button type="button" class="btn"
                             onclick="editType(this)">
                         Редактировать тип
                     </button>
-                    <% } else if (isView && object.getType() != null && object.getType().getId() > 0) { %>
+                    <% } else if (object.getType() != null) { %>
                     <button type="button" class="btn"
                             onclick="viewType(<%= object.getType().getId() %>, this.closest('.card'))">
                         Просмотр типа
@@ -102,9 +102,9 @@
                         <option value="">— выберите —</option>
                         <% if (substances != null) {
                             Integer selectedId = object.getHazardousSubstance() != null ? object.getHazardousSubstance().getId() : null;
-                            for (ReferenceHazardousSubstance s : substances) { %>
-                        <option value="<%= s.getId() %>" <%= Objects.equals(selectedId, s.getId()) ? "selected" : "" %>>
-                            <%= s.getName() %>
+                            for (ReferenceHazardousSubstance substance : substances) { %>
+                        <option value="<%= substance.getId() %>" <%= Objects.equals(selectedId, substance.getId()) ? "selected" : "" %>>
+                            <%= substance.getName() %>
                         </option>
                         <% }
                         } %>
@@ -113,12 +113,12 @@
                 </div>
 
                 <div style="display:flex; align-items:end;">
-                    <% if (!isView && object.getHazardousSubstance() != null && object.getHazardousSubstance().getId() > 0) { %>
+                    <% if (!isView) { %>
                     <button type="button" class="btn"
                             onclick="editHazardousFromSelect(this)">
                         Редактировать вещество
                     </button>
-                    <% } else if (isView && object.getHazardousSubstance() != null && object.getHazardousSubstance().getId() > 0) { %>
+                    <% } else if (object.getHazardousSubstance() != null) { %>
                     <button type="button" class="btn"
                             onclick="viewSubstance(<%= object.getHazardousSubstance().getId() %>, this.closest('.card'))">
                         Просмотр вещества
@@ -209,12 +209,12 @@
 
                             <div style="margin-top: 13px;">
 
-                                <% if (!isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
+                                <% if (!isView) { %>
                                 <button type="button" class="btn"
                                         onclick="openAsfFullPageFromSelect(this.closest('.card'))">
                                     Редактировать АСФ
                                 </button>
-                                <% } else if (isView && object.getAsf() != null && object.getAsf().getId() > 0) { %>
+                                <% } else if (object.getAsf() != null) { %>
                                 <button type="button" class="btn"
                                         onclick="viewAsf(<%= object.getAsf().getId() %>, this.closest('.card'))">
                                     Просмотр АСФ
@@ -339,12 +339,12 @@
                             </select>
                         </div>
                         <div style="display:flex; align-items:end;">
-                            <% if (!isView && object.getCity() != null && object.getCity().getId() > 0) { %>
+                            <% if (!isView) { %>
                             <button type="button" class="btn"
                                     onclick="editRegionFromSelect(this)">
                                 Редактировать район
                             </button>
-                            <% } else if (isView && object.getCity() != null && object.getCity().getId() > 0) { %>
+                            <% } else if (object.getCity() != null) { %>
                             <button type="button" class="btn"
                                     onclick="viewRegion(<%= object.getCity().getId() %>, this.closest('.card'))">
                                 Просмотр района
@@ -712,11 +712,19 @@
 
                     <div class="compact-block" style="grid-template-columns: repeat(2, 1fr);">
 
-                        <% for (int g = 1; g <= 4; g++) { %>
+                        <% for (int g = 1; g <= 4; g++) {
+                            String[] titles = {
+                                    "",
+                                    "План схема ОПО",
+                                    "Схема размещения оборудования на объекте",
+                                    "Схема сценариев развития аварий",
+                                    "Схема взаимодействия и оповещения при возникновении ЧС"
+                            };
+                        %>
 
                         <div class="section">
                             <div class="section-header">
-                                <span>Рисунок <%= g %> <%= (g == 1 || g == 3 || g == 4) ? "(обязательный)" : "" %></span>
+                                <span><%= titles[g] %> <%= (g == 1 || g == 3 || g == 4) ? "(обязательный)" : "" %></span>
                             </div>
 
                             <div class="section-body">

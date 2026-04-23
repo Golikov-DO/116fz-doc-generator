@@ -9,11 +9,22 @@
             Система управления документацией промышленной безопасности
         </p>
 
+        <%
+            Object user = session.getAttribute("user");
+        %>
+
         <div class="actions">
+            <% if (user != null) { %>
+            <a href="<%= request.getContextPath() %>/organizations" class="btn-primary">
+                Перейти в систему
+            </a>
+            <% } else { %>
             <a href="#" class="btn-primary" onclick="openLoginModal(); return false;">
                 Перейти в систему
             </a>
+            <% } %>
         </div>
+
     </div>
 
     <div class="features">

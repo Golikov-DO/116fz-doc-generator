@@ -8,7 +8,7 @@ import ru.ecospas.web.util.RequestIndexContext;
 
 import java.util.List;
 
-import static ru.ecospas.web.util.RequestUtils.*;
+import static ru.ecospas.web.util.RequestUtils.param;
 
 public class RegionalAuthoritiesSaveHelper {
 

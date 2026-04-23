@@ -41,7 +41,15 @@ public class GeneratePlanServlet extends BaseServlet {
 
             // 3. Loading data
             ObjectModel object = services.getParentService(ObjectModel.class).getOneById(objectId);
-            Organization org = services.getParentService(Organization.class).getOneById(object.getOrganization().getId());
+
+            if (object == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            if (requireAccess(req, resp, object.getOrganization().getId()) == null) return;
+
+            Organization org = object.getOrganization();
 
             // 4. Generation
             WordprocessingMLPackage document = context.wordGenerationService().generate(

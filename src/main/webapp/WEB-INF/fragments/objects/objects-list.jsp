@@ -5,7 +5,7 @@
 <%
     @SuppressWarnings("unchecked")
     List<ObjectModel> objects = (List<ObjectModel>) request.getAttribute("objects");
-    String orgId = request.getParameter("orgId");
+    String orgId = (String) request.getAttribute("orgId");
 %>
 
 <div class="section">
@@ -40,7 +40,7 @@
                     <td>
                         <div style="display: flex; gap: 8px;">
                             <%-- View object button --%>
-                            <form method="get" action="<%=""%>objects">
+                            <form method="get" action="<%=""%>object">
                                 <input type="hidden" name="mode" value="view">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="id" value="<%= obj.getId() %>">
@@ -48,7 +48,7 @@
                             </form>
 
                             <%-- Edit object button --%>
-                            <form method="get" action="<%=""%>objects">
+                            <form method="get" action="<%=""%>object">
                                 <input type="hidden" name="mode" value="edit">
                                 <input type="hidden" name="orgId" value="<%= orgId %>">
                                 <input type="hidden" name="id" value="<%= obj.getId() %>">
@@ -97,8 +97,7 @@
             </table>
 
             <div class="mt-20">
-                <form method="get" action="<%=""%>objects">
-                    <input type="hidden" name="mode" value="add">
+                <form method="post" action="<%=""%>create-empty-object">
                     <input type="hidden" name="orgId" value="<%= orgId %>">
                     <button type="submit" class="btn">Добавить объект</button>
                 </form>

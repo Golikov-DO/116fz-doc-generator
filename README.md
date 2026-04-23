@@ -5,8 +5,6 @@
 
 A web application for managing hazardous industrial facilities data and generating documentation automatically.
 
-🌐 **Live Demo:** https://116fz-doc-generator-production.up.railway.app/
-
 ---
 
 ## 🚀 Tech Stack

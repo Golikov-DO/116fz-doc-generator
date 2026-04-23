@@ -7,7 +7,7 @@ import ru.ecospas.infrastructure.config.HibernateConfig;
 
 import java.util.List;
 
-public class OrganizationSecurityService {
+public class SecurityService {
 
     public List<Organization> getOrganizationsForUser(User user) {
 
@@ -25,5 +25,10 @@ public class OrganizationSecurityService {
                     .setParameter("userId", user.getId())
                     .list();
         }
+    }
+
+    public boolean hasAccess(User user, Organization org) {
+        return user.getRole().name().equals("ADMIN") ||
+                org.getUser().getId().equals(user.getId());
     }
 }

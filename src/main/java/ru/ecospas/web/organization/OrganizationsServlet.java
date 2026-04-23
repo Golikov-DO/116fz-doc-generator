@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
-import ru.ecospas.domain.service.OrganizationSecurityService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
 public class OrganizationsServlet extends BaseServlet {
 
-    private final OrganizationSecurityService securityService = new OrganizationSecurityService();
+    private final SecurityService securityService = new SecurityService();
 
     @Override
     public void init() {

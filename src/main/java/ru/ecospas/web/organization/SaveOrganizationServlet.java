@@ -3,10 +3,7 @@ package ru.ecospas.web.organization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.ecospas.domain.model.Organization;
-import ru.ecospas.domain.model.OrganizationAddress;
-import ru.ecospas.domain.model.OrganizationContact;
-import ru.ecospas.domain.model.OrganizationSigner;
+import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
@@ -40,9 +37,14 @@ public class SaveOrganizationServlet extends BaseServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
             int orgId = paramInt(req,"orgId");
+            User currentUser = (User) req.getSession().getAttribute("user");
             Organization org;
-            if (orgId > 0) org = organizationService.getOneById(orgId);
-            else org = new Organization();
+            if (orgId > 0) {
+                org = requireAccess(req, resp, orgId);
+                if (org == null) return;
+            } else org = new Organization();
+
+            org.setUser(currentUser);
 
             saveHelper.mapOrganization(req, org);
             organizationService.save(org);

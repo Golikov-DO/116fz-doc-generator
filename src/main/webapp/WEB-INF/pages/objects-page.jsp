@@ -66,12 +66,14 @@
     <jsp:include page="/WEB-INF/fragments/objects/objects-list.jsp"/>
 
     <div class="form-footer" style="margin-top: 20px;">
-        <button type="button" onclick="history.back()" class="btn">Назад к организациям</button>
+        <a href="<%= request.getContextPath() %>/organizations" class="btn">
+            Назад к организациям
+        </a>
     </div>
 
     <% } else { %>
 
-    <form action="<%=""%>save-objects" method="post" id="objectsForm">
+    <form action="<%=""%>save-object" method="post" id="objectsForm">
         <input type="hidden" name="mode" value="<%= mode %>">
         <input type="hidden" name="orgId" value="<%= orgId != null ? orgId : "" %>">
         <input type="hidden" name="objectId" value="<%= objId %>">
