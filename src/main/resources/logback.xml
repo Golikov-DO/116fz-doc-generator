@@ -1,0 +1,16 @@
+<configuration>
+
+    <logger name="org.docx4j" level="WARN"/>
+    <logger name="org.docx4j.XmlUtils" level="ERROR"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+</configuration>

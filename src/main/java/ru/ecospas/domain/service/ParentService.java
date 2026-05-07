@@ -1,0 +1,29 @@
+package ru.ecospas.domain.service;
+
+import ru.ecospas.domain.repository.ParentRepository;
+import java.util.List;
+
+public class ParentService<T> implements ParentOperations<T> {
+
+    protected final ParentRepository<T> repository;
+
+    public ParentService(ParentRepository<T> repository) {
+        this.repository = repository;
+    }
+
+    public T getOneById(int id) {
+        return repository.findOneById(id);
+    }
+
+    public List<T> getMany() {
+        return repository.findMany();
+    }
+
+    public void save(T entity) {
+        repository.save(entity);
+    }
+
+    public void deleteById(int id) {
+        repository.deleteById(id);
+    }
+}
