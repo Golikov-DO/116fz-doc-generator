@@ -6,6 +6,7 @@ import ru.ecospas.domain.model.OrganizationAddress;
 import ru.ecospas.domain.model.OrganizationContact;
 import ru.ecospas.domain.model.OrganizationSigner;
 import ru.ecospas.web.util.MapListUtils;
+import ru.ecospas.web.util.RequestIndexContext;
 
 import java.util.List;
 
@@ -32,11 +33,12 @@ public class OrganizationSaveHelper {
         signer.setPosition(param(req, "signer_position"));
     }
 
-    public void mapContact(HttpServletRequest req, OrganizationContact contact) {
-        contact.setFullName(param(req, "org_contact_name[]"));
-        contact.setPosition(param(req, "org_contact_position[]"));
-        contact.setPhones(param(req, "org_contact_phone[]"));
-        contact.setAddress(param(req, "org_contact_address[]"));
+    public void mapContact(RequestIndexContext ctx, OrganizationContact contact) {
+        int i = ctx.index;
+        contact.setFullName(param(ctx.req, "org_contact_name[]", i));
+        contact.setPosition(param(ctx.req, "org_contact_position[]", i));
+        contact.setPhones(param(ctx.req, "org_contact_phone[]", i));
+        contact.setAddress(param(ctx.req, "org_contact_address[]", i));
     }
 
     public List<OrganizationContact> mapContacts(HttpServletRequest req) {
@@ -44,7 +46,7 @@ public class OrganizationSaveHelper {
                 req,
                 "contact_id[]",
                 OrganizationContact::new,
-                (ctx, contact) -> mapContact(ctx.req,  contact)
+                this::mapContact
         );
     }
 }

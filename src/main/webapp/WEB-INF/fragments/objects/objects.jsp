@@ -29,6 +29,8 @@
     List<ObjectTechnologicalBlock> technoBlockList = (List<ObjectTechnologicalBlock>) request.getAttribute("technoBlockList");
     @SuppressWarnings("unchecked")
     List<ObjectPersonsResponsible> personsResponseList = (List<ObjectPersonsResponsible>) request.getAttribute("personsResponseList");
+    @SuppressWarnings("unchecked")
+    List<ObjectFireEquipment> fireEquipments = (List<ObjectFireEquipment>) request.getAttribute("fireEquipmentList");
 
     String mode = (String) request.getAttribute("mode");
     boolean isView = "view".equals(mode);
@@ -643,6 +645,63 @@
                 </div>
             </div>
 
+            <!-- FireEquipment -->
+            <div class="collapse-block">
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <span>Первичные средства пожаротушения</span>
+                    <span>▼</span>
+                </div>
+
+                <div class="collapse-content">
+
+                    <table class="form-table">
+                        <thead>
+                        <tr>
+                            <th style="width:60px;">№</th>
+                            <th>Наименование средства</th>
+                            <th>Количество</th>
+                            <th>Место базирования</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <% if (fireEquipments != null) {
+                            for (ObjectFireEquipment fireEquipment : fireEquipments) { %>
+
+                        <tr>
+                            <td>
+                                <input type="hidden" name="fire_equipment_id[]" value="<%= fireEquipment.getId() %>">
+                                <input type="number" aria-label="№" name="fire_equipment_number[]"
+                                       value="<%= fireEquipment.getNumber() %>" <%= disabled %>>
+                            </td>
+                            <td><input type="text" name="fire_equipment_name_product[]" aria-label="Наименование средства"
+                                       value="<%= fireEquipment.getProductName() %>" <%= disabled %>></td>
+                            <td><input type="text" name="fire_equipment_quantity[]" aria-label="Количество"
+                                       value="<%= fireEquipment.getQuantity() != null ? fireEquipment.getQuantity() : "" %>" <%= disabled %>>
+                            </td>
+                            <td><input type="text" name="fire_equipment_location[]" aria-label="Место базирования"
+                                       value="<%= fireEquipment.getLocation() != null ? fireEquipment.getLocation() : "" %>" <%= disabled %>>
+                            </td>
+
+                            <% if (!isView) { %>
+                            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+                            <% } %>
+                        </tr>
+
+                        <% }
+                        } %>
+                        </tbody>
+                    </table>
+
+                    <% if (!isView) { %>
+                    <button type="button" class="btn btn-add" onclick="addTableRow(this, 'fire-equipment')">
+                        Добавить
+                    </button>
+                    <% } %>
+
+                </div>
+            </div>
+
             <!-- Responsible for the plan -->
             <div class="collapse-block">
                 <div class="collapse-header" onclick="toggleCollapse(this)">
@@ -694,7 +753,7 @@
                         </tbody>
                     </table>
 
-                    <button type="button" class="btn btn-add" onclick="addTableRow(this, 'persons_response')">
+                    <button type="button" class="btn btn-add" onclick="addTableRow(this, 'persons-response')">
                         Добавить ответственного
                     </button>
 

@@ -100,6 +100,18 @@ public class ObjectSaveHelper {
         balance.setDate(paramDate(req, "balance_date"));
     }
 
+    public void mapFireEquipment(RequestIndexContext ctx, ObjectFireEquipment fireEquipment) {
+        int i = ctx.index;
+
+        int num = paramInt(ctx.req, "fire_equipment_number[]", i);
+        if (num <= 0) fireEquipment.setNumber(i + 1);
+        else fireEquipment.setNumber(num);
+
+        fireEquipment.setProductName(param(ctx.req, "fire_equipment_name_product[]", i));
+        fireEquipment.setQuantity(param(ctx.req, "fire_equipment_quantity[]", i));
+        fireEquipment.setLocation(param(ctx.req, "fire_equipment_location[]", i));
+    }
+
     public List<ObjectCompositionKchs> mapKchsList(HttpServletRequest req) {
         return MapListUtils.mapList(
                 req,
@@ -142,6 +154,15 @@ public class ObjectSaveHelper {
                 "persons_response_id[]",
                 ObjectPersonsResponsible::new,
                 this::mapPersonsResponse
+        );
+    }
+
+    public List<ObjectFireEquipment> mapFireEquipmentList(HttpServletRequest req) {
+        return MapListUtils.mapList(
+                req,
+                "fire_equipment_id[]",
+                ObjectFireEquipment::new,
+                this::mapFireEquipment
         );
     }
 

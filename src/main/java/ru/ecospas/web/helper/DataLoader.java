@@ -53,6 +53,9 @@ public class DataLoader {
         ChildService<ObjectTechnologicalBlock> technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
         List<ObjectTechnologicalBlock> technoBlockList = technoBlockService.getManyByParentId(objectId);
 
+        ChildService<ObjectFireEquipment> fireEquipmentService = services.getChildService(ObjectFireEquipment.class);
+        List<ObjectFireEquipment> fireEquipmentList = fireEquipmentService.getManyByParentId(objectId);
+
         ChildService<ObjectPersonsResponsible> personsService = services.getChildService(ObjectPersonsResponsible.class);
         List<ObjectPersonsResponsible> personsResponseList = personsService.getManyByParentId(objectId);
 
@@ -72,6 +75,7 @@ public class DataLoader {
                 equipmentList,
                 structureList,
                 technoBlockList,
+                fireEquipmentList,
                 personsResponseList,
                 images,
                 policy,
@@ -133,6 +137,7 @@ public class DataLoader {
             List<ObjectTechnologicalEquipment> equipmentList,
             List<ObjectStructure> structureList,
             List<ObjectTechnologicalBlock> technoBlockList,
+            List<ObjectFireEquipment> fireEquipmentList,
             List<ObjectPersonsResponsible> personsResponseList,
             List<ObjectImage> images,
             ObjectInsurancePolicy policy,

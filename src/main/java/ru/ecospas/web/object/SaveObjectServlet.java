@@ -34,6 +34,7 @@ public class SaveObjectServlet extends BaseServlet {
     private ChildService<ObjectTechnologicalEquipment> equipmentService;
     private ChildService<ObjectStructure> structureService;
     private ChildService<ObjectTechnologicalBlock> technoBlockService;
+    private ChildService<ObjectFireEquipment> fireEquipmentService;
     private ChildService<ObjectPersonsResponsible> personsResponsibleService;
     private ChildService<ObjectImage> imageService;
     private ChildService<ObjectScenario> scenarioServiceChild;
@@ -59,6 +60,7 @@ public class SaveObjectServlet extends BaseServlet {
         equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
         structureService = services.getChildService(ObjectStructure.class);
         technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
+        fireEquipmentService = services.getChildService(ObjectFireEquipment.class);
         personsResponsibleService = services.getChildService(ObjectPersonsResponsible.class);
         imageService = services.getChildService(ObjectImage.class);
         scenarioServiceChild = services.getChildService(ObjectScenario.class);
@@ -134,7 +136,9 @@ public class SaveObjectServlet extends BaseServlet {
                 List<ObjectCompositionKchs> kchsList = saveHelper.mapKchsList(req);
 
                 List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(objectIdValue);
-                SyncListUtils.syncList(kchsList, oldDbList, ObjectCompositionKchs::getId, kchsService::deleteById);
+                SyncListUtils.syncList(kchsList, oldDbList,
+                        ObjectCompositionKchs::getId,
+                        kchsService::deleteById);
 
                 for (ObjectCompositionKchs kchs : kchsList) {
                     kchs.setObject(object);
@@ -143,9 +147,7 @@ public class SaveObjectServlet extends BaseServlet {
             } else {
                 List<ObjectCompositionKchs> oldDbList = kchsService.getManyByParentId(objectIdValue);
                 if (oldDbList != null && !oldDbList.isEmpty()) {
-                    SyncListUtils.syncList(
-                            List.of(),
-                            oldDbList,
+                    SyncListUtils.syncList(List.of(), oldDbList,
                             ObjectCompositionKchs::getId,
                             kchsService::deleteById
                     );
@@ -202,6 +204,17 @@ public class SaveObjectServlet extends BaseServlet {
             for (ObjectTechnologicalBlock block : technoBlockList) {
                 block.setObject(object);
                 technoBlockService.save(block);
+            }
+
+            List<ObjectFireEquipment> fireEquipmentList = saveHelper.mapFireEquipmentList(req);
+            List<ObjectFireEquipment> oldFireEquipmentList = fireEquipmentService.getManyByParentId(objectIdValue);
+            SyncListUtils.syncList(fireEquipmentList, oldFireEquipmentList,
+                    ObjectFireEquipment::getId,
+                    fireEquipmentService::deleteById
+            );
+            for (ObjectFireEquipment fireEquipment : fireEquipmentList) {
+                fireEquipment.setObject(object);
+                fireEquipmentService.save(fireEquipment);
             }
 
             List<ObjectPersonsResponsible> personsResponsiblesList = saveHelper.mapPersonsResponseList(req);

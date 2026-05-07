@@ -58,6 +58,7 @@ public class ObjectServlet extends BaseServlet {
                 req.setAttribute("equipmentList", data.equipmentList());
                 req.setAttribute("structureList", data.structureList());
                 req.setAttribute("technoBlockList", data.technoBlockList());
+                req.setAttribute("fireEquipmentList", data.fireEquipmentList());
                 req.setAttribute("personsResponseList", data.personsResponseList());
                 req.setAttribute("images", data.images());
                 req.setAttribute("policy", data.policy());

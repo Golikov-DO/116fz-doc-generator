@@ -13,7 +13,7 @@ function postRedirect(action, params = {}) {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = key;
-        input.value = value;
+        input.value = String(value);
         form.appendChild(input);
     });
 
@@ -123,7 +123,7 @@ function addTableRow(button, type) {
         `;
     }
 
-    if (type === 'persons_response') {
+    if (type === 'persons-response') {
         row.innerHTML = `
             <td>
                 <input type="hidden" name="persons_response_id[]" value="">
@@ -135,6 +135,19 @@ function addTableRow(button, type) {
             <td>
                 <textarea class="auto-resize" name="persons_response_position[]" rows="1" oninput="autoResize(this)"></textarea>
             </td>
+            <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
+        `;
+    }
+
+    if (type === 'fire-equipment') {
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="fire_equipment_id[]" value="">
+                <input type="number" name="fire_equipment_number[]" value="${index}" min="1">
+            </td>
+            <td><input type="text" name="fire_equipment_name_product[]"></td>
+            <td><input type="text" name="fire_equipment_quantity[]"></td>
+            <td><input type="text" name="fire_equipment_location[]"></td>
             <td class="delete-row" onclick="deleteTableRow(this)">✖</td>
         `;
     }
