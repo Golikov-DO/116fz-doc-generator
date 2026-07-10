@@ -3,24 +3,23 @@ package ru.ecospas.web.organization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
-import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 import ru.ecospas.web.helper.DataLoader.OrganizationData;
 
 import java.io.IOException;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class OrganizationServlet extends BaseServlet {
 
-    private DataLoader dataLoader;
-    private final SecurityService securityService = new SecurityService();
+    private final DataLoader dataLoader;
 
-    @Override
-    public void init() {
-        super.init();
-        dataLoader = new DataLoader(services);
+    public OrganizationServlet(InternalServices services) {
+        super(services);
+        this.dataLoader = new DataLoader(services);
     }
 
     @Override
@@ -42,10 +41,6 @@ public class OrganizationServlet extends BaseServlet {
         try {
             if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
                 int id = Integer.parseInt(orgId);
-
-                Organization orgCheck = services
-                        .getParentService(Organization.class)
-                        .getOneById(id);
 
                 if (requireAccess(req, resp, id) == null) return;
 

@@ -2,6 +2,8 @@ package ru.ecospas.web.organization;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.SecurityService;
@@ -9,14 +11,13 @@ import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class OrganizationsServlet extends BaseServlet {
 
     private final SecurityService securityService = new SecurityService();
 
-    @Override
-    public void init() {
-        super.init();
+    public OrganizationsServlet(InternalServices services) {
+        super(services);
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {

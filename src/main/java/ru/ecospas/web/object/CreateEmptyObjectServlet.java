@@ -3,6 +3,8 @@ package ru.ecospas.web.object;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.service.ChildService;
@@ -10,15 +12,14 @@ import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class CreateEmptyObjectServlet extends BaseServlet {
 
-    private ChildService<ObjectModel> objectService;
+    private final ChildService<ObjectModel> objectService;
 
-    @Override
-    public void init() {
-        super.init();
-        objectService = services.getChildService(ObjectModel.class);
+    public CreateEmptyObjectServlet(InternalServices services) {
+        super(services);
+        this.objectService = services.getChildService(ObjectModel.class);
     }
 
     @Override

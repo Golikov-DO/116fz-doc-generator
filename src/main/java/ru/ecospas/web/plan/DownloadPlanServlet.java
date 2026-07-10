@@ -2,8 +2,12 @@ package ru.ecospas.web.plan;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.domain.util.DocumentPathSet;
 import ru.ecospas.web.BaseServlet;
 
@@ -13,8 +17,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DownloadPlanServlet extends BaseServlet {
+
+    private final ParentService<ObjectModel> objectService;
+    private final ParentService<Organization> organizationService;
+    private final ChildService<ObjectModel> objectChildService;
+
+    public DownloadPlanServlet(InternalServices services) {
+        super(services);
+        this.objectService = services.getParentService(ObjectModel.class);
+        this.organizationService = services.getParentService(Organization.class);
+        this.objectChildService = services.getChildService(ObjectModel.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -25,11 +40,11 @@ public class DownloadPlanServlet extends BaseServlet {
         }
 
         int objectId = Integer.parseInt(objectIdParam);
-        super.init();
-        ObjectModel object = services.getParentService(ObjectModel.class).getOneById(objectId);
-        Organization org = services.getParentService(Organization.class).getOneById(object.getOrganization().getId());
+        ObjectModel object = objectService.getOneById(objectId);
 
-        List<ObjectModel> objects = services.getChildService(ObjectModel.class).getManyByParentId(org.getId());
+        Organization org = organizationService.getOneById(object.getOrganization().getId());
+
+        List<ObjectModel> objects = objectChildService.getManyByParentId(org.getId());
 
         Path path = DocumentPathSet.buildOutputFile(org, object, objects);
         if (!Files.exists(path)) {

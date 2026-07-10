@@ -6,6 +6,8 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfSigner;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.web.BaseServlet;
@@ -15,20 +17,19 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class GetAsfSignersServlet extends BaseServlet {
 
-    private ChildService<AsfSigner> signerService;
+    private final ChildService<AsfSigner> signerService;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(java.time.LocalTime.class,
                     (JsonSerializer<LocalTime>) (src, typeOfSrc, context) ->
                             new JsonPrimitive(src.toString()))
             .create();
 
-    @Override
-    public void init() {
-        super.init();
-        signerService = services.getChildService(AsfSigner.class);
+    public GetAsfSignersServlet(InternalServices services) {
+        super(services);
+        this.signerService = services.getChildService(AsfSigner.class);
     }
 
     @Override

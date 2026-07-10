@@ -3,21 +3,22 @@ package ru.ecospas.web.asf;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.param;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class CreateEmptyAsfServlet extends BaseServlet {
 
-    private ParentService<Asf> asfService;
+    private final ParentService<Asf> asfService;
 
-    @Override
-    public void init() {
-        super.init();
-        asfService = services.getParentService(Asf.class);
+    public CreateEmptyAsfServlet(InternalServices services) {
+        super(services);
+        this.asfService = services.getParentService(Asf.class);
     }
 
     @Override

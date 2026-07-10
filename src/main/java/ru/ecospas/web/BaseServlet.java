@@ -4,7 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.ecospas.app.ApplicationContext;
+import lombok.RequiredArgsConstructor;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
@@ -13,25 +13,14 @@ import ru.ecospas.infrastructure.db.HibernateUtil;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public abstract class BaseServlet extends HttpServlet {
-    protected InternalServices services;
 
-    @Override
-    public void init() {
-        ApplicationContext context = (ApplicationContext) getServletContext()
-                .getAttribute("appContext");
-        this.services = context.internalServices();
-    }
+    protected final InternalServices services;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-        if (!HibernateUtil.isDbAvailable()) {
-            req.getRequestDispatcher("/WEB-INF/views/db-error.jsp")
-                    .forward(req, resp);
-            return;
-        }
 
         super.service(req, resp);
     }

@@ -3,6 +3,8 @@ package ru.ecospas.web.region;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.service.ChildService;
@@ -15,21 +17,18 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveRegionServlet extends BaseServlet {
 
-    private ParentService<ReferenceCity> cityService;
-    private ChildService<ObjectRegionalAuthorities> authoritiesService;
-    private RegionalAuthoritiesSaveHelper saveHelper;
+    private final ParentService<ReferenceCity> cityService;
+    private final ChildService<ObjectRegionalAuthorities> authoritiesService;
+    private final RegionalAuthoritiesSaveHelper saveHelper;
 
-    @Override
-    public void init() {
-        super.init();
-
-        cityService = services.getParentService(ReferenceCity.class);
-        authoritiesService = services.getChildService(ObjectRegionalAuthorities.class);
-
-        saveHelper = new RegionalAuthoritiesSaveHelper();
+    public SaveRegionServlet(InternalServices services) {
+        super(services);
+        this.cityService = services.getParentService(ReferenceCity.class);
+        this.authoritiesService = services.getChildService(ObjectRegionalAuthorities.class);
+        this.saveHelper = new RegionalAuthoritiesSaveHelper();
     }
 
     @Override

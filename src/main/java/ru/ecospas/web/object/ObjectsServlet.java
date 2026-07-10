@@ -2,21 +2,22 @@ package ru.ecospas.web.object;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
+@Component
 public class ObjectsServlet extends BaseServlet {
 
-    private DataLoader dataLoader;
+    private final DataLoader dataLoader;
 
-    @Override
-    public void init() {
-        super.init();
-        dataLoader = new DataLoader(services);
+    public ObjectsServlet(InternalServices services) {
+        super(services);
+        this.dataLoader = new DataLoader(services);
     }
 
     @Override

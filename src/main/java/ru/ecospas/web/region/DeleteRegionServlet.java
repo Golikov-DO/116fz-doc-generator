@@ -3,6 +3,8 @@ package ru.ecospas.web.region;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.model.Role;
@@ -17,17 +19,16 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DeleteRegionServlet extends BaseServlet {
 
-    private ParentService<ReferenceCity> referenceCityService;
-    private ChildService<ObjectRegionalAuthorities> regionService;
+    private final ParentService<ReferenceCity> referenceCityService;
+    private final ChildService<ObjectRegionalAuthorities> regionService;
 
-    @Override
-    public void init() {
-        super.init();
-        referenceCityService = services.getParentService(ReferenceCity.class);
-        regionService = services.getChildService(ObjectRegionalAuthorities.class);
+    public DeleteRegionServlet(InternalServices services) {
+        super(services);
+        this.referenceCityService = services.getParentService(ReferenceCity.class);
+        this.regionService = services.getChildService(ObjectRegionalAuthorities.class);
     }
 
     @Override

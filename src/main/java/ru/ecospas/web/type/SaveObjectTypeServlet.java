@@ -3,6 +3,8 @@ package ru.ecospas.web.type;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
@@ -10,15 +12,14 @@ import ru.ecospas.web.BaseServlet;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveObjectTypeServlet extends BaseServlet {
 
-    private ParentService<ObjectType> objectTypeService;
+    private final ParentService<ObjectType> objectTypeService;
 
-    @Override
-    public void init() {
-        super.init();
-        objectTypeService = services.getParentService(ObjectType.class);
+    public SaveObjectTypeServlet(InternalServices services) {
+        super(services);
+        this.objectTypeService = services.getParentService(ObjectType.class);
     }
 
     @Override

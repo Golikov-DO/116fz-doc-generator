@@ -3,20 +3,21 @@ package ru.ecospas.web.object;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.service.ObjectDeleteService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DeleteObjectServlet extends BaseServlet {
 
-    private ObjectDeleteService deleteService;
+    private final ObjectDeleteService deleteService;
 
-    @Override
-    public void init() {
-        super.init();
-        deleteService = new ObjectDeleteService(services);
+    public DeleteObjectServlet(InternalServices services) {
+        super(services);
+        this.deleteService = new ObjectDeleteService(services);
     }
 
     @Override

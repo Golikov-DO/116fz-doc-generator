@@ -3,6 +3,8 @@ package ru.ecospas.web.object;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
@@ -14,57 +16,53 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveObjectServlet extends BaseServlet {
 
-    private ObjectSaveHelper saveHelper;
+    private final ObjectSaveHelper saveHelper;
 
-    private ChildService<ObjectModel> objectService;
+    private final ChildService<ObjectModel> objectService;
 
-    private ParentService<ReferenceCity> cityService;
-    private ParentService<Asf> asfService;
-    private ParentService<ReferenceHazardousSubstance> substanceService;
-    private ParentService<ObjectModel> objectParentService;
-    private ParentService<ObjectType> typeService;
+    private final ParentService<ReferenceCity> cityService;
+    private final ParentService<Asf> asfService;
+    private final ParentService<ReferenceHazardousSubstance> substanceService;
+    private final ParentService<ObjectModel> objectParentService;
+    private final ParentService<ObjectType> typeService;
 
-    private ChildService<ObjectAddress> addressService;
-    private ChildService<ObjectInsurancePolicy> policyService;
-    private ChildService<ObjectOrderMinimumBalance> balanceService;
-    private ChildService<ObjectCompositionKchs> kchsService;
-    private ChildService<ObjectTechnologicalEquipment> equipmentService;
-    private ChildService<ObjectStructure> structureService;
-    private ChildService<ObjectTechnologicalBlock> technoBlockService;
-    private ChildService<ObjectFireEquipment> fireEquipmentService;
-    private ChildService<ObjectPersonsResponsible> personsResponsibleService;
-    private ChildService<ObjectImage> imageService;
-    private ChildService<ObjectScenario> scenarioServiceChild;
-    private ParentService<Scenario> scenarioService;
+    private final ChildService<ObjectAddress> addressService;
+    private final ChildService<ObjectInsurancePolicy> policyService;
+    private final ChildService<ObjectOrderMinimumBalance> balanceService;
+    private final ChildService<ObjectCompositionKchs> kchsService;
+    private final ChildService<ObjectTechnologicalEquipment> equipmentService;
+    private final ChildService<ObjectStructure> structureService;
+    private final ChildService<ObjectTechnologicalBlock> technoBlockService;
+    private final ChildService<ObjectFireEquipment> fireEquipmentService;
+    private final ChildService<ObjectPersonsResponsible> personsResponsibleService;
+    private final ChildService<ObjectImage> imageService;
+    private final ChildService<ObjectScenario> scenarioServiceChild;
+    private final ParentService<Scenario> scenarioService;
 
-    @Override
-    public void init() {
-        super.init();
-        saveHelper = new ObjectSaveHelper();
-
-        cityService = services.getParentService(ReferenceCity.class);
-        asfService = services.getParentService(Asf.class);
-        substanceService = services.getParentService(ReferenceHazardousSubstance.class);
-        typeService = services.getParentService(ObjectType.class);
-
-        objectService = services.getChildService(ObjectModel.class);
-        objectParentService = services.getParentService(ObjectModel.class);
-
-        addressService = services.getChildService(ObjectAddress.class);
-        policyService = services.getChildService(ObjectInsurancePolicy.class);
-        balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
-        kchsService = services.getChildService(ObjectCompositionKchs.class);
-        equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
-        structureService = services.getChildService(ObjectStructure.class);
-        technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
-        fireEquipmentService = services.getChildService(ObjectFireEquipment.class);
-        personsResponsibleService = services.getChildService(ObjectPersonsResponsible.class);
-        imageService = services.getChildService(ObjectImage.class);
-        scenarioServiceChild = services.getChildService(ObjectScenario.class);
-        scenarioService = services.getParentService(Scenario.class);
+    public SaveObjectServlet(InternalServices services) {
+        super(services);
+        this.saveHelper = new ObjectSaveHelper();
+        this.objectService = services.getChildService(ObjectModel.class);
+        this.cityService = services.getParentService(ReferenceCity.class);
+        this.asfService = services.getParentService(Asf.class);
+        this.substanceService = services.getParentService(ReferenceHazardousSubstance.class);
+        this.objectParentService = services.getParentService(ObjectModel.class);
+        this.typeService = services.getParentService(ObjectType.class);
+        this.addressService = services.getChildService(ObjectAddress.class);
+        this.policyService = services.getChildService(ObjectInsurancePolicy.class);
+        this.balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
+        this.kchsService = services.getChildService(ObjectCompositionKchs.class);
+        this.equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
+        this.structureService = services.getChildService(ObjectStructure.class);
+        this.technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
+        this.fireEquipmentService = services.getChildService(ObjectFireEquipment.class);
+        this.personsResponsibleService = services.getChildService(ObjectPersonsResponsible.class);
+        this.imageService = services.getChildService(ObjectImage.class);
+        this.scenarioServiceChild = services.getChildService(ObjectScenario.class);
+        this.scenarioService = services.getParentService(Scenario.class);
     }
 
     @Override

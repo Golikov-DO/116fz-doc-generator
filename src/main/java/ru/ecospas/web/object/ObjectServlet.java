@@ -3,21 +3,22 @@ package ru.ecospas.web.object;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 
 import java.io.IOException;
 
-@SuppressWarnings("unused")
+@Component
 public class ObjectServlet extends BaseServlet {
 
-    private DataLoader dataLoader;
+    private final DataLoader dataLoader;
 
-    @Override
-    public void init() {
-        super.init();
-        dataLoader = new DataLoader(services);
+    public ObjectServlet(InternalServices services) {
+        super(services);
+        this.dataLoader = new DataLoader(services);
     }
 
     @Override

@@ -3,21 +3,22 @@ package ru.ecospas.web.substance;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.web.BaseServlet;
 
 import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class CreateEmptyHazardousSubstanceServlet extends BaseServlet {
 
-    private ParentService<ReferenceHazardousSubstance> hazardousSubstanceService;
+    private final ParentService<ReferenceHazardousSubstance> hazardousSubstanceService;
 
-    @Override
-    public void init() {
-        super.init();
-        hazardousSubstanceService = services.getParentService(ReferenceHazardousSubstance.class);
+    public CreateEmptyHazardousSubstanceServlet(InternalServices services) {
+        super(services);
+        this.hazardousSubstanceService = services.getParentService(ReferenceHazardousSubstance.class);
     }
 
     @Override

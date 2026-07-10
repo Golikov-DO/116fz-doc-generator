@@ -3,6 +3,8 @@ package ru.ecospas.web.region;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.service.ChildService;
@@ -11,17 +13,16 @@ import ru.ecospas.web.BaseServlet;
 
 import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class CreateEmptyRegionServlet extends BaseServlet {
 
-    private ParentService<ReferenceCity> cityService;
-    private ChildService<ObjectRegionalAuthorities> service;
+    private final ParentService<ReferenceCity> cityService;
+    private final ChildService<ObjectRegionalAuthorities> service;
 
-    @Override
-    public void init() {
-        super.init();
-        cityService = services.getParentService(ReferenceCity.class);
-        service = services.getChildService(ObjectRegionalAuthorities.class);
+    public CreateEmptyRegionServlet(InternalServices services) {
+        super(services);
+        this.cityService = services.getParentService(ReferenceCity.class);
+        this.service = services.getChildService(ObjectRegionalAuthorities.class);
     }
 
     @Override

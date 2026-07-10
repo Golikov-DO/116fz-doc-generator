@@ -1,14 +1,15 @@
 package ru.ecospas.domain.service;
 
-import ru.ecospas.domain.repository.ChildRepository;
+import ru.ecospas.domain.model.BaseEntity;
+import ru.ecospas.domain.repository.BaseRepository;
 
 import java.util.List;
 
-public class ChildService<T> implements ChildOperations<T> {
+public class ChildService<T extends BaseEntity> implements ChildOperations<T> {
 
-    protected final ChildRepository<T> repository;
+    protected final BaseRepository<T> repository;
 
-    public ChildService(ChildRepository<T> repository) {
+    public ChildService(BaseRepository<T> repository) {
         this.repository = repository;
     }
 

@@ -2,19 +2,20 @@ package ru.ecospas.web.asf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.web.BaseServlet;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DeleteAsfImageServlet extends BaseServlet {
 
     private ChildService<AsfDocumentImage> imageService;
 
-    @Override
-    public void init() {
-        super.init();
-        imageService = services.getChildService(AsfDocumentImage.class);
+    public DeleteAsfImageServlet(InternalServices services) {
+        super(services);
+        this.imageService = services.getChildService(AsfDocumentImage.class);
     }
 
     @Override

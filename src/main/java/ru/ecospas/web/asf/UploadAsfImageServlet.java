@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.service.ChildService;
@@ -17,18 +19,17 @@ import java.util.Objects;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 @MultipartConfig
 public class UploadAsfImageServlet extends BaseServlet {
 
-    private ParentService<Asf> asfService;
-    private ChildService<AsfDocumentImage> imageService;
+    private final ParentService<Asf> asfService;
+    private final ChildService<AsfDocumentImage> imageService;
 
-    @Override
-    public void init() {
-        super.init();
-        asfService = services.getParentService(Asf.class);
-        imageService = services.getChildService(AsfDocumentImage.class);
+    public UploadAsfImageServlet(InternalServices services) {
+        super(services);
+        this.asfService = services.getParentService(Asf.class);
+        this.imageService = services.getChildService(AsfDocumentImage.class);
     }
 
     @Override

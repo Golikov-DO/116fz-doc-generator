@@ -3,6 +3,8 @@ package ru.ecospas.web.type;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
@@ -14,15 +16,14 @@ import java.nio.charset.StandardCharsets;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DeleteObjectTypeServlet extends BaseServlet {
 
     private ParentService<ObjectType> objectTypeService;
 
-    @Override
-    public void init() {
-        super.init();
-        objectTypeService = services.getParentService(ObjectType.class);
+    public DeleteObjectTypeServlet(InternalServices services) {
+        super(services);
+        this.objectTypeService = services.getParentService(ObjectType.class);
     }
 
     @Override

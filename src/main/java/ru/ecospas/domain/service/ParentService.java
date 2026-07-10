@@ -1,22 +1,25 @@
 package ru.ecospas.domain.service;
 
-import ru.ecospas.domain.repository.ParentRepository;
+import ru.ecospas.domain.model.BaseEntity;
+import ru.ecospas.domain.repository.BaseRepository;
+
 import java.util.List;
 
-public class ParentService<T> implements ParentOperations<T> {
+public class ParentService<T extends BaseEntity> implements ParentOperations<T> {
 
-    protected final ParentRepository<T> repository;
+    protected final BaseRepository<T> repository;
 
-    public ParentService(ParentRepository<T> repository) {
+    public ParentService(BaseRepository<T> repository) {
         this.repository = repository;
     }
 
     public T getOneById(int id) {
-        return repository.findOneById(id);
+        return repository.findById(id)
+                .orElse(null);
     }
 
     public List<T> getMany() {
-        return repository.findMany();
+        return repository.findAll();
     }
 
     public void save(T entity) {

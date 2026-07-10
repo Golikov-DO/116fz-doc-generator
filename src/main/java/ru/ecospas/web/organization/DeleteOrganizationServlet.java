@@ -3,6 +3,8 @@ package ru.ecospas.web.organization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.service.ChildService;
@@ -15,21 +17,20 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class DeleteOrganizationServlet extends BaseServlet {
 
-    private ParentService<Organization> organizationService;
-    private OrganizationDeleteService orgDeleteService;
-    private ChildService<ObjectModel> objectService;
-    private ObjectDeleteService objectDeleteService;
+    private final ParentService<Organization> organizationService;
+    private final OrganizationDeleteService orgDeleteService;
+    private final ChildService<ObjectModel> objectService;
+    private final ObjectDeleteService objectDeleteService;
 
-    @Override
-    public void init() {
-        super.init();
+    public DeleteOrganizationServlet(InternalServices services) {
+        super(services);
         this.organizationService = services.getParentService(Organization.class);
+        this.orgDeleteService = new OrganizationDeleteService(services);
         this.objectService = services.getChildService(ObjectModel.class);
-        orgDeleteService = new OrganizationDeleteService(services);
-        objectDeleteService = new ObjectDeleteService(services);
+        this.objectDeleteService = new ObjectDeleteService(services);
     }
 
     @Override

@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectImage;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.service.ChildService;
@@ -16,19 +18,17 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 @MultipartConfig
 public class UploadObjectImageServlet extends BaseServlet {
 
-    private ChildService<ObjectImage> imageService;
-    private ParentService<ObjectModel> objectService;
+    private final ChildService<ObjectImage> imageService;
+    private final ParentService<ObjectModel> objectService;
 
-    @Override
-    public void init() {
-        super.init();
-
-        objectService = services.getParentService(ObjectModel.class);
-        imageService = services.getChildService(ObjectImage.class);
+    public UploadObjectImageServlet(InternalServices services) {
+        super(services);
+        this.imageService = services.getChildService(ObjectImage.class);
+        this.objectService = services.getParentService(ObjectModel.class);
     }
 
     @Override

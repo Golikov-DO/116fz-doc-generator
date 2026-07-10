@@ -4,9 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import ru.ecospas.app.ApplicationContext;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.service.WordGenerationService;
 import ru.ecospas.domain.util.DocumentPathSet;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.word.strategy.FillStrategy;
@@ -18,8 +20,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class GeneratePlanServlet extends BaseServlet {
+
+    private final WordGenerationService wordGenerationService;
+
+    public GeneratePlanServlet(InternalServices services, WordGenerationService wordGenerationService) {
+        super(services);
+        this.wordGenerationService = wordGenerationService;
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -32,14 +41,13 @@ public class GeneratePlanServlet extends BaseServlet {
 
         try {
             int objectId = Integer.parseInt(objectIdParam);
-            ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("appContext");
 
-            // 2. Read the template ONCE before the cycle
+            // 1. Read the template ONCE before the cycle
             String templatePath = getServletContext().getRealPath("/WEB-INF/template/tagtemplate.docx");
             if (templatePath == null) throw new IOException("Файл шаблона не найден");
             byte[] template = Files.readAllBytes(Paths.get(templatePath));
 
-            // 3. Loading data
+            // 2. Loading data
             ObjectModel object = services.getParentService(ObjectModel.class).getOneById(objectId);
 
             if (object == null) {
@@ -51,10 +59,12 @@ public class GeneratePlanServlet extends BaseServlet {
 
             Organization org = object.getOrganization();
 
-            // 4. Generation
-            WordprocessingMLPackage document = context.wordGenerationService().generate(
-                    FillStrategy.TAG, template, object.getId()
-            );
+            // 3. Generation
+            WordprocessingMLPackage document = wordGenerationService.generate(
+                            FillStrategy.TAG,
+                            template,
+                            object.getId()
+                    );
 
             List<ObjectModel> objects = services.getChildService(ObjectModel.class)
                     .getManyByParentId(org.getId());

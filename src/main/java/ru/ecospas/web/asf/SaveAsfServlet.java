@@ -3,6 +3,8 @@ package ru.ecospas.web.asf;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
@@ -15,33 +17,29 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveAsfServlet extends BaseServlet {
 
-    private ParentService<Asf> asfService;
-    private ChildService<AsfCertificate> certificateService;
-    private ChildService<AsfPersonnel> personnelService;
-    private ChildService<AsfSpecialists> specialistsService;
-    private ChildService<AsfCompositionDeploymentFunds> deploymentService;
-    private ChildService<AsfSigner> signerService;
-    private ChildService<AsfWorkType> workTypeService;
+    private final ParentService<Asf> asfService;
+    private final ChildService<AsfCertificate> certificateService;
+    private final ChildService<AsfPersonnel> personnelService;
+    private final ChildService<AsfSpecialists> specialistsService;
+    private final ChildService<AsfCompositionDeploymentFunds> deploymentService;
+    private final ChildService<AsfSigner> signerService;
+    private final ChildService<AsfWorkType> workTypeService;
 
-    private AsfSaveHelper saveHelper;
+    private final AsfSaveHelper saveHelper;
 
-    @Override
-    public void init() {
-
-        super.init();
-
-        asfService = services.getParentService(Asf.class);
-
-        certificateService = services.getChildService(AsfCertificate.class);
-        personnelService = services.getChildService(AsfPersonnel.class);
-        specialistsService = services.getChildService(AsfSpecialists.class);
-        deploymentService = services.getChildService(AsfCompositionDeploymentFunds.class);
-        signerService = services.getChildService(AsfSigner.class);
-        workTypeService = services.getChildService(AsfWorkType.class);
-        saveHelper = new AsfSaveHelper();
+    public SaveAsfServlet(InternalServices services) {
+        super(services);
+        this.asfService = services.getParentService(Asf.class);
+        this.certificateService = services.getChildService(AsfCertificate.class);
+        this.personnelService = services.getChildService(AsfPersonnel.class);
+        this.specialistsService = services.getChildService(AsfSpecialists.class);
+        this.deploymentService = services.getChildService(AsfCompositionDeploymentFunds.class);
+        this.signerService = services.getChildService(AsfSigner.class);
+        this.workTypeService = services.getChildService(AsfWorkType.class);
+        this.saveHelper = new AsfSaveHelper();
     }
 
     @Override

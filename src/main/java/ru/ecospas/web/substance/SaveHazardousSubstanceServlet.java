@@ -3,6 +3,8 @@ package ru.ecospas.web.substance;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectHazardousParamValue;
 import ru.ecospas.domain.model.ReferenceHazardousParam;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
@@ -15,20 +17,18 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveHazardousSubstanceServlet extends BaseServlet {
 
-    private ParentService<ReferenceHazardousSubstance> substanceService;
-    private ParentService<ReferenceHazardousParam> paramService;
-    private ChildService<ObjectHazardousParamValue> valueService;
+    private final ParentService<ReferenceHazardousSubstance> substanceService;
+    private final ParentService<ReferenceHazardousParam> paramService;
+    private final ChildService<ObjectHazardousParamValue> valueService;
 
-    @Override
-    public void init() {
-        super.init();
-
-        substanceService = services.getParentService(ReferenceHazardousSubstance.class);
-        paramService = services.getParentService(ReferenceHazardousParam.class);
-        valueService = services.getChildService(ObjectHazardousParamValue.class);
+    public SaveHazardousSubstanceServlet(InternalServices services) {
+        super(services);
+        this.substanceService = services.getParentService(ReferenceHazardousSubstance.class);
+        this.paramService = services.getParentService(ReferenceHazardousParam.class);
+        this.valueService = services.getChildService(ObjectHazardousParamValue.class);
     }
 
     @Override

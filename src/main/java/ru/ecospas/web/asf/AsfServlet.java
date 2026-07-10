@@ -3,6 +3,8 @@ package ru.ecospas.web.asf;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -13,15 +15,14 @@ import java.util.List;
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class AsfServlet extends BaseServlet {
 
-    private DataLoader dataLoader;
+    private final DataLoader dataLoader;
 
-    @Override
-    public void init() {
-        super.init();
-        dataLoader = new DataLoader(services);
+    public AsfServlet(InternalServices services) {
+        super(services);
+        this.dataLoader = new DataLoader(services);
     }
 
     @Override

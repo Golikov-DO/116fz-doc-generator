@@ -3,6 +3,8 @@ package ru.ecospas.web.organization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
@@ -14,23 +16,22 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
 public class SaveOrganizationServlet extends BaseServlet {
 
-    private ParentService<Organization> organizationService;
-    private OrganizationSaveHelper saveHelper;
-    private ChildService<OrganizationAddress> addressService;
-    private ChildService<OrganizationSigner> signerService;
-    private ChildService<OrganizationContact> contactService;
+    private final ParentService<Organization> organizationService;
+    private final OrganizationSaveHelper saveHelper;
+    private final ChildService<OrganizationAddress> addressService;
+    private final ChildService<OrganizationSigner> signerService;
+    private final ChildService<OrganizationContact> contactService;
 
-    @Override
-    public void init() {
-        super.init();
-        organizationService = services.getParentService(Organization.class);
-        saveHelper = new OrganizationSaveHelper();
-        addressService = services.getChildService(OrganizationAddress.class);
-        signerService = services.getChildService(OrganizationSigner.class);
-        contactService = services.getChildService(OrganizationContact.class);
+    public SaveOrganizationServlet(InternalServices services) {
+        super(services);
+        this.organizationService = services.getParentService(Organization.class);
+        this.saveHelper = new OrganizationSaveHelper();
+        this.addressService = services.getChildService(OrganizationAddress.class);
+        this.signerService = services.getChildService(OrganizationSigner.class);
+        this.contactService = services.getChildService(OrganizationContact.class);
     }
 
     @Override
