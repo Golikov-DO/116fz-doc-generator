@@ -1,11 +1,10 @@
 package ru.ecospas.domain.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import ru.ecospas.domain.model.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends BaseRepository<User> {
 
     Optional<User> findByLogin(String login);
 }
