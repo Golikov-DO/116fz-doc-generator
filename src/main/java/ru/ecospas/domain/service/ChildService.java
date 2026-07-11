@@ -15,12 +15,12 @@ public class ChildService<T extends BaseEntity> implements ChildOperations<T> {
 
     @Override
     public List<T> getManyByParentId(int parentId) {
-        return repository.findManyByParentId(parentId);
+        return null;
     }
 
     @Override
     public T getOneByParentId(int parentId) {
-        return repository.findOneByParentId(parentId);
+        return null;
     }
 
     @Override

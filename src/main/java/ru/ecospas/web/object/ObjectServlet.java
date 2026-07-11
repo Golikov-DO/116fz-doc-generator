@@ -4,8 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
-import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.model.ObjectModel;
+import ru.ecospas.domain.repository.*;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -17,9 +17,30 @@ public class ObjectServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public ObjectServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
-        super(services,  securityService);
+    private final AsfRepository asfRepository;
+    private final ReferenceCityRepository cityRepository;
+    private final ReferenceHazardousSubstanceRepository substanceRepository;
+    private final ScenarioRepository scenarioRepository;
+    private final ObjectTypeRepository objectTypeRepository;
+
+    public ObjectServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            DataLoader dataLoader,
+            AsfRepository asfRepository,
+            ReferenceCityRepository cityRepository,
+            ReferenceHazardousSubstanceRepository substanceRepository,
+            ScenarioRepository scenarioRepository,
+            ObjectTypeRepository objectTypeRepository) {
+
+        super(securityService, organizationRepository);
+
         this.dataLoader = dataLoader;
+        this.asfRepository = asfRepository;
+        this.cityRepository = cityRepository;
+        this.substanceRepository = substanceRepository;
+        this.scenarioRepository = scenarioRepository;
+        this.objectTypeRepository = objectTypeRepository;
     }
 
     @Override
@@ -37,11 +58,11 @@ public class ObjectServlet extends BaseServlet {
             orgId = req.getSession().getAttribute("orgId").toString();
         }
 
-        req.setAttribute("asfList", services.getParentService(Asf.class).getMany());
-        req.setAttribute("cities", services.getParentService(ReferenceCity.class).getMany());
-        req.setAttribute("substances", services.getParentService(ReferenceHazardousSubstance.class).getMany());
-        req.setAttribute("scenarios", services.getParentService(Scenario.class).getMany());
-        req.setAttribute("types", services.getParentService(ObjectType.class).getMany());
+        req.setAttribute("asfList", asfRepository.findAll());
+        req.setAttribute("cities", cityRepository.findAll());
+        req.setAttribute("substances", substanceRepository.findAll());
+        req.setAttribute("scenarios", scenarioRepository.findAll());
+        req.setAttribute("types", objectTypeRepository.findAll());
 
         req.setAttribute("mode", mode);
         req.setAttribute("orgId", orgId);

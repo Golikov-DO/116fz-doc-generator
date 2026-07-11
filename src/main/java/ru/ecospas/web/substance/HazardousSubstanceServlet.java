@@ -4,12 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectHazardousParamValue;
 import ru.ecospas.domain.model.ReferenceHazardousParam;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.HazardousSubstanceService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -23,15 +22,15 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class HazardousSubstanceServlet extends BaseServlet {
 
-    private final ParentService<ReferenceHazardousSubstance> substanceService;
-    private final ParentService<ReferenceHazardousParam> paramService;
-    private final ChildService<ObjectHazardousParamValue> valueService;
+    private final HazardousSubstanceService hazardousSubstanceService;
 
-    public HazardousSubstanceServlet(InternalServices services,  SecurityService securityService) {
-        super(services, securityService);
-        this.substanceService = services.getParentService(ReferenceHazardousSubstance.class);
-        this.paramService = services.getParentService(ReferenceHazardousParam.class);
-        this.valueService = services.getChildService(ObjectHazardousParamValue.class);
+    public HazardousSubstanceServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            HazardousSubstanceService hazardousSubstanceService) {
+
+        super(securityService, organizationRepository);
+        this.hazardousSubstanceService = hazardousSubstanceService;
     }
 
     @Override
@@ -39,36 +38,43 @@ public class HazardousSubstanceServlet extends BaseServlet {
             throws ServletException {
 
         try {
+
             int id = paramInt(req, "id");
             String mode = param(req, "mode");
 
-            ReferenceHazardousSubstance substance;
-            List<ObjectHazardousParamValue> values = List.of();
+            ReferenceHazardousSubstance substance =
+                    id > 0
+                            ? hazardousSubstanceService.load(id)
+                            : hazardousSubstanceService.create();
 
-            if (id > 0) {
-                substance = substanceService.getOneById(id);
-                values = valueService.getManyByParentId(id);
-            } else {
-                substance = new ReferenceHazardousSubstance();
-            }
+            List<ReferenceHazardousParam> params =
+                    hazardousSubstanceService.loadParams();
 
-            List<ReferenceHazardousParam> params = paramService.getMany();
+            List<ObjectHazardousParamValue> values =
+                    id > 0
+                            ? hazardousSubstanceService.loadValues(id)
+                            : List.of();
 
             Map<Integer, ObjectHazardousParamValue> valueMap =
-                    values.stream().collect(Collectors.toMap(
-                            paramValue -> paramValue.getParam().getId(),
-                            paramValue -> paramValue
-                    ));
+                    values.stream()
+                            .collect(Collectors.toMap(
+                                    value -> value.getParam().getId(),
+                                    value -> value
+                            ));
 
             req.setAttribute("substance", substance);
             req.setAttribute("params", params);
             req.setAttribute("values", valueMap);
             req.setAttribute("mode", mode);
-            String backUrl = req.getParameter("backUrl");
+            req.setAttribute("backUrl", req.getParameter("backUrl"));
 
-            req.setAttribute("backUrl", backUrl);
-            req.setAttribute("contentPage", "/WEB-INF/pages/hazardous-substance-page.jsp");
-            req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
+            req.setAttribute(
+                    "contentPage",
+                    "/WEB-INF/pages/hazardous-substance-page.jsp"
+            );
+
+            req.getRequestDispatcher("/WEB-INF/layout.jsp")
+                    .forward(req, resp);
 
         } catch (Exception e) {
             getServletContext().log("Error loading hazardous substance", e);

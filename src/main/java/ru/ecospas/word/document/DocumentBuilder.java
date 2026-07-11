@@ -1,11 +1,13 @@
 package ru.ecospas.word.document;
 
+import lombok.RequiredArgsConstructor;
 import org.docx4j.TextUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.P;
 import org.docx4j.wml.Tbl;
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.text.TextBlock;
 import ru.ecospas.word.pipeline.OpenResult;
@@ -14,15 +16,13 @@ import ru.ecospas.word.render.RenderContext;
 import ru.ecospas.word.render.RendererRegistry;
 import ru.ecospas.word.util.HeaderFooterUtil;
 
+@Component
+@RequiredArgsConstructor
 public class DocumentBuilder {
 
     private final RendererRegistry rendererRegistry;
 
-    public DocumentBuilder(RendererRegistry rendererRegistry) {
-        this.rendererRegistry = rendererRegistry;
-    }
-
-    public WordprocessingMLPackage build(OpenResult openResult) throws Exception {
+        public WordprocessingMLPackage build(OpenResult openResult) throws Exception {
         WordprocessingMLPackage document = openResult.getDocument();
         RenderContext context = new RenderContext(document);
         MainDocumentPart mdp = document.getMainDocumentPart();

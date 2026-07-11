@@ -3,9 +3,9 @@ package ru.ecospas.web.object;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -17,8 +17,12 @@ public class ObjectsServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public ObjectsServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
-        super(services, securityService);
+    public ObjectsServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            DataLoader dataLoader) {
+
+        super(securityService, organizationRepository);
         this.dataLoader = dataLoader;
     }
 
@@ -32,7 +36,7 @@ public class ObjectsServlet extends BaseServlet {
 
                 int id = Integer.parseInt(orgId);
 
-                Organization organization = services.getParentService(Organization.class).getOneById(id);
+                Organization organization = organizationRepository.findById(id).orElse(null);
 
                 req.setAttribute("organization", organization);
 

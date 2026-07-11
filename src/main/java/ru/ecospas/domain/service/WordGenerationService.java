@@ -6,6 +6,7 @@ import ru.ecospas.word.pipeline.OpenResult;
 import ru.ecospas.word.pipeline.OpenStrategy;
 import ru.ecospas.word.strategy.FillStrategy;
 
+
 public class WordGenerationService {
 
     private final DocumentBuilder documentBuilder;
@@ -30,13 +31,9 @@ public class WordGenerationService {
 
     private OpenStrategy resolve(FillStrategy strategy) {
 
-        switch (strategy) {
-            case TAG:
-                return tagOpenStrategy;
-            case PLACEHOLDER:
-                return placeholderOpenStrategy;
-            default:
-                throw new IllegalArgumentException("Unknown strategy: " + strategy);
-        }
+        return switch (strategy) {
+            case TAG -> tagOpenStrategy;
+            case PLACEHOLDER -> placeholderOpenStrategy;
+        };
     }
 }

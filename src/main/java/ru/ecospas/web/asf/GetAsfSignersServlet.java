@@ -7,9 +7,9 @@ import com.google.gson.JsonSerializer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfSigner;
-import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.repository.AsfSignerRepository;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.dto.AsfSignerDto;
@@ -21,16 +21,18 @@ import java.util.List;
 @Component
 public class GetAsfSignersServlet extends BaseServlet {
 
-    private final ChildService<AsfSigner> signerService;
+    private final AsfSignerRepository asfSignerRepository;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(java.time.LocalTime.class,
                     (JsonSerializer<LocalTime>) (src, typeOfSrc, context) ->
                             new JsonPrimitive(src.toString()))
             .create();
 
-    public GetAsfSignersServlet(InternalServices services, SecurityService securityService) {
-        super(services, securityService);
-        this.signerService = services.getChildService(AsfSigner.class);
+    public GetAsfSignersServlet(SecurityService securityService,
+                                OrganizationRepository organizationRepository,
+                                AsfSignerRepository asfSignerRepository) {
+        super(securityService, organizationRepository);
+        this.asfSignerRepository = asfSignerRepository;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class GetAsfSignersServlet extends BaseServlet {
 
         try {
             int asfId = Integer.parseInt(asfIdParam);
-            List<AsfSigner> signers = signerService.getManyByParentId(asfId);
+            List<AsfSigner> signers = asfSignerRepository.findAllByAsfId(asfId);
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");

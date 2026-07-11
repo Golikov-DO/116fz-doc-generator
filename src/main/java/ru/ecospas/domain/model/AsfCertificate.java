@@ -19,7 +19,7 @@ public class AsfCertificate implements BaseEntity {
     @EqualsAndHashCode.Include
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "asf_id")
     private Asf asf;
 

@@ -1,6 +1,7 @@
 package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.web.util.MapListUtils;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.param;
 
+@Component
 public class RegionalAuthoritiesSaveHelper {
 
     public void mapCity(HttpServletRequest req, ReferenceCity city) {

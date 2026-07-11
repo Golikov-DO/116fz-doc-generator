@@ -1,31 +1,36 @@
 package ru.ecospas.domain.service;
 
-import ru.ecospas.app.InternalServices;
-import ru.ecospas.domain.model.OrganizationAddress;
-import ru.ecospas.domain.model.OrganizationContact;
-import ru.ecospas.domain.model.OrganizationSigner;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.ecospas.domain.repository.*;
 
+@Service
+@RequiredArgsConstructor
+@Transactional
 public class OrganizationDeleteService {
 
-    private final ChildService<OrganizationAddress> addressService;
-    private final ChildService<OrganizationSigner> signerService;
-    private final ChildService<OrganizationContact> contactService;
+    private final OrganizationRepository organizationRepository;
 
-    public OrganizationDeleteService(InternalServices services) {
-        this.addressService = services.getChildService(OrganizationAddress.class);
-        this.signerService = services.getChildService(OrganizationSigner.class);
-        this.contactService = services.getChildService(OrganizationContact.class);
-    }
+    private final ObjectModelRepository objectRepository;
+    private final ObjectDeleteService objectDeleteService;
+
+    private final OrganizationAddressRepository organizationAddressRepository;
+    private final OrganizationSignerRepository organizationSignerRepository;
+    private final OrganizationContactRepository organizationContactRepository;
 
     public void delete(int orgId) {
 
-        contactService.getManyByParentId(orgId)
-                .forEach(c -> contactService.deleteById(c.getId()));
+        objectRepository.findByOrganizationId(orgId)
+                .forEach(object -> objectDeleteService.delete(object.getId()));
 
-        OrganizationAddress address = addressService.getOneByParentId(orgId);
-        if (address != null) addressService.deleteById(address.getId());
+        organizationContactRepository.deleteAllByOrganizationId(orgId);
 
-        OrganizationSigner signer = signerService.getOneByParentId(orgId);
-        if (signer != null) signerService.deleteById(signer.getId());
+        organizationAddressRepository.findByOrganizationId(orgId)
+                .ifPresent(organizationAddressRepository::delete);
+
+        organizationSignerRepository.deleteAllByOrganizationId(orgId);
+
+        organizationRepository.deleteById(orgId);
     }
 }

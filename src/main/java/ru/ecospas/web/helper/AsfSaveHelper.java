@@ -1,6 +1,7 @@
 package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.web.util.MapListUtils;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.*;
 
+@Component
 public class AsfSaveHelper {
 
     // ASF

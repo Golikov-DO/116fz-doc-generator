@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
-import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -16,11 +16,15 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class CreateEmptyObjectServlet extends BaseServlet {
 
-    private final ChildService<ObjectModel> objectService;
+    private final ObjectModelRepository objectRepository;
 
-    public CreateEmptyObjectServlet(InternalServices services, SecurityService securityService) {
-        super(services,  securityService);
-        this.objectService = services.getChildService(ObjectModel.class);
+    public CreateEmptyObjectServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            ObjectModelRepository objectRepository) {
+
+        super(securityService, organizationRepository);
+        this.objectRepository = objectRepository;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class CreateEmptyObjectServlet extends BaseServlet {
 
             ObjectModel object = new ObjectModel();
             object.setOrganization(organization);
-            objectService.save(object);
+            objectRepository.save(object);
 
             resp.sendRedirect("object?mode=edit&orgId=" + orgId + "&id=" + object.getId());
         } catch (Exception e) {

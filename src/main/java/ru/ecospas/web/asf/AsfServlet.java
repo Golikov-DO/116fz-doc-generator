@@ -4,8 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfDocumentImage;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -21,8 +21,11 @@ public class AsfServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public AsfServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
-        super(services, securityService);
+    public AsfServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            DataLoader dataLoader) {
+        super(securityService, organizationRepository);
         this.dataLoader = dataLoader;
     }
 
@@ -64,8 +67,7 @@ public class AsfServlet extends BaseServlet {
             req.setAttribute("returnOrgId", returnOrgId);
 
             // Load data only for view/edit modes and if ID is present
-            if (("view".equals(mode) || "edit".equals(mode)))
- {
+            if (("view".equals(mode) || "edit".equals(mode))) {
 
                 AsfData data = dataLoader.loadAsf(asfId);
 

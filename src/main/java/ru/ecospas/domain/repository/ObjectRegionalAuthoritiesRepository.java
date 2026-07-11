@@ -2,10 +2,10 @@ package ru.ecospas.domain.repository;
 
 import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ObjectRegionalAuthoritiesRepository
         extends BaseRepository<ObjectRegionalAuthorities> {
 
-    Optional<ObjectRegionalAuthorities> findByObjectCityId(Integer objectCityId);
+    List<ObjectRegionalAuthorities> findAllByObjectCityId(Integer cityId);
 }

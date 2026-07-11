@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.BiFunction;
 
+
 public class UnifiedBlockFactory {
 
     private final TableBlockFactory tableBlockFactory;
@@ -138,7 +139,7 @@ public class UnifiedBlockFactory {
         }
         int orgId = obj.getOrganization().getId();
 
-        putAllIfPresent(result, placeholderFillStrategy.build(orgId, objectId));
+        putAllIfPresent(result, placeholderFillStrategy.build(objectId));
         putAllIfPresent(result, tableBlockFactory.build(objectId));
         putAllIfPresent(result, listBlockFactory.build(objectId));
         putAllIfPresent(result, imageBlockFactory.build(objectId));

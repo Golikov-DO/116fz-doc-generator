@@ -1,8 +1,10 @@
 package ru.ecospas.word.layout;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ObjectHazardService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.service.HazardousSubstanceQueryService;
 import ru.ecospas.web.dto.HazardParamDto;
 
 import java.util.ArrayList;
@@ -14,25 +16,26 @@ import java.util.stream.Collectors;
 import static ru.ecospas.word.util.LayoutUtil.calcLines;
 import static ru.ecospas.word.util.LayoutUtil.rootSection;
 
+@Service
+@RequiredArgsConstructor
 public class HazardTableLayoutService {
-    private final ParentService<ObjectModel> objectService;
-    private final ObjectHazardService objectHazardService;
+
     private static final int NAME_LIMIT = 26;
     private static final int VALUE_LIMIT = 20;
     private static final int SECTION_LIMIT = 5;
 
-    public HazardTableLayoutService(
-            ParentService<ObjectModel> objectService,
-            ObjectHazardService objectHazardService) {
-        this.objectService = objectService;
-        this.objectHazardService = objectHazardService;
-    }
+    private final ObjectModelRepository objectRepository;
+    private final HazardousSubstanceQueryService hazardousSubstanceQueryService;
 
     public List<String[]> getHazardTableData(int objectId) {
 
-        ObjectModel obj = objectService.getOneById(objectId);
+        ObjectModel obj = objectRepository.findById(objectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Object not found: " + objectId));
 
-        List<HazardParamDto> params = objectHazardService.getHazardParamsWithValues(
+        List<HazardParamDto> params =
+                hazardousSubstanceQueryService.getHazardParamsWithValues(
                         obj.getHazardousSubstance().getId()
                 );
 

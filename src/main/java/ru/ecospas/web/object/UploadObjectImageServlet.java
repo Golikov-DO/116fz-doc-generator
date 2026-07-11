@@ -6,11 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectImage;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectImageRepository;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -23,13 +23,17 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @MultipartConfig
 public class UploadObjectImageServlet extends BaseServlet {
 
-    private final ChildService<ObjectImage> imageService;
-    private final ParentService<ObjectModel> objectService;
+    private final ObjectImageRepository imageRepository;
+    private final ObjectModelRepository objectRepository;
 
-    public UploadObjectImageServlet(InternalServices services, SecurityService securityService) {
-        super(services, securityService);
-        this.imageService = services.getChildService(ObjectImage.class);
-        this.objectService = services.getParentService(ObjectModel.class);
+    public UploadObjectImageServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            ObjectImageRepository imageRepository,
+            ObjectModelRepository objectRepository) {
+        super(securityService, organizationRepository);
+        this.imageRepository = imageRepository;
+        this.objectRepository = objectRepository;
     }
 
     @Override
@@ -44,9 +48,20 @@ public class UploadObjectImageServlet extends BaseServlet {
 
             byte[] data = filePart.getInputStream().readAllBytes();
 
-            ObjectModel object = objectService.getOneById(objectId);
+            ObjectModel object = objectRepository
+                    .findById(objectId)
+                    .orElse(null);
 
-            List<ObjectImage> images = imageService.getManyByParentId(objectId);
+            if (object == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            if (requireAccess(req, resp, object.getOrganization().getId()) == null) {
+                return;
+            }
+
+            List<ObjectImage> images = imageRepository.findAllByObjectId(objectId);
 
             // Looking for an existing one (1 picture per group!)
             ObjectImage image = images.stream()
@@ -62,7 +77,7 @@ public class UploadObjectImageServlet extends BaseServlet {
 
             image.setImageBlob(data);
 
-            imageService.save(image);
+            imageRepository.save(image);
 
             resp.setContentType("application/json");
             resp.getWriter().write("{\"id\":" + image.getId() + "}");

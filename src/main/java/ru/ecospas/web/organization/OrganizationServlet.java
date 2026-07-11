@@ -4,8 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -18,8 +18,11 @@ public class OrganizationServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public OrganizationServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
-        super(services, securityService);
+    public OrganizationServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            DataLoader dataLoader) {
+        super(securityService, organizationRepository);
         this.dataLoader = dataLoader;
     }
 
@@ -51,8 +54,7 @@ public class OrganizationServlet extends BaseServlet {
                 req.setAttribute("address", data.addr());
                 req.setAttribute("signer", data.signer());
                 req.setAttribute("contacts", data.contacts());
-            }
-            else {
+            } else {
                 req.setAttribute("organization", new Organization());
             }
 

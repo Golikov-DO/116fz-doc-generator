@@ -1,6 +1,7 @@
 package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.OrganizationAddress;
 import ru.ecospas.domain.model.OrganizationContact;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.*;
 
+@Component
 public class OrganizationSaveHelper {
     public void mapOrganization(HttpServletRequest req, Organization org) {
         org.setOrganizationName(param(req, "organization_full_name"));

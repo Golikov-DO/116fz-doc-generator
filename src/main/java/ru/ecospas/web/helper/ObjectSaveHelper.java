@@ -1,8 +1,9 @@
 package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.web.util.MapListUtils;
 import ru.ecospas.web.util.RequestIndexContext;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.*;
 
+@Component
 public class ObjectSaveHelper {
     public void mapObject(HttpServletRequest req, ObjectModel object) {
         object.setObjectFullName(param(req, "object_full_name"));
@@ -190,17 +192,31 @@ public class ObjectSaveHelper {
     public List<ObjectScenario> mapScenarios(
             HttpServletRequest req,
             ObjectStructure structure,
-            ParentService<Scenario> scenarioService,
+            ScenarioRepository scenarioRepository,
             int index
     ) {
 
-        // LIKELY
         String likely = param(req, "likely[]", index);
-        List<ObjectScenario> result = new ArrayList<>(parseScenarioList(likely, structure, scenarioService, ScenarioType.LIKELY));
 
-        // DANGEROUS
+        List<ObjectScenario> result = new ArrayList<>(
+                parseScenarioList(
+                        likely,
+                        structure,
+                        scenarioRepository,
+                        ScenarioType.LIKELY
+                )
+        );
+
         String dangerous = param(req, "dangerous[]", index);
-        result.addAll(parseScenarioList(dangerous, structure, scenarioService, ScenarioType.DANGEROUS));
+
+        result.addAll(
+                parseScenarioList(
+                        dangerous,
+                        structure,
+                        scenarioRepository,
+                        ScenarioType.DANGEROUS
+                )
+        );
 
         return result;
     }
@@ -208,21 +224,33 @@ public class ObjectSaveHelper {
     private List<ObjectScenario> parseScenarioList(
             String value,
             ObjectStructure structure,
-            ParentService<Scenario> scenarioService,
+            ScenarioRepository scenarioRepository,
             ScenarioType type
     ) {
+
         List<ObjectScenario> list = new ArrayList<>();
 
-        if (value == null || value.isEmpty()) return list;
+        if (value == null || value.isEmpty()) {
+            return list;
+        }
 
         String[] ids = value.split(",");
 
         for (String idStr : ids) {
+
             int id = Integer.parseInt(idStr);
+
+            Scenario scenario = scenarioRepository
+                    .findById(id)
+                    .orElse(null);
+
+            if (scenario == null) {
+                continue;
+            }
 
             ObjectScenario item = new ObjectScenario();
             item.setStructure(structure);
-            item.setScenario(scenarioService.getOneById(id));
+            item.setScenario(scenario);
             item.setType(type);
 
             list.add(item);

@@ -9,10 +9,4 @@ import java.util.List;
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity>
         extends JpaRepository<T, Integer> {
-
-    Class<T> getDomainClass();
-
-    List<T> findManyByParentId(int parentId);
-
-    T findOneByParentId(int parentId);
 }

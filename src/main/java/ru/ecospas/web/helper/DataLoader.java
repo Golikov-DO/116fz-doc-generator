@@ -1,137 +1,192 @@
 package ru.ecospas.web.helper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.repository.ObjectModelRepository;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.*;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class DataLoader {
 
-    private final InternalServices services;
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationAddressRepository organizationAddressRepository;
+    private final OrganizationContactRepository organizationContactRepository;
+    private final OrganizationSignerRepository organizationSignerRepository;
+
     private final ObjectModelRepository objectRepository;
+    private final ObjectAddressRepository objectAddressRepository;
+    private final ObjectCompositionKchsRepository objectCompositionKchsRepository;
+    private final ObjectTechnologicalEquipmentRepository objectTechnologicalEquipmentRepository;
+    private final ObjectStructureRepository objectStructureRepository;
+    private final ObjectTechnologicalBlockRepository objectTechnologicalBlockRepository;
+    private final ObjectFireEquipmentRepository objectFireEquipmentRepository;
+    private final ObjectPersonsResponsibleRepository objectPersonsResponsibleRepository;
+    private final ObjectImageRepository objectImageRepository;
+    private final ObjectInsurancePolicyRepository objectInsurancePolicyRepository;
+    private final ObjectOrderMinimumBalanceRepository objectOrderMinimumBalanceRepository;
 
-    public DataLoader(InternalServices services, ObjectModelRepository objectRepository) {
-        this.services = services;
-        this.objectRepository = objectRepository;
-    }
+    private final AsfRepository asfRepository;
+    private final AsfCertificateRepository asfCertificateRepository;
+    private final AsfCompositionDeploymentFundsRepository asfCompositionDeploymentFundsRepository;
+    private final AsfDocumentImageRepository asfDocumentImageRepository;
+    private final AsfPersonnelRepository asfPersonnelRepository;
+    private final AsfSpecialistsRepository asfSpecialistsRepository;
+    private final AsfSignerRepository asfSignerRepository;
+    private final AsfWorkTypeRepository asfWorkTypeRepository;
 
-    // Organization load
+    // ------------------------------------------------------------------------
+    // ORGANIZATION
+    // ------------------------------------------------------------------------
+
     public OrganizationData loadOrganization(int orgId) {
-        ParentService<Organization> orgService = services.getParentService(Organization.class);
-        Organization org = orgService.getOneById(orgId);
 
-        ChildService<OrganizationAddress> addrService = services.getChildService(OrganizationAddress.class);
-        OrganizationAddress addr = addrService.getOneByParentId(orgId);
+        Organization organization = organizationRepository
+                .findById(orgId)
+                .orElse(null);
 
-        ChildService<OrganizationSigner> signerService = services.getChildService(OrganizationSigner.class);
-        OrganizationSigner signer = signerService.getOneByParentId(orgId);
+        OrganizationAddress address = organizationAddressRepository
+                .findByOrganizationId(orgId)
+                .orElse(null);
 
-        ChildService<OrganizationContact> contactService = services.getChildService(OrganizationContact.class);
-        List<OrganizationContact> contacts = contactService.getManyByParentId(orgId);
+        OrganizationSigner signer = organizationSignerRepository
+                        .findByOrganizationId(orgId).orElse(null);
 
-        return new OrganizationData(org, addr, signer, contacts);
+
+        List<OrganizationContact> contacts =
+                organizationContactRepository
+                        .findAllByOrganizationId(orgId);
+
+        return new OrganizationData(
+                organization,
+                address,
+                signer,
+                contacts
+        );
     }
 
-    // Object load
+    // ------------------------------------------------------------------------
+    // OBJECTS
+    // ------------------------------------------------------------------------
+
+    public List<ObjectModel> loadObjects(int organizationId) {
+        return objectRepository.findByOrganizationId(organizationId);
+    }
+
+    // ------------------------------------------------------------------------
+    // OBJECT
+    // ------------------------------------------------------------------------
+
     public ObjectData loadObject(int objectId) {
 
-        ParentService<ObjectModel> objectService = services.getParentService(ObjectModel.class);
-        ObjectModel object = objectService.getOneById(objectId);
+        ObjectModel object = objectRepository
+                .findById(objectId)
+                .orElse(null);
 
-        ChildService<ObjectAddress> addressService = services.getChildService(ObjectAddress.class);
-        ObjectAddress address = addressService.getOneByParentId(objectId);
+        ObjectAddress address = objectAddressRepository
+                .findByObjectId(objectId)
+                .orElse(null);
 
-        ChildService<ObjectCompositionKchs> kchsService = services.getChildService(ObjectCompositionKchs.class);
-        List<ObjectCompositionKchs> kchsList = kchsService.getManyByParentId(objectId);
+        List<ObjectCompositionKchs> kchs = objectCompositionKchsRepository
+                        .findAllByObjectId(objectId);
 
-        ChildService<ObjectTechnologicalEquipment> equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
-        List<ObjectTechnologicalEquipment> equipmentList = equipmentService.getManyByParentId(objectId);
+        List<ObjectTechnologicalEquipment> equipment = objectTechnologicalEquipmentRepository
+                        .findAllByObjectId(objectId);
 
-        ChildService<ObjectStructure> structureService = services.getChildService(ObjectStructure.class);
-        List<ObjectStructure> structureList = structureService.getManyByParentId(objectId);
+        List<ObjectStructure> structures = objectStructureRepository
+                        .findAllByObjectId(objectId);
 
-        ChildService<ObjectTechnologicalBlock> technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
-        List<ObjectTechnologicalBlock> technoBlockList = technoBlockService.getManyByParentId(objectId);
+        List<ObjectTechnologicalBlock> blocks = objectTechnologicalBlockRepository
+                        .findAllByObjectId(objectId);
 
-        ChildService<ObjectFireEquipment> fireEquipmentService = services.getChildService(ObjectFireEquipment.class);
-        List<ObjectFireEquipment> fireEquipmentList = fireEquipmentService.getManyByParentId(objectId);
+        List<ObjectFireEquipment> fireEquipment = objectFireEquipmentRepository
+                        .findAllByObjectIdOrderByNumber(objectId);
 
-        ChildService<ObjectPersonsResponsible> personsService = services.getChildService(ObjectPersonsResponsible.class);
-        List<ObjectPersonsResponsible> personsResponseList = personsService.getManyByParentId(objectId);
+        List<ObjectPersonsResponsible> responsible = objectPersonsResponsibleRepository
+                        .findAllByObjectIdOrderByNumber(objectId);
 
-        ChildService<ObjectImage> imageService = services.getChildService(ObjectImage.class);
-        List<ObjectImage> images = imageService.getManyByParentId(objectId);
+        List<ObjectImage> images = objectImageRepository
+                        .findAllByObjectId(objectId);
 
-        ChildService<ObjectInsurancePolicy> policyService = services.getChildService(ObjectInsurancePolicy.class);
-        ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);
+        ObjectInsurancePolicy policy = objectInsurancePolicyRepository
+                        .findByObjectId(objectId)
+                        .orElse(null);
 
-        ChildService<ObjectOrderMinimumBalance> balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
-        ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectId);
+        ObjectOrderMinimumBalance balance = objectOrderMinimumBalanceRepository
+                        .findByObjectId(objectId)
+                        .orElse(null);
 
         return new ObjectData(
                 object,
                 address,
-                kchsList,
-                equipmentList,
-                structureList,
-                technoBlockList,
-                fireEquipmentList,
-                personsResponseList,
+                kchs,
+                equipment,
+                structures,
+                blocks,
+                fireEquipment,
+                responsible,
                 images,
                 policy,
                 balance
         );
     }
+    // ------------------------------------------------------------------------
+    // ASF
+    // ------------------------------------------------------------------------
 
-    // Objects load
-    public List<ObjectModel> loadObjects(int orgId) {
-        return objectRepository.findByOrganizationId(orgId);
-    }
-
-    // ASF load
     public AsfData loadAsf(int asfId) {
-        ParentService<Asf> asfService = services.getParentService(Asf.class);
-        Asf asf = asfService.getOneById(asfId);
 
-        ChildService<AsfCertificate> certService = services.getChildService(AsfCertificate.class);
-        List<AsfCertificate> certificates = certService.getManyByParentId(asfId);
-        AsfCertificate certificate = certificates.isEmpty() ? null : certificates.getFirst();
+        Asf asf = asfRepository
+                .findById(asfId)
+                .orElse(null);
 
-        ChildService<AsfCompositionDeploymentFunds> fundsService = services.getChildService(AsfCompositionDeploymentFunds.class);
-        List<AsfCompositionDeploymentFunds> fundsList = fundsService.getManyByParentId(asfId);
-        AsfCompositionDeploymentFunds deployment = fundsList.isEmpty() ? null : fundsList.getFirst();
+        AsfCertificate certificate = asfCertificateRepository
+                        .findByAsfId(asfId)
+                        .orElse(null);
 
-        ChildService<AsfDocumentImage> imageService = services.getChildService(AsfDocumentImage.class);
-        List<AsfDocumentImage> images = imageService.getManyByParentId(asfId);
+        AsfCompositionDeploymentFunds deployment = asfCompositionDeploymentFundsRepository
+                        .findByAsfId(asfId)
+                        .orElse(null);
 
-        ChildService<AsfPersonnel> personnelService = services.getChildService(AsfPersonnel.class);
-        List<AsfPersonnel> personnelList = personnelService.getManyByParentId(asfId);
-        AsfPersonnel personnel = personnelList.isEmpty() ? null : personnelList.getFirst();
+        List<AsfDocumentImage> images = asfDocumentImageRepository
+                        .findAllByAsfId(asfId);
 
-        ChildService<AsfSpecialists> specialistsService = services.getChildService(AsfSpecialists.class);
-        List<AsfSpecialists> specialistsList = specialistsService.getManyByParentId(asfId);
-        AsfSpecialists specialists = specialistsList.isEmpty() ? null : specialistsList.getFirst();
+        AsfPersonnel personnel = asfPersonnelRepository
+                        .findByAsfId(asfId)
+                        .orElse(null);
 
-        ChildService<AsfSigner> signerService = services.getChildService(AsfSigner.class);
-        List<AsfSigner> signers = signerService.getManyByParentId(asfId);
+        AsfSpecialists specialists = asfSpecialistsRepository
+                        .findByAsfId(asfId)
+                        .orElse(null);
 
-        ChildService<AsfWorkType> workTypeService = services.getChildService(AsfWorkType.class);
-        List<AsfWorkType> workTypes = workTypeService.getManyByParentId(asfId);
+        List<AsfSigner> signers = asfSignerRepository.findAllByAsfId(asfId);
 
-        return new AsfData(asf, certificate, deployment, images, personnel, specialists, signers, workTypes);
+        List<AsfWorkType> workTypes = asfWorkTypeRepository.findAllByAsfId(asfId);
+
+        return new AsfData(
+                asf,
+                certificate,
+                deployment,
+                images,
+                personnel,
+                specialists,
+                signers,
+                workTypes
+        );
     }
 
-    // Data wrapper classes
+    // ------------------------------------------------------------------------
+    // DTO
+    // ------------------------------------------------------------------------
+
     public record OrganizationData(
             Organization org,
             OrganizationAddress addr,
             OrganizationSigner signer,
-            List<OrganizationContact> contacts) {
+            List<OrganizationContact> contacts
+    ) {
     }
 
     public record ObjectData(
@@ -157,6 +212,7 @@ public class DataLoader {
             AsfPersonnel personnel,
             AsfSpecialists specialists,
             List<AsfSigner> signers,
-            List<AsfWorkType> workTypes) {
+            List<AsfWorkType> workTypes
+    ) {
     }
 }

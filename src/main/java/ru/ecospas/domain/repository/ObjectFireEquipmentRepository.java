@@ -2,10 +2,11 @@ package ru.ecospas.domain.repository;
 
 import ru.ecospas.domain.model.ObjectFireEquipment;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ObjectFireEquipmentRepository
         extends BaseRepository<ObjectFireEquipment> {
 
-    Optional<ObjectFireEquipment> findByObjectId(Integer objectId);
+    List<ObjectFireEquipment> findAllByObjectIdOrderByNumber(Integer objectId);
+
 }

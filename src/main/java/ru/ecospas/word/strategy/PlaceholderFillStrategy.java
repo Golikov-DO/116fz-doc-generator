@@ -1,20 +1,21 @@
 package ru.ecospas.word.strategy;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.text.TextPlaceholderService;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
+@RequiredArgsConstructor
 public class PlaceholderFillStrategy {
 
     private final TextPlaceholderService textPlaceholderService;
 
-    public PlaceholderFillStrategy(TextPlaceholderService textPlaceholderService) {
-        this.textPlaceholderService = textPlaceholderService;
-    }
-    public Map<String, Object> build(int orgId, int objectId) throws SQLException {
-        return new HashMap<>(textPlaceholderService.build(orgId, objectId));
+    public Map<String, Object> build(int objectId) throws SQLException {
+        return new HashMap<>(textPlaceholderService.build(objectId));
     }
 }
 

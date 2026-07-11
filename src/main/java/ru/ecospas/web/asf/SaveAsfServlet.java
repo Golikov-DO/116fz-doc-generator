@@ -4,16 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
-import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.model.Asf;
+import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.AsfService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
-import ru.ecospas.web.helper.AsfSaveHelper;
-import ru.ecospas.web.util.SyncListUtils;
-
-import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
@@ -21,108 +16,52 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class SaveAsfServlet extends BaseServlet {
 
-    private final ParentService<Asf> asfService;
-    private final ChildService<AsfCertificate> certificateService;
-    private final ChildService<AsfPersonnel> personnelService;
-    private final ChildService<AsfSpecialists> specialistsService;
-    private final ChildService<AsfCompositionDeploymentFunds> deploymentService;
-    private final ChildService<AsfSigner> signerService;
-    private final ChildService<AsfWorkType> workTypeService;
+    private final AsfService asfService;
 
-    private final AsfSaveHelper saveHelper;
-
-    public SaveAsfServlet(InternalServices services, SecurityService securityService) {
-        super(services, securityService);
-        this.asfService = services.getParentService(Asf.class);
-        this.certificateService = services.getChildService(AsfCertificate.class);
-        this.personnelService = services.getChildService(AsfPersonnel.class);
-        this.specialistsService = services.getChildService(AsfSpecialists.class);
-        this.deploymentService = services.getChildService(AsfCompositionDeploymentFunds.class);
-        this.signerService = services.getChildService(AsfSigner.class);
-        this.workTypeService = services.getChildService(AsfWorkType.class);
-        this.saveHelper = new AsfSaveHelper();
+    public SaveAsfServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            AsfService asfService
+    ) {
+        super(securityService, organizationRepository);
+        this.asfService = asfService;
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException {
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException {
 
         try {
+
             int asfId = paramInt(req, "asfId");
             String returnOrgId = param(req, "returnOrgId");
 
             Asf asf;
 
             if (asfId == 0) {
-                asf = new Asf();
+                asf = asfService.create();
             } else {
-                asf = asfService.getOneById(asfId);
+                asf = asfService.load(asfId);
+
                 if (asf == null) {
-                    throw new ServletException("Asf not found with id: " + asfId);
+                    throw new ServletException(
+                            "Asf not found with id: " + asfId
+                    );
                 }
             }
 
-            saveHelper.mapAsf(req, asf);
-            asfService.save(asf);
-
-            AsfCertificate certificate = certificateService.getOneByParentId(asf.getId());
-            if (certificate == null) certificate = new AsfCertificate();
-            saveHelper.mapCertificate(req, certificate);
-            certificate.setAsf(asf);
-            certificateService.save(certificate);
-
-            AsfPersonnel personnel = personnelService.getOneByParentId(asf.getId());
-            if (personnel == null) personnel = new AsfPersonnel();
-            saveHelper.mapPersonnel(req, personnel);
-            personnel.setAsf(asf);
-            personnelService.save(personnel);
-
-            AsfSpecialists specialists = specialistsService.getOneByParentId(asf.getId());
-            if (specialists == null) specialists = new AsfSpecialists();
-            saveHelper.mapSpecialists(req, specialists);
-            specialists.setAsf(asf);
-            specialistsService.save(specialists);
-
-            AsfCompositionDeploymentFunds deployment = deploymentService.getOneByParentId(asf.getId());
-            if (deployment == null) deployment = new AsfCompositionDeploymentFunds();
-            saveHelper.mapDeployment(req, deployment);
-            deployment.setAsf(asf);
-            deploymentService.save(deployment);
-
-            List<AsfSigner> signers = saveHelper.mapSigners(req);
-            List<AsfSigner> oldSigners = signerService.getManyByParentId(asf.getId());
-
-            SyncListUtils.syncList(
-                    signers,
-                    oldSigners,
-                    AsfSigner::getId,
-                    signerService::deleteById
-            );
-
-            for (AsfSigner signer : signers) {
-                signer.setAsf(asf);
-                signerService.save(signer);
-            }
-
-            List<AsfWorkType> workTypes = saveHelper.mapWorkTypes(req);
-            List<AsfWorkType> oldWorkTypes = workTypeService.getManyByParentId(asf.getId());
-
-            SyncListUtils.syncList(
-                    workTypes,
-                    oldWorkTypes,
-                    AsfWorkType::getId,
-                    workTypeService::deleteById
-            );
-
-            for (AsfWorkType workType : workTypes) {
-                workType.setAsf(asf);
-                workTypeService.save(workType);
-            }
+            asf = asfService.save(req, asf);
 
             if (returnOrgId != null && !returnOrgId.isEmpty()) {
-                resp.sendRedirect("objects?mode=edit&orgId=" + returnOrgId);
+                resp.sendRedirect(
+                        "objects?mode=edit&orgId=" + returnOrgId
+                );
             } else {
-                resp.sendRedirect("asf?mode=view&asfId=" + asf.getId());
+                resp.sendRedirect(
+                        "asf?mode=view&asfId=" + asf.getId()
+                );
             }
 
         } catch (Exception e) {

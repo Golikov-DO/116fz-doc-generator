@@ -4,23 +4,26 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectType;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.ObjectTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
-import static ru.ecospas.web.util.RequestUtils.param;
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
 @Component
 public class SaveObjectTypeServlet extends BaseServlet {
 
-    private final ParentService<ObjectType> objectTypeService;
+    private final ObjectTypeService objectTypeService;
 
-    public SaveObjectTypeServlet(InternalServices services, SecurityService securityService) {
-        super(services, securityService);
-        this.objectTypeService = services.getParentService(ObjectType.class);
+    public SaveObjectTypeServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            ObjectTypeService objectTypeService) {
+
+        super(securityService, organizationRepository);
+        this.objectTypeService = objectTypeService;
     }
 
     @Override
@@ -28,22 +31,19 @@ public class SaveObjectTypeServlet extends BaseServlet {
             throws ServletException {
 
         try {
+
             int id = paramInt(req, "id");
 
             ObjectType objectType;
 
             if (id == 0) {
-                objectType = new ObjectType();
+                objectType = objectTypeService.create();
             } else {
-                objectType = objectTypeService.getOneById(id);
+                objectType = objectTypeService.load(id);
             }
 
-            objectType.setType(param(req, "type"));
-            objectType.setTypeDefinition(param(req, "object_type_definitions"));
-            
-            objectTypeService.save(objectType);
+            objectTypeService.save(req, objectType);
 
-            // Build redirect URL
             String backUrl = req.getParameter("backUrl");
 
             if (backUrl != null && !backUrl.isEmpty()) {
@@ -51,7 +51,6 @@ public class SaveObjectTypeServlet extends BaseServlet {
                 return;
             }
 
-            // fallback
             resp.sendRedirect("/objects?mode=edit");
 
         } catch (Exception e) {

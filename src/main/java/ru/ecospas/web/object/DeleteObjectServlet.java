@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.ObjectDeleteService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -15,10 +17,18 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 public class DeleteObjectServlet extends BaseServlet {
 
     private final ObjectDeleteService deleteService;
+    private final ObjectModelRepository objectRepository;
 
-    public DeleteObjectServlet(InternalServices services, SecurityService securityService) {
-        super(services, securityService);
-        this.deleteService = new ObjectDeleteService(services);
+    public DeleteObjectServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            ObjectModelRepository objectRepository,
+            ObjectDeleteService deleteService) {
+
+        super(securityService, organizationRepository);
+
+        this.objectRepository = objectRepository;
+        this.deleteService = deleteService;
     }
 
     @Override
@@ -28,9 +38,7 @@ public class DeleteObjectServlet extends BaseServlet {
 
             if (objectId == 0) throw new ServletException("objectId is required");
 
-            var object = services
-                    .getParentService(ru.ecospas.domain.model.ObjectModel.class)
-                    .getOneById(objectId);
+            var object = objectRepository.findById(objectId).orElse(null);
 
             if (object == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -40,8 +48,6 @@ public class DeleteObjectServlet extends BaseServlet {
             if (requireAccess(req, resp, object.getOrganization().getId()) == null) return;
 
             String returnUrl = req.getParameter("returnUrl");
-
-            deleteService.delete(objectId);
 
             deleteService.delete(objectId);
 

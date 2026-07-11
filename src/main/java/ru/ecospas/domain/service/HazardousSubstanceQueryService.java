@@ -1,7 +1,11 @@
 package ru.ecospas.domain.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.ObjectHazardousParamValue;
 import ru.ecospas.domain.model.ReferenceHazardousParam;
+import ru.ecospas.domain.repository.ObjectHazardousParamValueRepository;
+import ru.ecospas.domain.repository.ReferenceHazardousParamRepository;
 import ru.ecospas.web.dto.HazardParamDto;
 
 import java.util.List;
@@ -9,25 +13,22 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ObjectHazardService {
+@Service
+@RequiredArgsConstructor
+public class HazardousSubstanceQueryService {
 
-    private final ParentService<ReferenceHazardousParam> paramService;
-    private final ChildService<ObjectHazardousParamValue> valueService;
+    private final ReferenceHazardousParamRepository paramRepository;
+    private final ObjectHazardousParamValueRepository valueRepository;
 
-    public ObjectHazardService(
-            ParentService<ReferenceHazardousParam> paramService,
-            ChildService<ObjectHazardousParamValue> valueService
+    public List<HazardParamDto> getHazardParamsWithValues(
+            Integer substanceId
     ) {
-        this.paramService = paramService;
-        this.valueService = valueService;
-    }
 
-    public List<HazardParamDto> getHazardParamsWithValues(int substanceId) {
-
-        List<ReferenceHazardousParam> params = paramService.getMany();
+        List<ReferenceHazardousParam> params =
+                paramRepository.findAll();
 
         Map<Integer, ObjectHazardousParamValue> values =
-                valueService.getManyByParentId(substanceId)
+                valueRepository.findAllBySubstanceId(substanceId)
                         .stream()
                         .collect(Collectors.toMap(
                                 value -> value.getParam().getId(),
@@ -42,4 +43,3 @@ public class ObjectHazardService {
                 .toList();
     }
 }
-

@@ -4,30 +4,27 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.app.InternalServices;
-import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.model.Organization;
-import ru.ecospas.domain.service.*;
+import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.OrganizationDeleteService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
-
-import java.util.List;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
 @Component
 public class DeleteOrganizationServlet extends BaseServlet {
 
-    private final ParentService<Organization> organizationService;
     private final OrganizationDeleteService orgDeleteService;
-    private final ChildService<ObjectModel> objectService;
-    private final ObjectDeleteService objectDeleteService;
 
-    public DeleteOrganizationServlet(InternalServices services, SecurityService securityService) {
-        super(services,  securityService);
-        this.organizationService = services.getParentService(Organization.class);
-        this.orgDeleteService = new OrganizationDeleteService(services);
-        this.objectService = services.getChildService(ObjectModel.class);
-        this.objectDeleteService = new ObjectDeleteService(services);
+
+    public DeleteOrganizationServlet(
+            SecurityService securityService,
+            OrganizationRepository organizationRepository,
+            OrganizationDeleteService orgDeleteService) {
+        super(securityService, organizationRepository);
+
+        this.orgDeleteService = orgDeleteService;
+
     }
 
     @Override
@@ -35,23 +32,25 @@ public class DeleteOrganizationServlet extends BaseServlet {
             throws ServletException {
 
         try {
+
             int orgId = paramInt(req, "orgId");
 
-            if (orgId == 0) throw new ServletException("orgId is required");
+            if (orgId == 0) {
+                throw new ServletException("orgId is required");
+            }
 
-            if (requireAccess(req, resp, orgId) == null) return;
+            if (requireAccess(req, resp, orgId) == null) {
+                return;
+            }
 
             orgDeleteService.delete(orgId);
 
-            List<ObjectModel> objects = objectService.getManyByParentId(orgId);
-
-            for (ObjectModel obj : objects) objectDeleteService.delete(obj.getId());
-
-            organizationService.deleteById(orgId);
-
             resp.sendRedirect("/");
+
         } catch (Exception e) {
+
             getServletContext().log("Error deleting Organization", e);
+
             throw new ServletException("Error deleting Organization", e);
         }
     }
