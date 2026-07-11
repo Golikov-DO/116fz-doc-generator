@@ -9,7 +9,6 @@ import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.SecurityService;
-import ru.ecospas.infrastructure.db.HibernateUtil;
 
 import java.io.IOException;
 
