@@ -3,16 +3,19 @@ package ru.ecospas.web.user;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.UserAdminService;
 
 import java.io.IOException;
 
-@SuppressWarnings("unused") // Managed via dynamic registration in ServletAutoRegistration
+@Component
+@RequiredArgsConstructor
 public class CreateEmptyUserServlet extends HttpServlet {
 
-    private final UserAdminService service = new UserAdminService();
+    private final UserAdminService service;
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 

@@ -10,6 +10,7 @@ import ru.ecospas.domain.model.ReferenceHazardousParam;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class HazardousSubstanceServlet extends BaseServlet {
     private final ParentService<ReferenceHazardousParam> paramService;
     private final ChildService<ObjectHazardousParamValue> valueService;
 
-    public HazardousSubstanceServlet(InternalServices services) {
-        super(services);
+    public HazardousSubstanceServlet(InternalServices services,  SecurityService securityService) {
+        super(services, securityService);
         this.substanceService = services.getParentService(ReferenceHazardousSubstance.class);
         this.paramService = services.getParentService(ReferenceHazardousParam.class);
         this.valueService = services.getChildService(ObjectHazardousParamValue.class);

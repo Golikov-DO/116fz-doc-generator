@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfDocumentImage;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 import ru.ecospas.web.helper.DataLoader.AsfData;
@@ -20,9 +21,9 @@ public class AsfServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public AsfServlet(InternalServices services) {
-        super(services);
-        this.dataLoader = new DataLoader(services);
+    public AsfServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
+        super(services, securityService);
+        this.dataLoader = dataLoader;
     }
 
     @Override

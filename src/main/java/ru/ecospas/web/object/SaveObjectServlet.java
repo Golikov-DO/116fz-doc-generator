@@ -8,6 +8,7 @@ import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.ObjectSaveHelper;
 import ru.ecospas.web.util.SyncListUtils;
@@ -42,8 +43,8 @@ public class SaveObjectServlet extends BaseServlet {
     private final ChildService<ObjectScenario> scenarioServiceChild;
     private final ParentService<Scenario> scenarioService;
 
-    public SaveObjectServlet(InternalServices services) {
-        super(services);
+    public SaveObjectServlet(InternalServices services, SecurityService securityService) {
+        super(services,  securityService);
         this.saveHelper = new ObjectSaveHelper();
         this.objectService = services.getChildService(ObjectModel.class);
         this.cityService = services.getParentService(ReferenceCity.class);

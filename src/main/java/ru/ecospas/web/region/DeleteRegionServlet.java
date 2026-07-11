@@ -11,6 +11,7 @@ import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.io.IOException;
@@ -25,8 +26,8 @@ public class DeleteRegionServlet extends BaseServlet {
     private final ParentService<ReferenceCity> referenceCityService;
     private final ChildService<ObjectRegionalAuthorities> regionService;
 
-    public DeleteRegionServlet(InternalServices services) {
-        super(services);
+    public DeleteRegionServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.referenceCityService = services.getParentService(ReferenceCity.class);
         this.regionService = services.getChildService(ObjectRegionalAuthorities.class);
     }

@@ -11,6 +11,7 @@ import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class UploadAsfImageServlet extends BaseServlet {
     private final ParentService<Asf> asfService;
     private final ChildService<AsfDocumentImage> imageService;
 
-    public UploadAsfImageServlet(InternalServices services) {
-        super(services);
+    public UploadAsfImageServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.asfService = services.getParentService(Asf.class);
         this.imageService = services.getChildService(AsfDocumentImage.class);
     }

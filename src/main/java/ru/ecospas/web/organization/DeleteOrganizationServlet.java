@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ObjectDeleteService;
-import ru.ecospas.domain.service.OrganizationDeleteService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.*;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -25,8 +22,8 @@ public class DeleteOrganizationServlet extends BaseServlet {
     private final ChildService<ObjectModel> objectService;
     private final ObjectDeleteService objectDeleteService;
 
-    public DeleteOrganizationServlet(InternalServices services) {
-        super(services);
+    public DeleteOrganizationServlet(InternalServices services, SecurityService securityService) {
+        super(services,  securityService);
         this.organizationService = services.getParentService(Organization.class);
         this.orgDeleteService = new OrganizationDeleteService(services);
         this.objectService = services.getChildService(ObjectModel.class);

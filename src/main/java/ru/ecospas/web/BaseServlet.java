@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
@@ -12,10 +11,15 @@ import ru.ecospas.domain.service.SecurityService;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
 public abstract class BaseServlet extends HttpServlet {
 
     protected final InternalServices services;
+    protected final SecurityService securityService;
+
+    protected BaseServlet(InternalServices services, SecurityService securityService) {
+        this.services = services;
+        this.securityService = securityService;
+    }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp)
@@ -30,8 +34,6 @@ public abstract class BaseServlet extends HttpServlet {
         var org = services.getParentService(Organization.class).getOneById(orgId);
 
         var user = (User) req.getSession().getAttribute("user");
-
-        var securityService = new SecurityService();
 
         if (!securityService.hasAccess(user, org)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

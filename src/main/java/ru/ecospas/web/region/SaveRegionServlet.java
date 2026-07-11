@@ -9,6 +9,7 @@ import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.RegionalAuthoritiesSaveHelper;
 import ru.ecospas.web.util.SyncListUtils;
@@ -24,8 +25,8 @@ public class SaveRegionServlet extends BaseServlet {
     private final ChildService<ObjectRegionalAuthorities> authoritiesService;
     private final RegionalAuthoritiesSaveHelper saveHelper;
 
-    public SaveRegionServlet(InternalServices services) {
-        super(services);
+    public SaveRegionServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.cityService = services.getParentService(ReferenceCity.class);
         this.authoritiesService = services.getChildService(ObjectRegionalAuthorities.class);
         this.saveHelper = new RegionalAuthoritiesSaveHelper();

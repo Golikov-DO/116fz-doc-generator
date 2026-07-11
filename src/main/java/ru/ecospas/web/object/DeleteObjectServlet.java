@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.service.ObjectDeleteService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
@@ -15,8 +16,8 @@ public class DeleteObjectServlet extends BaseServlet {
 
     private final ObjectDeleteService deleteService;
 
-    public DeleteObjectServlet(InternalServices services) {
-        super(services);
+    public DeleteObjectServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.deleteService = new ObjectDeleteService(services);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 @Component
@@ -13,8 +14,8 @@ public class DeleteAsfImageServlet extends BaseServlet {
 
     private ChildService<AsfDocumentImage> imageService;
 
-    public DeleteAsfImageServlet(InternalServices services) {
-        super(services);
+    public DeleteAsfImageServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.imageService = services.getChildService(AsfDocumentImage.class);
     }
 

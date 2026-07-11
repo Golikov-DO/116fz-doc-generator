@@ -8,6 +8,7 @@ import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.OrganizationSaveHelper;
 import ru.ecospas.web.util.SyncListUtils;
@@ -25,8 +26,8 @@ public class SaveOrganizationServlet extends BaseServlet {
     private final ChildService<OrganizationSigner> signerService;
     private final ChildService<OrganizationContact> contactService;
 
-    public SaveOrganizationServlet(InternalServices services) {
-        super(services);
+    public SaveOrganizationServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.organizationService = services.getParentService(Organization.class);
         this.saveHelper = new OrganizationSaveHelper();
         this.addressService = services.getChildService(OrganizationAddress.class);

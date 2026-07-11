@@ -11,6 +11,7 @@ import ru.ecospas.domain.model.ObjectImage;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -25,8 +26,8 @@ public class UploadObjectImageServlet extends BaseServlet {
     private final ChildService<ObjectImage> imageService;
     private final ParentService<ObjectModel> objectService;
 
-    public UploadObjectImageServlet(InternalServices services) {
-        super(services);
+    public UploadObjectImageServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.imageService = services.getChildService(ObjectImage.class);
         this.objectService = services.getParentService(ObjectModel.class);
     }

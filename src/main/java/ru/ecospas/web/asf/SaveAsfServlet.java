@@ -8,6 +8,7 @@ import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.AsfSaveHelper;
 import ru.ecospas.web.util.SyncListUtils;
@@ -30,8 +31,8 @@ public class SaveAsfServlet extends BaseServlet {
 
     private final AsfSaveHelper saveHelper;
 
-    public SaveAsfServlet(InternalServices services) {
-        super(services);
+    public SaveAsfServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.asfService = services.getParentService(Asf.class);
         this.certificateService = services.getChildService(AsfCertificate.class);
         this.personnelService = services.getChildService(AsfPersonnel.class);

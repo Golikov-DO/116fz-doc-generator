@@ -5,6 +5,10 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.ecospas.web.asf.*;
+import ru.ecospas.web.auth.CheckLoginServlet;
+import ru.ecospas.web.auth.GuestServlet;
+import ru.ecospas.web.auth.LoginServlet;
+import ru.ecospas.web.auth.LogoutServlet;
 import ru.ecospas.web.object.*;
 import ru.ecospas.web.organization.DeleteOrganizationServlet;
 import ru.ecospas.web.organization.OrganizationServlet;
@@ -24,6 +28,7 @@ import ru.ecospas.web.type.CreateEmptyObjectTypeServlet;
 import ru.ecospas.web.type.DeleteObjectTypeServlet;
 import ru.ecospas.web.type.ObjectTypeServlet;
 import ru.ecospas.web.type.SaveObjectTypeServlet;
+import ru.ecospas.web.user.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -39,6 +44,7 @@ public class ServletConfiguration {
     private final CreateEmptyObjectServlet createEmptyObjectServlet;
     private final DeleteObjectServlet deleteObjectServlet;
     private final ObjectServlet objectServlet;
+    private final ObjectsServlet objectsServlet;
     private final SaveObjectServlet saveObjectServlet;
     private final UploadObjectImageServlet uploadObjectImageServlet;
     private final DeleteOrganizationServlet deleteOrganizationServlet;
@@ -58,6 +64,15 @@ public class ServletConfiguration {
     private final DeleteHazardousSubstanceServlet deleteHazardousSubstanceServlet;
     private final HazardousSubstanceServlet hazardousSubstanceServlet;
     private final SaveHazardousSubstanceServlet saveHazardousSubstanceServlet;
+    private final LoginServlet loginServlet;
+    private final LogoutServlet logoutServlet;
+    private final GuestServlet guestServlet;
+    private final CheckLoginServlet checkLoginServlet;
+    private final UsersServlet usersServlet;
+    private final UserServlet userServlet;
+    private final SaveUserServlet saveUserServlet;
+    private final DeleteUserServlet deleteUserServlet;
+    private final CreateEmptyUserServlet createEmptyUserServlet;
 
     @Bean
     public ServletRegistrationBean<GeneratePlanServlet> generatePlanRegistration() {
@@ -107,6 +122,11 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<ObjectServlet> objectRegistration() {
         return new ServletRegistrationBean<>(objectServlet, "/object");
+    }
+
+    @Bean
+    public ServletRegistrationBean<ObjectsServlet> objectsRegistration() {
+        return new ServletRegistrationBean<>(objectsServlet, "/objects");
     }
 
     @Bean
@@ -202,5 +222,50 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<SaveHazardousSubstanceServlet> saveHazardousSubstanceRegistration() {
         return new ServletRegistrationBean<>(saveHazardousSubstanceServlet, "/save-hazardous-substance");
+    }
+
+    @Bean
+    public ServletRegistrationBean<LoginServlet> loginRegistration() {
+        return new ServletRegistrationBean<>(loginServlet, "/login");
+    }
+
+    @Bean
+    public ServletRegistrationBean<LogoutServlet> logoutRegistration() {
+        return new ServletRegistrationBean<>(logoutServlet, "/logout");
+    }
+
+    @Bean
+    public ServletRegistrationBean<GuestServlet> guestRegistration() {
+        return new ServletRegistrationBean<>(guestServlet, "/guest");
+    }
+
+    @Bean
+    public ServletRegistrationBean<CheckLoginServlet> checkLoginRegistration() {
+        return new ServletRegistrationBean<>(checkLoginServlet, "/check-login");
+    }
+
+    @Bean
+    public ServletRegistrationBean<UsersServlet> usersRegistration() {
+        return new ServletRegistrationBean<>(usersServlet, "/users");
+    }
+
+    @Bean
+    public ServletRegistrationBean<UserServlet> userRegistration() {
+        return new ServletRegistrationBean<>(userServlet, "/user");
+    }
+
+    @Bean
+    public ServletRegistrationBean<SaveUserServlet> saveUserRegistration() {
+        return new ServletRegistrationBean<>(saveUserServlet, "/save-user");
+    }
+
+    @Bean
+    public ServletRegistrationBean<DeleteUserServlet> deleteUserRegistration() {
+        return new ServletRegistrationBean<>(deleteUserServlet, "/delete-user");
+    }
+
+    @Bean
+    public ServletRegistrationBean<CreateEmptyUserServlet> createEmptyUserRegistration() {
+        return new ServletRegistrationBean<>(createEmptyUserServlet, "/create-empty-user");
     }
 }

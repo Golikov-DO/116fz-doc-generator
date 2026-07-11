@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.param;
@@ -16,8 +17,8 @@ public class CreateEmptyAsfServlet extends BaseServlet {
 
     private final ParentService<Asf> asfService;
 
-    public CreateEmptyAsfServlet(InternalServices services) {
-        super(services);
+    public CreateEmptyAsfServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.asfService = services.getParentService(Asf.class);
     }
 

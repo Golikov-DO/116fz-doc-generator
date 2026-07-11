@@ -8,6 +8,7 @@ import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.domain.util.DocumentPathSet;
 import ru.ecospas.web.BaseServlet;
 
@@ -24,8 +25,8 @@ public class DownloadPlanServlet extends BaseServlet {
     private final ParentService<Organization> organizationService;
     private final ChildService<ObjectModel> objectChildService;
 
-    public DownloadPlanServlet(InternalServices services) {
-        super(services);
+    public DownloadPlanServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.objectService = services.getParentService(ObjectModel.class);
         this.organizationService = services.getParentService(Organization.class);
         this.objectChildService = services.getChildService(ObjectModel.class);

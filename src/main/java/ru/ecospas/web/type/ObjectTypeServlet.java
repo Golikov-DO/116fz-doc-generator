@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.param;
@@ -17,8 +18,8 @@ public class ObjectTypeServlet extends BaseServlet {
 
     private final ParentService<ObjectType> objectTypeService;
 
-    public ObjectTypeServlet(InternalServices services) {
-        super(services);
+    public ObjectTypeServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.objectTypeService = services.getParentService(ObjectType.class);
     }
 

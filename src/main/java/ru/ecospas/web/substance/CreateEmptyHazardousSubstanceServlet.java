@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.nio.charset.StandardCharsets;
@@ -16,8 +17,8 @@ public class CreateEmptyHazardousSubstanceServlet extends BaseServlet {
 
     private final ParentService<ReferenceHazardousSubstance> hazardousSubstanceService;
 
-    public CreateEmptyHazardousSubstanceServlet(InternalServices services) {
-        super(services);
+    public CreateEmptyHazardousSubstanceServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.hazardousSubstanceService = services.getParentService(ReferenceHazardousSubstance.class);
     }
 

@@ -9,6 +9,7 @@ import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +20,8 @@ public class CreateEmptyRegionServlet extends BaseServlet {
     private final ParentService<ReferenceCity> cityService;
     private final ChildService<ObjectRegionalAuthorities> service;
 
-    public CreateEmptyRegionServlet(InternalServices services) {
-        super(services);
+    public CreateEmptyRegionServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.cityService = services.getParentService(ReferenceCity.class);
         this.service = services.getChildService(ObjectRegionalAuthorities.class);
     }

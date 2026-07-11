@@ -9,6 +9,7 @@ import ru.ecospas.domain.model.ObjectRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class RegionServlet extends BaseServlet {
     private final ParentService<ReferenceCity> cityService;
     private final ChildService<ObjectRegionalAuthorities> authoritiesService;
 
-    public RegionServlet(InternalServices services) {
-        super(services);
+    public RegionServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.cityService = services.getParentService(ReferenceCity.class);
         this.authoritiesService = services.getChildService(ObjectRegionalAuthorities.class);
     }

@@ -14,10 +14,8 @@ import java.util.List;
 @Component
 public class OrganizationsServlet extends BaseServlet {
 
-    private final SecurityService securityService = new SecurityService();
-
-    public OrganizationsServlet(InternalServices services) {
-        super(services);
+    public OrganizationsServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {

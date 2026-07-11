@@ -9,6 +9,7 @@ import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.io.IOException;
@@ -21,8 +22,8 @@ public class DeleteObjectTypeServlet extends BaseServlet {
 
     private ParentService<ObjectType> objectTypeService;
 
-    public DeleteObjectTypeServlet(InternalServices services) {
-        super(services);
+    public DeleteObjectTypeServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.objectTypeService = services.getParentService(ObjectType.class);
     }
 

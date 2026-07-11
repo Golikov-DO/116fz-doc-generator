@@ -11,6 +11,7 @@ import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import java.io.IOException;
@@ -25,8 +26,8 @@ public class DeleteHazardousSubstanceServlet extends BaseServlet {
     private final ParentService<ReferenceHazardousSubstance> substanceService;
     private final ChildService<ObjectHazardousParamValue> valueService;
 
-    public DeleteHazardousSubstanceServlet(InternalServices services) {
-        super(services);
+    public DeleteHazardousSubstanceServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.substanceService = services.getParentService(ReferenceHazardousSubstance.class);
         this.valueService = services.getChildService(ObjectHazardousParamValue.class);
     }

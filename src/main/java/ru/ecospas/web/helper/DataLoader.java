@@ -1,18 +1,23 @@
 package ru.ecospas.web.helper;
 
+import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.service.ChildService;
 import ru.ecospas.domain.service.ParentService;
 
 import java.util.List;
 
+@Component
 public class DataLoader {
 
     private final InternalServices services;
+    private final ObjectModelRepository objectRepository;
 
-    public DataLoader(InternalServices services) {
+    public DataLoader(InternalServices services, ObjectModelRepository objectRepository) {
         this.services = services;
+        this.objectRepository = objectRepository;
     }
 
     // Organization load
@@ -85,8 +90,7 @@ public class DataLoader {
 
     // Objects load
     public List<ObjectModel> loadObjects(int orgId) {
-        ChildService<ObjectModel> objService = services.getChildService(ObjectModel.class);
-        return objService.getManyByParentId(orgId);
+        return objectRepository.findByOrganizationId(orgId);
     }
 
     // ASF load

@@ -8,6 +8,7 @@ import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
@@ -17,8 +18,8 @@ public class CreateEmptyObjectServlet extends BaseServlet {
 
     private final ChildService<ObjectModel> objectService;
 
-    public CreateEmptyObjectServlet(InternalServices services) {
-        super(services);
+    public CreateEmptyObjectServlet(InternalServices services, SecurityService securityService) {
+        super(services,  securityService);
         this.objectService = services.getChildService(ObjectModel.class);
     }
 

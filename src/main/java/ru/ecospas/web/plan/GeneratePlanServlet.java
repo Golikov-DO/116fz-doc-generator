@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.domain.service.WordGenerationService;
 import ru.ecospas.domain.util.DocumentPathSet;
 import ru.ecospas.web.BaseServlet;
@@ -25,8 +26,9 @@ public class GeneratePlanServlet extends BaseServlet {
 
     private final WordGenerationService wordGenerationService;
 
-    public GeneratePlanServlet(InternalServices services, WordGenerationService wordGenerationService) {
-        super(services);
+    public GeneratePlanServlet(InternalServices services, WordGenerationService wordGenerationService,
+                               SecurityService securityService) {
+        super(services, securityService);
         this.wordGenerationService = wordGenerationService;
     }
 

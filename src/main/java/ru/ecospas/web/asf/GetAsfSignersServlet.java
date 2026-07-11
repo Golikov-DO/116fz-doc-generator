@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.AsfSigner;
 import ru.ecospas.domain.service.ChildService;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.dto.AsfSignerDto;
 
@@ -27,8 +28,8 @@ public class GetAsfSignersServlet extends BaseServlet {
                             new JsonPrimitive(src.toString()))
             .create();
 
-    public GetAsfSignersServlet(InternalServices services) {
-        super(services);
+    public GetAsfSignersServlet(InternalServices services, SecurityService securityService) {
+        super(services, securityService);
         this.signerService = services.getChildService(AsfSigner.class);
     }
 

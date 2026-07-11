@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.app.InternalServices;
 import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
 
@@ -16,9 +17,9 @@ public class ObjectServlet extends BaseServlet {
 
     private final DataLoader dataLoader;
 
-    public ObjectServlet(InternalServices services) {
-        super(services);
-        this.dataLoader = new DataLoader(services);
+    public ObjectServlet(InternalServices services, SecurityService securityService, DataLoader dataLoader) {
+        super(services,  securityService);
+        this.dataLoader = dataLoader;
     }
 
     @Override

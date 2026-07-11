@@ -1,4 +1,3 @@
-<%@ page import="ru.ecospas.app.ApplicationContext" %>
 <%@ page import="ru.ecospas.domain.model.Organization" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
@@ -14,13 +13,11 @@
 
     if (orgId != null && !orgId.isEmpty()) {
         try {
-            ApplicationContext ctx = (ApplicationContext) application.getAttribute("appContext");
+            Organization organization = (Organization) request.getAttribute("organization");
 
-            Organization organization = ctx.internalServices()
-                    .getParentService(Organization.class)
-                    .getOneById(Integer.parseInt(orgId));
+            if (organization != null
+                    && organization.getOrganizationShortName() != null) {
 
-            if (organization != null && organization.getOrganizationShortName() != null) {
                 orgShortName = organization.getOrganizationShortName();
             }
         } catch (Exception ignored) {
