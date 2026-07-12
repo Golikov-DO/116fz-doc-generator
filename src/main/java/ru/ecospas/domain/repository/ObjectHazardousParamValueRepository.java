@@ -1,11 +1,12 @@
 package ru.ecospas.domain.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.ecospas.domain.model.ObjectHazardousParamValue;
 
 import java.util.List;
 
 public interface ObjectHazardousParamValueRepository
-        extends BaseRepository<ObjectHazardousParamValue> {
+        extends JpaRepository<ObjectHazardousParamValue, Integer> {
 
     List<ObjectHazardousParamValue> findAllBySubstanceId(Integer substanceId);
 }

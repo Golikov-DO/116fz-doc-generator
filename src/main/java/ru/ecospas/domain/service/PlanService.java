@@ -28,56 +28,56 @@ public class PlanService {
 
     private final ObjectModelRepository objectRepository;
     private final OrganizationRepository organizationRepository;
-    //private final WordGenerationService wordGenerationService;
+    private final WordGenerationService wordGenerationService;
 
     public void generate(
             ServletContext servletContext,
             HttpServletRequest req,
             Integer objectId
     ) throws Exception {
-        new UnsupportedOperationException("Word disabled");
-//        String templatePath =
-//                servletContext.getRealPath("/WEB-INF/template/tagtemplate.docx");
-//
-//        if (templatePath == null) {
-//            throw new IOException("Файл шаблона не найден");
-//        }
-//
-//        byte[] template =
-//                Files.readAllBytes(Paths.get(templatePath));
-//
-//        ObjectModel object = objectRepository.findById(objectId)
-//                .orElseThrow(() ->
-//                        new ServletException("Object not found"));
-//
-//        Organization organization = object.getOrganization();
-//
-//        WordprocessingMLPackage document =
-//                wordGenerationService.generate(
-//                        FillStrategy.TAG,
-//                        template,
-//                        objectId
-//                );
-//
-//        List<ObjectModel> objects =
-//                objectRepository.findByOrganizationId(
-//                        organization.getId()
-//                );
-//
-//        Path outputPath =
-//                DocumentPathSet.buildOutputFile(
-//                        organization,
-//                        object,
-//                        objects
-//                );
-//
-//        File parentDir = outputPath.getParent().toFile();
-//
-//        if (!parentDir.exists()) {
-//            parentDir.mkdirs();
-//        }
-//
-//        document.save(outputPath.toFile());
+
+        String templatePath =
+                servletContext.getRealPath("/WEB-INF/template/tagtemplate.docx");
+
+        if (templatePath == null) {
+            throw new IOException("Файл шаблона не найден");
+        }
+
+        byte[] template =
+                Files.readAllBytes(Paths.get(templatePath));
+
+        ObjectModel object = objectRepository.findById(objectId)
+                .orElseThrow(() ->
+                        new ServletException("Object not found"));
+
+        Organization organization = object.getOrganization();
+
+        WordprocessingMLPackage document =
+                wordGenerationService.generate(
+                        FillStrategy.TAG,
+                        template,
+                        objectId
+                );
+
+        List<ObjectModel> objects =
+                objectRepository.findByOrganizationId(
+                        organization.getId()
+                );
+
+        Path outputPath =
+                DocumentPathSet.buildOutputFile(
+                        organization,
+                        object,
+                        objects
+                );
+
+        File parentDir = outputPath.getParent().toFile();
+
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+        document.save(outputPath.toFile());
     }
 
     public void download(

@@ -22,13 +22,13 @@ public class DocumentBuilder {
 
     private final RendererRegistry rendererRegistry;
 
-        public WordprocessingMLPackage build(OpenResult openResult) throws Exception {
-        WordprocessingMLPackage document = openResult.getDocument();
+    public WordprocessingMLPackage build(OpenResult openResult) throws Exception {
+        WordprocessingMLPackage document = openResult.document();
         RenderContext context = new RenderContext(document);
         MainDocumentPart mdp = document.getMainDocumentPart();
 
         // 1. Collect simple text replacements
-        for (Block block : openResult.getBlocks()) {
+        for (Block block : openResult.blocks()) {
             if (block instanceof TextBlock(String key, String text)) {
                 context.getTextReplacements().put(key, text);
             }
@@ -41,7 +41,7 @@ public class DocumentBuilder {
         }
 
         // 3. Launch renderers
-        for (Block block : openResult.getBlocks()) {
+        for (Block block : openResult.blocks()) {
             if (block instanceof TextBlock) continue;
             BlockRenderer<?> renderer = rendererRegistry.resolve(block);
             if (renderer != null) {
@@ -84,7 +84,8 @@ public class DocumentBuilder {
                         Object next = XmlUtils.unwrap(content.get(i));
                         if (next instanceof P nextP) {
                             String nextText = TextUtils.getText(nextP);
-                            boolean nextHasSect = nextP.getPPr() != null && nextP.getPPr().getSectPr() != null;
+                            boolean nextHasSect = nextP.getPPr() != null
+                                    && nextP.getPPr().getSectPr() != null;
 
                             if ((nextText == null || nextText.trim().isEmpty()) && !nextHasSect) {
                                 content.remove(i);
@@ -138,7 +139,6 @@ public class DocumentBuilder {
 
         return document;
     }
-
 
 
     @SuppressWarnings("unchecked")

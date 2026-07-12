@@ -7,6 +7,7 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
 import ru.ecospas.word.render.BlockRenderer;
@@ -16,6 +17,7 @@ import ru.ecospas.word.util.DocxTraversalUtil;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class Docx4jImageBlockRenderer implements BlockRenderer<ImageBlock> {
 
     private static final AtomicInteger idCounter = new AtomicInteger(1000);

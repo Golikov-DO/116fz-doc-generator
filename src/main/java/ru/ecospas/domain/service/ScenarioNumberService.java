@@ -1,5 +1,6 @@
 package ru.ecospas.domain.service;
 
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Scenario;
 import ru.ecospas.web.dto.ScenarioDTO;
 
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ScenarioNumberService {
 
     public Map<Integer, ScenarioDTO> build(List<Scenario> scenarios) {

@@ -1,9 +1,11 @@
 package ru.ecospas.word.layout;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectStructure;
 import ru.ecospas.domain.model.Scenario;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectStructureRepository;
+import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.domain.util.SubscriptUtils;
 import ru.ecospas.web.dto.ScenarioDTO;
 
@@ -12,24 +14,17 @@ import java.util.stream.Collectors;
 
 import static ru.ecospas.domain.util.Collect.collect;
 
+@Component
+@RequiredArgsConstructor
 public class ObjectScenarioTableLayoutService {
 
-    private final ChildService<ObjectStructure> structureService;
-    private final ParentService<Scenario> scenarioService;
-
-
-    public ObjectScenarioTableLayoutService(
-            ChildService<ObjectStructure> structureService,
-            ParentService<Scenario> scenarioService
-    ) {
-        this.structureService = structureService;
-        this.scenarioService = scenarioService;
-    }
+    private final ObjectStructureRepository structureRepository;
+    private final ScenarioRepository scenarioRepository;
 
     public List<String[]> getObjectScenarioTableData(int objectId) {
 
-        List<ObjectStructure> structures = structureService.getManyByParentId(objectId);
-        List<Scenario> allScenarios = scenarioService.getMany();
+        List<ObjectStructure> structures = structureRepository.findAllByObjectId(objectId);
+        List<Scenario> allScenarios = scenarioRepository.findAll();
         List<String[]> rows = new ArrayList<>();
         LinkedHashSet<Integer> allIds = new LinkedHashSet<>();
 
@@ -91,8 +86,8 @@ public class ObjectScenarioTableLayoutService {
 
     public List<String[]> getObjectScenarioFullData(int objectId) {
 
-        List<ObjectStructure> structures = structureService.getManyByParentId(objectId);
-        List<Scenario> allScenarios = scenarioService.getMany();
+        List<ObjectStructure> structures = structureRepository.findAllByObjectId(objectId);
+        List<Scenario> allScenarios = scenarioRepository.findAll();
 
         LinkedHashSet<Integer> allIds = new LinkedHashSet<>();
 

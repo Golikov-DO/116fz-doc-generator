@@ -1,11 +1,9 @@
 package ru.ecospas.domain.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.ecospas.domain.model.ReferenceHazardousParam;
 
-import java.util.List;
-
 public interface ReferenceHazardousParamRepository
-        extends BaseRepository<ReferenceHazardousParam> {
+        extends JpaRepository<ReferenceHazardousParam, Integer> {
 
-    List<ReferenceHazardousParam> findAll();
 }

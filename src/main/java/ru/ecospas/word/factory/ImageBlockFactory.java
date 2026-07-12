@@ -1,11 +1,14 @@
 package ru.ecospas.word.factory;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.model.AsfDocumentImage;
 import ru.ecospas.domain.model.ObjectImage;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.AsfDocumentImageRepository;
+import ru.ecospas.domain.repository.ObjectImageRepository;
+import ru.ecospas.domain.repository.ObjectModelRepository;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -13,24 +16,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class ImageBlockFactory {
-    private final ChildService<ObjectImage> objectImageService;
-    private final ChildService<AsfDocumentImage> asfDocumentImageService;
-    private final ParentService<ObjectModel> objectService;
-
-    public ImageBlockFactory(ChildService<ObjectImage> objectImageService,
-                             ChildService<AsfDocumentImage> asfDocumentImageService,
-                             ParentService<ObjectModel> objectService) {
-        this.objectImageService = objectImageService;
-        this.asfDocumentImageService = asfDocumentImageService;
-        this.objectService = objectService;
-    }
+    private final ObjectImageRepository objectImageRepository;
+    private final AsfDocumentImageRepository asfDocumentImageRepository;
+    private final ObjectModelRepository objectRepository;
 
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
-        Asf asf = objectService.getOneById(objectId).getAsf();
-        List<AsfDocumentImage> asfImage = asfDocumentImageService.getManyByParentId(asf.getId());
-        List<ObjectImage> objectImages = objectImageService.getManyByParentId(objectId);
+        ObjectModel object = objectRepository.findById(objectId)
+                .orElseThrow();
+
+        Asf asf = object.getAsf();
+        List<AsfDocumentImage> asfImage = asfDocumentImageRepository.findAllByAsfId(asf.getId());
+        List<ObjectImage> objectImages = objectImageRepository.findAllByObjectId(objectId);
 
         Map<String, List<byte[]>> imagesByGroup = objectImages.stream()
                 .collect(Collectors.groupingBy(

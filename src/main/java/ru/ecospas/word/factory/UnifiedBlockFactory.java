@@ -1,7 +1,10 @@
 package ru.ecospas.word.factory;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
 import ru.ecospas.word.blocks.list.ListBlock;
@@ -19,7 +22,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.BiFunction;
 
-
+@Component
+@RequiredArgsConstructor
 public class UnifiedBlockFactory {
 
     private final TableBlockFactory tableBlockFactory;
@@ -29,29 +33,13 @@ public class UnifiedBlockFactory {
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
     private final ObjectScenarioTableLayoutService objectScenarioTableLayoutService;
-    private final ParentService<ObjectModel> objectService;
+    private final ObjectModelRepository objectRepository;
 
     // Map of block creation strategies
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
 
-    public UnifiedBlockFactory(
-            TableBlockFactory tableBlockFactory,
-            PlaceholderFillStrategy placeholderFillStrategy,
-            ImageBlockFactory imageBlockFactory,
-            ListBlockFactory listBlockFactory,
-            HazardTableLayoutService hazardTableLayoutService,
-            ContactTableLayoutService contactTableLayoutService,
-            ObjectScenarioTableLayoutService objectScenarioTableLayoutService,
-            ParentService<ObjectModel> objectService
-    ) {
-        this.tableBlockFactory = tableBlockFactory;
-        this.listBlockFactory = listBlockFactory;
-        this.placeholderFillStrategy = placeholderFillStrategy;
-        this.imageBlockFactory = imageBlockFactory;
-        this.hazardTableLayoutService = hazardTableLayoutService;
-        this.contactTableLayoutService = contactTableLayoutService;
-        this.objectScenarioTableLayoutService = objectScenarioTableLayoutService;
-        this.objectService = objectService;
+    @PostConstruct
+    private void init() {
         initCreators();
     }
 
@@ -133,7 +121,8 @@ public class UnifiedBlockFactory {
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> result = new LinkedHashMap<>();
 
-        ObjectModel obj = objectService.getOneById(objectId);
+        ObjectModel obj = objectRepository.findById(objectId).orElse(null);
+
         if (obj == null) {
             return result;
         }

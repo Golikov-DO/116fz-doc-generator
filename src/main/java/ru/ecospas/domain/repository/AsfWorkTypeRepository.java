@@ -1,12 +1,11 @@
 package ru.ecospas.domain.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.ecospas.domain.model.AsfWorkType;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface AsfWorkTypeRepository
-        extends BaseRepository<AsfWorkType> {
+public interface AsfWorkTypeRepository extends JpaRepository<AsfWorkType, Integer> {
 
     List<AsfWorkType> findAllByAsfId(Integer asfId);
 }

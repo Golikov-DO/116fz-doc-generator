@@ -47,7 +47,12 @@ public class ContactTableLayoutService {
                 numStr = String.valueOf(counter++);
             }
 
-            tableRows.add(new String[]{numStr, objectRegionalAuthorities.getName(), objectRegionalAuthorities.getDepartment(), objectRegionalAuthorities.getPhoneNumber(), objectRegionalAuthorities.getAddress()});
+            tableRows.add(new String[]{
+                    numStr, objectRegionalAuthorities.getName(),
+                    objectRegionalAuthorities.getDepartment(),
+                    objectRegionalAuthorities.getPhoneNumber(),
+                    objectRegionalAuthorities.getAddress()
+            });
         }
 
         // --- Section 3: Separator (WITHOUT COUNTER) ---
@@ -55,7 +60,8 @@ public class ContactTableLayoutService {
         tableRows.add(new String[]{"H_MERGE_FULL", org.getOrganizationShortName(), "", "", ""});
 
         // --- Section 4: Organization Contact (start with 9) ---
-        for (OrganizationContact organizationContact : organizationContactRepository.findAllByOrganizationId(orgId)) {
+        for (OrganizationContact organizationContact : organizationContactRepository
+                .findAllByOrganizationId(orgId)) {
             tableRows.add(
                     new String[]{
                             String.valueOf(counter++),
