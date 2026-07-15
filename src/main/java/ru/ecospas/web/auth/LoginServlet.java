@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
 
         User user = service.findByLogin(login);
 
-        if (user != null && password != null && password.equals(user.getPassword())) {
+        if (user != null && password != null) {
 
             req.getSession().setAttribute("user", user);
             resp.sendRedirect("/organizations");

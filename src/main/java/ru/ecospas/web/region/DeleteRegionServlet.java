@@ -4,9 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.Role;
-import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.RegionalAuthoritiesService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -24,9 +23,10 @@ public class DeleteRegionServlet extends BaseServlet {
     public DeleteRegionServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            RegionalAuthoritiesService regionalAuthoritiesService
+            RegionalAuthoritiesService regionalAuthoritiesService,
+            CurrentUserService currentUserService
     ) {
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.regionalAuthoritiesService = regionalAuthoritiesService;
     }
 
@@ -36,9 +36,7 @@ public class DeleteRegionServlet extends BaseServlet {
             HttpServletResponse resp
     ) throws ServletException, IOException {
 
-        User user = (User) req.getSession().getAttribute("user");
-
-        if (user == null || user.getRole() != Role.ADMIN) {
+        if (!currentUserService.isAdmin()) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -57,10 +55,7 @@ public class DeleteRegionServlet extends BaseServlet {
 
             if (backUrl != null) {
                 resp.sendRedirect(
-                        java.net.URLDecoder.decode(
-                                backUrl,
-                                StandardCharsets.UTF_8
-                        )
+                        java.net.URLDecoder.decode(backUrl, StandardCharsets.UTF_8)
                 );
                 return;
             }

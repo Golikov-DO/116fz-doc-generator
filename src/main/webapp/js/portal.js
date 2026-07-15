@@ -91,6 +91,11 @@ function switchMode() {
     const btn = document.getElementById("submitBtn");
     const link = document.getElementById("switchLink");
     const msg = document.getElementById("loginCheck");
+    const emailContainer = document.getElementById("emailContainer");
+    const confirmPasswordContainer = document.getElementById("confirmPasswordContainer");
+
+    const emailField = document.getElementById("emailField");
+    const confirmPasswordField = document.getElementById("confirmPasswordField");
     const sourceInput = document.querySelector('input[name="source"]');
 
     if (msg) msg.innerText = "";
@@ -99,6 +104,11 @@ function switchMode() {
     if (loginInput) loginInput.value = "";
 
     if (isLogin) {
+        emailContainer.style.display = "none";
+        confirmPasswordContainer.style.display = "none";
+
+        emailField.required = false;
+        confirmPasswordField.required = false;
         form.action = "login";
         title.innerText = "Вход";
         btn.innerText = "Войти";
@@ -110,6 +120,11 @@ function switchMode() {
         msg.innerText = "";
 
     } else {
+        emailContainer.style.display = "block";
+        confirmPasswordContainer.style.display = "block";
+
+        emailField.required = true;
+        confirmPasswordField.required = true;
         form.action = "save-user";
         title.innerText = "Регистрация";
         btn.innerText = "Зарегистрироваться";

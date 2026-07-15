@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.ObjectService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -24,9 +25,10 @@ public class SaveObjectServlet extends BaseServlet {
             SecurityService securityService,
             OrganizationRepository organizationRepository,
             ObjectService objectService,
-            ObjectSaveHelper saveHelper) {
+            ObjectSaveHelper saveHelper,
+            CurrentUserService currentUserService) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
 
         this.objectService = objectService;
         this.saveHelper = saveHelper;
@@ -53,10 +55,7 @@ public class SaveObjectServlet extends BaseServlet {
                     return;
                 }
 
-                organization = requireAccess(
-                        req,
-                        resp,
-                        object.getOrganization().getId()
+                organization = requireAccess(resp, object.getOrganization().getId()
                 );
 
                 if (organization == null) {
@@ -69,7 +68,7 @@ public class SaveObjectServlet extends BaseServlet {
 
                 orgId = paramInt(req, "orgId");
 
-                organization = requireAccess(req, resp, orgId);
+                organization = requireAccess(resp, orgId);
 
                 if (organization == null) {
                     return;

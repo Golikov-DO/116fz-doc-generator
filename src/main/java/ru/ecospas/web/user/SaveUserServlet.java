@@ -16,9 +16,25 @@ import java.io.IOException;
 public class SaveUserServlet extends HttpServlet {
 
     private final UserAdminService service;
+    private final RegistrationService registrationService;
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+        String source = req.getParameter("source");
+        if ("register".equals(source)) {
+
+            RegistrationForm form = new RegistrationForm();
+
+            form.setLogin(req.getParameter("login"));
+            form.setEmail(req.getParameter("email"));
+            form.setPassword(req.getParameter("password"));
+            form.setConfirmPassword(req.getParameter("confirmPassword"));
+
+            registrationService.register(form);
+
+            resp.sendRedirect("/?login=true");
+            return;
+        }
         String idStr = req.getParameter("id");
 
         User user;
@@ -36,23 +52,21 @@ public class SaveUserServlet extends HttpServlet {
         }
 
         user.setLogin(req.getParameter("login"));
-        user.setPassword(req.getParameter("password"));
+        user.setEmail(req.getParameter("email"));
+        String password = req.getParameter("password");
         String roleParam = req.getParameter("role");
 
         if (roleParam != null) user.setRole(Role.valueOf(roleParam));
 
         try {
-            service.save(user);
+            if (password != null && !password.isBlank()) {
+                user.setPassword(password);
+                service.saveWithPassword(user);
+            } else {
+                service.save(user);
+            }
         } catch (Exception e) {
             resp.sendRedirect("/?error=login_taken");
-        }
-
-        String source = req.getParameter("source");
-
-        if ("register".equals(source)) {
-            resp.sendRedirect("/?login=true");
-        } else {
-            resp.sendRedirect("/user?mode=view&id=" + user.getId());
         }
     }
 }

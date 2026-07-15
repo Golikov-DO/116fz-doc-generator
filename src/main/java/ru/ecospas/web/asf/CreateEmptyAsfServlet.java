@@ -8,6 +8,7 @@ import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.repository.AsfRepository;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.AsfService;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -23,8 +24,9 @@ public class CreateEmptyAsfServlet extends BaseServlet {
             SecurityService securityService,
             OrganizationRepository organizationRepository,
             AsfRepository asfRepository,
-            AsfService asfService) {
-        super(securityService, organizationRepository);
+            AsfService asfService,
+            CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
         this.asfRepository = asfRepository;
         this.asfService = asfService;
     }

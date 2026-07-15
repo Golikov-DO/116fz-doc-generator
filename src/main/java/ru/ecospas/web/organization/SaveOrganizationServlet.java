@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.OrganizationService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -18,12 +19,12 @@ public class SaveOrganizationServlet extends BaseServlet {
 
     private final OrganizationService organizationService;
 
-
     public SaveOrganizationServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            OrganizationService organizationService) {
-        super(securityService, organizationRepository);
+            OrganizationService organizationService,
+            CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
         this.organizationService = organizationService;
     }
 
@@ -31,13 +32,18 @@ public class SaveOrganizationServlet extends BaseServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
             int orgId = paramInt(req, "orgId");
-            User currentUser = (User) req.getSession().getAttribute("user");
+            User currentUser = currentUserService.currentUser();
+
+            if (currentUser == null) {
+                resp.sendRedirect("/");
+                return;
+            }
 
             Organization org;
 
             if (orgId > 0) {
 
-                org = requireAccess(req, resp, orgId);
+                org = requireAccess(resp, orgId);
 
                 if (org == null) {
                     return;

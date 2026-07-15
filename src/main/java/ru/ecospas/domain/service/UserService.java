@@ -13,20 +13,6 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public User login(String login, String password) {
-
-        User user = findByLogin(login);
-
-        if (user == null) {
-            return null;
-        }
-
-        if (!user.getPassword().equals(password)) {
-            return null;
-        }
-
-        return user;
-    }
 
     public User findByLogin(String login) {
         return repository.findByLogin(login)

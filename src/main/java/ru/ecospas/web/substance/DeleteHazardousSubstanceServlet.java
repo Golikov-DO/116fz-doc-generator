@@ -4,9 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.Role;
-import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.HazardousSubstanceService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -24,9 +23,11 @@ public class DeleteHazardousSubstanceServlet extends BaseServlet {
     public DeleteHazardousSubstanceServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            HazardousSubstanceService hazardousSubstanceService) {
+            HazardousSubstanceService hazardousSubstanceService,
+            CurrentUserService currentUserService
+    ) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.hazardousSubstanceService = hazardousSubstanceService;
     }
 
@@ -34,9 +35,7 @@ public class DeleteHazardousSubstanceServlet extends BaseServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        User user = (User) req.getSession().getAttribute("user");
-
-        if (user == null || user.getRole() != Role.ADMIN) {
+        if (!currentUserService.isAdmin()) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -55,10 +54,7 @@ public class DeleteHazardousSubstanceServlet extends BaseServlet {
 
             if (backUrl != null && !backUrl.isEmpty()) {
                 resp.sendRedirect(
-                        java.net.URLDecoder.decode(
-                                backUrl,
-                                StandardCharsets.UTF_8
-                        )
+                        java.net.URLDecoder.decode(backUrl, StandardCharsets.UTF_8)
                 );
                 return;
             }

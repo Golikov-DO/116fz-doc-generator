@@ -33,8 +33,8 @@
                         <label for="user_password">Пароль:</label>
                     </td>
                     <td>
-                        <input name="password" id="user_password"
-                               value="<%= user != null ? user.getPassword() : "" %>"
+                        <input type="password" class="form-control" id="password" name="password"
+                                value="" autocomplete="new-password"
                             <%= isView ? "readonly" : "" %>>
                     </td>
                 </tr>

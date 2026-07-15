@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.AsfSigner;
 import ru.ecospas.domain.repository.AsfSignerRepository;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.dto.AsfSignerDto;
@@ -30,8 +31,9 @@ public class GetAsfSignersServlet extends BaseServlet {
 
     public GetAsfSignersServlet(SecurityService securityService,
                                 OrganizationRepository organizationRepository,
-                                AsfSignerRepository asfSignerRepository) {
-        super(securityService, organizationRepository);
+                                AsfSignerRepository asfSignerRepository,
+                                CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
         this.asfSignerRepository = asfSignerRepository;
     }
 

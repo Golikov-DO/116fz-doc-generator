@@ -8,6 +8,7 @@ import ru.ecospas.domain.model.ObjectHazardousParamValue;
 import ru.ecospas.domain.model.ReferenceHazardousParam;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.HazardousSubstanceService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -27,9 +28,11 @@ public class HazardousSubstanceServlet extends BaseServlet {
     public HazardousSubstanceServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            HazardousSubstanceService hazardousSubstanceService) {
+            HazardousSubstanceService hazardousSubstanceService,
+            CurrentUserService currentUserService
+    ) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.hazardousSubstanceService = hazardousSubstanceService;
     }
 

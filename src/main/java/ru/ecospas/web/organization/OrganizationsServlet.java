@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -14,27 +15,28 @@ import java.util.List;
 @Component
 public class OrganizationsServlet extends BaseServlet {
 
+    private final CurrentUserService currentUserService;
+
     public OrganizationsServlet(
             SecurityService securityService,
-            OrganizationRepository organizationRepository) {
-        super(securityService, organizationRepository);
+            OrganizationRepository organizationRepository,
+            CurrentUserService currentUserService
+    ) {
+        super(securityService, organizationRepository, currentUserService);
+        this.currentUserService = currentUserService;
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            User user = (User) req.getSession().getAttribute("user");
-            Boolean guest = (Boolean) req.getSession().getAttribute("guest");
+            User user = currentUserService.currentUser();
 
-            List<Organization> organizations;
-
-            if (guest != null && guest) {
-                organizations = List.of();
-            } else if (user != null) {
-                organizations = securityService.getOrganizationsForUser(user);
-            } else {
+            if (user == null) {
                 resp.sendRedirect("/");
                 return;
             }
+
+            List<Organization> organizations =
+                    securityService.getOrganizationsForUser(user);
 
             req.setAttribute("organizations", organizations);
             req.setAttribute("mode", null);

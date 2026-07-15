@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ReferenceCity;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.RegionalAuthoritiesService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.domain.repository.OrganizationRepository;
@@ -20,9 +21,10 @@ public class SaveRegionServlet extends BaseServlet {
     public SaveRegionServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            RegionalAuthoritiesService regionalAuthoritiesService
+            RegionalAuthoritiesService regionalAuthoritiesService,
+            CurrentUserService currentUserService
     ) {
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.regionalAuthoritiesService = regionalAuthoritiesService;
     }
 

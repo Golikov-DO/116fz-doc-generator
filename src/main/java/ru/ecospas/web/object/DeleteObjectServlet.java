@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.ObjectDeleteService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -22,9 +23,10 @@ public class DeleteObjectServlet extends BaseServlet {
             SecurityService securityService,
             OrganizationRepository organizationRepository,
             ObjectModelRepository objectRepository,
-            ObjectDeleteService deleteService) {
+            ObjectDeleteService deleteService,
+            CurrentUserService currentUserService) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
 
         this.objectRepository = objectRepository;
         this.deleteService = deleteService;
@@ -44,7 +46,7 @@ public class DeleteObjectServlet extends BaseServlet {
                 return;
             }
 
-            if (requireAccess(req, resp, object.getOrganization().getId()) == null) return;
+            if (requireAccess(resp, object.getOrganization().getId()) == null) return;
 
             String returnUrl = req.getParameter("returnUrl");
 

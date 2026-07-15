@@ -8,6 +8,7 @@ import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -21,9 +22,10 @@ public class CreateEmptyObjectServlet extends BaseServlet {
     public CreateEmptyObjectServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectModelRepository objectRepository) {
+            ObjectModelRepository objectRepository,
+            CurrentUserService currentUserService) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.objectRepository = objectRepository;
     }
 
@@ -34,7 +36,7 @@ public class CreateEmptyObjectServlet extends BaseServlet {
             int orgId = paramInt(req, "orgId");
             if (orgId == 0) throw new ServletException("orgId is required");
 
-            Organization organization = requireAccess(req, resp, orgId);
+            Organization organization = requireAccess(resp, orgId);
             if (organization == null) return;
 
             ObjectModel object = new ObjectModel();

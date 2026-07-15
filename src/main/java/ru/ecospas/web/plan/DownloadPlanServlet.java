@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.PlanService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -21,9 +22,10 @@ public class DownloadPlanServlet extends BaseServlet {
     public DownloadPlanServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            PlanService planService
+            PlanService planService,
+            CurrentUserService currentUserService
     ) {
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.planService = planService;
     }
 

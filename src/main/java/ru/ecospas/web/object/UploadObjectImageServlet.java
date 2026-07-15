@@ -11,6 +11,7 @@ import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.repository.ObjectImageRepository;
 import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -30,8 +31,9 @@ public class UploadObjectImageServlet extends BaseServlet {
             SecurityService securityService,
             OrganizationRepository organizationRepository,
             ObjectImageRepository imageRepository,
-            ObjectModelRepository objectRepository) {
-        super(securityService, organizationRepository);
+            ObjectModelRepository objectRepository,
+            CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
         this.imageRepository = imageRepository;
         this.objectRepository = objectRepository;
     }
@@ -57,7 +59,7 @@ public class UploadObjectImageServlet extends BaseServlet {
                 return;
             }
 
-            if (requireAccess(req, resp, object.getOrganization().getId()) == null) {
+            if (requireAccess(resp, object.getOrganization().getId()) == null) {
                 return;
             }
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectType;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.ObjectTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -20,9 +21,11 @@ public class SaveObjectTypeServlet extends BaseServlet {
     public SaveObjectTypeServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectTypeService objectTypeService) {
+            ObjectTypeService objectTypeService,
+            CurrentUserService currentUserService
+    ) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.objectTypeService = objectTypeService;
     }
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -21,8 +22,9 @@ public class OrganizationServlet extends BaseServlet {
     public OrganizationServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            DataLoader dataLoader) {
-        super(securityService, organizationRepository);
+            DataLoader dataLoader,
+            CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
         this.dataLoader = dataLoader;
     }
 
@@ -46,7 +48,7 @@ public class OrganizationServlet extends BaseServlet {
             if (("view".equals(mode) || "edit".equals(mode)) && orgId != null && !orgId.isEmpty()) {
                 int id = Integer.parseInt(orgId);
 
-                if (requireAccess(req, resp, id) == null) return;
+                if (requireAccess(resp, id) == null) return;
 
                 OrganizationData data = dataLoader.loadOrganization(id);
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.repository.*;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -31,9 +32,10 @@ public class ObjectServlet extends BaseServlet {
             ReferenceCityRepository cityRepository,
             ReferenceHazardousSubstanceRepository substanceRepository,
             ScenarioRepository scenarioRepository,
-            ObjectTypeRepository objectTypeRepository) {
+            ObjectTypeRepository objectTypeRepository,
+            CurrentUserService currentUserService) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
 
         this.dataLoader = dataLoader;
         this.asfRepository = asfRepository;

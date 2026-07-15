@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.model.Organization;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 import ru.ecospas.web.helper.DataLoader;
@@ -20,9 +21,10 @@ public class ObjectsServlet extends BaseServlet {
     public ObjectsServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            DataLoader dataLoader) {
+            DataLoader dataLoader,
+            CurrentUserService currentUserService) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.dataLoader = dataLoader;
     }
 
@@ -40,7 +42,7 @@ public class ObjectsServlet extends BaseServlet {
 
                 req.setAttribute("organization", organization);
 
-                if (requireAccess(req, resp, id) == null) return;
+                if (requireAccess(resp, id) == null) return;
 
                 List<ObjectModel> objects = dataLoader.loadObjects(id);
 

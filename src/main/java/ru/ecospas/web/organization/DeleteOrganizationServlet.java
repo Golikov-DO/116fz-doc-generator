@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.repository.OrganizationRepository;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.OrganizationDeleteService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
@@ -20,8 +21,9 @@ public class DeleteOrganizationServlet extends BaseServlet {
     public DeleteOrganizationServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            OrganizationDeleteService orgDeleteService) {
-        super(securityService, organizationRepository);
+            OrganizationDeleteService orgDeleteService,
+            CurrentUserService currentUserService) {
+        super(securityService, organizationRepository, currentUserService);
 
         this.orgDeleteService = orgDeleteService;
 
@@ -39,7 +41,7 @@ public class DeleteOrganizationServlet extends BaseServlet {
                 throw new ServletException("orgId is required");
             }
 
-            if (requireAccess(req, resp, orgId) == null) {
+            if (requireAccess(resp, orgId) == null) {
                 return;
             }
 

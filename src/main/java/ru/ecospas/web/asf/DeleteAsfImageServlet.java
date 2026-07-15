@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.AsfDocumentImageService;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -16,9 +17,11 @@ public class DeleteAsfImageServlet extends BaseServlet {
     public DeleteAsfImageServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            AsfDocumentImageService imageService) {
+            AsfDocumentImageService imageService,
+            CurrentUserService currentUserService
+    ) {
 
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.imageService = imageService;
     }
 

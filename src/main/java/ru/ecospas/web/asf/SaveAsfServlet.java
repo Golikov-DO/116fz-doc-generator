@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Asf;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.AsfService;
+import ru.ecospas.domain.service.CurrentUserService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -21,9 +22,10 @@ public class SaveAsfServlet extends BaseServlet {
     public SaveAsfServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            AsfService asfService
+            AsfService asfService,
+            CurrentUserService currentUserService
     ) {
-        super(securityService, organizationRepository);
+        super(securityService, organizationRepository, currentUserService);
         this.asfService = asfService;
     }
 

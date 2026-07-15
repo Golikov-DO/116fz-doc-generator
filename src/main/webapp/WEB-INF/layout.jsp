@@ -22,13 +22,16 @@
         <%@ include file="/WEB-INF/header.jsp" %>
     </header>
 
-    <%
-        User login = (User) session.getAttribute("user");
-    %>
+<%
+
+    boolean authenticated = authentication != null
+                    && authentication.isAuthenticated()
+                    && !"anonymousUser".equals(authentication.getPrincipal());
+%>
 
     <div class="main-content" style="display:flex;">
 
-        <% if (login != null) { %>
+        <% if (authenticated) { %>
         <aside style="width:220px;">
             <%@ include file="/WEB-INF/sidebar.jsp" %>
         </aside>
