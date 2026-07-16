@@ -2,13 +2,16 @@ package ru.ecospas.domain.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ecospas.domain.model.ObjectRegionalAuthorities;
+import ru.ecospas.domain.model.CityRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
-import ru.ecospas.domain.repository.ObjectRegionalAuthoritiesRepository;
+import ru.ecospas.domain.repository.CityRegionalAuthoritiesRepository;
 import ru.ecospas.domain.repository.ReferenceCityRepository;
+import ru.ecospas.web.dto.request.city.SaveCityRequest;
 import ru.ecospas.web.helper.RegionalAuthoritiesSaveHelper;
+import ru.ecospas.web.mapper.city.CityRequestMapper;
 import ru.ecospas.web.util.SyncListUtils;
 
 import java.util.List;
@@ -19,9 +22,11 @@ import java.util.List;
 public class RegionalAuthoritiesService {
 
     private final ReferenceCityRepository cityRepository;
-    private final ObjectRegionalAuthoritiesRepository authoritiesRepository;
+    private final CityRegionalAuthoritiesRepository authoritiesRepository;
 
     private final RegionalAuthoritiesSaveHelper helper;
+
+    private final CityRequestMapper requestMapper;
 
     public ReferenceCity load(Integer id) {
         return cityRepository.findById(id).orElse(null);
@@ -50,20 +55,20 @@ public class RegionalAuthoritiesService {
             ReferenceCity city
     ) {
 
-        List<ObjectRegionalAuthorities> newList =
+        List<CityRegionalAuthorities> newList =
                 helper.mapAuthorities(req);
 
-        List<ObjectRegionalAuthorities> oldList =
+        List<CityRegionalAuthorities> oldList =
                 authoritiesRepository.findAllByObjectCityId(city.getId());
 
         SyncListUtils.syncList(
                 newList,
                 oldList,
-                ObjectRegionalAuthorities::getId,
+                CityRegionalAuthorities::getId,
                 authoritiesRepository::deleteById
         );
 
-        for (ObjectRegionalAuthorities authority : newList) {
+        for (CityRegionalAuthorities authority : newList) {
             authority.setObjectCity(city);
             authoritiesRepository.save(authority);
         }
@@ -89,8 +94,8 @@ public class RegionalAuthoritiesService {
 
         for (int i = 0; i < 4; i++) {
 
-            ObjectRegionalAuthorities authority =
-                    new ObjectRegionalAuthorities();
+            CityRegionalAuthorities authority =
+                    new CityRegionalAuthorities();
 
             authority.setObjectCity(city);
             authority.setName("");
@@ -101,7 +106,7 @@ public class RegionalAuthoritiesService {
         return city;
     }
 
-    public List<ObjectRegionalAuthorities> findAuthorities(
+    public List<CityRegionalAuthorities> findAuthorities(
             Integer cityId
     ) {
 
@@ -110,13 +115,59 @@ public class RegionalAuthoritiesService {
 
     public void delete(Integer cityId) {
 
-        List<ObjectRegionalAuthorities> authorities =
+        List<CityRegionalAuthorities> authorities =
                 authoritiesRepository.findAllByObjectCityId(cityId);
 
-        for (ObjectRegionalAuthorities authority : authorities) {
+        for (CityRegionalAuthorities authority : authorities) {
             authoritiesRepository.deleteById(authority.getId());
         }
 
         cityRepository.deleteById(cityId);
+    }
+
+    //REST
+    @Transactional(readOnly = true)
+    public ReferenceCity loadRest(Integer id) {
+        ReferenceCity city = cityRepository.findById(id).orElse(null);
+        if (city == null) {
+            return null;
+        }
+        Hibernate.initialize(city.getRegionalAuthorities());
+        return city;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReferenceCity> findAll() {
+        return cityRepository.findAll();
+    }
+
+    @Transactional
+    public ReferenceCity create(SaveCityRequest request) {
+        ReferenceCity city = new ReferenceCity();
+        return save(request, city);
+    }
+
+    @Transactional
+    public ReferenceCity save(SaveCityRequest request,ReferenceCity city) {
+        requestMapper.toCity(request, city);
+        return cityRepository.save(city);
+    }
+
+    @Transactional
+    public ReferenceCity update(Integer id, SaveCityRequest request) {
+        ReferenceCity city = loadRest(id);
+        if (city == null) {
+            return null;
+        }
+        return save(request, city);
+    }
+
+    @Transactional
+    public void deleteRest(Integer id) {
+        ReferenceCity city = loadRest(id);
+        if (city == null) {
+            return;
+        }
+        cityRepository.delete(city);
     }
 }

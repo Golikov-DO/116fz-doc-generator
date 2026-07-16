@@ -22,7 +22,7 @@ public class ObjectServlet extends BaseServlet {
     private final ReferenceCityRepository cityRepository;
     private final ReferenceHazardousSubstanceRepository substanceRepository;
     private final ScenarioRepository scenarioRepository;
-    private final ObjectTypeRepository objectTypeRepository;
+    private final ReferenceTypeRepository referenceTypeRepository;
 
     public ObjectServlet(
             SecurityService securityService,
@@ -32,7 +32,7 @@ public class ObjectServlet extends BaseServlet {
             ReferenceCityRepository cityRepository,
             ReferenceHazardousSubstanceRepository substanceRepository,
             ScenarioRepository scenarioRepository,
-            ObjectTypeRepository objectTypeRepository,
+            ReferenceTypeRepository referenceTypeRepository,
             CurrentUserService currentUserService) {
 
         super(securityService, organizationRepository, currentUserService);
@@ -42,7 +42,7 @@ public class ObjectServlet extends BaseServlet {
         this.cityRepository = cityRepository;
         this.substanceRepository = substanceRepository;
         this.scenarioRepository = scenarioRepository;
-        this.objectTypeRepository = objectTypeRepository;
+        this.referenceTypeRepository = referenceTypeRepository;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ObjectServlet extends BaseServlet {
         req.setAttribute("cities", cityRepository.findAll());
         req.setAttribute("substances", substanceRepository.findAll());
         req.setAttribute("scenarios", scenarioRepository.findAll());
-        req.setAttribute("types", objectTypeRepository.findAll());
+        req.setAttribute("types", referenceTypeRepository.findAll());
 
         req.setAttribute("mode", mode);
         req.setAttribute("orgId", orgId);

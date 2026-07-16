@@ -15,7 +15,7 @@ public class ContactTableLayoutService {
     private final OrganizationRepository organizationRepository;
     private final ObjectModelRepository objectRepository;
     private final ReferenceEmergencyServicesRepository emergencyRepository;
-    private final ObjectRegionalAuthoritiesRepository regionalRepository;
+    private final CityRegionalAuthoritiesRepository regionalRepository;
     private final OrganizationContactRepository organizationContactRepository;
 
     public List<String[]> getContactTableData(int orgId, int objectId) {
@@ -34,9 +34,9 @@ public class ContactTableLayoutService {
         }
 
         // --- Section 2: Regional (6-9) ---
-        List<ObjectRegionalAuthorities> regionalList = regionalRepository
+        List<CityRegionalAuthorities> regionalList = regionalRepository
                 .findAllByObjectCityId(obj.getCity().getId());
-        for (ObjectRegionalAuthorities objectRegionalAuthorities : regionalList) {
+        for (CityRegionalAuthorities cityRegionalAuthorities : regionalList) {
             String numStr;
             if (counter == 8) {
                 numStr = "V_MERGE_START:8";
@@ -48,10 +48,10 @@ public class ContactTableLayoutService {
             }
 
             tableRows.add(new String[]{
-                    numStr, objectRegionalAuthorities.getName(),
-                    objectRegionalAuthorities.getDepartment(),
-                    objectRegionalAuthorities.getPhoneNumber(),
-                    objectRegionalAuthorities.getAddress()
+                    numStr, cityRegionalAuthorities.getName(),
+                    cityRegionalAuthorities.getDepartment(),
+                    cityRegionalAuthorities.getPhoneNumber(),
+                    cityRegionalAuthorities.getAddress()
             });
         }
 

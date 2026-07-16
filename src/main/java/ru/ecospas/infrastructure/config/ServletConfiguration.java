@@ -6,9 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.ecospas.web.asf.*;
 import ru.ecospas.web.auth.CheckLoginServlet;
-import ru.ecospas.web.auth.GuestServlet;
-import ru.ecospas.web.auth.LoginServlet;
-import ru.ecospas.web.auth.LogoutServlet;
 import ru.ecospas.web.object.*;
 import ru.ecospas.web.organization.DeleteOrganizationServlet;
 import ru.ecospas.web.organization.OrganizationServlet;
@@ -64,9 +61,6 @@ public class ServletConfiguration {
     private final DeleteHazardousSubstanceServlet deleteHazardousSubstanceServlet;
     private final HazardousSubstanceServlet hazardousSubstanceServlet;
     private final SaveHazardousSubstanceServlet saveHazardousSubstanceServlet;
-    private final LoginServlet loginServlet;
-    private final LogoutServlet logoutServlet;
-    private final GuestServlet guestServlet;
     private final CheckLoginServlet checkLoginServlet;
     private final UsersServlet usersServlet;
     private final UserServlet userServlet;
@@ -222,21 +216,6 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<SaveHazardousSubstanceServlet> saveHazardousSubstanceRegistration() {
         return new ServletRegistrationBean<>(saveHazardousSubstanceServlet, "/save-hazardous-substance");
-    }
-
-    @Bean
-    public ServletRegistrationBean<LoginServlet> loginRegistration() {
-        return new ServletRegistrationBean<>(loginServlet, "/login");
-    }
-
-    @Bean
-    public ServletRegistrationBean<LogoutServlet> logoutRegistration() {
-        return new ServletRegistrationBean<>(logoutServlet, "/logout");
-    }
-
-    @Bean
-    public ServletRegistrationBean<GuestServlet> guestRegistration() {
-        return new ServletRegistrationBean<>(guestServlet, "/guest");
     }
 
     @Bean

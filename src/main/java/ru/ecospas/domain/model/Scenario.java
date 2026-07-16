@@ -3,6 +3,9 @@ package ru.ecospas.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +22,7 @@ public class Scenario implements BaseEntity {
     private String name;
     private String description;
     private String impactFactor;
+
+    @OneToMany(mappedBy = "scenario")
+    private List<ObjectScenario> objectScenarios = new ArrayList<>();
 }

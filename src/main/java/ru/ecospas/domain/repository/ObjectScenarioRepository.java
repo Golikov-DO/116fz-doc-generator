@@ -8,4 +8,8 @@ import java.util.List;
 public interface ObjectScenarioRepository extends JpaRepository<ObjectScenario, Integer> {
 
     List<ObjectScenario> findAllByStructureId(Integer structureId);
+
+    List<ObjectScenario> findByStructureIdOrderByTypeAscScenarioNameAsc(Integer structureId);
+
+    void deleteByStructureId(Integer structureId);
 }

@@ -1,8 +1,8 @@
 package ru.ecospas.web.dto;
 
 import lombok.Getter;
-import ru.ecospas.domain.model.ObjectHazardousParamValue;
-import ru.ecospas.domain.model.ReferenceHazardousParam;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
+import ru.ecospas.domain.model.SubstanceHazardousParam;
 
 @Getter
 public class HazardParamDto {
@@ -14,8 +14,8 @@ public class HazardParamDto {
     private final String source;
 
     public HazardParamDto(
-            ReferenceHazardousParam param,
-            ObjectHazardousParamValue valueObj
+            SubstanceHazardousParam param,
+            SubstanceHazardousParamValue valueObj
     ) {
         this.paramId = param.getId();
         this.section = param.getSectionNo();

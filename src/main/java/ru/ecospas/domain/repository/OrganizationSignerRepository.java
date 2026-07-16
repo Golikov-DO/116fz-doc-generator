@@ -5,12 +5,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.OrganizationSigner;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrganizationSignerRepository
         extends JpaRepository<OrganizationSigner, Integer> {
 
     Optional<OrganizationSigner> findByOrganizationId(Integer organizationId);
+    List<OrganizationSigner> findAllByOrganizationId(Integer organizationId);
 
     @Modifying
     @Transactional

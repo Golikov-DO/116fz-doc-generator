@@ -2,9 +2,9 @@ package ru.ecospas.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.ecospas.domain.model.ObjectHazardousParamValue;
-import ru.ecospas.domain.model.ReferenceHazardousParam;
-import ru.ecospas.domain.repository.ObjectHazardousParamValueRepository;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
+import ru.ecospas.domain.model.SubstanceHazardousParam;
+import ru.ecospas.domain.repository.ReferenceHazardousParamValueRepository;
 import ru.ecospas.domain.repository.ReferenceHazardousParamRepository;
 import ru.ecospas.web.dto.HazardParamDto;
 
@@ -18,16 +18,16 @@ import java.util.stream.Collectors;
 public class HazardousSubstanceQueryService {
 
     private final ReferenceHazardousParamRepository paramRepository;
-    private final ObjectHazardousParamValueRepository valueRepository;
+    private final ReferenceHazardousParamValueRepository valueRepository;
 
     public List<HazardParamDto> getHazardParamsWithValues(
             Integer substanceId
     ) {
 
-        List<ReferenceHazardousParam> params =
+        List<SubstanceHazardousParam> params =
                 paramRepository.findAll();
 
-        Map<Integer, ObjectHazardousParamValue> values =
+        Map<Integer, SubstanceHazardousParamValue> values =
                 valueRepository.findAllBySubstanceId(substanceId)
                         .stream()
                         .collect(Collectors.toMap(

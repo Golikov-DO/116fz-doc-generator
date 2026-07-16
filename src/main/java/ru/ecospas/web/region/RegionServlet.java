@@ -4,7 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectRegionalAuthorities;
+import ru.ecospas.domain.model.CityRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
@@ -45,7 +45,7 @@ public class RegionServlet extends BaseServlet {
             ReferenceCity city =
                     regionalAuthoritiesService.load(cityId);
 
-            List<ObjectRegionalAuthorities> authorities =
+            List<CityRegionalAuthorities> authorities =
                     regionalAuthoritiesService.findAuthorities(cityId);
 
             req.setAttribute("city", city);

@@ -1,16 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="ru.ecospas.domain.model.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="ru.ecospas.domain.model.ReferenceHazardousParam" %>
-<%@ page import="ru.ecospas.domain.model.ObjectHazardousParamValue" %>
+<%@ page import="ru.ecospas.domain.model.SubstanceHazardousParam" %>
+<%@ page import="ru.ecospas.domain.model.SubstanceHazardousParamValue" %>
 <%@ page import="ru.ecospas.domain.model.ReferenceHazardousSubstance" %>
 
 <%
     ReferenceHazardousSubstance substance = (ReferenceHazardousSubstance) request.getAttribute("substance");
     @SuppressWarnings("unchecked")
-    List<ReferenceHazardousParam> params = (List<ReferenceHazardousParam>) request.getAttribute("params");
+    List<SubstanceHazardousParam> params = (List<SubstanceHazardousParam>) request.getAttribute("params");
     @SuppressWarnings("unchecked")
-    Map<Integer, ObjectHazardousParamValue> values = (Map<Integer, ObjectHazardousParamValue>) request.getAttribute("values");
+    Map<Integer, SubstanceHazardousParamValue> values = (Map<Integer, SubstanceHazardousParamValue>) request.getAttribute("values");
 
     boolean hasData = substance != null;
     String mode = (String) request.getAttribute("mode");
@@ -60,9 +60,9 @@
 
                     <%
                         if (params != null) {
-                            for (ReferenceHazardousParam param : params) {
+                            for (SubstanceHazardousParam param : params) {
 
-                                ObjectHazardousParamValue val =
+                                SubstanceHazardousParamValue val =
                                         values != null ? values.get(param.getId()) : null;
 
                                 String valueText = val != null && val.getValueText() != null

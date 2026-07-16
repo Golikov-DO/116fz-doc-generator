@@ -2,11 +2,14 @@ package ru.ecospas.domain.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.repository.*;
+import ru.ecospas.web.dto.request.object.SaveObjectRequest;
 import ru.ecospas.web.helper.ObjectSaveHelper;
+import ru.ecospas.web.mapper.object.ObjectRequestMapper;
 import ru.ecospas.web.util.SyncListUtils;
 
 import java.util.List;
@@ -23,11 +26,12 @@ public class ObjectService {
     private final ReferenceCityRepository cityRepository;
     private final AsfRepository asfRepository;
     private final ReferenceHazardousSubstanceRepository substanceRepository;
-    private final ObjectTypeRepository typeRepository;
+    private final ReferenceTypeRepository typeRepository;
 
     private final ObjectAddressRepository addressRepository;
     private final ObjectInsurancePolicyRepository policyRepository;
     private final ObjectOrderMinimumBalanceRepository balanceRepository;
+    private final OrganizationRepository organizationRepository;
 
     private final ObjectCompositionKchsRepository kchsRepository;
     private final ObjectTechnologicalEquipmentRepository equipmentRepository;
@@ -40,8 +44,16 @@ public class ObjectService {
     private final ScenarioRepository scenarioRepository;
     private final ObjectScenarioRepository objectScenarioRepository;
 
+    private final ObjectRequestMapper objectRequestMapper;
+    private final CurrentUserService currentUserService;
+
     public ObjectModel load(Integer id) {
-        return objectRepository.findById(id).orElse(null);
+        return objectRepository
+                .findByIdAndOrganizationUserId(
+                        id,
+                        currentUserService.requireCurrentUser().getId()
+                )
+                .orElse(null);
     }
 
     public ObjectModel create(Organization organization) {
@@ -368,27 +380,186 @@ public class ObjectService {
     ) {
 
         object = saveObject(req, helper, object);
-
         saveAddress(req, helper, object);
-
         saveKchs(req, helper, object);
-
         saveEquipment(req, helper, object);
-
         saveStructures(req, helper, object);
-
         saveTechnoBlocks(req, helper, object);
-
         saveFireEquipment(req, helper, object);
-
         savePersons(req, helper, object);
-
         saveImages(req, helper, object);
-
         savePolicy(req, helper, object);
-
         saveMinimumBalance(req, helper, object);
+        return object;
+    }
+
+    //REST
+    public ObjectModel load(Integer organizationId, Integer id) {
+        ObjectModel object = objectRepository
+                .findByIdAndOrganizationId(id, organizationId)
+                .orElse(null);
+
+        if (object == null) {
+            return null;
+        }
+
+        Hibernate.initialize(object.getCompositionKchs());
+        Hibernate.initialize(object.getResponsiblePersons());
+        Hibernate.initialize(object.getFireEquipments());
+        Hibernate.initialize(object.getTechnologicalEquipments());
+        Hibernate.initialize(object.getTechnologicalBlocks());
+        Hibernate.initialize(object.getStructures());
+        Hibernate.initialize(object.getImages());
 
         return object;
+
+    }
+
+    public ObjectModel create(Integer organizationId, SaveObjectRequest request) {
+        ObjectModel object = new ObjectModel();
+        object.setOrganization(organizationRepository.getReferenceById(organizationId));
+        return save(request, object);
+    }
+
+    public ObjectModel save(SaveObjectRequest request, ObjectModel object) {
+        objectRequestMapper.toObject(request, object);
+        saveAddress(request, object);
+        saveInsurancePolicy(request, object);
+        saveMinimumBalance(request, object);
+        saveCompositionKchs(request, object);
+        saveResponsiblePersons(request, object);
+        saveFireEquipments(request, object);
+        saveTechnologicalEquipments(request, object);
+        saveTechnologicalBlocks(request, object);
+        saveStructures(request, object);
+        saveImages(request, object);
+        return objectRepository.save(object);
+    }
+
+    private void saveAddress(SaveObjectRequest request, ObjectModel object) {
+        ObjectAddress address = object.getAddress();
+        if (address == null) {
+            address = new ObjectAddress();
+        }
+        objectRequestMapper.toAddress(request.address(),address);
+        address.setObject(object);
+        object.setAddress(address);
+    }
+
+    private void saveInsurancePolicy(SaveObjectRequest request, ObjectModel object) {
+        ObjectInsurancePolicy policy = object.getInsurancePolicy();
+        if (policy == null) {
+            policy = new ObjectInsurancePolicy();
+        }
+        objectRequestMapper.toInsurancePolicy(request.insurancePolicy(), policy);
+        policy.setObject(object);
+        object.setInsurancePolicy(policy);
+    }
+
+    private void saveMinimumBalance(SaveObjectRequest request, ObjectModel object) {
+        ObjectOrderMinimumBalance balance = object.getMinimumBalance();
+        if (balance == null) {
+            balance = new ObjectOrderMinimumBalance();
+        }
+        objectRequestMapper.toMinimumBalance(request.minimumBalance(), balance);
+        balance.setObject(object);
+        object.setMinimumBalance(balance);
+    }
+
+    private void saveCompositionKchs(SaveObjectRequest request, ObjectModel object){
+        object.getCompositionKchs().clear();
+        List<ObjectCompositionKchs> list =
+                objectRequestMapper.toCompositionKchs(request.compositionKchs());
+        for (ObjectCompositionKchs item : list) {
+            item.setObject(object);
+        }
+        object.getCompositionKchs().addAll(list);
+    }
+
+    private void saveResponsiblePersons(SaveObjectRequest request, ObjectModel object) {
+        object.getResponsiblePersons().clear();
+        List<ObjectPersonsResponsible> list =
+                objectRequestMapper.toResponsiblePersons(request.responsiblePersons());
+        for (ObjectPersonsResponsible item : list) {
+            item.setObject(object);
+        }
+        object.getResponsiblePersons().addAll(list);
+    }
+
+    private void saveFireEquipments(SaveObjectRequest request, ObjectModel object) {
+        object.getFireEquipments().clear();
+        List<ObjectFireEquipment> list =
+                objectRequestMapper.toFireEquipments(request.fireEquipments());
+        for (ObjectFireEquipment item : list) {
+            item.setObject(object);
+        }
+        object.getFireEquipments().addAll(list);
+    }
+
+    private void saveTechnologicalEquipments(SaveObjectRequest request, ObjectModel object) {
+        object.getTechnologicalEquipments().clear();
+        List<ObjectTechnologicalEquipment> list =
+                objectRequestMapper.toTechnologicalEquipments(
+                        request.technologicalEquipments()
+                );
+        for (ObjectTechnologicalEquipment item : list) {
+            item.setObject(object);
+        }
+        object.getTechnologicalEquipments().addAll(list);
+    }
+
+    private void saveTechnologicalBlocks(SaveObjectRequest request, ObjectModel object) {
+        object.getTechnologicalBlocks().clear();
+        List<ObjectTechnologicalBlock> list =
+                objectRequestMapper.toTechnologicalBlocks(request.technologicalBlocks());
+        for (ObjectTechnologicalBlock item : list) {
+            item.setObject(object);
+        }
+        object.getTechnologicalBlocks().addAll(list);
+    }
+
+    private void saveStructures(SaveObjectRequest request, ObjectModel object) {
+        object.getStructures().clear();
+        List<ObjectStructure> list = objectRequestMapper.toStructures(request.structures());
+        for (ObjectStructure item : list) {
+            item.setObject(object);
+        }
+        object.getStructures().addAll(list);
+    }
+
+    private void saveImages(SaveObjectRequest request, ObjectModel object) {
+        object.getImages().clear();
+        List<ObjectImage> list = objectRequestMapper.toImages(request.images());
+        for (ObjectImage item : list) {
+            item.setObject(object);
+        }
+        object.getImages().addAll(list);
+    }
+
+    public List<ObjectModel> findAll(Integer organizationId) {
+        return objectRepository.findByOrganizationId(organizationId);
+    }
+
+    public ObjectModel update(Integer organizationId, Integer id, SaveObjectRequest request) {
+        ObjectModel object = load(organizationId, id);
+        if (object == null) {
+            return null;
+        }
+        return save(request, object);
+    }
+
+    public void delete(Integer organizationId, Integer id) {
+        ObjectModel object = load(organizationId, id);
+        if (object != null) {
+            objectRepository.delete(object);
+        }
+    }
+
+    public ObjectModel create(SaveObjectRequest request) {
+        ObjectModel object = new ObjectModel();
+        object.setOrganization(
+                organizationRepository.getReferenceById(request.organizationId())
+        );
+        return save(request, object);
     }
 }

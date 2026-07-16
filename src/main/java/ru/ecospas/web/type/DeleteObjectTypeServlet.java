@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
-import ru.ecospas.domain.service.ObjectTypeService;
+import ru.ecospas.domain.service.ReferenceTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -18,16 +18,16 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class DeleteObjectTypeServlet extends BaseServlet {
 
-    private final ObjectTypeService objectTypeService;
+    private final ReferenceTypeService referenceTypeService;
 
     public DeleteObjectTypeServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectTypeService objectTypeService,
+            ReferenceTypeService referenceTypeService,
             CurrentUserService currentUserService) {
 
         super(securityService, organizationRepository, currentUserService);
-        this.objectTypeService = objectTypeService;
+        this.referenceTypeService = referenceTypeService;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DeleteObjectTypeServlet extends BaseServlet {
                 throw new ServletException("id is required");
             }
 
-            objectTypeService.delete(id);
+            referenceTypeService.delete(id);
 
             String backUrl = req.getParameter("backUrl");
 

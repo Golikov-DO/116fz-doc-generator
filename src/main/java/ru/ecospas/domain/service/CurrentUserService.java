@@ -11,21 +11,16 @@ import ru.ecospas.infrastructure.security.UserPrincipal;
 public class CurrentUserService {
 
     public User currentUser() {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication == null || !authentication.isAuthenticated()
                 || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
             return null;
         }
-
         return principal.getUser();
     }
 
     public boolean isAuthenticated() {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         return authentication != null && authentication.isAuthenticated()
                 && authentication.getPrincipal() instanceof UserPrincipal;
     }
@@ -39,4 +34,11 @@ public class CurrentUserService {
         return user != null ? user.getId() : null;
     }
 
+    public User requireCurrentUser() {
+        User user = currentUser();
+        if (user == null) {
+            throw new IllegalStateException("Authenticated user not found");
+        }
+        return user;
+    }
 }

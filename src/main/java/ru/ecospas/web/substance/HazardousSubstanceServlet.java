@@ -4,8 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectHazardousParamValue;
-import ru.ecospas.domain.model.ReferenceHazardousParam;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
+import ru.ecospas.domain.model.SubstanceHazardousParam;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
@@ -50,15 +50,15 @@ public class HazardousSubstanceServlet extends BaseServlet {
                             ? hazardousSubstanceService.load(id)
                             : hazardousSubstanceService.create();
 
-            List<ReferenceHazardousParam> params =
+            List<SubstanceHazardousParam> params =
                     hazardousSubstanceService.loadParams();
 
-            List<ObjectHazardousParamValue> values =
+            List<SubstanceHazardousParamValue> values =
                     id > 0
                             ? hazardousSubstanceService.loadValues(id)
                             : List.of();
 
-            Map<Integer, ObjectHazardousParamValue> valueMap =
+            Map<Integer, SubstanceHazardousParamValue> valueMap =
                     values.stream()
                             .collect(Collectors.toMap(
                                     value -> value.getParam().getId(),

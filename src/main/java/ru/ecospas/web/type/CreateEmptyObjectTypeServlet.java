@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectType;
+import ru.ecospas.domain.model.ReferenceType;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
-import ru.ecospas.domain.service.ObjectTypeService;
+import ru.ecospas.domain.service.ReferenceTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -16,17 +16,17 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class CreateEmptyObjectTypeServlet extends BaseServlet {
 
-    private final ObjectTypeService objectTypeService;
+    private final ReferenceTypeService referenceTypeService;
 
     public CreateEmptyObjectTypeServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectTypeService objectTypeService,
+            ReferenceTypeService referenceTypeService,
             CurrentUserService currentUserService
     ) {
 
         super(securityService, organizationRepository, currentUserService);
-        this.objectTypeService = objectTypeService;
+        this.referenceTypeService = referenceTypeService;
     }
 
     @Override
@@ -35,12 +35,12 @@ public class CreateEmptyObjectTypeServlet extends BaseServlet {
 
         try {
 
-            ObjectType objectType = objectTypeService.createEmpty();
+            ReferenceType referenceType = referenceTypeService.createEmpty();
 
             String backUrl = req.getParameter("backUrl");
 
             String redirect =
-                    "/object-type?id=" + objectType.getId() + "&mode=edit";
+                    "/object-type?id=" + referenceType.getId() + "&mode=edit";
 
             if (backUrl != null && !backUrl.isEmpty()) {
                 redirect += "&backUrl=" +

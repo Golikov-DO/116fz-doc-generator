@@ -2,23 +2,14 @@ package ru.ecospas.domain.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ecospas.domain.model.Asf;
-import ru.ecospas.domain.model.AsfCertificate;
-import ru.ecospas.domain.model.AsfCompositionDeploymentFunds;
-import ru.ecospas.domain.model.AsfPersonnel;
-import ru.ecospas.domain.model.AsfSpecialists;
-import ru.ecospas.domain.model.AsfSigner;
-import ru.ecospas.domain.model.AsfWorkType;
-import ru.ecospas.domain.repository.AsfCertificateRepository;
-import ru.ecospas.domain.repository.AsfCompositionDeploymentFundsRepository;
-import ru.ecospas.domain.repository.AsfPersonnelRepository;
-import ru.ecospas.domain.repository.AsfRepository;
-import ru.ecospas.domain.repository.AsfSignerRepository;
-import ru.ecospas.domain.repository.AsfSpecialistsRepository;
-import ru.ecospas.domain.repository.AsfWorkTypeRepository;
+import ru.ecospas.domain.model.*;
+import ru.ecospas.domain.repository.*;
+import ru.ecospas.web.dto.request.asf.SaveAsfRequest;
 import ru.ecospas.web.helper.AsfSaveHelper;
+import ru.ecospas.web.mapper.asf.AsfRequestMapper;
 import ru.ecospas.web.util.SyncListUtils;
 
 import java.util.List;
@@ -39,6 +30,8 @@ public class AsfService {
     private final AsfWorkTypeRepository workTypeRepository;
 
     private final AsfSaveHelper helper;
+
+    private final AsfRequestMapper asfRequestMapper;
 
     public Asf load(Integer id) {
         return asfRepository.findById(id).orElse(null);
@@ -190,5 +183,126 @@ public class AsfService {
         saveWorkTypes(req, asf);
 
         return asf;
+    }
+
+    //REST
+    @Transactional(readOnly = true)
+    public Asf loadRest(Integer id) {
+
+        Asf asf = asfRepository.findById(id).orElse(null);
+
+        if (asf == null) {
+            return null;
+        }
+
+        Hibernate.initialize(asf.getSigners());
+        Hibernate.initialize(asf.getWorkTypes());
+        Hibernate.initialize(asf.getImages());
+
+        return asf;
+    }
+
+    public Asf create(SaveAsfRequest request) {
+        Asf asf = new Asf();
+        return save(request, asf);
+    }
+
+    public Asf save(SaveAsfRequest request, Asf asf) {
+        asfRequestMapper.toAsf(request, asf);
+        saveCertificate(request, asf);
+        savePersonnel(request, asf);
+        saveSpecialists(request, asf);
+        saveDeployment(request, asf);
+        saveSigners(request, asf);
+        saveWorkTypes(request, asf);
+        saveImages(request, asf);
+        return asfRepository.save(asf);
+    }
+
+    public Asf update(Integer id, SaveAsfRequest request
+    ) {
+        Asf asf = load(id);
+        if (asf == null) {
+            return null;
+        }
+        return save(request, asf);
+    }
+    public void delete(Integer id) {
+        Asf asf = load(id);
+        if (asf == null) {
+            return;
+        }
+        asfRepository.delete(asf);
+    }
+
+    private void saveCertificate(SaveAsfRequest request, Asf asf) {
+        AsfCertificate certificate = asf.getCertificate();
+        if (certificate == null) {
+            certificate = new AsfCertificate();
+        }
+        asfRequestMapper.toCertificate(request.certificate(), certificate);
+        certificate.setAsf(asf);
+        asf.setCertificate(certificate);
+    }
+
+    private void savePersonnel(SaveAsfRequest request, Asf asf) {
+        AsfPersonnel personnel = asf.getPersonnel();
+        if (personnel == null) {
+            personnel = new AsfPersonnel();
+        }
+        asfRequestMapper.toPersonnel(request.personnel(), personnel);
+        personnel.setAsf(asf);
+        asf.setPersonnel(personnel);
+    }
+
+    private void saveSpecialists(SaveAsfRequest request, Asf asf) {
+        AsfSpecialists specialists = asf.getSpecialists();
+        if (specialists == null) {
+            specialists = new AsfSpecialists();
+        }
+        asfRequestMapper.toSpecialists(request.specialists(), specialists);
+        specialists.setAsf(asf);
+        asf.setSpecialists(specialists);
+    }
+
+    private void saveDeployment(SaveAsfRequest request, Asf asf) {
+        AsfCompositionDeploymentFunds deployment = asf.getDeployment();
+        if (deployment == null) {
+            deployment = new AsfCompositionDeploymentFunds();
+        }
+        asfRequestMapper.toDeployment(request.deployment(), deployment);
+        deployment.setAsf(asf);
+        asf.setDeployment(deployment);
+    }
+
+    private void saveSigners(SaveAsfRequest request, Asf asf) {
+        asf.getSigners().clear();
+        List<AsfSigner> signers = asfRequestMapper.toSigners(request.signers());
+        for (AsfSigner signer : signers) {
+            signer.setAsf(asf);
+        }
+        asf.getSigners().addAll(signers);
+    }
+
+    private void saveWorkTypes(SaveAsfRequest request, Asf asf) {
+        asf.getWorkTypes().clear();
+        List<AsfWorkType> workTypes = asfRequestMapper.toWorkTypes(request.workTypes());
+        for (AsfWorkType workType : workTypes) {
+            workType.setAsf(asf);
+        }
+        asf.getWorkTypes().addAll(workTypes);
+    }
+
+    private void saveImages(SaveAsfRequest request, Asf asf) {
+        asf.getImages().clear();
+        List<AsfDocumentImage> images = asfRequestMapper.toImages(request.images());
+        for (AsfDocumentImage image : images) {
+            image.setAsf(asf);
+        }
+        asf.getImages().addAll(images);
+    }
+
+    public List<Asf> findAll() {
+        return asfRepository.findAll();
     }
 }

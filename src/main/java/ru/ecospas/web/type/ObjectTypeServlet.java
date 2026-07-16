@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectType;
+import ru.ecospas.domain.model.ReferenceType;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
-import ru.ecospas.domain.service.ObjectTypeService;
+import ru.ecospas.domain.service.ReferenceTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -17,17 +17,17 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class ObjectTypeServlet extends BaseServlet {
 
-    private final ObjectTypeService objectTypeService;
+    private final ReferenceTypeService referenceTypeService;
 
     public ObjectTypeServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectTypeService objectTypeService,
+            ReferenceTypeService referenceTypeService,
             CurrentUserService currentUserService
     ) {
 
         super(securityService, organizationRepository, currentUserService);
-        this.objectTypeService = objectTypeService;
+        this.referenceTypeService = referenceTypeService;
     }
 
     @Override
@@ -39,13 +39,13 @@ public class ObjectTypeServlet extends BaseServlet {
             int id = paramInt(req, "id");
             String mode = param(req, "mode");
 
-            ObjectType objectType = null;
+            ReferenceType referenceType = null;
 
             if (id > 0) {
-                objectType = objectTypeService.load(id);
+                referenceType = referenceTypeService.load(id);
             }
 
-            req.setAttribute("objectType", objectType);
+            req.setAttribute("referenceType", referenceType);
             req.setAttribute("mode", mode);
             req.setAttribute("isView", "view".equals(mode));
             req.setAttribute("backUrl", req.getParameter("backUrl"));

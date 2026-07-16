@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.UserRepository;
+import ru.ecospas.web.dto.request.user.SaveUserRequest;
+import ru.ecospas.web.mapper.user.UserRequestMapper;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -12,10 +16,50 @@ import ru.ecospas.domain.repository.UserRepository;
 public class UserService {
 
     private final UserRepository repository;
-
+    private final UserRequestMapper userRequestMapper;
 
     public User findByLogin(String login) {
         return repository.findByLogin(login)
                 .orElse(null);
+    }
+
+    public List<User> findAll() {
+        return repository.findAll();
+    }
+
+    public User load(Integer id) {
+
+        return repository.findById(id)
+                .orElse(null);
+    }
+
+    @Transactional
+    public User create(SaveUserRequest request) {
+        User user = new User();
+        return save(request, user);
+    }
+
+    @Transactional
+    public User save(SaveUserRequest request, User user) {
+        userRequestMapper.toUser(request, user);
+        return repository.save(user);
+    }
+
+    @Transactional
+    public User update(Integer id, SaveUserRequest request) {
+        User user = load(id);
+        if (user == null) {
+            return null;
+        }
+        return save(request, user);
+    }
+
+    @Transactional
+    public void delete(Integer id) {
+        User user = load(id);
+        if (user == null) {
+            return;
+        }
+        repository.delete(user);
     }
 }

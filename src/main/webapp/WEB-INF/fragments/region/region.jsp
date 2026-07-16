@@ -1,13 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="ru.ecospas.domain.model.ReferenceCity" %>
-<%@ page import="ru.ecospas.domain.model.ObjectRegionalAuthorities" %>
+<%@ page import="ru.ecospas.domain.model.CityRegionalAuthorities" %>
 <%@ page import="java.util.List" %>
 <%
     ReferenceCity city = (ReferenceCity) request.getAttribute("city");
 
     @SuppressWarnings("unchecked")
-    List<ObjectRegionalAuthorities> list =
-            (List<ObjectRegionalAuthorities>) request.getAttribute("authorities");
+    List<CityRegionalAuthorities> list =
+            (List<CityRegionalAuthorities>) request.getAttribute("authorities");
 
     String mode = (String) request.getAttribute("mode");
     boolean isView = "view".equals(mode);
@@ -121,7 +121,7 @@
                     <%
                         if (list != null) {
                             for (int i = 0; i < list.size(); i++) {
-                                ObjectRegionalAuthorities authorities = list.get(i);
+                                CityRegionalAuthorities authorities = list.get(i);
                     %>
 
                     <tr>

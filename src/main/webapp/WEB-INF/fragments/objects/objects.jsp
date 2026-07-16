@@ -13,7 +13,7 @@
     List<ObjectTechnologicalEquipment> equipmentList = (List<ObjectTechnologicalEquipment>) request.getAttribute("equipmentList");
     ObjectInsurancePolicy policy = (ObjectInsurancePolicy) request.getAttribute("policy");
     @SuppressWarnings("unchecked")
-    List<ObjectType> type = (List<ObjectType>) request.getAttribute("types");
+    List<ReferenceType> type = (List<ReferenceType>) request.getAttribute("types");
     ObjectOrderMinimumBalance balance = (ObjectOrderMinimumBalance) request.getAttribute("balance");
     @SuppressWarnings("unchecked")
     List<ReferenceCity> cities = (List<ReferenceCity>) request.getAttribute("cities");
@@ -73,9 +73,9 @@
                         <option value="">— выберите —</option>
                         <% if (type != null) {
                             Integer selectedId = object.getType() != null ? object.getType().getId() : null;
-                            for (ObjectType objectType : type) { %>
-                        <option value="<%= objectType.getId() %>" <%= Objects.equals(selectedId, objectType.getId()) ? "selected" : "" %>>
-                            <%= objectType.getType() %>
+                            for (ReferenceType referenceType : type) { %>
+                        <option value="<%= referenceType.getId() %>" <%= Objects.equals(selectedId, referenceType.getId()) ? "selected" : "" %>>
+                            <%= referenceType.getType() %>
                         </option>
                         <% }
                         } %>

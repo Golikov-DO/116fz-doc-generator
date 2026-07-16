@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,11 +35,81 @@ public class ObjectModel implements BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "object_type_id")
-    private ObjectType type;
+    private ReferenceType type;
 
     @ManyToOne
     @JoinColumn(name = "hazardous_substance_id")
     private ReferenceHazardousSubstance hazardousSubstance;
+
+    @OneToOne(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private ObjectOrderMinimumBalance minimumBalance;
+
+    @OneToOne(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private ObjectAddress address;
+
+    @OneToOne(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private ObjectInsurancePolicy insurancePolicy;
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectPersonsResponsible> responsiblePersons = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectCompositionKchs> compositionKchs = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectFireEquipment> fireEquipments = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectImage> images = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectStructure> structures = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectTechnologicalBlock> technologicalBlocks = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "object",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ObjectTechnologicalEquipment> technologicalEquipments = new ArrayList<>();
 
     private int asfSignerId;
     private int hazardClass;

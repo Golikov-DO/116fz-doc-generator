@@ -3,6 +3,9 @@ package ru.ecospas.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,4 +20,14 @@ public class ReferenceHazardousSubstance implements BaseEntity {
     private Integer id;
     private String name;
     private String nameGen;
+
+    @OneToMany(mappedBy = "hazardousSubstance")
+    private List<ObjectModel> objects = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "substance",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<SubstanceHazardousParamValue> values = new ArrayList<>();
 }

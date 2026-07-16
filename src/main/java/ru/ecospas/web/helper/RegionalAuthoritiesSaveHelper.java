@@ -2,7 +2,7 @@ package ru.ecospas.web.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectRegionalAuthorities;
+import ru.ecospas.domain.model.CityRegionalAuthorities;
 import ru.ecospas.domain.model.ReferenceCity;
 import ru.ecospas.web.util.MapListUtils;
 import ru.ecospas.web.util.RequestIndexContext;
@@ -29,7 +29,7 @@ public class RegionalAuthoritiesSaveHelper {
         city.setCityName(param(req, "city_name"));
     }
 
-    public void mapAuthority(RequestIndexContext ctx, ObjectRegionalAuthorities authorities) {
+    public void mapAuthority(RequestIndexContext ctx, CityRegionalAuthorities authorities) {
         int i = ctx.index;
 
         authorities.setName(param(ctx.req, "ra_name[]", i));
@@ -38,11 +38,11 @@ public class RegionalAuthoritiesSaveHelper {
         authorities.setAddress(param(ctx.req, "ra_address[]", i));
     }
 
-    public List<ObjectRegionalAuthorities> mapAuthorities(HttpServletRequest req) {
+    public List<CityRegionalAuthorities> mapAuthorities(HttpServletRequest req) {
         return MapListUtils.mapList(
                 req,
                 "ra_id[]",
-                ObjectRegionalAuthorities::new,
+                CityRegionalAuthorities::new,
                 this::mapAuthority
         );
     }

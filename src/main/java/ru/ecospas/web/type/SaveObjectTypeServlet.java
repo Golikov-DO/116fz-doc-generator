@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.ObjectType;
+import ru.ecospas.domain.model.ReferenceType;
 import ru.ecospas.domain.repository.OrganizationRepository;
 import ru.ecospas.domain.service.CurrentUserService;
-import ru.ecospas.domain.service.ObjectTypeService;
+import ru.ecospas.domain.service.ReferenceTypeService;
 import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.BaseServlet;
 
@@ -16,17 +16,17 @@ import static ru.ecospas.web.util.RequestUtils.paramInt;
 @Component
 public class SaveObjectTypeServlet extends BaseServlet {
 
-    private final ObjectTypeService objectTypeService;
+    private final ReferenceTypeService referenceTypeService;
 
     public SaveObjectTypeServlet(
             SecurityService securityService,
             OrganizationRepository organizationRepository,
-            ObjectTypeService objectTypeService,
+            ReferenceTypeService referenceTypeService,
             CurrentUserService currentUserService
     ) {
 
         super(securityService, organizationRepository, currentUserService);
-        this.objectTypeService = objectTypeService;
+        this.referenceTypeService = referenceTypeService;
     }
 
     @Override
@@ -37,15 +37,15 @@ public class SaveObjectTypeServlet extends BaseServlet {
 
             int id = paramInt(req, "id");
 
-            ObjectType objectType;
+            ReferenceType referenceType;
 
             if (id == 0) {
-                objectType = objectTypeService.create();
+                referenceType = referenceTypeService.create();
             } else {
-                objectType = objectTypeService.load(id);
+                referenceType = referenceTypeService.load(id);
             }
 
-            objectTypeService.save(req, objectType);
+            referenceTypeService.save(req, referenceType);
 
             String backUrl = req.getParameter("backUrl");
 
