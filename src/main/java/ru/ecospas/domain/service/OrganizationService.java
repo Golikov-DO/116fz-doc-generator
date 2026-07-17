@@ -43,11 +43,6 @@ public class OrganizationService {
         return organization;
     }
 
-    public List<Organization> findAll() {
-        User user = currentUserService.currentUser();
-        return organizationRepository.findByUserId(user.getId());
-    }
-
     public Organization saveOrganization(HttpServletRequest req, Organization organization) {
         helper.mapOrganization(req, organization);
         return organizationRepository.save(organization);
@@ -105,7 +100,7 @@ public class OrganizationService {
     public Organization save(SaveOrganizationRequest request, Organization organization) {
         organizationRequestMapper.toOrganization(request, organization);
         saveAddress(request, organization);
-        saveSigner(request, organization);
+        saveSigners(request, organization);
         saveContacts(request, organization);
         return organizationRepository.save(organization);
     }
@@ -143,9 +138,9 @@ public class OrganizationService {
         organization.getContacts().addAll(contacts);
     }
 
-    private void saveSigner(SaveOrganizationRequest request, Organization organization) {
+    private void saveSigners(SaveOrganizationRequest request, Organization organization) {
         organization.getSigners().clear();
-        List<OrganizationSigner> signers = organizationRequestMapper.toSigners(request.signer());
+        List<OrganizationSigner> signers = organizationRequestMapper.toSigners(request.signers());
         for (OrganizationSigner signer : signers) {
             signer.setOrganization(organization);
         }
@@ -160,5 +155,10 @@ public class OrganizationService {
         organizationRequestMapper.toAddress(request.address(), address);
         address.setOrganization(organization);
         organization.setAddress(address);
+    }
+
+    public List<Organization> findAll() {
+        User user = currentUserService.currentUser();
+        return organizationRepository.findByUserIdOrderByOrganizationShortNameAsc(user.getId());
     }
 }

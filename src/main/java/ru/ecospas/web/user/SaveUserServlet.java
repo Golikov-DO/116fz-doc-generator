@@ -16,25 +16,10 @@ import java.io.IOException;
 public class SaveUserServlet extends HttpServlet {
 
     private final UserAdminService service;
-    private final RegistrationService registrationService;
+    private final RegistrationOldService registrationOldService;
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        String source = req.getParameter("source");
-        if ("register".equals(source)) {
-
-            RegistrationForm form = new RegistrationForm();
-
-            form.setLogin(req.getParameter("login"));
-            form.setEmail(req.getParameter("email"));
-            form.setPassword(req.getParameter("password"));
-            form.setConfirmPassword(req.getParameter("confirmPassword"));
-
-            registrationService.register(form);
-
-            resp.sendRedirect("/?login=true");
-            return;
-        }
         String idStr = req.getParameter("id");
 
         User user;

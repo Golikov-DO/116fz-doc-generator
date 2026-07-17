@@ -106,4 +106,44 @@ public class AsfDocumentImageService {
     public List<AsfDocumentImage> findAll(Integer asfId) {
         return imageRepository.findAllByAsfId(asfId);
     }
+
+    //REST
+    public Integer upload(
+            Integer asfId,
+            String group,
+            Integer imageId,
+            byte[] data
+    ) {
+        Asf asf = asfRepository.findById(asfId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Asf not found with id: " + asfId));
+         List<AsfDocumentImage> images = imageRepository.findAllByAsfId(asfId);
+        int nextNumber = images.stream()
+                .filter(i -> group.equals(i.getGroupKey()))
+                .map(AsfDocumentImage::getNameDocument)
+                .filter(Objects::nonNull)
+                .map(n -> n.replaceAll("\\D+", ""))
+                .filter(s -> !s.isEmpty())
+                .mapToInt(Integer::parseInt)
+                .max()
+                .orElse(0) + 1;
+        AsfDocumentImage image;
+        if (imageId > 0) {
+            image = images.stream()
+                    .filter(i -> i.getId().equals(imageId))
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Image not found: " + imageId));
+            image.setImageBlob(data);
+        } else {
+            image = new AsfDocumentImage();
+            image.setAsf(asf);
+            image.setGroupKey(group);
+            String prefix = "1".equals(group) ? "Свидетельство " : "Паспорт ";
+            image.setNameDocument(prefix + nextNumber);
+            image.setImageBlob(data);
+        }
+        imageRepository.save(image);
+        return image.getId();
+    }
 }

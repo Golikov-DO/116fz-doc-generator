@@ -27,7 +27,6 @@ public class OrganizationRequestMapper {
         if (request == null) {
             return;
         }
-
         address.setAddressIndex(request.addressIndex());
         address.setConstituentEntity(request.constituentEntity());
         address.setCity(request.city());
@@ -35,39 +34,36 @@ public class OrganizationRequestMapper {
         address.setHouse(request.house());
     }
 
-    public List<OrganizationSigner> toSigners(OrganizationSignerRequest request) {
+    public List<OrganizationSigner> toSigners(List<OrganizationSignerRequest> requests) {
         List<OrganizationSigner> signers = new ArrayList<>();
-        if (request == null) {
+        if (requests == null) {
             return signers;
         }
-        OrganizationSigner signer = new OrganizationSigner();
-        signer.setName(request.name());
-        signer.setPosition(request.position());
-        signers.add(signer);
+        for (OrganizationSignerRequest request : requests) {
+            OrganizationSigner signer = new OrganizationSigner();
+            signer.setId(request.id());
+            signer.setName(request.name());
+            signer.setPosition(request.position());
+            signer.setIsPrimary(request.isPrimary());
+            signers.add(signer);
+        }
         return signers;
     }
 
     public List<OrganizationContact> toContacts(List<OrganizationContactRequest> requests) {
-
         List<OrganizationContact> contacts = new ArrayList<>();
-
         if (requests == null) {
             return contacts;
         }
-
         for (OrganizationContactRequest request : requests) {
-
             OrganizationContact contact = new OrganizationContact();
-
             contact.setId(request.id());
             contact.setFullName(request.fullName());
             contact.setPosition(request.position());
             contact.setPhones(request.phones());
             contact.setAddress(request.address());
-
             contacts.add(contact);
         }
-
         return contacts;
     }
 }

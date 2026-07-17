@@ -8,7 +8,7 @@ public record SaveOrganizationRequest(
         String organizationTypeActivity,
         boolean oneTerritory,
         OrganizationAddressRequest address,
-        OrganizationSignerRequest signer,
+        List<OrganizationSignerRequest> signers,
         List<OrganizationContactRequest> contacts
 ) {
 }

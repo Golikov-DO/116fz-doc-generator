@@ -3,6 +3,7 @@ package ru.ecospas.domain.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
 import ru.ecospas.domain.repository.UserRepository;
 import ru.ecospas.web.dto.request.user.SaveUserRequest;
@@ -26,9 +27,7 @@ public class UserService {
     public List<User> findAll() {
         return repository.findAll();
     }
-
     public User load(Integer id) {
-
         return repository.findById(id)
                 .orElse(null);
     }
@@ -40,8 +39,27 @@ public class UserService {
     }
 
     @Transactional
+    public User register(String login, String password, String email) {
+        if (repository.findByLogin(login).isPresent()) {
+            throw new IllegalArgumentException("Логин уже занят");
+        }
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setRole(Role.USER);
+
+        return repository.save(user);
+    }
+
+    @Transactional
     public User save(SaveUserRequest request, User user) {
         userRequestMapper.toUser(request, user);
+        return repository.save(user);
+    }
+
+    @Transactional
+    public User save(User user) {
         return repository.save(user);
     }
 

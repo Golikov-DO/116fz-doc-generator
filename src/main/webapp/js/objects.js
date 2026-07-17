@@ -554,7 +554,7 @@ document.addEventListener('change', function (event) {
     formData.append('group', group);
     formData.append('objectId', objectId);
 
-    fetch('upload-object-image', {
+    fetch('/api/object-images', {
         method: 'POST',
         body: formData
     })

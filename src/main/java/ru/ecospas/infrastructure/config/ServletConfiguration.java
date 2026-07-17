@@ -5,7 +5,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.ecospas.web.asf.*;
-import ru.ecospas.web.auth.CheckLoginServlet;
 import ru.ecospas.web.object.*;
 import ru.ecospas.web.organization.DeleteOrganizationServlet;
 import ru.ecospas.web.organization.OrganizationServlet;
@@ -34,16 +33,13 @@ public class ServletConfiguration {
     private final GeneratePlanServlet generatePlanServlet;
     private final AsfServlet asfServlet;
     private final CreateEmptyAsfServlet createEmptyAsfServlet;
-    private final DeleteAsfImageServlet deleteAsfImageServlet;
     private final GetAsfSignersServlet getAsfSignersServlet;
     private final SaveAsfServlet saveAsfServlet;
-    private final UploadAsfImageServlet uploadAsfImageServlet;
     private final CreateEmptyObjectServlet createEmptyObjectServlet;
     private final DeleteObjectServlet deleteObjectServlet;
     private final ObjectServlet objectServlet;
     private final ObjectsServlet objectsServlet;
     private final SaveObjectServlet saveObjectServlet;
-    private final UploadObjectImageServlet uploadObjectImageServlet;
     private final DeleteOrganizationServlet deleteOrganizationServlet;
     private final OrganizationServlet organizationServlet;
     private final OrganizationsServlet organizationsServlet;
@@ -61,7 +57,6 @@ public class ServletConfiguration {
     private final DeleteHazardousSubstanceServlet deleteHazardousSubstanceServlet;
     private final HazardousSubstanceServlet hazardousSubstanceServlet;
     private final SaveHazardousSubstanceServlet saveHazardousSubstanceServlet;
-    private final CheckLoginServlet checkLoginServlet;
     private final UsersServlet usersServlet;
     private final UserServlet userServlet;
     private final SaveUserServlet saveUserServlet;
@@ -84,11 +79,6 @@ public class ServletConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean<DeleteAsfImageServlet> deleteAsfImageRegistration() {
-        return new ServletRegistrationBean<>(deleteAsfImageServlet, "/delete-asf-image");
-    }
-
-    @Bean
     public ServletRegistrationBean<GetAsfSignersServlet> getAsfSignersRegistration() {
         return new ServletRegistrationBean<>(getAsfSignersServlet, "/get-asf-signers");
     }
@@ -96,11 +86,6 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<SaveAsfServlet> saveAsfRegistration() {
         return new ServletRegistrationBean<>(saveAsfServlet, "/save-asf");
-    }
-
-    @Bean
-    public ServletRegistrationBean<UploadAsfImageServlet> uploadAsfImageRegistration() {
-        return new ServletRegistrationBean<>(uploadAsfImageServlet, "/upload-asf-image");
     }
 
     @Bean
@@ -126,11 +111,6 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<SaveObjectServlet> saveObjectRegistration() {
         return new ServletRegistrationBean<>(saveObjectServlet, "/save-object");
-    }
-
-    @Bean
-    public ServletRegistrationBean<UploadObjectImageServlet> uploadObjectImageRegistration() {
-        return new ServletRegistrationBean<>(uploadObjectImageServlet, "/upload-object-image");
     }
 
     @Bean
@@ -216,11 +196,6 @@ public class ServletConfiguration {
     @Bean
     public ServletRegistrationBean<SaveHazardousSubstanceServlet> saveHazardousSubstanceRegistration() {
         return new ServletRegistrationBean<>(saveHazardousSubstanceServlet, "/save-hazardous-substance");
-    }
-
-    @Bean
-    public ServletRegistrationBean<CheckLoginServlet> checkLoginRegistration() {
-        return new ServletRegistrationBean<>(checkLoginServlet, "/check-login");
     }
 
     @Bean

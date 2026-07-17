@@ -1,5 +1,6 @@
 package ru.ecospas.infrastructure.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,17 +52,29 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .formLogin(form -> form
-                        .loginPage("/")
                         .loginProcessingUrl("/login")
                         .usernameParameter("login")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/?login=true&error=1")
+                        .successHandler((
+                                request,
+                                response,
+                                authentication) -> response
+                                .setStatus(HttpServletResponse.SC_OK))
+                        .failureHandler((
+                                request,
+                                response,
+                                exception) -> response
+                                .sendError(HttpServletResponse.SC_UNAUTHORIZED))
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessHandler((
+                                request,
+                                response,
+                                authentication) -> {response
+                                .sendRedirect("http://localhost:5173/");  // ← явный редирект на фронт
+                        })
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")

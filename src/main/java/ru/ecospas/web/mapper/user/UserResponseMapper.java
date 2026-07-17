@@ -11,48 +11,29 @@ import java.util.List;
 public class UserResponseMapper {
 
     public UserResponse toResponse(User user) {
-
         if (user == null) {
             return null;
         }
-
         return new UserResponse(
-
                 user.getId(),
-
                 user.getLogin(),
-
                 user.getEmail(),
-
                 user.getRole()
         );
     }
 
     public List<UserResponse> toResponses(List<User> users) {
-
-        return users.stream()
-                .map(this::toResponse)
-                .toList();
+        return users.stream().map(this::toResponse).toList();
     }
 
     public UserListResponse toListResponse(User user) {
-
         if (user == null) {
             return null;
         }
-
-        return new UserListResponse(
-
-                user.getId(),
-
-                user.getLogin()
-        );
+        return new UserListResponse(user.getId(), user.getLogin());
     }
 
     public List<UserListResponse> toListResponses(List<User> users) {
-
-        return users.stream()
-                .map(this::toListResponse)
-                .toList();
+        return users.stream().map(this::toListResponse).toList();
     }
 }

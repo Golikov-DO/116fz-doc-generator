@@ -8,4 +8,6 @@ import java.util.List;
 public interface OrganizationRepository extends JpaRepository<Organization, Integer> {
 
     List<Organization> findByUserId(Integer userId);
+
+    List<Organization> findByUserIdOrderByOrganizationShortNameAsc(Integer userId);
 }
