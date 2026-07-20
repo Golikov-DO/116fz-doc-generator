@@ -3,7 +3,10 @@ package ru.ecospas.web.mapper.object;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.repository.*;
+import ru.ecospas.domain.repository.AsfRepository;
+import ru.ecospas.domain.repository.ReferenceCityRepository;
+import ru.ecospas.domain.repository.ReferenceHazardousSubstanceRepository;
+import ru.ecospas.domain.repository.ReferenceTypeRepository;
 import ru.ecospas.web.dto.request.object.*;
 
 import java.util.ArrayList;

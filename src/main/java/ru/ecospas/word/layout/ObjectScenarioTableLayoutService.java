@@ -7,7 +7,7 @@ import ru.ecospas.domain.model.Scenario;
 import ru.ecospas.domain.repository.ObjectStructureRepository;
 import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.ScenarioDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -2,9 +2,9 @@ package ru.ecospas.web.mapper.hazardous;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.model.SubstanceHazardousParam;
 import ru.ecospas.domain.model.SubstanceHazardousParamValue;
-import ru.ecospas.domain.model.ReferenceHazardousSubstance;
 import ru.ecospas.domain.repository.ReferenceHazardousParamRepository;
 import ru.ecospas.web.dto.request.hazardous.HazardousParamValueRequest;
 import ru.ecospas.web.dto.request.hazardous.SaveHazardousSubstanceRequest;

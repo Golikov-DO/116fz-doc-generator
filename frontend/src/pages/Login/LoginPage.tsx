@@ -1,9 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import './LoginPage.css';
+import {useAuth} from "../../auth/useAuth";
+import {login as loginRequest} from "../../api/authApi";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const {refreshUser} = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -13,95 +16,83 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [loginStatus, setLoginStatus] = useState<'idle' | 'free' | 'taken'>('idle');
 
-    // Проверка логина при регистрации (твой эндпоинт)
-    const checkLogin = async (value: string) => {
-        if (value.length < 3) {
+    // === ПРОВЕРКА ЛОГИНА С ДЕБАУНСОМ ===
+    useEffect(() => {
+        if (isLogin || login.length < 3) {
             setLoginStatus('idle');
             return;
         }
-        try {
-            const res = await fetch(
-                `/api/auth/check-login?login=${encodeURIComponent(value)}`);
-            const data = await res.json();  // ← тут JSON, не text!
-            setLoginStatus(data.available ? 'free' : 'taken');
-        } catch {
-            setLoginStatus('idle');
-        }
-    };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
-
-        if (isLogin) {
-            // === ВХОД через Spring Security ===
-            const formData = new URLSearchParams();
-            formData.append('login', login);
-            formData.append('password', password);
-
+        const timer = setTimeout(async () => {
             try {
-                const res = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData.toString(),
-                    credentials: 'include', // важно! для JSESSIONID cookie
-                });
-
-                if (res.ok) {
-                    // Успех! Spring создал сессию
-                    window.location.href = '/organizations';
-                } else {
-                    setError('Неверный логин или пароль');
-                }
+                const res = await fetch(
+                    `/api/auth/check-login?login=${encodeURIComponent(login)}`
+                );
+                const data = await res.json();
+                setLoginStatus(data.available ? 'free' : 'taken');
             } catch {
-                setError('Ошибка сети');
+                setLoginStatus('idle');
             }
+        }, 300);
 
-        } else {
-            // === РЕГИСТРАЦИЯ ===
-            if (password !== confirmPassword) {
-                setError('Пароли не совпадают');
-                setIsLoading(false);
-                return;
-            }
+        return () => clearTimeout(timer);
+    }, [login, isLogin]);
 
-            try {
-                const res = await fetch('/api/auth/register', {  // твой контроллер
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ login, password, email }),
-                    credentials: 'include',
-                });
+    const handleSubmit =
+        async (e: React.SubmitEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            setError('');
+            setIsLoading(true);
 
-                if (res.ok) {
-                    // Регистрация успешна — переключаем на вход
-                    setIsLogin(true);
-                    setPassword('');
-                    setConfirmPassword('');
-                    setEmail('');
-                    setLoginStatus('idle');
-                    setError('Регистрация успешна! Войдите с новым паролем.');
-                } else {
-                    const msg = await res.text();
-                    setError(msg || 'Ошибка регистрации');
+            if (isLogin) {
+                try {
+                    await loginRequest(login, password);
+                    await refreshUser();
+                    navigate("/organizations", {replace: true});
+                } catch (e) {
+                    setError("Неверный логин или пароль");
                 }
-            } catch {
-                setError('Ошибка сети');
-            }
-        }
+            } else {
+                if (password !== confirmPassword) {
+                    setError('Пароли не совпадают');
+                    setIsLoading(false);
+                    return;
+                }
 
-        setIsLoading(false);
-    };
+                try {
+                    const res = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({login, password, email}),
+                        credentials: 'include',
+                    });
+
+                    if (res.ok) {
+                        setIsLogin(true);
+                        setPassword('');
+                        setConfirmPassword('');
+                        setEmail('');
+                        setLoginStatus('idle');
+                        setError('Регистрация успешна! Войдите с новым паролем.');
+                    } else {
+                        const msg = await res.text();
+                        setError(msg || 'Ошибка регистрации');
+                    }
+                } catch {
+                    setError('Ошибка сети');
+                }
+            }
+
+            setIsLoading(false);
+        };
 
     return (
         <div className="login-overlay">
             <div className="login-card">
                 <div className="login-header">
                     <h2>{isLogin ? 'Вход' : 'Регистрация'}</h2>
-                    <span className="close-btn" onClick={() => navigate('/')}>×</span>
+                    <span className="close-btn" onClick={() =>
+                        navigate('/')}>×</span>
                 </div>
 
                 {error && <div className="error-msg">{error}</div>}
@@ -112,12 +103,8 @@ export default function LoginPage() {
                         <input
                             type="text"
                             value={login}
-                            onChange={(e) => {
-                                setLogin(e.target.value);
-                                if (!isLogin) {
-                                    checkLogin(e.target.value);
-                                }
-                            }}
+                            onChange={(e) =>
+                                setLogin(e.target.value)}  // ← просто setLogin, без async
                             required
                             minLength={3}
                         />
@@ -128,7 +115,7 @@ export default function LoginPage() {
                                 marginTop: '4px',
                                 display: 'block'
                             }}>
-                            {loginStatus === 'free' && '✅ свободен'}
+                                {loginStatus === 'free' && '✅ свободен'}
                                 {loginStatus === 'taken' && '❌ занят'}
                             </span>
                         )}
@@ -140,7 +127,8 @@ export default function LoginPage() {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) =>
+                                    setEmail(e.target.value)}
                                 required
                             />
                         </div>
@@ -151,7 +139,8 @@ export default function LoginPage() {
                         <input
                             type="password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) =>
+                                setPassword(e.target.value)}
                             required
                         />
                     </div>

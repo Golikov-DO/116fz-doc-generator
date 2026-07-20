@@ -11,90 +11,115 @@ import OrganizationsPage from "../pages/Organizations/OrganizationsPage";
 import OrganizationPage from "../pages/Organization/OrganizationPage";
 import ObjectsPage from "../pages/Objects/ObjectsPage";
 import ObjectPage from '../pages/Object/ObjectPage';
-import AllObjectsPage from "../pages/Objects/AllObjectsPage.tsx";
+import AllObjectsTable from "../components/tables/AllObjectsTable.tsx";
 import AsfsPage from "../pages/Asf/AsfsPage.tsx";
 import AsfPage from "../pages/Asf/AsfPage.tsx";
+import {AuthProvider} from "../auth/AuthContext";
 
 export default function AppRouter() {
     return (
         <BrowserRouter>
-            <Routes>
-                {/* Стартовая страница — без сайдбара */}
-                <Route element={<HomeLayout/>}>
-                    <Route path="/" element={<HomePage/>}/>
-                    <Route path="/login" element={<LoginPage/>}/>
-                </Route>
+            <AuthProvider>
+                <Routes>
+                    {/* Стартовая страница — без сайдбара */}
+                    <Route element={<HomeLayout/>}>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                    </Route>
 
-                {/* Внутренние страницы — с сайдбаром */}
-                <Route element={<MainLayout/>}>
-                    <Route path="admin" element={
-                        <ProtectedRoute>
-                            <AdminPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="admin/users/:id" element={
-                        <ProtectedRoute>
-                            <UserPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="admin/users/:id/edit" element={
-                        <ProtectedRoute>
-                            <UserPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="profile" element={
-                        <ProtectedRoute>
-                            <ProfilePage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="organizations" element={
-                        <ProtectedRoute>
-                            <OrganizationsPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="organization/:id" element={
-                        <ProtectedRoute>
-                            <OrganizationPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="organization/:id/edit" element={
-                        <ProtectedRoute>
-                            <OrganizationPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="organization/new" element={
-                        <ProtectedRoute>
-                            <OrganizationPage/>
-                        </ProtectedRoute>
-                    }/>
+                    {/* Внутренние страницы — с сайдбаром */}
+                    <Route element={<MainLayout/>}>
+                        <Route path="admin" element={
+                            <ProtectedRoute>
+                                <AdminPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="admin/users/:id" element={
+                            <ProtectedRoute>
+                                <UserPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="admin/users/:id/edit" element={
+                            <ProtectedRoute>
+                                <UserPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="profile" element={
+                            <ProtectedRoute>
+                                <ProfilePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="organizations" element={
+                            <ProtectedRoute>
+                                <OrganizationsPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="organization/:id" element={
+                            <ProtectedRoute>
+                                <OrganizationPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="organization/:id/edit" element={
+                            <ProtectedRoute>
+                                <OrganizationPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="organization/new" element={
+                            <ProtectedRoute>
+                                <OrganizationPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="objects" element={
+                            <ProtectedRoute>
+                                <AllObjectsTable/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="objects/:orgId" element={
+                            <ProtectedRoute>
+                                <ObjectsPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/organizations/:orgId/objects/:id" element={
+                            <ProtectedRoute>
+                                <ObjectPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/organizations/:orgId/objects/:id/edit" element={
+                            <ProtectedRoute>
+                                <ObjectPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/organizations/:orgId/objects/new" element={
+                            <ProtectedRoute>
+                                <ObjectPage/>
+                            </ProtectedRoute>}/>
+                        <Route path="/asfs" element={
+                            <ProtectedRoute>
+                                <AsfsPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/asf/:id" element={
+                            <ProtectedRoute>
+                                <AsfPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/asf/:id/edit" element={
+                            <ProtectedRoute>
+                                <AsfPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/asf/new" element={
+                            <ProtectedRoute>
+                                <AsfPage/>
+                            </ProtectedRoute>
+                        }/>
+                    </Route>
 
-                    <Route path="objects" element={
-                        <ProtectedRoute>
-                            <AllObjectsPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="objects/:orgId" element={
-                        <ProtectedRoute>
-                            <ObjectsPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="/organizations/:orgId/objects/:id" element={<ObjectPage />} />
-                    <Route path="/organizations/:orgId/objects/:id/edit" element={<ObjectPage />} />
-                    <Route path="/organizations/:orgId/objects/new" element={<ObjectPage />} />
-                    <Route path="/asfs" element={
-                        <ProtectedRoute>
-                            <AsfsPage/>
-                        </ProtectedRoute>
-                    }/>
-                    <Route path="/asf/:id" element={<AsfPage />} />
-                    <Route path="/asf/:id/edit" element={<AsfPage />} />
-                    <Route path="/asf/new" element={<AsfPage />} />
-                </Route>
+                    {/* ВСЁ ОСТАЛЬНОЕ — редирект на главную */}
+                    <Route path="*" element={<Navigate to="/" replace/>}/>
 
-                {/* ВСЁ ОСТАЛЬНОЕ — редирект на главную */}
-                <Route path="*" element={<Navigate to="/" replace/>}/>
-
-            </Routes>
+                </Routes>
+            </AuthProvider>
         </BrowserRouter>
     );
 }

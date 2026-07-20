@@ -1,29 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useAuth } from "../../auth/useAuth";
 import logo from '../../assets/logo.png'
 import './Header.css'
 
-interface User {
-    id: number
-    login: string
-    email: string
-    role: string
-}
-
 export function Header() {
-    const navigate = useNavigate()
-    const [user, setUser] = useState<User | null>(null)
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        fetch('/api/auth/me', { credentials: 'include' })
-            .then(res => res.ok ? res.json() : null)
-            .then(data => setUser(data))
-            .catch(() => setUser(null))
-    }, [])
+    const { user, logout } = useAuth();
 
-    const handleLogout = () => {
-        // Просто переходим на /logout — Spring обработает и редиректнет
-        window.location.href = '/logout';
+    const handleLogout = async () => {
+        await logout();
+        navigate("/", { replace: true });
     };
 
     return (

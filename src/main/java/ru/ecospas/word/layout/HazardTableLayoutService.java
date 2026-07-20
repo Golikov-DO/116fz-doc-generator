@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.service.HazardousSubstanceQueryService;
-import ru.ecospas.web.dto.HazardParamDto;
+import ru.ecospas.web.dto.response.hazardous.HazardParamDto;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package ru.ecospas.web.mapper.hazardous;
 
 import org.springframework.stereotype.Component;
-import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 import ru.ecospas.web.dto.response.hazardous.HazardousParamValueResponse;
 import ru.ecospas.web.dto.response.hazardous.HazardousSubstanceListResponse;
 import ru.ecospas.web.dto.response.hazardous.HazardousSubstanceResponse;

@@ -1,4 +1,4 @@
-package ru.ecospas.web.dto;
+package ru.ecospas.web.dto.response.scenario;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,7 +3,7 @@ package ru.ecospas.word.blocks.text;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.repository.*;
+import ru.ecospas.domain.repository.ReferenceTableTitleRepository;
 import ru.ecospas.domain.util.*;
 
 import java.sql.SQLException;

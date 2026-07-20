@@ -1,6 +1,5 @@
 package ru.ecospas.domain.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,8 +10,6 @@ import ru.ecospas.web.mapper.type.TypeRequestMapper;
 
 import java.util.List;
 
-import static ru.ecospas.web.util.RequestUtils.param;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -21,47 +18,6 @@ public class ReferenceTypeService {
     private final ReferenceTypeRepository referenceTypeRepository;
     private final TypeRequestMapper requestMapper;
 
-    public ReferenceType load(Integer id) {
-        return referenceTypeRepository.findById(id).orElse(null);
-    }
-
-    public ReferenceType create() {
-
-        ReferenceType referenceType = new ReferenceType();
-        referenceType.setType("");
-        referenceType.setTypeDefinition("");
-
-        return referenceType;
-    }
-
-    public ReferenceType save(
-            HttpServletRequest req,
-            ReferenceType referenceType
-    ) {
-
-        referenceType.setType(
-                param(req, "type")
-        );
-
-        referenceType.setTypeDefinition(
-                param(req, "object_type_definitions")
-        );
-
-        return referenceTypeRepository.save(referenceType);
-    }
-
-    public ReferenceType createEmpty() {
-
-        return referenceTypeRepository.save(
-                create()
-        );
-    }
-
-    public void delete(Integer id) {
-        referenceTypeRepository.deleteById(id);
-    }
-
-    //REST
     @Transactional(readOnly = true)
     public ReferenceType loadRest(Integer id) {
         return referenceTypeRepository.findById(id).orElse(null);

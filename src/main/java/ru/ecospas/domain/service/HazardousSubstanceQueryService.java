@@ -2,11 +2,11 @@ package ru.ecospas.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 import ru.ecospas.domain.model.SubstanceHazardousParam;
-import ru.ecospas.domain.repository.ReferenceHazardousParamValueRepository;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 import ru.ecospas.domain.repository.ReferenceHazardousParamRepository;
-import ru.ecospas.web.dto.HazardParamDto;
+import ru.ecospas.domain.repository.ReferenceHazardousParamValueRepository;
+import ru.ecospas.web.dto.response.hazardous.HazardParamDto;
 
 import java.util.List;
 import java.util.Map;

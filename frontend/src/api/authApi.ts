@@ -8,14 +8,17 @@ export async function login(login: string, password: string) {
     form.append("password", password);
 
     await api.post(
-        "/login",
-        form,
+        "/login", form,
         {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
         }
     );
+}
+
+export async function logout() {
+    await api.post("/logout");
 }
 
 export async function me() {

@@ -1,8 +1,8 @@
-package ru.ecospas.web.dto;
+package ru.ecospas.web.dto.response.hazardous;
 
 import lombok.Getter;
-import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 import ru.ecospas.domain.model.SubstanceHazardousParam;
+import ru.ecospas.domain.model.SubstanceHazardousParamValue;
 
 @Getter
 public class HazardParamDto {

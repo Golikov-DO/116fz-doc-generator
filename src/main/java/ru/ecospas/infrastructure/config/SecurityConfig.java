@@ -69,12 +69,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler((
-                                request,
-                                response,
-                                authentication) -> {response
-                                .sendRedirect("http://localhost:5173/");  // ← явный редирект на фронт
-                        })
+                        .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/"))
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")

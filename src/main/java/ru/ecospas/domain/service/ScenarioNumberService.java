@@ -2,7 +2,7 @@ package ru.ecospas.domain.service;
 
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Scenario;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.ScenarioDTO;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

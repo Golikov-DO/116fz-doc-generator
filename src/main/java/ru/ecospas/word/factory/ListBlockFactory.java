@@ -11,7 +11,7 @@ import ru.ecospas.domain.service.ScenarioNumberService;
 import ru.ecospas.domain.util.Collect;
 import ru.ecospas.domain.util.ObjectTechnicalDescriptionFormatter;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.ScenarioDTO;
 
 import java.sql.SQLException;
 import java.util.*;
