@@ -1,6 +1,7 @@
 package ru.ecospas.domain.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.Role;
@@ -18,6 +19,7 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserRequestMapper userRequestMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public User findByLogin(String login) {
         return repository.findByLogin(login)
@@ -73,11 +75,32 @@ public class UserService {
     }
 
     @Transactional
+    public User updateUser(User user, String login, String email, String password, Role role) {
+        user.setLogin(login);
+        user.setEmail(email);
+        user.setRole(role);
+        if (password != null && !password.isBlank()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+        return repository.save(user);
+    }
+
+    @Transactional
     public void delete(Integer id) {
         User user = load(id);
         if (user == null) {
             return;
         }
         repository.delete(user);
+    }
+
+    @Transactional
+    public User updateProfile(User user, String login, String email, String password) {
+        user.setLogin(login);
+        user.setEmail(email);
+        if (password != null && !password.isBlank()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+        return repository.save(user);
     }
 }

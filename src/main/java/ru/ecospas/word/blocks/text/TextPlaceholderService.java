@@ -8,7 +8,9 @@ import ru.ecospas.domain.util.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,109 +18,110 @@ import java.util.stream.Collectors;
 public class TextPlaceholderService {
 
     private final ReferenceTableTitleRepository tableTitleRepository;
-    private final OrganizationAddressRepository organizationAddressRepository;
-    private final OrganizationSignerRepository organizationSignerRepository;
 
-    private final ObjectModelRepository objectModelRepository;
-    private final ObjectAddressRepository objectAddressRepository;
-    private final ObjectOrderMinimumBalanceRepository objectOrderMinimumBalanceRepository;
-    private final ObjectInsurancePolicyRepository objectInsurancePolicyRepository;
-    private final ObjectTechnologicalBlockRepository objectTechnologicalBlockRepository;
-    private final ObjectImageRepository objectImageRepository;
-    private final ObjectTechnologicalEquipmentRepository technologicalEquipmentRepository;
-    private final ObjectFireEquipmentRepository fireEquipmentRepository;
-    private final ObjectCompositionKchsRepository compositionKchsRepository;
-    private final ObjectPersonsResponsibleRepository personsResponsibleRepository;
+    public Map<String, String> build(ObjectModel obj) throws SQLException {
+        if (obj == null) {
+            return new HashMap<>();
+        }
 
-    private final AsfSignerRepository asfSignerRepository;
-    private final AsfCertificateRepository asfCertificateRepository;
-    private final AsfCompositionDeploymentFundsRepository asfCompositionDeploymentFundsRepository;
-    private final AsfPersonnelRepository asfPersonnelRepository;
-    private final AsfSpecialistsRepository asfSpecialistsRepository;
-    private final AsfWorkTypeRepository asfWorkTypeRepository;
-
-    public Map<String, String> build(int objectId) throws SQLException  {
         Map<String, String> map = new HashMap<>();
-
-        ObjectModel obj = objectModelRepository.findById(objectId).orElseThrow();
         Organization org = obj.getOrganization();
         Asf asf = obj.getAsf();
 
         // ---------- ORGANIZATION TEXT BLOCK ----------
-        OrganizationAddress orgAddr = organizationAddressRepository.findByOrganizationId(org.getId()).orElseThrow();
-        OrganizationSigner orgSigner = organizationSignerRepository.findByOrganizationId(org.getId()).orElseThrow();
-        map.put("ORG_ADDRESS_FULL", ObjectAddressFormatter.format(orgAddr));
-        map.put("ORG_NAME", org.getOrganizationName());
-        map.put("ORG_SHORT_NAME", org.getOrganizationShortName());
-        map.put("ORG_SIGNER_NAME", orgSigner.getName());
-        map.put("ORG_SIGNER_POSITION", orgSigner.getPosition());
-        map.put("ORG_TYPE_ACTIVITY", org.getOrganizationTypeActivity());
+        OrganizationAddress orgAddr = org != null ? org.getAddress() : null;
+        OrganizationSigner orgSigner = org != null ? org.getSigners().stream()
+                .filter(s -> Boolean.TRUE.equals(s.getIsPrimary()))
+                .findFirst()
+                .orElse(null) : null;
+
+        map.put("ORG_ADDRESS_FULL", orgAddr != null ? ObjectAddressFormatter.format(orgAddr) : "");
+        map.put("ORG_NAME", safe(org != null ? org.getOrganizationName() : null));
+        map.put("ORG_SHORT_NAME", safe(org != null ? org.getOrganizationShortName() : null));
+        map.put("ORG_SIGNER_NAME", orgSigner != null ? safe(orgSigner.getName()) : "");
+        map.put("ORG_SIGNER_POSITION", orgSigner != null ? safe(orgSigner.getPosition()) : "");
+        map.put("ORG_TYPE_ACTIVITY", safe(org != null ? org.getOrganizationTypeActivity() : null));
 
         // ---------- ASF TEXT BLOCK ----------
-        var asfSigners = asfSignerRepository.findAllByAsfId(asf.getId());
-        AsfSigner asfSigner = asfSigners.stream()
-                .filter(s -> s.getId() == obj.getAsfSignerId())
-                .findFirst()
-                .orElseThrow(() ->
-                        new RuntimeException("ASF signer not found for objectId=" + obj.getId())
-                );
-        var cert = asfCertificateRepository.findByAsfId(asf.getId()).orElseThrow();
-        var funds = asfCompositionDeploymentFundsRepository.findByAsfId(asf.getId()).orElseThrow();
-        var personnel = asfPersonnelRepository.findByAsfId(asf.getId()).orElseThrow();
-        var specialists = asfSpecialistsRepository.findByAsfId(asf.getId()).orElseThrow();
-        var types = asfWorkTypeRepository.findAllByAsfId(asf.getId());
+        if (asf != null) {
+            AsfSigner asfSigner = asf.getSigners().stream()
+                    .filter(s -> s.getId() != null && obj.getAsfSignerId() != null && s.getId().equals(obj.getAsfSignerId()))
+                    .findFirst()
+                    .orElse(null);
 
-        map.put("ASF_AREA_RESPONSIBILITY", funds.getResponsibilityArea());
-        map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(String.valueOf(obj.getArrivalTime())));
-        map.put("ASF_AVAILABLE_SPECIALISTS", AsfSpecialistsTextBuilder.build(specialists));
-        map.put("ASF_CERTIFICATE_TEXT", AsfCertificateTextBuilder.build(cert));
-        map.put("ASF_CERTIFIED_RESCUERS", AsfPersonnelTextBuilder.build(personnel));
-        map.put("ASF_CONTACT_NUMBER", funds.getDutyOfficerTelephone());
-        map.put("ASF_DUTY_OFFICER_PHONE", funds.getDutyOfficerTelephone());
-        map.put("ASF_E_MAIL", funds.getEMail());
-        map.put("ASF_FULL_NAME", asf.getFullName());
-        map.put("ASF_FULL_NAME_GEN", asf.getFullNameGen());
-        map.put("ASF_NUMBER_BUILDINGS", funds.getNumberBuildings());
-        map.put("ASF_NUMBER_PERSONNEL_LIST", String.valueOf(personnel.getStaffByList()));
-        map.put("ASF_NUMBER_PERSONNEL_STAFF", String.valueOf(personnel.getStaffByStaffing()));
-        map.put("ASF_PLACE_LOCATION", funds.getDeploymentPlace());
-        map.put("ASF_RECEPTION_PHONE", funds.getContactTelephone());
-        map.put("ASF_SHORT_NAME", asf.getShortName());
-        map.put("ASF_SIGNER_NAME", asfSigner.getName());
-        map.put("ASF_SIGNER_POSITION", asfSigner.getPosition());
-        map.put("ASF_STATUS_SHORT", asf.getStatusShort());
-        map.put("ASF_TOTAL_BUILDING_AREA", funds.getTotalArea());
-        map.put("ASF_WORK_TYPES", types.stream()
-                .map(AsfWorkType::getName)
-                .collect(Collectors.joining(", ")));
+            AsfCertificate cert = asf.getCertificate();
+            AsfCompositionDeploymentFunds funds = asf.getDeployment();
+            AsfPersonnel personnel = asf.getPersonnel();
+            AsfSpecialists specialists = asf.getSpecialists();
+            List<AsfWorkType> types = asf.getWorkTypes();
+
+            map.put("ASF_AREA_RESPONSIBILITY", funds != null ? safe(funds.getResponsibilityArea()) : "");
+            map.put("ASF_ARRIVAL_TIME", DocumentOutputFormatter.format(String.valueOf(obj.getArrivalTime())));
+            map.put("ASF_AVAILABLE_SPECIALISTS", specialists != null ? AsfSpecialistsTextBuilder.build(specialists) : "");
+            map.put("ASF_CERTIFICATE_TEXT", cert != null ? AsfCertificateTextBuilder.build(cert) : "");
+            map.put("ASF_CERTIFIED_RESCUERS", personnel != null ? AsfPersonnelTextBuilder.build(personnel) : "");
+            map.put("ASF_CONTACT_NUMBER", funds != null ? safe(funds.getDutyOfficerTelephone()) : "");
+            map.put("ASF_DUTY_OFFICER_PHONE", funds != null ? safe(funds.getDutyOfficerTelephone()) : "");
+            map.put("ASF_E_MAIL", funds != null ? safe(funds.getEMail()) : "");
+            map.put("ASF_FULL_NAME", safe(asf.getFullName()));
+            map.put("ASF_FULL_NAME_GEN", safe(asf.getFullNameGen()));
+            map.put("ASF_NUMBER_BUILDINGS", funds != null ? safe(funds.getNumberBuildings()) : "");
+            map.put("ASF_NUMBER_PERSONNEL_LIST", personnel != null ? String.valueOf(personnel.getStaffByList()) : "");
+            map.put("ASF_NUMBER_PERSONNEL_STAFF", personnel != null ? String.valueOf(personnel.getStaffByStaffing()) : "");
+            map.put("ASF_PLACE_LOCATION", funds != null ? safe(funds.getDeploymentPlace()) : "");
+            map.put("ASF_RECEPTION_PHONE", funds != null ? safe(funds.getContactTelephone()) : "");
+            map.put("ASF_SHORT_NAME", safe(asf.getShortName()));
+            map.put("ASF_SIGNER_NAME", asfSigner != null ? safe(asfSigner.getName()) : "");
+            map.put("ASF_SIGNER_POSITION", asfSigner != null ? safe(asfSigner.getPosition()) : "");
+            map.put("ASF_STATUS_SHORT", safe(asf.getStatusShort()));
+            map.put("ASF_TOTAL_BUILDING_AREA", funds != null ? safe(funds.getTotalArea()) : "");
+            map.put("ASF_WORK_TYPES", types != null ? types.stream()
+                    .map(AsfWorkType::getName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(", ")) : "");
+        } else {
+            // ASF null — все ASF поля пустые
+            String[] asfFields = {
+                    "ASF_AREA_RESPONSIBILITY", "ASF_ARRIVAL_TIME", "ASF_AVAILABLE_SPECIALISTS",
+                    "ASF_CERTIFICATE_TEXT", "ASF_CERTIFIED_RESCUERS", "ASF_CONTACT_NUMBER",
+                    "ASF_DUTY_OFFICER_PHONE", "ASF_E_MAIL", "ASF_FULL_NAME", "ASF_FULL_NAME_GEN",
+                    "ASF_NUMBER_BUILDINGS", "ASF_NUMBER_PERSONNEL_LIST", "ASF_NUMBER_PERSONNEL_STAFF",
+                    "ASF_PLACE_LOCATION", "ASF_RECEPTION_PHONE", "ASF_SHORT_NAME",
+                    "ASF_SIGNER_NAME", "ASF_SIGNER_POSITION", "ASF_STATUS_SHORT",
+                    "ASF_TOTAL_BUILDING_AREA", "ASF_WORK_TYPES"
+            };
+            for (String field : asfFields) {
+                map.put(field, "");
+            }
+        }
 
         // ---------- OBJECT TEXT BLOCK ----------
-        var balance = objectOrderMinimumBalanceRepository.findByObjectId(obj.getId()).orElseThrow();
-        var objAddr = objectAddressRepository.findByObjectId(obj.getId()).orElseThrow();
-        var policy = objectInsurancePolicyRepository.findByObjectId(obj.getId()).orElseThrow();
-        var substance = obj.getHazardousSubstance();
-        var techBlocks = objectTechnologicalBlockRepository.findAllByObjectId(obj.getId()).size();
-        var type = obj.getType();
+        ObjectOrderMinimumBalance balance = obj.getMinimumBalance();
+        ObjectAddress objAddr = obj.getAddress();
+        ObjectInsurancePolicy policy = obj.getInsurancePolicy();
+        ReferenceHazardousSubstance substance = obj.getHazardousSubstance();
+        int techBlocks = obj.getTechnologicalBlocks().size();
+        ReferenceType type = obj.getType();
 
-        map.put("OBJ_ADDRESS_FULL", ObjectAddressFormatter.format(objAddr));
-        map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", obj.getAmountOfHazardousSubstance());
+        map.put("OBJ_ADDRESS_FULL", objAddr != null ? ObjectAddressFormatter.format(objAddr) : "");
+        map.put("OBJ_AMOUNT_HAZARDOUS_SUBSTANCE", safe(obj.getAmountOfHazardousSubstance()));
         map.put("OBJ_AMOUNT_TECHNOLOGICAL_BLOCK", DocumentOutputFormatter.format(techBlocks + " технологический блок"));
-        map.put("OBJ_DEPARTMENT_GOCHS_CITY", obj.getDepartmentGoChsCity());
+        map.put("OBJ_DEPARTMENT_GOCHS_CITY", safe(obj.getDepartmentGoChsCity()));
         map.put("OBJ_EMERGENCY_COMMISSION", obj.isEmergencyCommission() ? "создана" : "не создана");
-        map.put("OBJ_HAZARDOUS_SUBSTANCE", substance.getName());
-        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance.getNameGen());
+        map.put("OBJ_HAZARDOUS_SUBSTANCE", substance != null ? safe(substance.getName()) : "");
+        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance != null ? safe(substance.getNameGen()) : "");
         map.put("OBJ_HAZARD_CLASS", DocumentOutputFormatter.toRoman(String.valueOf(obj.getHazardClass())));
-        map.put("OBJ_INSURANCE_POLICY_DATE", DocumentOutputFormatter.russDate(String.valueOf(policy.getValidUntil())));
-        map.put("OBJ_INSURANCE_POLICY_NUMBER", String.valueOf(policy.getNumber()));
-        map.put("OBJ_NAME", obj.getObjectFullName());
-        map.put("OBJ_NEAREST_FIRE_STATION", obj.getNearestFireStation());
-        map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", DocumentOutputFormatter.russDate(String.valueOf(balance.getDate())));
-        map.put("OBJ_ORDER_MINIMUM_BALANCE_NUMBER", String.valueOf(balance.getNumber()));
-        map.put("OBJ_SHORT_NAME", type.getType());
-        map.put("OBJ_TYPE_DIFINITION", type.getTypeDefinition());
+        map.put("OBJ_INSURANCE_POLICY_DATE", policy != null ? DocumentOutputFormatter.russDate(String.valueOf(policy.getValidUntil())) : "");
+        map.put("OBJ_INSURANCE_POLICY_NUMBER", policy != null ? String.valueOf(policy.getNumber()) : "");
+        map.put("OBJ_NAME", safe(obj.getObjectFullName()));
+        map.put("OBJ_NEAREST_FIRE_STATION", safe(obj.getNearestFireStation()));
+        map.put("OBJ_ORDER_MINIMUM_BALANCE_DATE", balance != null ? DocumentOutputFormatter.russDate(String.valueOf(balance.getDate())) : "");
+        map.put("OBJ_ORDER_MINIMUM_BALANCE_NUMBER", balance != null ? String.valueOf(balance.getNumber()) : "");
+        map.put("OBJ_SHORT_NAME", type != null ? safe(type.getType()) : "");
+        map.put("OBJ_TYPE_DIFINITION", type != null ? safe(type.getTypeDefinition()) : "");
 
         // ---------- IMAGE & CAPTION TEXT BLOCK ----------
-        var objImages = objectImageRepository.findAllByObjectId(obj.getId());
+        List<ObjectImage> objImages = obj.getImages();
 
         int currentImageDisplayNum = 1;
 
@@ -134,9 +137,9 @@ public class TextPlaceholderService {
 
             if (firstInGroupOpt.isPresent()) {
                 ObjectImage firstInGroup = firstInGroupOpt.get();
-                map.put(linkTextKey, firstInGroup.getLinkText());
+                map.put(linkTextKey, safe(firstInGroup.getLinkText()));
                 map.put(linkNumKey, String.valueOf(currentImageDisplayNum));
-                map.put(captureTextKey, firstInGroup.getCaption());
+                map.put(captureTextKey, safe(firstInGroup.getCaption()));
                 currentImageDisplayNum++;
             } else {
                 map.put(linkTextKey, "DELETE_ME");
@@ -149,14 +152,14 @@ public class TextPlaceholderService {
         var titles = tableTitleRepository.findAll();
 
         Map<Integer, Boolean> presenceMap = new HashMap<>();
-        presenceMap.put(1, !technologicalEquipmentRepository.findAllByObjectId(obj.getId()).isEmpty());
+        presenceMap.put(1, !obj.getTechnologicalEquipments().isEmpty());
         presenceMap.put(2, true);
         presenceMap.put(3, true);
         presenceMap.put(4, true);
-        presenceMap.put(5, !fireEquipmentRepository.findAllByObjectIdOrderByNumber(obj.getId()).isEmpty());
+        presenceMap.put(5, !obj.getFireEquipments().isEmpty());
         presenceMap.put(6, true);
-        presenceMap.put(7, !personsResponsibleRepository.findAllByObjectIdOrderByNumber(obj.getId()).isEmpty());
-        presenceMap.put(8, !compositionKchsRepository.findAllByObjectId(obj.getId()).isEmpty());
+        presenceMap.put(7, !obj.getResponsiblePersons().isEmpty());
+        presenceMap.put(8, !obj.getCompositionKchs().isEmpty());
         presenceMap.put(9, true);
 
         int currentDisplayNum = 1;
@@ -173,8 +176,8 @@ public class TextPlaceholderService {
                 var titleOpt = titles.stream().filter(tableTitle -> tableTitle.getId() == currentId).findFirst();
                 if (titleOpt.isPresent()) {
                     map.put(numKey, String.valueOf(currentDisplayNum));
-                    map.put(linkKey, titleOpt.get().getTableTextLinc());
-                    map.put(nameKey, titleOpt.get().getTableTextName());
+                    map.put(linkKey, safe(titleOpt.get().getTableTextLinc()));
+                    map.put(nameKey, safe(titleOpt.get().getTableTextName()));
                     currentDisplayNum++;
                 }
             } else {
@@ -184,5 +187,9 @@ public class TextPlaceholderService {
             }
         }
         return map;
+    }
+
+    private String safe(String value) {
+        return value != null ? value : "";
     }
 }

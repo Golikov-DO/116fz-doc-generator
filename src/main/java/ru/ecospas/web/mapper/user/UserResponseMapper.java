@@ -30,7 +30,7 @@ public class UserResponseMapper {
         if (user == null) {
             return null;
         }
-        return new UserListResponse(user.getId(), user.getLogin());
+        return new UserListResponse(user.getId(), user.getLogin(), user.getRole());
     }
 
     public List<UserListResponse> toListResponses(List<User> users) {

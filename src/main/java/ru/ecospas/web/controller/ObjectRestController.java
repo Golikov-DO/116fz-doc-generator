@@ -35,11 +35,9 @@ public class ObjectRestController {
     ) {
 
         ObjectModel object = objectService.load(organizationId, id);
-
         if (object == null) {
             throw new IllegalArgumentException("Object not found");
         }
-
         return responseMapper.toResponse(object);
     }
 
@@ -50,9 +48,7 @@ public class ObjectRestController {
             @RequestBody
             SaveObjectRequest request
     ) {
-
         ObjectModel object = objectService.create(organizationId, request);
-
         return responseMapper.toResponse(object);
     }
 
@@ -64,21 +60,15 @@ public class ObjectRestController {
             @RequestBody
             SaveObjectRequest request
     ) {
-
         ObjectModel object = objectService.update(organizationId, id, request);
-
         if (object == null) {
             throw new IllegalArgumentException("Object not found");
         }
-
         return responseMapper.toResponse(object);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteObject(
-            @PathVariable Integer organizationId,
-            @PathVariable Integer id
-    ) {
+    public void deleteObject(@PathVariable Integer organizationId, @PathVariable Integer id) {
         objectService.delete(organizationId, id);
     }
 }

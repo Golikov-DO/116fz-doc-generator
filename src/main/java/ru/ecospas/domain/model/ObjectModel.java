@@ -111,7 +111,7 @@ public class ObjectModel implements BaseEntity {
     )
     private List<ObjectTechnologicalEquipment> technologicalEquipments = new ArrayList<>();
 
-    private int asfSignerId;
+    private Integer asfSignerId;
     private int hazardClass;
 
     @Column(name = "full_name")

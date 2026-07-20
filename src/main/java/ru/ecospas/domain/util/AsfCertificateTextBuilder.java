@@ -12,12 +12,18 @@ public class AsfCertificateTextBuilder {
 
         if (cert == null) return "";
 
+        String issueDateStr = cert.getIssueDate() != null
+                ? DocumentOutputFormatter.dotDate(String.valueOf(cert.getIssueDate()))
+                : "";
+        String validUntilStr = cert.getValidUntil() != null
+                ? DocumentOutputFormatter.russDate(String.valueOf(cert.getValidUntil()))
+                : "";
+
         return "серия № " + cert.getCertNumber() +
                 ", рег. номер " + cert.getCertSeries() +
-                " от " + DocumentOutputFormatter.dotDate(String.valueOf(cert.getIssueDate())) +
-                " г., выданное на основании протокола заседания " +
+                (issueDateStr.isEmpty() ? "" : " от " + issueDateStr + " г.") +
+                ", выданное на основании протокола заседания " +
                 cert.getIssuedBy() + " " + cert.getIssueBasis() +
-                ", сроком действия до " + DocumentOutputFormatter.russDate(String.valueOf(cert.getValidUntil())) +
-                "г";
+                (validUntilStr.isEmpty() ? "" : ", сроком действия до " + validUntilStr + "г");
     }
 }

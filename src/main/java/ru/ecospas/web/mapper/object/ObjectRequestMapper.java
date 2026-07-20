@@ -17,7 +17,6 @@ public class ObjectRequestMapper {
     private final ReferenceTypeRepository typeRepository;
     private final ReferenceHazardousSubstanceRepository substanceRepository;
     private final AsfRepository asfRepository;
-    private final ScenarioRepository scenarioRepository;
 
     public void toObject(
             SaveObjectRequest request,
@@ -25,12 +24,12 @@ public class ObjectRequestMapper {
     ) {
 
         object.setObjectFullName(request.objectFullName());
-        object.setHazardClass(request.hazardClass());
+        object.setHazardClass(request.hazardClass() != null ? request.hazardClass() : 0);
         object.setAmountOfHazardousSubstance(request.amountOfHazardousSubstance());
         object.setNearestFireStation(request.nearestFireStation());
         object.setDepartmentGoChsCity(request.departmentGoChsCity());
         object.setEmergencyCommission(request.emergencyCommission());
-        object.setAsfSignerId(request.asfSignerId());
+        object.setAsfSignerId(request.asfSignerId() != null ? request.asfSignerId() : 0);
         object.setArrivalTime(request.arrivalTime());
 
         object.setCity(
@@ -218,83 +217,21 @@ public class ObjectRequestMapper {
         return result;
     }
 
-    public List<ObjectStructure> toStructures(
-            List<ObjectStructureRequest> requests
-    ) {
-
+    public List<ObjectStructure> toStructures(List<ObjectStructureRequest> requests) {
         if (requests == null) {
             return new ArrayList<>();
         }
-
         List<ObjectStructure> result = new ArrayList<>();
-
         for (ObjectStructureRequest request : requests) {
-
             ObjectStructure structure = new ObjectStructure();
 
             structure.setId(request.id());
             structure.setNum(request.num());
             structure.setName(request.name());
+            structure.setLikelyIds(request.likelyIds());
+            structure.setDangerousIds(request.dangerousIds());
 
             result.add(structure);
-        }
-
-        return result;
-    }
-
-    private List<ObjectScenario> toScenarios(
-            List<ObjectScenarioRequest> requests,
-            ObjectStructure structure
-    ) {
-
-        if (requests == null) {
-            return new ArrayList<>();
-        }
-
-        List<ObjectScenario> result = new ArrayList<>();
-
-        for (ObjectScenarioRequest request : requests) {
-
-            ObjectScenario item = new ObjectScenario();
-
-            item.setStructure(structure);
-
-            item.setScenario(
-                    scenarioRepository.getReferenceById(
-                            request.scenarioId()
-                    )
-            );
-
-            item.setType(
-                    ScenarioType.valueOf(request.type())
-            );
-
-            result.add(item);
-        }
-
-        return result;
-    }
-
-    public List<ObjectImage> toImages(
-            List<ObjectImageRequest> requests
-    ) {
-
-        if (requests == null) {
-            return new ArrayList<>();
-        }
-
-        List<ObjectImage> result = new ArrayList<>();
-
-        for (ObjectImageRequest request : requests) {
-
-            ObjectImage image = new ObjectImage();
-
-            image.setId(request.id());
-            image.setCaption(request.caption());
-            image.setLinkText(request.linkText());
-            image.setGroupKey(request.groupKey());
-
-            result.add(image);
         }
 
         return result;

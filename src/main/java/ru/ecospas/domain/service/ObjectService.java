@@ -7,12 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.*;
 import ru.ecospas.domain.repository.*;
+import ru.ecospas.web.dto.request.object.ObjectImageRequest;
 import ru.ecospas.web.dto.request.object.SaveObjectRequest;
+import ru.ecospas.web.dto.response.object.ObjectWithOrgResponse;
 import ru.ecospas.web.helper.ObjectSaveHelper;
 import ru.ecospas.web.mapper.object.ObjectRequestMapper;
 import ru.ecospas.web.util.SyncListUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static ru.ecospas.web.util.RequestUtils.paramInt;
 
@@ -394,6 +400,7 @@ public class ObjectService {
     }
 
     //REST
+    @Transactional(readOnly = true)
     public ObjectModel load(Integer organizationId, Integer id) {
         ObjectModel object = objectRepository
                 .findByIdAndOrganizationId(id, organizationId)
@@ -403,6 +410,7 @@ public class ObjectService {
             return null;
         }
 
+        // Object collections
         Hibernate.initialize(object.getCompositionKchs());
         Hibernate.initialize(object.getResponsiblePersons());
         Hibernate.initialize(object.getFireEquipments());
@@ -411,8 +419,35 @@ public class ObjectService {
         Hibernate.initialize(object.getStructures());
         Hibernate.initialize(object.getImages());
 
-        return object;
+        // Organization and its data
+        if (object.getOrganization() != null) {
+            Hibernate.initialize(object.getOrganization());
+            Hibernate.initialize(object.getOrganization().getAddress());
+            Hibernate.initialize(object.getOrganization().getSigners());
+            Hibernate.initialize(object.getOrganization().getContacts());
+        }
 
+        // ASF and its data
+        if (object.getAsf() != null) {
+            Hibernate.initialize(object.getAsf());
+            Hibernate.initialize(object.getAsf().getCertificate());
+            Hibernate.initialize(object.getAsf().getPersonnel());
+            Hibernate.initialize(object.getAsf().getSpecialists());
+            Hibernate.initialize(object.getAsf().getDeployment());
+            Hibernate.initialize(object.getAsf().getSigners());
+            Hibernate.initialize(object.getAsf().getWorkTypes());
+            Hibernate.initialize(object.getAsf().getImages());
+        }
+
+        // Related entities
+        if (object.getAddress() != null) Hibernate.initialize(object.getAddress());
+        if (object.getInsurancePolicy() != null) Hibernate.initialize(object.getInsurancePolicy());
+        if (object.getMinimumBalance() != null) Hibernate.initialize(object.getMinimumBalance());
+        if (object.getType() != null) Hibernate.initialize(object.getType());
+        if (object.getCity() != null) Hibernate.initialize(object.getCity());
+        if (object.getHazardousSubstance() != null) Hibernate.initialize(object.getHazardousSubstance());
+
+        return object;
     }
 
     public ObjectModel create(Integer organizationId, SaveObjectRequest request) {
@@ -528,12 +563,28 @@ public class ObjectService {
     }
 
     private void saveImages(SaveObjectRequest request, ObjectModel object) {
-        object.getImages().clear();
-        List<ObjectImage> list = objectRequestMapper.toImages(request.images());
-        for (ObjectImage item : list) {
-            item.setObject(object);
+        if (request.images() == null) {
+            object.getImages().clear();
+            return;
         }
-        object.getImages().addAll(list);
+        Map<Integer, ObjectImage> existing = object.getImages().stream()
+                .filter(image -> image.getId() != null)
+                .collect(Collectors.toMap(
+                        ObjectImage::getId,
+                        Function.identity()
+                ));
+        for (ObjectImageRequest dto : request.images()) {
+            if (dto.id() == null) {
+                continue;
+            }
+            ObjectImage image = existing.get(dto.id());
+            if (image == null) {
+                continue;
+            }
+            image.setCaption(dto.caption());
+            image.setLinkText(dto.linkText());
+            image.setGroupKey(dto.groupKey());
+        }
     }
 
     public List<ObjectModel> findAll(Integer organizationId) {
@@ -561,5 +612,30 @@ public class ObjectService {
                 organizationRepository.getReferenceById(request.organizationId())
         );
         return save(request, object);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ObjectWithOrgResponse> findAllObjectsWithOrg() {
+        User currentUser = currentUserService.requireCurrentUser();
+        List<Organization> organizations;
+
+        if (currentUserService.isAdmin()) {
+            organizations = organizationRepository.findAll();
+        } else {
+            organizations = organizationRepository.findByUserIdOrderByOrganizationShortNameAsc(currentUser.getId());
+        }
+
+        List<ObjectWithOrgResponse> result = new ArrayList<>();
+        for (Organization org : organizations) {
+            for (ObjectModel obj : org.getObjects()) {
+                result.add(new ObjectWithOrgResponse(
+                        obj.getId(),
+                        obj.getObjectFullName(),
+                        org.getId(),
+                        org.getOrganizationShortName()
+                ));
+            }
+        }
+        return result;
     }
 }

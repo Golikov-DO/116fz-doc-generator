@@ -45,160 +45,98 @@ public class AsfService {
             HttpServletRequest req,
             Asf asf
     ) {
-
         helper.mapAsf(req, asf);
-
         return asfRepository.save(asf);
     }
 
-    private void saveCertificate(
-            HttpServletRequest req,
-            Asf asf
-    ) {
+    private void saveCertificate(HttpServletRequest req, Asf asf) {
 
         AsfCertificate certificate = certificateRepository
                 .findByAsfId(asf.getId())
                 .orElseGet(AsfCertificate::new);
-
         helper.mapCertificate(req, certificate);
-
         certificate.setAsf(asf);
-
         certificateRepository.save(certificate);
     }
 
-    private void savePersonnel(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
+    private void savePersonnel(HttpServletRequest req, Asf asf) {
         AsfPersonnel personnel = personnelRepository
                 .findByAsfId(asf.getId())
                 .orElseGet(AsfPersonnel::new);
-
         helper.mapPersonnel(req, personnel);
-
         personnel.setAsf(asf);
-
         personnelRepository.save(personnel);
     }
 
-    private void saveSpecialists(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
+    private void saveSpecialists(HttpServletRequest req, Asf asf) {
         AsfSpecialists specialists = specialistsRepository
                 .findByAsfId(asf.getId())
                 .orElseGet(AsfSpecialists::new);
-
         helper.mapSpecialists(req, specialists);
-
         specialists.setAsf(asf);
-
         specialistsRepository.save(specialists);
     }
 
-    private void saveDeployment(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
+    private void saveDeployment(HttpServletRequest req, Asf asf) {
         AsfCompositionDeploymentFunds deployment = deploymentRepository
                 .findByAsfId(asf.getId())
                 .orElseGet(AsfCompositionDeploymentFunds::new);
-
         helper.mapDeployment(req, deployment);
-
         deployment.setAsf(asf);
-
         deploymentRepository.save(deployment);
     }
 
-    private void saveSigners(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
-        List<AsfSigner> newSigners =
-                helper.mapSigners(req);
-
-        List<AsfSigner> oldSigners =
-                signerRepository.findAllByAsfId(asf.getId());
-
+    private void saveSigners(HttpServletRequest req, Asf asf) {
+        List<AsfSigner> newSigners = helper.mapSigners(req);
+        List<AsfSigner> oldSigners = signerRepository.findAllByAsfId(asf.getId());
         SyncListUtils.syncList(
                 newSigners,
                 oldSigners,
                 AsfSigner::getId,
                 signerRepository::deleteById
         );
-
         for (AsfSigner signer : newSigners) {
             signer.setAsf(asf);
             signerRepository.save(signer);
         }
     }
 
-    private void saveWorkTypes(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
-        List<AsfWorkType> newWorkTypes =
-                helper.mapWorkTypes(req);
-
-        List<AsfWorkType> oldWorkTypes =
-                workTypeRepository.findAllByAsfId(asf.getId());
-
+    private void saveWorkTypes(HttpServletRequest req, Asf asf) {
+        List<AsfWorkType> newWorkTypes =helper.mapWorkTypes(req);
+        List<AsfWorkType> oldWorkTypes = workTypeRepository.findAllByAsfId(asf.getId());
         SyncListUtils.syncList(
                 newWorkTypes,
                 oldWorkTypes,
                 AsfWorkType::getId,
                 workTypeRepository::deleteById
         );
-
         for (AsfWorkType workType : newWorkTypes) {
             workType.setAsf(asf);
             workTypeRepository.save(workType);
         }
     }
 
-    public Asf save(
-            HttpServletRequest req,
-            Asf asf
-    ) {
-
+    public Asf save(HttpServletRequest req, Asf asf) {
         asf = saveAsf(req, asf);
-
         saveCertificate(req, asf);
-
         savePersonnel(req, asf);
-
         saveSpecialists(req, asf);
-
         saveDeployment(req, asf);
-
         saveSigners(req, asf);
-
         saveWorkTypes(req, asf);
-
         return asf;
     }
 
     //REST
     @Transactional(readOnly = true)
     public Asf loadRest(Integer id) {
-
         Asf asf = asfRepository.findById(id).orElse(null);
-
         if (asf == null) {
             return null;
         }
-
         Hibernate.initialize(asf.getSigners());
         Hibernate.initialize(asf.getWorkTypes());
         Hibernate.initialize(asf.getImages());
-
         return asf;
     }
 
@@ -219,8 +157,7 @@ public class AsfService {
         return asfRepository.save(asf);
     }
 
-    public Asf update(Integer id, SaveAsfRequest request
-    ) {
+    public Asf update(Integer id, SaveAsfRequest request) {
         Asf asf = load(id);
         if (asf == null) {
             return null;
@@ -304,5 +241,16 @@ public class AsfService {
 
     public List<Asf> findAll() {
         return asfRepository.findAll();
+    }
+
+    @Transactional
+    public void setPrimarySigner(Integer asfId, Integer signerId, boolean isPrimary) {
+        // Сбросить isPrimary у всех подписантов этой АСФ
+        signerRepository.clearPrimaryByAsfId(asfId);
+        // Установить isPrimary у выбранного
+        AsfSigner signer = signerRepository.findById(signerId)
+                .orElseThrow(() -> new IllegalArgumentException("Signer not found"));
+        signer.setIsPrimary(isPrimary);
+        signerRepository.save(signer);
     }
 }

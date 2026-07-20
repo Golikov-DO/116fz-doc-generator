@@ -36,6 +36,16 @@ public class DocumentBuilder {
 
         // 2. Make a basic replacement
         if (!context.getTextReplacements().isEmpty()) {
+            String xml = mdp.getXML();
+
+            int idx = xml.indexOf("OBJ_TEXT_CAPTURE_1_IMAGE");
+            System.out.println("INDEX = " + idx);
+
+            if (idx != -1) {
+                int start = Math.max(0, idx - 200);
+                int end = Math.min(xml.length(), idx + 300);
+                System.out.println(xml.substring(start, end));
+            }
             mdp.variableReplace(context.getTextReplacements());
             new HeaderFooterUtil().processHeadersAndFooters(document, context.getTextReplacements());
         }

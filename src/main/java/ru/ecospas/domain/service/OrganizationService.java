@@ -158,7 +158,14 @@ public class OrganizationService {
     }
 
     public List<Organization> findAll() {
+        if (currentUserService.isAdmin()) {
+            return organizationRepository.findAll();
+        }
         User user = currentUserService.currentUser();
         return organizationRepository.findByUserIdOrderByOrganizationShortNameAsc(user.getId());
+    }
+
+    public List<Organization> findAllForAdmin() {
+        return organizationRepository.findAll();
     }
 }

@@ -3,6 +3,7 @@ package ru.ecospas.domain.service;
 import lombok.RequiredArgsConstructor;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.stereotype.Service;
+import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.word.document.DocumentBuilder;
 import ru.ecospas.word.pipeline.OpenResult;
 import ru.ecospas.word.pipeline.OpenStrategy;
@@ -18,15 +19,25 @@ public class WordGenerationService {
     private final TagOpenStrategy tagOpenStrategy;
     private final PlaceholderOpenStrategy placeholderOpenStrategy;
 
+    // Новый метод — принимает готовый объект
+    public WordprocessingMLPackage generate(
+            FillStrategy strategy,
+            byte[] templateBytes,
+            ObjectModel object
+    ) throws Exception {
+        OpenStrategy openStrategy = resolve(strategy);
+        OpenResult openResult = openStrategy.open(templateBytes, object);
+        return documentBuilder.build(openResult);
+    }
+
+    // Старый метод — для обратной совместимости (если где-то ещё используется)
     public WordprocessingMLPackage generate(
             FillStrategy strategy,
             byte[] templateBytes,
             int objectId
     ) throws Exception {
-
         OpenStrategy openStrategy = resolve(strategy);
         OpenResult openResult = openStrategy.open(templateBytes, objectId);
-
         return documentBuilder.build(openResult);
     }
 

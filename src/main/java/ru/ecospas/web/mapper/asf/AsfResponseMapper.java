@@ -146,7 +146,8 @@ public class AsfResponseMapper {
                 .map(item -> new AsfSignerResponse(
                         item.getId(),
                         item.getName(),
-                        item.getPosition()
+                        item.getPosition(),
+                        item.getIsPrimary()
                 ))
                 .toList();
     }

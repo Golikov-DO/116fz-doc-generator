@@ -10,19 +10,12 @@ public record AsfResponse(
         String fullNameGen,
         String shortName,
         String statusShort,
-
         AsfCertificateResponse certificate,
-
         AsfPersonnelResponse personnel,
-
         AsfSpecialistsResponse specialists,
-
         AsfCompositionDeploymentFundsResponse deployment,
-
         List<AsfSignerResponse> signers,
-
         List<AsfWorkTypeResponse> workTypes,
-
         List<AsfImageResponse> images
 ) {
 }

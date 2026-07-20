@@ -26,31 +26,28 @@ public class ObjectImageController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ImageUploadResponse upload(
-
             @RequestParam Integer objectId,
-
             @RequestParam String group,
-
             @RequestParam MultipartFile file
-
     ) throws Exception {
-
         ObjectModel object = objectRepository.findById(objectId)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND));
-
         User user = currentUserService.requireCurrentUser();
-
         if (!securityService.hasAccess(user, object.getOrganization())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
-        Integer imageId = imageService.upload(
-                objectId,
-                group,
-                file.getBytes()
-        );
-
+        Integer imageId = imageService.upload(objectId, group, file.getBytes());
         return new ImageUploadResponse(imageId);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getImage(@PathVariable Integer id) {
+        return imageService.getImage(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteImage(@PathVariable Integer id) {
+        imageService.delete(id);
     }
 }

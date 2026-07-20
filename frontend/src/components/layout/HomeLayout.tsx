@@ -1,6 +1,6 @@
 // src/layouts/HomeLayout.tsx
 import { Outlet } from 'react-router-dom';
-import { Header } from './Header';
+import { Header } from './Header.tsx';
 import './HomeLayout.css';
 
 export function HomeLayout() {

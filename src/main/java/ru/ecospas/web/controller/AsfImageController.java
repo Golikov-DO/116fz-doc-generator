@@ -6,12 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import ru.ecospas.domain.model.Asf;
-import ru.ecospas.domain.model.User;
-import ru.ecospas.domain.repository.AsfRepository;
+import ru.ecospas.domain.model.AsfDocumentImage;
+import ru.ecospas.domain.repository.AsfDocumentImageRepository;
 import ru.ecospas.domain.service.AsfDocumentImageService;
-import ru.ecospas.domain.service.CurrentUserService;
-import ru.ecospas.domain.service.SecurityService;
 import ru.ecospas.web.dto.response.image.ImageUploadResponse;
 
 import java.io.IOException;
@@ -22,6 +19,7 @@ import java.io.IOException;
 public class AsfImageController {
 
     private final AsfDocumentImageService imageService;
+    private final AsfDocumentImageRepository imageRepository;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ImageUploadResponse upload(
@@ -32,6 +30,13 @@ public class AsfImageController {
     ) throws IOException {
         Integer id = imageService.upload(asfId, group, imageId, file.getBytes());
         return new ImageUploadResponse(id);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getImage(@PathVariable Integer id) {
+        return imageRepository.findById(id)
+                .map(AsfDocumentImage::getImageBlob)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")

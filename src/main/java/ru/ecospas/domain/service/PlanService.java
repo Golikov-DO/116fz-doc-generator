@@ -36,8 +36,7 @@ public class PlanService {
             Integer objectId
     ) throws Exception {
 
-        String templatePath =
-                servletContext.getRealPath("/WEB-INF/template/tagtemplate.docx");
+        String templatePath = servletContext.getRealPath("/WEB-INF/template/tagtemplate.docx");
 
         if (templatePath == null) {
             throw new IOException("Файл шаблона не найден");

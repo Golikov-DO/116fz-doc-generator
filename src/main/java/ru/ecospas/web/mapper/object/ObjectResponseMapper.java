@@ -110,11 +110,9 @@ public class ObjectResponseMapper {
     private List<ObjectCompositionKchsResponse> toCompositionKchs(
             List<ObjectCompositionKchs> list
     ) {
-
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectCompositionKchsResponse(
                         item.getId(),
@@ -131,11 +129,9 @@ public class ObjectResponseMapper {
     private List<ObjectPersonsResponsibleResponse> toResponsiblePersons(
             List<ObjectPersonsResponsible> list
     ) {
-
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectPersonsResponsibleResponse(
                         item.getId(),
@@ -146,14 +142,10 @@ public class ObjectResponseMapper {
                 .toList();
     }
 
-    private List<ObjectFireEquipmentResponse> toFireEquipments(
-            List<ObjectFireEquipment> list
-    ) {
-
+    private List<ObjectFireEquipmentResponse> toFireEquipments(List<ObjectFireEquipment> list) {
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectFireEquipmentResponse(
                         item.getId(),
@@ -168,11 +160,9 @@ public class ObjectResponseMapper {
     private List<ObjectTechnologicalEquipmentResponse> toTechnologicalEquipments(
             List<ObjectTechnologicalEquipment> list
     ) {
-
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectTechnologicalEquipmentResponse(
                         item.getId(),
@@ -186,11 +176,9 @@ public class ObjectResponseMapper {
     private List<ObjectTechnologicalBlockResponse> toTechnologicalBlocks(
             List<ObjectTechnologicalBlock> list
     ) {
-
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectTechnologicalBlockResponse(
                         item.getId(),
@@ -200,32 +188,25 @@ public class ObjectResponseMapper {
                 .toList();
     }
 
-    private List<ObjectStructureResponse> toStructures(
-            List<ObjectStructure> list
-    ) {
-
+    private List<ObjectStructureResponse> toStructures( List<ObjectStructure> list) {
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectStructureResponse(
                         item.getId(),
                         item.getNum(),
                         item.getName(),
-                        Collections.emptyList()
+                        item.getLikelyIds(),
+                        item.getDangerousIds()
                 ))
                 .toList();
     }
 
-    private List<ObjectImageResponse> toImages(
-            List<ObjectImage> list
-    ) {
-
+    private List<ObjectImageResponse> toImages(List<ObjectImage> list) {
         if (list == null) {
             return Collections.emptyList();
         }
-
         return list.stream()
                 .map(item -> new ObjectImageResponse(
                         item.getId(),
