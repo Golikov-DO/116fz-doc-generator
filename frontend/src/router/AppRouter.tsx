@@ -7,13 +7,25 @@ import LoginPage from "../pages/Login/LoginPage";
 import AdminPage from "../pages/Admin/AdminPage";
 import UserPage from "../pages/Admin/UserPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
-import OrganizationsPage from "../pages/Organizations/OrganizationsPage";
+import OrganizationsPage from "../pages/Organization/OrganizationsPage.tsx";
 import OrganizationPage from "../pages/Organization/OrganizationPage";
-import ObjectsPage from "../pages/Objects/ObjectsPage";
+import ObjectsPage from "../pages/Object/ObjectsPage.tsx";
 import ObjectPage from '../pages/Object/ObjectPage';
 import AllObjectsTable from "../components/tables/AllObjectsTable.tsx";
 import AsfsPage from "../pages/Asf/AsfsPage.tsx";
 import AsfPage from "../pages/Asf/AsfPage.tsx";
+import HazardousSubstancesPage from "../pages/Hazardous/HazardousSubstancesPage.tsx";
+import HazardousSubstancePage from "../pages/Hazardous/HazardousSubstancePage.tsx";
+import CitiesPage from "../pages/City/CitiesPage.tsx";
+import CityPage from "../pages/City/CityPage.tsx";
+import ScenariosPage from "../pages/Scenario/ScenariosPage.tsx";
+import ScenarioPage from "../pages/Scenario/ScenarioPage.tsx";
+import TypesPage from "../pages/Type/ObjectTypesPage.tsx";
+import TypePage from "../pages/Type/ObjectTypePage.tsx";
+import TableTitlesPage from '../pages/TableTitles/TableTitlesPage'
+import TableTitlePage from '../pages/TableTitles/TableTitlePage'
+import EmergencyServicesPage from '../pages/EmergencyService/EmergencyServicesPage'
+import EmergencyServicePage from '../pages/EmergencyService/EmergencyServicePage'
 import {AuthProvider} from "../auth/AuthContext";
 
 export default function AppRouter() {
@@ -111,6 +123,126 @@ export default function AppRouter() {
                         <Route path="/asf/new" element={
                             <ProtectedRoute>
                                 <AsfPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/hazardous-substances" element={
+                            <ProtectedRoute>
+                                <HazardousSubstancesPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/hazardous-substances/:id" element={
+                            <ProtectedRoute>
+                                <HazardousSubstancePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/hazardous-substances/:id/edit" element={
+                            <ProtectedRoute>
+                                <HazardousSubstancePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/hazardous-substances/new" element={
+                            <ProtectedRoute>
+                                <HazardousSubstancePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/cities" element={
+                            <ProtectedRoute>
+                                <CitiesPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/cities/:id" element={
+                            <ProtectedRoute>
+                                <CityPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/cities/:id/edit" element={
+                            <ProtectedRoute>
+                                <CityPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/cities/new" element={
+                            <ProtectedRoute>
+                                <CityPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/scenarios" element={
+                            <ProtectedRoute>
+                                <ScenariosPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/scenarios/:id" element={
+                            <ProtectedRoute>
+                                <ScenarioPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/scenarios/:id/edit" element={
+                            <ProtectedRoute>
+                                <ScenarioPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/scenarios/new" element={
+                            <ProtectedRoute>
+                                <ScenarioPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/types" element={
+                            <ProtectedRoute>
+                                <TypesPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/types/:id" element={
+                            <ProtectedRoute>
+                                <TypePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/types/:id/edit" element={
+                            <ProtectedRoute>
+                                <TypePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/types/new" element={
+                            <ProtectedRoute>
+                                <TypePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/table-titles" element={
+                            <ProtectedRoute>
+                                <TableTitlesPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/table-titles/:id" element={
+                            <ProtectedRoute>
+                                <TableTitlePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/table-titles/:id/edit" element={
+                            <ProtectedRoute>
+                                <TableTitlePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/table-titles/new" element={
+                            <ProtectedRoute>
+                                <TableTitlePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/emergency-services" element={
+                            <ProtectedRoute>
+                                <EmergencyServicesPage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/emergency-services/:id" element={
+                            <ProtectedRoute>
+                                <EmergencyServicePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/emergency-services/:id/edit" element={
+                            <ProtectedRoute>
+                                <EmergencyServicePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/emergency-services/new" element={
+                            <ProtectedRoute>
+                                <EmergencyServicePage/>
                             </ProtectedRoute>
                         }/>
                     </Route>

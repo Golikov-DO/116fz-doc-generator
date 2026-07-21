@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import { getObjectsByOrganization, type ObjectModel } from '../../api/objectApi';
-import { getOrganization } from '../../api/organizationApi';
-import ObjectTable from '../../components/tables/ObjectTable';
+import { getObjectsByOrganization, type ObjectModel } from '../../api/objectApi.ts';
+import { getOrganization } from '../../api/organizationApi.ts';
+import ObjectTable from '../../components/tables/ObjectTable.tsx';
 
 export default function ObjectsPage() {
     const navigate = useNavigate();

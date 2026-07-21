@@ -8,7 +8,6 @@ import ru.ecospas.web.dto.request.scenario.SaveScenarioRequest;
 public class ScenarioRequestMapper {
 
     public void toScenario(SaveScenarioRequest request, Scenario scenario) {
-
         scenario.setName(request.name());
         scenario.setDescription(request.description());
         scenario.setImpactFactor(request.impactFactor());

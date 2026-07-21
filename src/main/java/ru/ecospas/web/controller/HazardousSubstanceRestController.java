@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.ecospas.domain.model.ReferenceHazardousSubstance;
+import ru.ecospas.domain.service.HazardousSubstanceQueryService;
 import ru.ecospas.domain.service.HazardousSubstanceService;
 import ru.ecospas.web.dto.request.hazardous.SaveHazardousSubstanceRequest;
+import ru.ecospas.web.dto.response.hazardous.HazardousParamResponse;
 import ru.ecospas.web.dto.response.hazardous.HazardousSubstanceListResponse;
 import ru.ecospas.web.dto.response.hazardous.HazardousSubstanceResponse;
 import ru.ecospas.web.mapper.hazardous.HazardousSubstanceResponseMapper;
@@ -19,6 +21,7 @@ public class HazardousSubstanceRestController {
 
     private final HazardousSubstanceService hazardousSubstanceService;
     private final HazardousSubstanceResponseMapper responseMapper;
+    private final HazardousSubstanceQueryService queryService;
 
     @GetMapping
     public List<HazardousSubstanceListResponse> getHazardousSubstances() {
@@ -67,5 +70,10 @@ public class HazardousSubstanceRestController {
     @DeleteMapping("/{id}")
     public void deleteHazardousSubstance(@PathVariable Integer id) {
         hazardousSubstanceService.deleteRest(id);
+    }
+
+    @GetMapping("/params")
+    public List<HazardousParamResponse> getAllParams() {
+        return queryService.getAllParams();
     }
 }

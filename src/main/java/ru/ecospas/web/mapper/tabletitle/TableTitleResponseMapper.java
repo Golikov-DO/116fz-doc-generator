@@ -31,7 +31,8 @@ public class TableTitleResponseMapper {
         }
         return new TableTitleListResponse(
                 tableTitle.getId(),
-                tableTitle.getTableTextLinc()
+                tableTitle.getTableTextLinc(),
+                tableTitle.getTableTextName()
         );
     }
 

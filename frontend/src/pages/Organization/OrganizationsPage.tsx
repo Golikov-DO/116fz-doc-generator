@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { getOrganizations, deleteOrganization, type Organization } from "../../api/organizationApi"
-import OrganizationTable from "../../components/tables/OrganizationTable"
+import { getOrganizations, deleteOrganization, type Organization } from "../../api/organizationApi.ts"
+import OrganizationTable from "../../components/tables/OrganizationTable.tsx"
 
 export default function OrganizationsPage() {
     const navigate = useNavigate()

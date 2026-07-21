@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ScenarioDTO {
+public class WordScenarioResponse {
 
     private Integer id;
     private String name;

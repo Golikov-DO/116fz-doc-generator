@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.ObjectModel;
 import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.domain.service.HazardousSubstanceQueryService;
-import ru.ecospas.web.dto.response.hazardous.HazardParamDto;
+import ru.ecospas.web.dto.response.hazardous.HazardousParamValueResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class HazardTableLayoutService {
                         new IllegalArgumentException(
                                 "Object not found: " + objectId));
 
-        List<HazardParamDto> params =
+        List<HazardousParamValueResponse> params =
                 hazardousSubstanceQueryService.getHazardParamsWithValues(
                         obj.getHazardousSubstance().getId()
                 );
@@ -42,31 +42,31 @@ public class HazardTableLayoutService {
         return buildVisualRowsAsArray(params);
     }
 
-    private List<String[]> buildVisualRowsAsArray(List<HazardParamDto> params) {
+    private List<String[]> buildVisualRowsAsArray(List<HazardousParamValueResponse> params) {
 
-        Map<Integer, List<HazardParamDto>> grouped = params.stream()
+        Map<Integer, List<HazardousParamValueResponse>> grouped = params.stream()
                 .collect(Collectors.groupingBy(
-                        p -> rootSection(p.getSection()),
+                        p -> rootSection(p.sectionNo()),
                         TreeMap::new,
                         Collectors.toList()
                 ));
 
         List<String[]> tableRows = new ArrayList<>();
 
-        for (List<HazardParamDto> group : grouped.values()) {
+        for (List<HazardousParamValueResponse> group : grouped.values()) {
 
             List<TableRowModel> rows = new ArrayList<>();
 
             // ---------- STEP 1 ----------
-            for (HazardParamDto dto : group) {
+            for (HazardousParamValueResponse dto : group) {
 
                 TableRowModel tableRow = new TableRowModel();
 
-                tableRow.isRoot = !dto.getSection().contains(".");
-                tableRow.section = dto.getSection();
-                tableRow.name = dto.getTitle() + ":";
-                tableRow.value = dto.getValue();
-                tableRow.source = dto.getSource();
+                tableRow.isRoot = !dto.sectionNo().contains(".");
+                tableRow.section = dto.sectionNo();
+                tableRow.name = dto.title() + ":";
+                tableRow.value = dto.valueText();
+                tableRow.source = dto.sourceInfo();
 
                 rows.add(tableRow);
             }

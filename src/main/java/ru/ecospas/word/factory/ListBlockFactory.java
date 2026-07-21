@@ -11,7 +11,7 @@ import ru.ecospas.domain.service.ScenarioNumberService;
 import ru.ecospas.domain.util.Collect;
 import ru.ecospas.domain.util.ObjectTechnicalDescriptionFormatter;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.response.scenario.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.WordScenarioResponse;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -78,14 +78,14 @@ public class ListBlockFactory {
         allIds.addAll(likelyIds);
         allIds.addAll(dangerousIds);
 
-        Map<Integer, ScenarioDTO> scenarioMap =
+        Map<Integer, WordScenarioResponse> scenarioMap =
                 numberService.buildFromIds(allIds, baseMap);
 
         List<String> likelyList = new ArrayList<>();
         List<String> dangerousList = new ArrayList<>();
 
         for (Integer id : likelyIds) {
-            ScenarioDTO dto = scenarioMap.get(id);
+            WordScenarioResponse dto = scenarioMap.get(id);
             if (dto == null) continue;
 
             likelyList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber())
@@ -93,7 +93,7 @@ public class ListBlockFactory {
         }
 
         for (Integer id : dangerousIds) {
-            ScenarioDTO dto = scenarioMap.get(id);
+            WordScenarioResponse dto = scenarioMap.get(id);
             if (dto == null) continue;
 
             dangerousList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber())

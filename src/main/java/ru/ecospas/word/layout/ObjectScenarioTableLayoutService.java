@@ -7,7 +7,7 @@ import ru.ecospas.domain.model.Scenario;
 import ru.ecospas.domain.repository.ObjectStructureRepository;
 import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.response.scenario.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.WordScenarioResponse;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class ObjectScenarioTableLayoutService {
             collect(s.getDangerousIds(), allIds);
         }
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         Map<Integer, Scenario> scenarioMap = allScenarios.stream()
@@ -47,7 +47,7 @@ public class ObjectScenarioTableLayoutService {
             Scenario sc = scenarioMap.get(id);
             if (sc == null) continue;
 
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(id);
             dto.setName(sc.getName());
             dto.setDescription(sc.getDescription());
@@ -68,7 +68,7 @@ public class ObjectScenarioTableLayoutService {
                 String joined = ids.stream()
                         .sorted(Comparator.comparing(id -> map.get(id).getNumber()))
                         .map(id -> {
-                            ScenarioDTO dto = map.get(id);
+                            WordScenarioResponse dto = map.get(id);
                             return dto != null ? "С" + SubscriptUtils.toSubscript(dto.getNumber()) : "";
                         })
                         .filter(s -> !s.isEmpty())
@@ -96,7 +96,7 @@ public class ObjectScenarioTableLayoutService {
             collect(s.getDangerousIds(), allIds);
         }
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         Map<Integer, Scenario> scenarioMap = allScenarios.stream()
@@ -110,7 +110,7 @@ public class ObjectScenarioTableLayoutService {
             Scenario sc = scenarioMap.get(id);
             if (sc == null) continue;
 
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(id);
             dto.setName(sc.getName());
             dto.setDescription(sc.getDescription());
@@ -125,7 +125,7 @@ public class ObjectScenarioTableLayoutService {
 
         List<String[]> rows = new ArrayList<>();
 
-        for (ScenarioDTO dto : map.values()) {
+        for (WordScenarioResponse dto : map.values()) {
 
             rows.add(new String[]{
                     "С" + SubscriptUtils.toSubscript(dto.getNumber()) + "\n" + dto.getName(),

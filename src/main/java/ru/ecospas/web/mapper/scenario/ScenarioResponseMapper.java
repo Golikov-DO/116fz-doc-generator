@@ -30,10 +30,7 @@ public class ScenarioResponseMapper {
         if (scenario == null) {
             return null;
         }
-        return new ScenarioListResponse(
-                scenario.getId(),
-                scenario.getName()
-        );
+        return new ScenarioListResponse(scenario.getId(), scenario.getName());
     }
 
     public List<ScenarioListResponse> toListResponses(List<Scenario> list) {

@@ -22,49 +22,27 @@ public class HazardousSubstanceRequestMapper {
             SaveHazardousSubstanceRequest request,
             ReferenceHazardousSubstance substance
     ) {
-
         substance.setName(request.name());
-
         substance.setNameGen(request.nameGen());
-
-        Map<Integer, SubstanceHazardousParamValue> existing =
-                new HashMap<>();
-
+        Map<Integer, SubstanceHazardousParamValue> existing = new HashMap<>();
         for (SubstanceHazardousParamValue value : substance.getValues()) {
-            existing.put(
-                    value.getParam().getId(),
-                    value
-            );
+            existing.put(value.getParam().getId(), value);
         }
-
         substance.getValues().clear();
-
         if (request.values() == null) {
             return;
         }
-
         for (HazardousParamValueRequest dto : request.values()) {
-
-            SubstanceHazardousParamValue value =
-                    existing.get(dto.paramId());
-
+            SubstanceHazardousParamValue value = existing.get(dto.paramId());
             if (value == null) {
-
                 value = new SubstanceHazardousParamValue();
-
                 value.setSubstance(substance);
-
-                SubstanceHazardousParam param =
-                        paramRepository.findById(dto.paramId())
+                SubstanceHazardousParam param = paramRepository.findById(dto.paramId())
                                 .orElseThrow();
-
                 value.setParam(param);
             }
-
             value.setValueText(dto.valueText());
-
             value.setSourceInfo(dto.sourceInfo());
-
             substance.getValues().add(value);
         }
     }
