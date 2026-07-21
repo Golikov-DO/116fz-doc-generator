@@ -22,9 +22,7 @@ public class ScenarioRestController {
 
     @GetMapping
     public List<ScenarioListResponse> getScenarios() {
-        return responseMapper.toListResponses(
-                scenarioService.findAll()
-        );
+        return responseMapper.toListResponses(scenarioService.findAll());
     }
 
     @GetMapping("/{id}")

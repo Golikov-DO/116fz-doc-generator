@@ -29,9 +29,7 @@ public class TableTitleRestController {
     public TableTitleResponse getTableTitle(@PathVariable Integer id) {
         ReferenceTableTitle tableTitle = tableTitleService.loadRest(id);
         if (tableTitle == null) {
-            throw new IllegalArgumentException(
-                    "Table title not found"
-            );
+            throw new IllegalArgumentException("Table title not found");
         }
         return responseMapper.toResponse(tableTitle);
     }

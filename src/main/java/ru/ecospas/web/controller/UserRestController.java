@@ -26,9 +26,7 @@ public class UserRestController {
 
     @GetMapping
     public List<UserListResponse> getUsers() {
-        return responseMapper.toListResponses(
-                userService.findAll()
-        );
+        return responseMapper.toListResponses(userService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -56,7 +54,8 @@ public class UserRestController {
             throw new IllegalArgumentException("User not found");
         }
         return responseMapper.toResponse(
-                userService.updateUser(user, request.login(), request.email(), request.password(), request.role())
+                userService.updateUser(user, request.login(), request.email(),
+                        request.password(), request.role())
         );
     }
 
@@ -74,7 +73,8 @@ public class UserRestController {
     @PutMapping("/me")
     public UserResponse updateCurrentUser(@Valid @RequestBody UpdateProfileRequest request) {
         User user = currentUserService.requireCurrentUser();
-        User updated = userService.updateProfile(user, request.login(), request.email(), request.password());
+        User updated = userService.updateProfile(user, request.login(), request.email(),
+                request.password());
         return responseMapper.toResponse(updated);
     }
 }
