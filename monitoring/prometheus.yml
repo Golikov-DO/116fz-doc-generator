@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "116fz-doc-generator"
+
+    metrics_path: "/actuator/prometheus"
+
+    static_configs:
+      - targets:
+          - app:8080

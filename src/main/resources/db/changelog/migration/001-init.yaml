@@ -1,0 +1,1536 @@
+databaseChangeLog:
+- changeSet:
+    id: 1784711441684-1
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_personnel_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: staff_by_staffing
+            type: INTEGER
+        - column:
+            name: staff_by_list
+            type: INTEGER
+        - column:
+            name: certified_total
+            type: INTEGER
+        - column:
+            name: qualified_total
+            type: INTEGER
+        - column:
+            name: third_class
+            type: INTEGER
+        - column:
+            name: second_class
+            type: INTEGER
+        - column:
+            name: first_class
+            type: INTEGER
+        - column:
+            name: international_class
+            type: INTEGER
+        tableName: asf_personnel
+- changeSet:
+    id: 1784711441684-2
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: users_pkey
+            name: id
+            startWith: 14
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: login
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(255)
+        - column:
+            name: role
+            type: VARCHAR(255)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1784711441684-3
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_certificate_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: cert_number
+            type: VARCHAR(255)
+        - column:
+            name: cert_series
+            type: VARCHAR(255)
+        - column:
+            name: issued_by
+            type: VARCHAR(255)
+        - column:
+            name: issue_basis
+            type: VARCHAR(255)
+        - column:
+            name: issue_date
+            type: date
+        - column:
+            name: valid_until
+            type: date
+        tableName: asf_certificate
+- changeSet:
+    id: 1784711441684-4
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_composition_deployment_funds_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: responsibility_area
+            type: VARCHAR(255)
+        - column:
+            name: deployment_place
+            type: VARCHAR(255)
+        - column:
+            name: duty_officer_telephone
+            type: VARCHAR(255)
+        - column:
+            name: contact_telephone
+            type: VARCHAR(255)
+        - column:
+            name: e_mail
+            type: VARCHAR(255)
+        - column:
+            name: number_buildings
+            type: VARCHAR(255)
+        - column:
+            name: total_area
+            type: VARCHAR(255)
+        tableName: asf_composition_deployment_funds
+- changeSet:
+    id: 1784711441684-5
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_document_image_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: group_key
+            type: VARCHAR(255)
+        - column:
+            name: image_blob
+            type: BYTEA
+        - column:
+            name: name_document
+            type: VARCHAR(255)
+        tableName: asf_document_image
+- changeSet:
+    id: 1784711441684-6
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: short_name
+            type: VARCHAR(255)
+        - column:
+            name: status_short
+            type: VARCHAR(255)
+        - column:
+            name: full_name_gen
+            type: VARCHAR(255)
+        tableName: asf
+- changeSet:
+    id: 1784711441684-7
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_signer_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: signer_position
+            type: VARCHAR(255)
+        - column:
+            name: signer_name
+            type: VARCHAR(255)
+        - column:
+            name: is_primary
+            type: BOOLEAN
+        tableName: asf_signer
+- changeSet:
+    id: 1784711441684-8
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_specialists_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: total_count
+            type: INTEGER
+        - column:
+            name: asr_tp
+            type: INTEGER
+        - column:
+            name: asr_lrn_ter
+            type: INTEGER
+        - column:
+            name: gzsr
+            type: INTEGER
+        - column:
+            name: psr
+            type: INTEGER
+        - column:
+            name: driver
+            type: INTEGER
+        - column:
+            name: asr_lrn_sea
+            type: INTEGER
+        tableName: asf_specialists
+- changeSet:
+    id: 1784711441684-9
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: asf_work_type_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: asf_id
+            type: INTEGER
+        tableName: asf_work_type
+- changeSet:
+    id: 1784711441684-10
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: composition_kchs_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: number
+            type: INTEGER
+        - column:
+            name: position
+            type: VARCHAR(255)
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: work_phone
+            type: VARCHAR(255)
+        - column:
+            name: cell_phone
+            type: VARCHAR(255)
+        - column:
+            name: home_address
+            type: VARCHAR(255)
+        tableName: object_composition_kchs
+- changeSet:
+    id: 1784711441684-11
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: emergency_services_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: service_name
+            type: VARCHAR(255)
+        - column:
+            name: position
+            type: VARCHAR(255)
+        - column:
+            name: phone_number
+            type: VARCHAR(255)
+        - column:
+            name: address
+            type: VARCHAR(255)
+        tableName: emergency_services
+- changeSet:
+    id: 1784711441684-12
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: hazardous_param_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: section_no
+            type: VARCHAR(255)
+        - column:
+            name: title
+            type: VARCHAR(255)
+        tableName: hazardous_param
+- changeSet:
+    id: 1784711441684-13
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: hazardous_param_value_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: param_id
+            type: INTEGER
+        - column:
+            name: value_text
+            type: VARCHAR
+        - column:
+            name: source_info
+            type: VARCHAR(255)
+        - column:
+            name: substance_id
+            type: INTEGER
+        tableName: hazardous_param_value
+- changeSet:
+    id: 1784711441684-14
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: hazardous_substance_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: name_gen
+            type: VARCHAR(255)
+        tableName: hazardous_substance
+- changeSet:
+    id: 1784711441684-15
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_address_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: address_index
+            type: INTEGER
+        - column:
+            name: constituent_entity
+            type: VARCHAR(255)
+        - column:
+            name: area_hierarchy
+            type: VARCHAR(255)
+        - column:
+            name: city_name
+            type: VARCHAR(255)
+        - column:
+            name: street
+            type: VARCHAR(255)
+        - column:
+            name: house
+            type: VARCHAR(255)
+        - column:
+            name: coordinates
+            type: VARCHAR(255)
+        - column:
+            name: raw_address
+            type: VARCHAR(255)
+        tableName: object_address
+- changeSet:
+    id: 1784711441684-16
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_city_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: geo_relief
+            type: VARCHAR(255)
+        - column:
+            name: geo_geology
+            type: VARCHAR(255)
+        - column:
+            name: climat_desc
+            type: VARCHAR(255)
+        - column:
+            name: hydro_desc
+            type: VARCHAR(255)
+        - column:
+            name: infra_transport
+            type: VARCHAR(255)
+        - column:
+            name: infra_engineering
+            type: VARCHAR(255)
+        - column:
+            name: infra_organizations
+            type: VARCHAR(255)
+        - column:
+            name: nearby_towns
+            type: VARCHAR(255)
+        - column:
+            name: mass_people_places
+            type: VARCHAR(255)
+        - column:
+            name: admin_status
+            type: VARCHAR(255)
+        - column:
+            name: dist_centers
+            type: VARCHAR(255)
+        - column:
+            name: city_name
+            type: VARCHAR(255)
+        tableName: object_city
+- changeSet:
+    id: 1784711441684-17
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_development_accident_scenarios_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: scenarios
+            type: VARCHAR(255)
+        - column:
+            name: development_scheme
+            type: VARCHAR(255)
+        - column:
+            name: object_id
+            type: INTEGER
+        tableName: object_development_accident_scenarios
+- changeSet:
+    id: 1784711441684-18
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: org_id
+            type: INTEGER
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: hazard_class
+            type: INTEGER
+        - column:
+            name: hazardous_substance_id
+            type: INTEGER
+        - column:
+            name: nearest_fire_station
+            type: VARCHAR(255)
+        - column:
+            name: department_gochs_city
+            type: VARCHAR(255)
+        - column:
+            name: amount_of_hazardous_substance
+            type: VARCHAR(255)
+        - column:
+            name: emergency_commission
+            type: BOOLEAN
+        - column:
+            name: asf_id
+            type: INTEGER
+        - column:
+            name: asf_signer_id
+            type: INTEGER
+        - column:
+            name: object_city_id
+            type: INTEGER
+        - column:
+            name: object_type_id
+            type: INTEGER
+        - column:
+            name: arrival_time
+            type: time(6) WITHOUT TIME ZONE
+        tableName: object
+- changeSet:
+    id: 1784711441684-19
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_image_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: group_key
+            type: VARCHAR(255)
+        - column:
+            name: image_blob
+            type: BYTEA
+        - column:
+            name: caption
+            type: VARCHAR(255)
+        - column:
+            name: link_text
+            type: VARCHAR(255)
+        tableName: object_image
+- changeSet:
+    id: 1784711441684-20
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_insurance_policy_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: number
+            type: VARCHAR(255)
+        - column:
+            name: valid_until
+            type: date
+        tableName: object_insurance_policy
+- changeSet:
+    id: 1784711441684-21
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_order_minimum_balance_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: number
+            type: VARCHAR(255)
+        - column:
+            name: date
+            type: date
+        tableName: object_order_minimum_balance
+- changeSet:
+    id: 1784711441684-22
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+            name: id
+            type: INTEGER
+        - column:
+            name: structure_id
+            type: INTEGER
+        - column:
+            name: scenario_id
+            type: INTEGER
+        - column:
+            name: type
+            type: VARCHAR(255)
+        tableName: object_scenario
+- changeSet:
+    id: 1784711441684-23
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_structure_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: num
+            type: INTEGER
+        - column:
+            name: dangerous_scenario_ids
+            type: VARCHAR(255)
+        - column:
+            name: likely_scenario_ids
+            type: VARCHAR(255)
+        tableName: object_structure
+- changeSet:
+    id: 1784711441684-24
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_technological_block_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: num
+            type: INTEGER
+        tableName: object_technological_block
+- changeSet:
+    id: 1784711441684-25
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: object_type_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_type_definitions
+            type: VARCHAR(512)
+        - column:
+            name: type
+            type: VARCHAR(255)
+        tableName: object_type
+- changeSet:
+    id: 1784711441684-26
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: organization_address_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: organization_id
+            type: INTEGER
+        - column:
+            name: address_index
+            type: INTEGER
+        - column:
+            name: constituent_entity
+            type: VARCHAR(255)
+        - column:
+            name: area_hierarchy
+            type: VARCHAR(255)
+        - column:
+            name: city_name
+            type: VARCHAR(255)
+        - column:
+            name: street
+            type: VARCHAR(255)
+        - column:
+            name: house
+            type: VARCHAR(255)
+        - column:
+            name: raw_address
+            type: VARCHAR(255)
+        tableName: organization_address
+- changeSet:
+    id: 1784711441684-27
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: organization_contact_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: organization_id
+            type: INTEGER
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: position
+            type: VARCHAR(255)
+        - column:
+            name: phones
+            type: VARCHAR(255)
+        - column:
+            name: address
+            type: VARCHAR(255)
+        tableName: organization_contact
+- changeSet:
+    id: 1784711441684-28
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: organization_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: organization_short_name
+            type: VARCHAR(255)
+        - column:
+            name: organization_full_name
+            type: VARCHAR(255)
+        - column:
+            name: organization_type_activity
+            type: VARCHAR(500)
+        - column:
+            name: one_territory
+            type: BOOLEAN
+        - column:
+            name: user_id
+            type: INTEGER
+        tableName: organization
+- changeSet:
+    id: 1784711441684-29
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: organization_signer_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: organization_id
+            type: INTEGER
+        - column:
+            name: signer_position
+            type: VARCHAR(255)
+        - column:
+            name: signer_surname_basic
+            type: VARCHAR(255)
+        - column:
+            name: is_primary
+            type: BOOLEAN
+        tableName: organization_signer
+- changeSet:
+    id: 1784711441684-30
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: primary_fire_extinguishing_equipment_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: num
+            type: INTEGER
+        - column:
+            name: name_product
+            type: VARCHAR(255)
+        - column:
+            name: quantity
+            type: VARCHAR(255)
+        - column:
+            name: location
+            type: VARCHAR(255)
+        tableName: object_primary_fire_extinguishing_equipment
+- changeSet:
+    id: 1784711441684-31
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: regional_authorities_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_city_id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: department
+            type: VARCHAR(255)
+        - column:
+            name: phone_number
+            type: VARCHAR(255)
+        - column:
+            name: address
+            type: VARCHAR(255)
+        tableName: object_regional_authorities
+- changeSet:
+    id: 1784711441684-32
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: responsible_persons_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: object_id
+            type: INTEGER
+        - column:
+            name: number
+            type: INTEGER
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: position
+            type: VARCHAR(255)
+        tableName: object_responsible_persons
+- changeSet:
+    id: 1784711441684-33
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+            name: id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            name: impact_factor
+            type: VARCHAR(255)
+        tableName: scenario
+- changeSet:
+    id: 1784711441684-34
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: table_title_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: table_linc
+            type: VARCHAR(255)
+        - column:
+            name: table_name
+            type: VARCHAR(255)
+        tableName: table_title
+- changeSet:
+    id: 1784711441684-35
+    author: initial
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: technological_equipment_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: num
+            type: INTEGER
+        - column:
+            name: equipment_name
+            type: VARCHAR(255)
+        - column:
+            name: characteristics
+            type: VARCHAR
+        - column:
+            name: object_id
+            type: INTEGER
+        tableName: object_technological_equipment
+- changeSet:
+    id: 1784711441684-36
+    author: initial
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: asf_id
+        indexName: asf_personnel_asf_id_uindex
+        tableName: asf_personnel
+        unique: true
+- changeSet:
+    id: 1784711441684-37
+    author: initial
+    changes:
+    - addUniqueConstraint:
+        columnNames: login
+        constraintName: users_login_key
+        tableName: users
+- changeSet:
+    id: 1784711441684-38
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: substance_id
+        baseTableName: hazardous_param_value
+        constraintName: fk63q5q84l5pe82v1do9kxemjv4
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: hazardous_substance
+        validate: true
+- changeSet:
+    id: 1784711441684-39
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: organization
+        constraintName: fk7klnupuuu0cbbqabirlp4oujm
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1784711441684-40
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_order_minimum_balance
+        constraintName: fk_balance_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-41
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_certificate
+        constraintName: fk_cert_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-42
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_document_image
+        constraintName: fk_docimg_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-43
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_primary_fire_extinguishing_equipment
+        constraintName: fk_fireeq_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-44
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_composition_deployment_funds
+        constraintName: fk_funds_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-45
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_composition_kchs
+        constraintName: fk_kchs_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-46
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_address
+        constraintName: fk_objaddr_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-47
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: org_id
+        baseTableName: object
+        constraintName: fk_object_org
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1784711441684-48
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_image
+        constraintName: fk_objimg_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-49
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organization_id
+        baseTableName: organization_address
+        constraintName: fk_orgaddr_org
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1784711441684-50
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organization_id
+        baseTableName: organization_contact
+        constraintName: fk_orgcontact_org
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1784711441684-51
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organization_id
+        baseTableName: organization_signer
+        constraintName: fk_orgsigner_org
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1784711441684-52
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: param_id
+        baseTableName: hazardous_param_value
+        constraintName: fk_paramvalue_param
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: hazardous_param
+        validate: true
+- changeSet:
+    id: 1784711441684-53
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_personnel
+        constraintName: fk_personnel_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-54
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_insurance_policy
+        constraintName: fk_policy_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-55
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_city_id
+        baseTableName: object_regional_authorities
+        constraintName: fk_regauth_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object_city
+        validate: true
+- changeSet:
+    id: 1784711441684-56
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_responsible_persons
+        constraintName: fk_resp_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-57
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_signer
+        constraintName: fk_signer_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-58
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_specialists
+        constraintName: fk_spec_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-59
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_structure
+        constraintName: fk_structure_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-60
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_technological_block
+        constraintName: fk_techblock_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-61
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_technological_equipment
+        constraintName: fk_techeq_object
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-62
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: asf_work_type
+        constraintName: fk_worktype_asf
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-63
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_type_id
+        baseTableName: object
+        constraintName: fkbauus8jo95tnnxx1efdrkypgv
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object_type
+        validate: true
+- changeSet:
+    id: 1784711441684-64
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: asf_id
+        baseTableName: object
+        constraintName: fkcdgep7ga5mnyf9ghf995s0nxq
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: asf
+        validate: true
+- changeSet:
+    id: 1784711441684-65
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_id
+        baseTableName: object_development_accident_scenarios
+        constraintName: fkfdulua65415ggink2fpp45cv9
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object
+        validate: true
+- changeSet:
+    id: 1784711441684-66
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: hazardous_substance_id
+        baseTableName: object
+        constraintName: fkfhlc2f26on8s9b3jknrj5q3g
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: hazardous_substance
+        validate: true
+- changeSet:
+    id: 1784711441684-67
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: structure_id
+        baseTableName: object_scenario
+        constraintName: fkfrxtahs678i9h01eopyjmcnqc
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object_structure
+        validate: true
+- changeSet:
+    id: 1784711441684-68
+    author: initial
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: object_city_id
+        baseTableName: object
+        constraintName: object_object_city_id_fk
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: object_city
+        validate: true
+
