@@ -3,6 +3,9 @@ package ru.ecospas.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,4 +30,26 @@ public class Organization implements BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "organization")
+    private List<ObjectModel> objects = new ArrayList<>();
+
+    @OneToOne(
+            mappedBy = "organization",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private OrganizationAddress address;
+
+    @OneToMany(
+            mappedBy = "organization",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<OrganizationSigner> signers = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "organization",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<OrganizationContact> contacts = new ArrayList<>();
 }

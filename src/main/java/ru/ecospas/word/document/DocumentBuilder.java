@@ -1,11 +1,13 @@
 package ru.ecospas.word.document;
 
+import lombok.RequiredArgsConstructor;
 import org.docx4j.TextUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.P;
 import org.docx4j.wml.Tbl;
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.text.TextBlock;
 import ru.ecospas.word.pipeline.OpenResult;
@@ -14,21 +16,19 @@ import ru.ecospas.word.render.RenderContext;
 import ru.ecospas.word.render.RendererRegistry;
 import ru.ecospas.word.util.HeaderFooterUtil;
 
+@Component
+@RequiredArgsConstructor
 public class DocumentBuilder {
 
     private final RendererRegistry rendererRegistry;
 
-    public DocumentBuilder(RendererRegistry rendererRegistry) {
-        this.rendererRegistry = rendererRegistry;
-    }
-
     public WordprocessingMLPackage build(OpenResult openResult) throws Exception {
-        WordprocessingMLPackage document = openResult.getDocument();
+        WordprocessingMLPackage document = openResult.document();
         RenderContext context = new RenderContext(document);
         MainDocumentPart mdp = document.getMainDocumentPart();
 
         // 1. Collect simple text replacements
-        for (Block block : openResult.getBlocks()) {
+        for (Block block : openResult.blocks()) {
             if (block instanceof TextBlock(String key, String text)) {
                 context.getTextReplacements().put(key, text);
             }
@@ -41,7 +41,7 @@ public class DocumentBuilder {
         }
 
         // 3. Launch renderers
-        for (Block block : openResult.getBlocks()) {
+        for (Block block : openResult.blocks()) {
             if (block instanceof TextBlock) continue;
             BlockRenderer<?> renderer = rendererRegistry.resolve(block);
             if (renderer != null) {
@@ -84,7 +84,8 @@ public class DocumentBuilder {
                         Object next = XmlUtils.unwrap(content.get(i));
                         if (next instanceof P nextP) {
                             String nextText = TextUtils.getText(nextP);
-                            boolean nextHasSect = nextP.getPPr() != null && nextP.getPPr().getSectPr() != null;
+                            boolean nextHasSect = nextP.getPPr() != null
+                                    && nextP.getPPr().getSectPr() != null;
 
                             if ((nextText == null || nextText.trim().isEmpty()) && !nextHasSect) {
                                 content.remove(i);
@@ -138,7 +139,6 @@ public class DocumentBuilder {
 
         return document;
     }
-
 
 
     @SuppressWarnings("unchecked")

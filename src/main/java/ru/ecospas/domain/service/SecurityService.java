@@ -1,34 +1,20 @@
 package ru.ecospas.domain.service;
 
-import org.hibernate.Session;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.Organization;
+import ru.ecospas.domain.model.Role;
 import ru.ecospas.domain.model.User;
-import ru.ecospas.infrastructure.config.HibernateConfig;
 
-import java.util.List;
-
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SecurityService {
 
-    public List<Organization> getOrganizationsForUser(User user) {
+    public boolean hasAccess(User user, Organization organization) {
 
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-
-            if (user.getRole().name().equals("ADMIN")) {
-                return session.createQuery("from Organization", Organization.class)
-                        .list();
-            }
-
-            return session.createQuery(
-                    "from Organization where user.id = :userId",
-                    Organization.class
-            )
-                    .setParameter("userId", user.getId())
-                    .list();
-        }
-    }
-
-    public boolean hasAccess(User user, Organization org) {
-        return user.getRole().name().equals("ADMIN") ||
-                org.getUser().getId().equals(user.getId());
+        return user.getRole() == Role.ADMIN
+                || organization.getUser().getId().equals(user.getId());
     }
 }

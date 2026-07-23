@@ -3,6 +3,7 @@ package ru.ecospas.word.render.docx4j;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.list.ListBlock;
 import ru.ecospas.word.render.BlockRenderer;
@@ -16,6 +17,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Docx4jListBlockRenderer implements BlockRenderer<ListBlock> {
 
     private final DocxTraversalUtil docxTraversalUtil = new DocxTraversalUtil();

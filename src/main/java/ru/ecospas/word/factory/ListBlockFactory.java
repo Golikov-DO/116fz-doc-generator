@@ -1,48 +1,41 @@
 package ru.ecospas.word.factory;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.repository.ObjectStructureRepository;
+import ru.ecospas.domain.repository.ObjectTechnologicalBlockRepository;
+import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.domain.service.ScenarioNumberService;
 import ru.ecospas.domain.util.Collect;
 import ru.ecospas.domain.util.ObjectTechnicalDescriptionFormatter;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.WordScenarioResponse;
 
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class ListBlockFactory {
 
-    private final ParentService<ObjectModel> objectService;
-    private final ChildService<ObjectStructure> objectStructureService;
-    private final ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService;
+    private final ObjectModelRepository objectRepository;
+    private final ObjectStructureRepository objectStructureRepository;
+    private final ObjectTechnologicalBlockRepository objectTechnologicalBlockRepository;
+    private final ScenarioRepository scenarioRepository;
     private final ScenarioNumberService numberService;
-    private final ParentService<Scenario> scenarioService;
 
-    public ListBlockFactory(
-            ParentService<ObjectModel> objectService,
-            ChildService<ObjectStructure> objectStructureService,
-            ChildService<ObjectTechnologicalBlock> objectTechnologicalBlockService,
-            ScenarioNumberService numberService,
-            ParentService<Scenario> scenarioService
-    ) {
-        this.objectService = objectService;
-        this.objectStructureService = objectStructureService;
-        this.objectTechnologicalBlockService = objectTechnologicalBlockService;
-        this.scenarioService = scenarioService;
-        this.numberService = numberService;
-    }
+    public Map<String, Object> build(int objectId) throws SQLException {
 
-    public Map<String,Object> build(int objectId) throws SQLException {
+        Map<String, Object> data = new HashMap<>();
 
-        Map<String,Object> data = new HashMap<>();
-
-        ObjectModel object = objectService.getOneById(objectId);
+        ObjectModel object = objectRepository.findById(objectId).orElseThrow();
 
         // ===== OBJ_AREA_LOCATION =====
-        String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter.formatAsParagraphs(object.getCity());
+        String[] descriptionParagraphs = ObjectTechnicalDescriptionFormatter
+                .formatAsParagraphs(object.getCity());
 
         if (descriptionParagraphs.length > 0) {
             data.put("OBJ_AREA_LOCATION_LIST", descriptionParagraphs);
@@ -50,21 +43,24 @@ public class ListBlockFactory {
         // ============================================================
 
         // ===== OBJECT_STRUCTURE_LIST =====
-        List<ObjectStructure> structureList = objectStructureService.getManyByParentId(object.getId());
+        List<ObjectStructure> structureList = objectStructureRepository
+                .findAllByObjectId(object.getId());
         String[] structureItems = extractNames(structureList);
         if (structureItems.length > 0) {
             data.put("OBJ_STRUCTURE_LIST1", structureItems);
         }
 
         // ===== TECHNO_BLOCK_LIST =====
-        List<ObjectTechnologicalBlock> technoList = objectTechnologicalBlockService.getManyByParentId(object.getId());
+        List<ObjectTechnologicalBlock> technoList = objectTechnologicalBlockRepository
+                .findAllByObjectId(object.getId());
         String[] technoItems = extractNames(technoList);
         if (technoItems.length > 0) {
             data.put("OBJ_TECHNO_BLOCK_LIST№", technoItems);
         }
 
         // ===== OBJECT SCENARIOS =====
-        List<ObjectStructure> structures = objectStructureService.getManyByParentId(object.getId());
+        List<ObjectStructure> structures = objectStructureRepository
+                .findAllByObjectId(object.getId());
 
         LinkedHashSet<Integer> likelyIds = new LinkedHashSet<>();
         LinkedHashSet<Integer> dangerousIds = new LinkedHashSet<>();
@@ -74,7 +70,7 @@ public class ListBlockFactory {
             Collect.collect(s.getDangerousIds(), dangerousIds);
         }
 
-        List<Scenario> allScenarios = scenarioService.getMany();
+        List<Scenario> allScenarios = scenarioRepository.findAll();
         Map<Integer, Scenario> baseMap = allScenarios.stream()
                 .collect(Collectors.toMap(Scenario::getId, s -> s));
 
@@ -82,24 +78,26 @@ public class ListBlockFactory {
         allIds.addAll(likelyIds);
         allIds.addAll(dangerousIds);
 
-        Map<Integer, ScenarioDTO> scenarioMap =
+        Map<Integer, WordScenarioResponse> scenarioMap =
                 numberService.buildFromIds(allIds, baseMap);
 
         List<String> likelyList = new ArrayList<>();
         List<String> dangerousList = new ArrayList<>();
 
         for (Integer id : likelyIds) {
-            ScenarioDTO dto = scenarioMap.get(id);
+            WordScenarioResponse dto = scenarioMap.get(id);
             if (dto == null) continue;
 
-            likelyList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber()) + " – " + dto.getName());
+            likelyList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber())
+                    + " – " + dto.getName());
         }
 
         for (Integer id : dangerousIds) {
-            ScenarioDTO dto = scenarioMap.get(id);
+            WordScenarioResponse dto = scenarioMap.get(id);
             if (dto == null) continue;
 
-            dangerousList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber()) + " – " + dto.getName());
+            dangerousList.add(" – С" + SubscriptUtils.toSubscript(dto.getNumber())
+                    + " – " + dto.getName());
         }
 
         if (!likelyList.isEmpty()) {

@@ -1,7 +1,9 @@
 package ru.ecospas.word.factory;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ParentService;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
 import ru.ecospas.word.blocks.list.ListBlock;
@@ -19,6 +21,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.BiFunction;
 
+@Component
+@RequiredArgsConstructor
 public class UnifiedBlockFactory {
 
     private final TableBlockFactory tableBlockFactory;
@@ -28,47 +32,57 @@ public class UnifiedBlockFactory {
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
     private final ObjectScenarioTableLayoutService objectScenarioTableLayoutService;
-    private final ParentService<ObjectModel> objectService;
 
-    // Map of block creation strategies
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
 
-    public UnifiedBlockFactory(
-            TableBlockFactory tableBlockFactory,
-            PlaceholderFillStrategy placeholderFillStrategy,
-            ImageBlockFactory imageBlockFactory,
-            ListBlockFactory listBlockFactory,
-            HazardTableLayoutService hazardTableLayoutService,
-            ContactTableLayoutService contactTableLayoutService,
-            ObjectScenarioTableLayoutService objectScenarioTableLayoutService,
-            ParentService<ObjectModel> objectService
-    ) {
-        this.tableBlockFactory = tableBlockFactory;
-        this.listBlockFactory = listBlockFactory;
-        this.placeholderFillStrategy = placeholderFillStrategy;
-        this.imageBlockFactory = imageBlockFactory;
-        this.hazardTableLayoutService = hazardTableLayoutService;
-        this.contactTableLayoutService = contactTableLayoutService;
-        this.objectScenarioTableLayoutService = objectScenarioTableLayoutService;
-        this.objectService = objectService;
+    @PostConstruct
+    private void init() {
         initCreators();
     }
 
     private void initCreators() {
-        // Text
         creators.put(String.class, (key, val) -> new TextBlock(key, (String) val));
-
-        // Lists (String[])
         creators.put(String[].class, (key, val) -> new ListBlock(key, (String[]) val));
-
-        // Pictures (byte[])
         creators.put(byte[].class, (key, val) ->
                 new ImageBlock(key, val, resolvePictureType(key))
         );
     }
 
-    public List<Block> buildBlocks(int objectId) throws SQLException {
-        Map<String, Object> allData = build(objectId);
+    // ========== НОВЫЕ МЕТОДЫ (с ObjectModel) ==========
+
+    public List<Block> buildBlocks(ObjectModel object) throws SQLException {
+        Map<String, Object> allData = build(object);
+        return buildBlocksFromData(allData);
+    }
+
+    public Map<String, Object> build(ObjectModel obj) throws SQLException {
+        Map<String, Object> result = new LinkedHashMap<>();
+
+        if (obj == null) {
+            return result;
+        }
+        int orgId = obj.getOrganization().getId();
+        int objectId = obj.getId();
+
+        putAllIfPresent(result, placeholderFillStrategy.build(obj));
+        putAllIfPresent(result, tableBlockFactory.build(objectId));
+        putAllIfPresent(result, listBlockFactory.build(objectId));
+        putAllIfPresent(result, imageBlockFactory.build(objectId));
+        List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(objectId);
+        if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
+        List<String[]> scenarioFullData = objectScenarioTableLayoutService.getObjectScenarioFullData(objectId);
+        if (!scenarioFullData.isEmpty()) result.put("OBJ_TABLE_3_PLACEHOLDER", scenarioFullData);
+        List<String[]> scenarioData = objectScenarioTableLayoutService.getObjectScenarioTableData(objectId);
+        if (!scenarioData.isEmpty()) result.put("OBJ_TABLE_4_PLACEHOLDER", scenarioData);
+        List<String[]> contactData = contactTableLayoutService.getContactTableData(orgId, objectId);
+        if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
+
+        return result;
+    }
+
+    // ========== ОБЩИЙ МЕТОД РЕНДЕРИНГА БЛОКОВ ==========
+
+    private List<Block> buildBlocksFromData(Map<String, Object> allData) {
         List<Block> blocks = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : allData.entrySet()) {
@@ -90,7 +104,6 @@ public class UnifiedBlockFactory {
                 continue;
             }
 
-            // 2. List Processing
             if (value instanceof List<?> list && !list.isEmpty()) {
                 Object first = list.getFirst();
 
@@ -129,31 +142,6 @@ public class UnifiedBlockFactory {
         return new TableBlock(key, new TableSchema(columns), tableRows);
     }
 
-    public Map<String, Object> build(int objectId) throws SQLException {
-        Map<String, Object> result = new LinkedHashMap<>();
-
-        ObjectModel obj = objectService.getOneById(objectId);
-        if (obj == null) {
-            return result;
-        }
-        int orgId = obj.getOrganization().getId();
-
-        putAllIfPresent(result, placeholderFillStrategy.build(orgId, objectId));
-        putAllIfPresent(result, tableBlockFactory.build(objectId));
-        putAllIfPresent(result, listBlockFactory.build(objectId));
-        putAllIfPresent(result, imageBlockFactory.build(objectId));
-        List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(objectId);
-        if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
-        List<String[]> scenarioFullData = objectScenarioTableLayoutService.getObjectScenarioFullData(objectId);
-        if (!scenarioFullData.isEmpty()) result.put("OBJ_TABLE_3_PLACEHOLDER", scenarioFullData);
-        List<String[]> scenarioData = objectScenarioTableLayoutService.getObjectScenarioTableData(objectId);
-        if (!scenarioData.isEmpty()) result.put("OBJ_TABLE_4_PLACEHOLDER", scenarioData);
-        List<String[]> contactData = contactTableLayoutService.getContactTableData(orgId, objectId);
-        if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
-
-        return result;
-    }
-
     private void putAllIfPresent(Map<String, Object> target, Map<String, Object> source) {
         if (source != null && !source.isEmpty()) {
             target.putAll(source);
@@ -161,7 +149,6 @@ public class UnifiedBlockFactory {
     }
 
     private int resolvePictureType(String key) {
-
         if (key.startsWith("ASF_IMAGE")) return 0;
         if (key.startsWith("OBJ_IMAGE")) return 1;
         return 0;

@@ -1,64 +1,47 @@
 package ru.ecospas.domain.service;
 
-import ru.ecospas.app.InternalServices;
-import ru.ecospas.domain.model.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.ecospas.domain.repository.*;
 
+@Service
+@RequiredArgsConstructor
+@Transactional
 public class ObjectDeleteService {
 
-    private final ChildService<ObjectAddress> addressService;
-    private final ChildService<ObjectInsurancePolicy> policyService;
-    private final ChildService<ObjectOrderMinimumBalance> balanceService;
-    private final ChildService<ObjectCompositionKchs> kchsService;
-    private final ChildService<ObjectTechnologicalEquipment> equipmentService;
-    private final ChildService<ObjectStructure> structureService;
-    private final ChildService<ObjectTechnologicalBlock> technoBlockService;
-    private final ChildService<ObjectPersonsResponsible> personsService;
-    private final ChildService<ObjectImage> imageService;
-    private final ParentService<ObjectModel> objectService;
+    private final ObjectModelRepository objectRepository;
 
-    public ObjectDeleteService(InternalServices services) {
-        this.objectService = services.getParentService(ObjectModel.class);
-
-        this.addressService = services.getChildService(ObjectAddress.class);
-        this.policyService = services.getChildService(ObjectInsurancePolicy.class);
-        this.balanceService = services.getChildService(ObjectOrderMinimumBalance.class);
-        this.kchsService = services.getChildService(ObjectCompositionKchs.class);
-        this.equipmentService = services.getChildService(ObjectTechnologicalEquipment.class);
-        this.structureService = services.getChildService(ObjectStructure.class);
-        this.technoBlockService = services.getChildService(ObjectTechnologicalBlock.class);
-        this.personsService = services.getChildService(ObjectPersonsResponsible.class);
-        this.imageService = services.getChildService(ObjectImage.class);
-    }
+    private final ObjectAddressRepository addressRepository;
+    private final ObjectInsurancePolicyRepository policyRepository;
+    private final ObjectOrderMinimumBalanceRepository balanceRepository;
+    private final ObjectCompositionKchsRepository kchsRepository;
+    private final ObjectTechnologicalEquipmentRepository equipmentRepository;
+    private final ObjectStructureRepository structureRepository;
+    private final ObjectTechnologicalBlockRepository technoBlockRepository;
+    private final ObjectPersonsResponsibleRepository personsRepository;
+    private final ObjectImageRepository imageRepository;
 
     public void delete(int objectId) {
 
-        ObjectAddress address = addressService.getOneByParentId(objectId);
-        if (address != null) addressService.deleteById(address.getId());
+        addressRepository.findByObjectId(objectId).ifPresent(addressRepository::delete);
 
-        ObjectInsurancePolicy policy = policyService.getOneByParentId(objectId);
-        if (policy != null) policyService.deleteById(policy.getId());
+        policyRepository.findByObjectId(objectId).ifPresent(policyRepository::delete);
 
-        ObjectOrderMinimumBalance balance = balanceService.getOneByParentId(objectId);
-        if (balance != null) balanceService.deleteById(balance.getId());
+        balanceRepository.findByObjectId(objectId).ifPresent(balanceRepository::delete);
 
-        kchsService.getManyByParentId(objectId)
-                .forEach(e -> kchsService.deleteById(e.getId()));
+        kchsRepository.deleteAllByObjectId(objectId);
 
-        equipmentService.getManyByParentId(objectId)
-                .forEach(e -> equipmentService.deleteById(e.getId()));
+        equipmentRepository.deleteAllByObjectId(objectId);
 
-        structureService.getManyByParentId(objectId)
-                .forEach(e -> structureService.deleteById(e.getId()));
+        structureRepository.deleteAllByObjectId(objectId);
 
-        technoBlockService.getManyByParentId(objectId)
-                .forEach(e -> technoBlockService.deleteById(e.getId()));
+        technoBlockRepository.deleteAllByObjectId(objectId);
 
-        personsService.getManyByParentId(objectId)
-                .forEach(e -> personsService.deleteById(e.getId()));
+        personsRepository.deleteAllByObjectId(objectId);
 
-        imageService.getManyByParentId(objectId)
-                .forEach(e -> imageService.deleteById(e.getId()));
+        imageRepository.deleteAllByObjectId(objectId);
 
-        objectService.deleteById(objectId);
+        objectRepository.deleteById(objectId);
     }
 }

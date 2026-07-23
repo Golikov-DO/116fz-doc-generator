@@ -1,22 +1,24 @@
 package ru.ecospas.domain.service;
 
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.Scenario;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.WordScenarioResponse;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ScenarioNumberService {
 
-    public Map<Integer, ScenarioDTO> build(List<Scenario> scenarios) {
+    public Map<Integer, WordScenarioResponse> build(List<Scenario> scenarios) {
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         for (Scenario sc : scenarios) {
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(sc.getId());
             dto.setName(sc.getName());
             dto.setNumber(counter++);
@@ -27,19 +29,19 @@ public class ScenarioNumberService {
         return map;
     }
 
-    public Map<Integer, ScenarioDTO> buildFromIds(
+    public Map<Integer, WordScenarioResponse> buildFromIds(
             Collection<Integer> ids,
             Map<Integer, Scenario> scenarioMap
     ) {
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         for (Integer id : ids) {
             Scenario sc = scenarioMap.get(id);
             if (sc == null) continue;
 
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(id);
             dto.setName(sc.getName());
             dto.setDescription(sc.getDescription());

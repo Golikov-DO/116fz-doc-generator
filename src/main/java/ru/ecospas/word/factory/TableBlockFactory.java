@@ -1,8 +1,9 @@
 package ru.ecospas.word.factory;
 
-import ru.ecospas.domain.model.*;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.ecospas.domain.model.ObjectModel;
+import ru.ecospas.domain.repository.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -11,32 +12,20 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class TableBlockFactory {
 
-    private final ChildService<ObjectCompositionKchs> objectCompositionKchsService;
-    private final ParentService<ObjectModel> objectService;
-    private final ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService;
-    private final ChildService<ObjectFireEquipment> objectFireEquipmentService;
-    private final ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService;
-
-    public TableBlockFactory(
-            ChildService<ObjectCompositionKchs> objectCompositionKchsService,
-            ParentService<ObjectModel> objectService,
-            ChildService<ObjectTechnologicalEquipment> objectTechnologicalEquipmentService,
-            ChildService<ObjectFireEquipment> objectFireEquipmentService,
-            ChildService<ObjectPersonsResponsible> objectPersonsResponsibleService
-    ) {
-        this.objectCompositionKchsService = objectCompositionKchsService;
-        this.objectService = objectService;
-        this.objectTechnologicalEquipmentService = objectTechnologicalEquipmentService;
-        this.objectFireEquipmentService = objectFireEquipmentService;
-        this.objectPersonsResponsibleService = objectPersonsResponsibleService;
-    }
+    private final ObjectCompositionKchsRepository objectCompositionKchsRepository;
+    private final ObjectModelRepository objectRepository;
+    private final ObjectTechnologicalEquipmentRepository objectTechnologicalEquipmentRepository;
+    private final ObjectFireEquipmentRepository objectFireEquipmentRepository;
+    private final ObjectPersonsResponsibleRepository objectPersonsResponsibleRepository;
 
     public Map<String, Object> build(int objectId) throws SQLException {
         Map<String, Object> data = new HashMap<>();
 
-        ObjectModel obj = objectService.getOneById(objectId);
+        ObjectModel obj = objectRepository.findById(objectId).orElseThrow();
 
         for (int i = 1; i <= 9; i++) {
             if (i == 2 || i == 3 || i == 4 || i == 6) continue;
@@ -44,30 +33,30 @@ public class TableBlockFactory {
             String placeholderKey = "OBJ_TABLE_" + i + "_PLACEHOLDER";
 
             // Get data for a specific index.
-            switch (i){
+            switch (i) {
                 case 1 -> fillTable(data, placeholderKey,
-                        objectTechnologicalEquipmentService.getManyByParentId(obj.getId()),
+                        objectTechnologicalEquipmentRepository.findAllByObjectId(obj.getId()),
                         equipment ->
                                 new String[]{String.valueOf(equipment.getNum()), equipment.getName(),
                                         equipment.getCharacteristics()});
                 case 5 -> fillTable(data, placeholderKey,
-                        objectFireEquipmentService.getManyByParentId(obj.getId()),
+                        objectFireEquipmentRepository.findAllByObjectIdOrderByNumber(obj.getId()),
                         equipment ->
                                 new String[]{String.valueOf(equipment.getNumber()),
                                         equipment.getProductName(), equipment.getQuantity(), equipment.getLocation()});
                 case 7 -> fillTable(data, placeholderKey,
-                        objectPersonsResponsibleService.getManyByParentId(obj.getId()),
+                        objectPersonsResponsibleRepository.findAllByObjectIdOrderByNumber(obj.getId()),
                         personsResponsible ->
                                 new String[]{String.valueOf(personsResponsible.getNumber()),
                                         personsResponsible.getFullName(),
                                         personsResponsible.getPosition()});
                 case 8 -> fillTable(data, placeholderKey,
-                        objectCompositionKchsService.getManyByParentId(obj.getId()),
+                        objectCompositionKchsRepository.findAllByObjectId(obj.getId()),
                         kchs ->
                                 new String[]{String.valueOf(kchs.getNumber()),
                                         kchs.getPosition(), kchs.getFullName(),
                                         kchs.getWorkPhone(), kchs.getCellPhone(), kchs.getHomeAddress()
-                });
+                                });
                 default -> data.put(placeholderKey, null);
             }
         }

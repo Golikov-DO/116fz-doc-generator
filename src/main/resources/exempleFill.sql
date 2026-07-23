@@ -8,6 +8,9 @@ ROLLBACK;
 --очищаем временный контейнер
 -- docker exec -t DocumentsDB rm /backup.sql
 
+--docker exec DocumentsDB pg_dump -U Admin -d PMLLPA -Fc > backups/PMLLPA-before-spring.dump создать дамп
+--docker exec -i newDocumentsDB pg_restore -U Admin -d PMLLPA < backups/PMLLPA-before-spring.dump восстановить дамп
+
 --запись данных в контейнер из дампа
 --docker cp "F:\Google диск\Програмирование\Java\db\backup.sql" DocumentsDB:/backup.sql
 --записываем в уже созданный контейнер

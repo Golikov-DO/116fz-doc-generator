@@ -1,9 +1,11 @@
 package ru.ecospas.word.layout;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.service.ObjectHazardService;
-import ru.ecospas.domain.service.ParentService;
-import ru.ecospas.web.dto.HazardParamDto;
+import ru.ecospas.domain.repository.ObjectModelRepository;
+import ru.ecospas.domain.service.HazardousSubstanceQueryService;
+import ru.ecospas.web.dto.response.hazardous.HazardousParamValueResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,56 +16,57 @@ import java.util.stream.Collectors;
 import static ru.ecospas.word.util.LayoutUtil.calcLines;
 import static ru.ecospas.word.util.LayoutUtil.rootSection;
 
+@Service
+@RequiredArgsConstructor
 public class HazardTableLayoutService {
-    private final ParentService<ObjectModel> objectService;
-    private final ObjectHazardService objectHazardService;
+
     private static final int NAME_LIMIT = 26;
     private static final int VALUE_LIMIT = 20;
     private static final int SECTION_LIMIT = 5;
 
-    public HazardTableLayoutService(
-            ParentService<ObjectModel> objectService,
-            ObjectHazardService objectHazardService) {
-        this.objectService = objectService;
-        this.objectHazardService = objectHazardService;
-    }
+    private final ObjectModelRepository objectRepository;
+    private final HazardousSubstanceQueryService hazardousSubstanceQueryService;
 
     public List<String[]> getHazardTableData(int objectId) {
 
-        ObjectModel obj = objectService.getOneById(objectId);
+        ObjectModel obj = objectRepository.findById(objectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Object not found: " + objectId));
 
-        List<HazardParamDto> params = objectHazardService.getHazardParamsWithValues(
+        List<HazardousParamValueResponse> params =
+                hazardousSubstanceQueryService.getHazardParamsWithValues(
                         obj.getHazardousSubstance().getId()
                 );
 
         return buildVisualRowsAsArray(params);
     }
 
-    private List<String[]> buildVisualRowsAsArray(List<HazardParamDto> params) {
+    private List<String[]> buildVisualRowsAsArray(List<HazardousParamValueResponse> params) {
 
-        Map<Integer, List<HazardParamDto>> grouped = params.stream()
+        Map<Integer, List<HazardousParamValueResponse>> grouped = params.stream()
                 .collect(Collectors.groupingBy(
-                        p -> rootSection(p.getSection()),
+                        p -> rootSection(p.sectionNo()),
                         TreeMap::new,
                         Collectors.toList()
                 ));
 
         List<String[]> tableRows = new ArrayList<>();
 
-        for (List<HazardParamDto> group : grouped.values()) {
+        for (List<HazardousParamValueResponse> group : grouped.values()) {
 
             List<TableRowModel> rows = new ArrayList<>();
 
             // ---------- STEP 1 ----------
-            for (HazardParamDto dto : group) {
+            for (HazardousParamValueResponse dto : group) {
 
                 TableRowModel tableRow = new TableRowModel();
 
-                tableRow.isRoot = !dto.getSection().contains(".");
-                tableRow.section = dto.getSection();
-                tableRow.name = dto.getTitle() + ":";
-                tableRow.value = dto.getValue();
-                tableRow.source = dto.getSource();
+                tableRow.isRoot = !dto.sectionNo().contains(".");
+                tableRow.section = dto.sectionNo();
+                tableRow.name = dto.title() + ":";
+                tableRow.value = dto.valueText();
+                tableRow.source = dto.sourceInfo();
 
                 rows.add(tableRow);
             }

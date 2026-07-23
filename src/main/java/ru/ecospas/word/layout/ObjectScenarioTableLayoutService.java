@@ -1,35 +1,30 @@
 package ru.ecospas.word.layout;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectStructure;
 import ru.ecospas.domain.model.Scenario;
-import ru.ecospas.domain.service.ChildService;
-import ru.ecospas.domain.service.ParentService;
+import ru.ecospas.domain.repository.ObjectStructureRepository;
+import ru.ecospas.domain.repository.ScenarioRepository;
 import ru.ecospas.domain.util.SubscriptUtils;
-import ru.ecospas.web.dto.ScenarioDTO;
+import ru.ecospas.web.dto.response.scenario.WordScenarioResponse;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.ecospas.domain.util.Collect.collect;
 
+@Component
+@RequiredArgsConstructor
 public class ObjectScenarioTableLayoutService {
 
-    private final ChildService<ObjectStructure> structureService;
-    private final ParentService<Scenario> scenarioService;
-
-
-    public ObjectScenarioTableLayoutService(
-            ChildService<ObjectStructure> structureService,
-            ParentService<Scenario> scenarioService
-    ) {
-        this.structureService = structureService;
-        this.scenarioService = scenarioService;
-    }
+    private final ObjectStructureRepository structureRepository;
+    private final ScenarioRepository scenarioRepository;
 
     public List<String[]> getObjectScenarioTableData(int objectId) {
 
-        List<ObjectStructure> structures = structureService.getManyByParentId(objectId);
-        List<Scenario> allScenarios = scenarioService.getMany();
+        List<ObjectStructure> structures = structureRepository.findAllByObjectId(objectId);
+        List<Scenario> allScenarios = scenarioRepository.findAll();
         List<String[]> rows = new ArrayList<>();
         LinkedHashSet<Integer> allIds = new LinkedHashSet<>();
 
@@ -38,7 +33,7 @@ public class ObjectScenarioTableLayoutService {
             collect(s.getDangerousIds(), allIds);
         }
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         Map<Integer, Scenario> scenarioMap = allScenarios.stream()
@@ -52,7 +47,7 @@ public class ObjectScenarioTableLayoutService {
             Scenario sc = scenarioMap.get(id);
             if (sc == null) continue;
 
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(id);
             dto.setName(sc.getName());
             dto.setDescription(sc.getDescription());
@@ -73,7 +68,7 @@ public class ObjectScenarioTableLayoutService {
                 String joined = ids.stream()
                         .sorted(Comparator.comparing(id -> map.get(id).getNumber()))
                         .map(id -> {
-                            ScenarioDTO dto = map.get(id);
+                            WordScenarioResponse dto = map.get(id);
                             return dto != null ? "С" + SubscriptUtils.toSubscript(dto.getNumber()) : "";
                         })
                         .filter(s -> !s.isEmpty())
@@ -91,8 +86,8 @@ public class ObjectScenarioTableLayoutService {
 
     public List<String[]> getObjectScenarioFullData(int objectId) {
 
-        List<ObjectStructure> structures = structureService.getManyByParentId(objectId);
-        List<Scenario> allScenarios = scenarioService.getMany();
+        List<ObjectStructure> structures = structureRepository.findAllByObjectId(objectId);
+        List<Scenario> allScenarios = scenarioRepository.findAll();
 
         LinkedHashSet<Integer> allIds = new LinkedHashSet<>();
 
@@ -101,7 +96,7 @@ public class ObjectScenarioTableLayoutService {
             collect(s.getDangerousIds(), allIds);
         }
 
-        Map<Integer, ScenarioDTO> map = new LinkedHashMap<>();
+        Map<Integer, WordScenarioResponse> map = new LinkedHashMap<>();
         int counter = 1;
 
         Map<Integer, Scenario> scenarioMap = allScenarios.stream()
@@ -115,7 +110,7 @@ public class ObjectScenarioTableLayoutService {
             Scenario sc = scenarioMap.get(id);
             if (sc == null) continue;
 
-            ScenarioDTO dto = new ScenarioDTO();
+            WordScenarioResponse dto = new WordScenarioResponse();
             dto.setId(id);
             dto.setName(sc.getName());
             dto.setDescription(sc.getDescription());
@@ -130,7 +125,7 @@ public class ObjectScenarioTableLayoutService {
 
         List<String[]> rows = new ArrayList<>();
 
-        for (ScenarioDTO dto : map.values()) {
+        for (WordScenarioResponse dto : map.values()) {
 
             rows.add(new String[]{
                     "С" + SubscriptUtils.toSubscript(dto.getNumber()) + "\n" + dto.getName(),

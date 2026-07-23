@@ -26,4 +26,7 @@ public class OrganizationSigner implements BaseEntity {
 
     @Column(name = "signer_position")
     private String position;
+
+    @Column(name = "is_primary")
+    private Boolean isPrimary;
 }

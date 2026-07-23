@@ -1,10 +1,12 @@
 package ru.ecospas.word.render.docx4j;
 
+import org.springframework.stereotype.Component;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.text.TextBlock;
 import ru.ecospas.word.render.BlockRenderer;
 import ru.ecospas.word.render.RenderContext;
 
+@Component
 public class Docx4jTextBlockRenderer implements BlockRenderer<TextBlock> {
 
     @Override

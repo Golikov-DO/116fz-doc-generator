@@ -1,69 +1,49 @@
 package ru.ecospas.domain.service;
 
-import org.hibernate.Session;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.ecospas.domain.model.User;
-import ru.ecospas.infrastructure.config.HibernateConfig;
+import ru.ecospas.domain.repository.UserRepository;
 
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
+@Transactional
 public class UserAdminService {
 
+    private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from User", User.class).list();
-        }
+        return repository.findAll();
     }
 
+
     public void save(User user) {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            session.beginTransaction();
+        repository.save(user);
+    }
 
-            if (user.getId() == null) {
-                session.persist(user);
-            } else {
-                session.merge(user);
-            }
-
-            session.getTransaction().commit();
-        }
+    public void saveWithPassword(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        repository.save(user);
     }
 
     public void delete(int id) {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            session.beginTransaction();
-
-            User user = session.get(User.class, id);
-            if (user != null) {
-                session.remove(user);
-            }
-
-            session.getTransaction().commit();
-        }
+        repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public User findById(int id) {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.get(User.class, id);
-        }
+        return repository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public User findByLogin(String login) {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-
-            return session.createQuery(
-                            "from User where login = :login", User.class)
-                    .setParameter("login", login)
-                    .uniqueResult();
-        }
+        return repository.findByLogin(login).orElse(null);
     }
 
-    public User login(String login, String password) {
-        User user = findByLogin(login);
-
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
-        }
-
-        return null;
-    }
 }

@@ -17,7 +17,7 @@ public class ObjectPersonsResponsible implements BaseEntity {
     @EqualsAndHashCode.Include
     private Integer id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_id")
     private ObjectModel object;
 
