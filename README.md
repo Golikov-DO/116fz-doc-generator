@@ -277,31 +277,29 @@ npm run dev
 
 ## Login
 
-*(Add screenshot)*
+![Login Screen](images/login.png)
+*Форма входа в систему*
 
 ---
 
 ## Dashboard
 
-*(Add screenshot)*
+![Dashboard](images/dashboard.png)
+*Главная панель управления*
 
 ---
 
 ## Organization Management
 
-*(Add screenshot)*
+![Organization Management](images/organizations.png)
+*Управление организациями*
 
 ---
 
 ## Object Management
 
-*(Add screenshot)*
-
----
-
-## Image Management
-
-*(Add screenshot)*
+![Object Management](images/objects.png)
+*Управление объектами*
 
 ---
 
