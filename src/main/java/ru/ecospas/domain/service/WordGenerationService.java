@@ -30,17 +30,6 @@ public class WordGenerationService {
         return documentBuilder.build(openResult);
     }
 
-    // Старый метод — для обратной совместимости (если где-то ещё используется)
-    public WordprocessingMLPackage generate(
-            FillStrategy strategy,
-            byte[] templateBytes,
-            int objectId
-    ) throws Exception {
-        OpenStrategy openStrategy = resolve(strategy);
-        OpenResult openResult = openStrategy.open(templateBytes, objectId);
-        return documentBuilder.build(openResult);
-    }
-
     private OpenStrategy resolve(FillStrategy strategy) {
         return switch (strategy) {
             case TAG -> tagOpenStrategy;

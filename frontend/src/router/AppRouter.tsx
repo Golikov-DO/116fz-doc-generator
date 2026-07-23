@@ -26,6 +26,7 @@ import TableTitlesPage from '../pages/TableTitles/TableTitlesPage'
 import TableTitlePage from '../pages/TableTitles/TableTitlePage'
 import EmergencyServicesPage from '../pages/EmergencyService/EmergencyServicesPage'
 import EmergencyServicePage from '../pages/EmergencyService/EmergencyServicePage'
+import DocumentsPage from '../pages/documents/DocumentsPage.tsx'
 import {AuthProvider} from "../auth/AuthContext";
 
 export default function AppRouter() {
@@ -243,6 +244,11 @@ export default function AppRouter() {
                         <Route path="/emergency-services/new" element={
                             <ProtectedRoute>
                                 <EmergencyServicePage/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/documents" element={
+                            <ProtectedRoute>
+                                <DocumentsPage/>
                             </ProtectedRoute>
                         }/>
                     </Route>

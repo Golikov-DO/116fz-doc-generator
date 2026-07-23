@@ -50,10 +50,7 @@ public class PlanRestService {
 
         Path outputPath = DocumentPathSet.buildOutputFile(organization, object, objects);
 
-        File parentDir = outputPath.getParent().toFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
-        }
+        Files.createDirectories(outputPath.getParent());
 
         document.save(outputPath.toFile());
         return outputPath;

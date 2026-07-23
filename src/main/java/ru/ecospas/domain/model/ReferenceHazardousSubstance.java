@@ -19,7 +19,7 @@ public class ReferenceHazardousSubstance implements BaseEntity {
     @EqualsAndHashCode.Include
     private Integer id;
     private String name;
-    private String nameGen;
+    private String nameShort;
 
     @OneToMany(mappedBy = "hazardousSubstance")
     private List<ObjectModel> objects = new ArrayList<>();

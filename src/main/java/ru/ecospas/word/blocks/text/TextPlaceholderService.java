@@ -109,7 +109,7 @@ public class TextPlaceholderService {
         map.put("OBJ_DEPARTMENT_GOCHS_CITY", safe(obj.getDepartmentGoChsCity()));
         map.put("OBJ_EMERGENCY_COMMISSION", obj.isEmergencyCommission() ? "создана" : "не создана");
         map.put("OBJ_HAZARDOUS_SUBSTANCE", substance != null ? safe(substance.getName()) : "");
-        map.put("OBJ_HAZARDOUS_SUBSTANCE_GEN", substance != null ? safe(substance.getNameGen()) : "");
+        map.put("OBJ_HAZARDOUS_SUBSTANCE_SHORT", substance != null ? safe(substance.getNameShort()) : "");
         map.put("OBJ_HAZARD_CLASS", DocumentOutputFormatter.toRoman(String.valueOf(obj.getHazardClass())));
         map.put("OBJ_INSURANCE_POLICY_DATE", policy != null ? DocumentOutputFormatter.russDate(String.valueOf(policy.getValidUntil())) : "");
         map.put("OBJ_INSURANCE_POLICY_NUMBER", policy != null ? String.valueOf(policy.getNumber()) : "");

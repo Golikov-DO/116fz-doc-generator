@@ -20,15 +20,9 @@ public class HazardousSubstanceResponseMapper {
         return new HazardousSubstanceResponse(
                 substance.getId(),
                 substance.getName(),
-                substance.getNameGen(),
+                substance.getNameShort(),
                 toValues(substance.getValues())
         );
-    }
-
-    public List<HazardousSubstanceResponse> toResponses(
-            List<ReferenceHazardousSubstance> list
-    ) {
-        return list.stream().map(this::toResponse).toList();
     }
 
     public HazardousSubstanceListResponse toListResponse(ReferenceHazardousSubstance substance) {

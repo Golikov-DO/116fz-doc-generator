@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.ecospas.domain.model.ObjectModel;
-import ru.ecospas.domain.repository.ObjectModelRepository;
 import ru.ecospas.word.blocks.Block;
 import ru.ecospas.word.blocks.image.ImageBlock;
 import ru.ecospas.word.blocks.list.ListBlock;
@@ -33,7 +32,6 @@ public class UnifiedBlockFactory {
     private final HazardTableLayoutService hazardTableLayoutService;
     private final ContactTableLayoutService contactTableLayoutService;
     private final ObjectScenarioTableLayoutService objectScenarioTableLayoutService;
-    private final ObjectModelRepository objectRepository;
 
     private final Map<Class<?>, BiFunction<String, Object, Block>> creators = new HashMap<>();
 
@@ -48,39 +46,6 @@ public class UnifiedBlockFactory {
         creators.put(byte[].class, (key, val) ->
                 new ImageBlock(key, val, resolvePictureType(key))
         );
-    }
-
-    // ========== СТАРЫЕ МЕТОДЫ (оставляем для совместимости) ==========
-
-    public List<Block> buildBlocks(int objectId) throws SQLException {
-        Map<String, Object> allData = build(objectId);
-        return buildBlocksFromData(allData);
-    }
-
-    public Map<String, Object> build(int objectId) throws SQLException {
-        Map<String, Object> result = new LinkedHashMap<>();
-
-        ObjectModel obj = objectRepository.findById(objectId).orElse(null);
-
-        if (obj == null) {
-            return result;
-        }
-        int orgId = obj.getOrganization().getId();
-
-        putAllIfPresent(result, placeholderFillStrategy.build(obj));
-        putAllIfPresent(result, tableBlockFactory.build(objectId));
-        putAllIfPresent(result, listBlockFactory.build(objectId));
-        putAllIfPresent(result, imageBlockFactory.build(objectId));
-        List<String[]> hazardData = hazardTableLayoutService.getHazardTableData(objectId);
-        if (!hazardData.isEmpty()) result.put("OBJ_TABLE_2_PLACEHOLDER", hazardData);
-        List<String[]> scenarioFullData = objectScenarioTableLayoutService.getObjectScenarioFullData(objectId);
-        if (!scenarioFullData.isEmpty()) result.put("OBJ_TABLE_3_PLACEHOLDER", scenarioFullData);
-        List<String[]> scenarioData = objectScenarioTableLayoutService.getObjectScenarioTableData(objectId);
-        if (!scenarioData.isEmpty()) result.put("OBJ_TABLE_4_PLACEHOLDER", scenarioData);
-        List<String[]> contactData = contactTableLayoutService.getContactTableData(orgId, objectId);
-        if (!contactData.isEmpty()) result.put("OBJ_TABLE_6_PLACEHOLDER", contactData);
-
-        return result;
     }
 
     // ========== НОВЫЕ МЕТОДЫ (с ObjectModel) ==========
@@ -99,7 +64,7 @@ public class UnifiedBlockFactory {
         int orgId = obj.getOrganization().getId();
         int objectId = obj.getId();
 
-        putAllIfPresent(result, placeholderFillStrategy.build(obj));  // ← объект!
+        putAllIfPresent(result, placeholderFillStrategy.build(obj));
         putAllIfPresent(result, tableBlockFactory.build(objectId));
         putAllIfPresent(result, listBlockFactory.build(objectId));
         putAllIfPresent(result, imageBlockFactory.build(objectId));

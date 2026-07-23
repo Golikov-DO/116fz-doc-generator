@@ -6,7 +6,7 @@ public record HazardousSubstanceResponse(
 
         Integer id,
         String name,
-        String nameGen,
+        String nameShort,
         List<HazardousParamValueResponse> values
 
 ) {

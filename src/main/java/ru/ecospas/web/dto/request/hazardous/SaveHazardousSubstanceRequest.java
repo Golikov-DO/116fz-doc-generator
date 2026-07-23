@@ -5,7 +5,7 @@ import java.util.List;
 public record SaveHazardousSubstanceRequest(
 
         String name,
-        String nameGen,
+        String nameShort,
         List<HazardousParamValueRequest> values
 
 ) {

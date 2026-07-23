@@ -4,3 +4,9 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/migration/002-admin-user.yaml
+
+  - include:
+      file: db/changelog/migration/003-hazardous.yaml
+
+  - include:
+      file: db/changelog/migration/004-hazardous.yaml

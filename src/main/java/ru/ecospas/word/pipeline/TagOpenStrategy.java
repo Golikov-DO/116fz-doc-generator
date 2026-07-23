@@ -17,20 +17,6 @@ public class TagOpenStrategy implements OpenStrategy {
     private final UnifiedBlockFactory blockFactory;
 
     @Override
-    public OpenResult open(byte[] templateBytes, int objectId) {
-        try {
-            WordprocessingMLPackage pkg = WordprocessingMLPackage.load(
-                    new ByteArrayInputStream(templateBytes));
-            VariablePrepare.prepare(pkg);
-            // Pass orgId and objectId to the factory
-            List<Block> blocks = blockFactory.buildBlocks(objectId);
-            return new OpenResult(pkg, blocks);
-        } catch (Exception e) {
-            throw new RuntimeException("TAG Strategy failed", e);
-        }
-    }
-
-    @Override
     public OpenResult open(byte[] templateBytes, ObjectModel object) {
         try {
             WordprocessingMLPackage pkg =

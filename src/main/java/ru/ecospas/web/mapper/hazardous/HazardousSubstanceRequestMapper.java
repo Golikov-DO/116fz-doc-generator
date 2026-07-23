@@ -23,7 +23,7 @@ public class HazardousSubstanceRequestMapper {
             ReferenceHazardousSubstance substance
     ) {
         substance.setName(request.name());
-        substance.setNameGen(request.nameGen());
+        substance.setNameShort(request.nameShort());
         Map<Integer, SubstanceHazardousParamValue> existing = new HashMap<>();
         for (SubstanceHazardousParamValue value : substance.getValues()) {
             existing.put(value.getParam().getId(), value);

@@ -126,6 +126,8 @@ export default function OrganizationPage() {
                     return
                 }
                 const newOrg = await res.json()
+                setOriginalOrg(JSON.parse(JSON.stringify(org)))
+                setHasChanges(false)
                 navigate(`/organization/${newOrg.id}/edit`)
             } else {
                 // PUT для обновления
@@ -330,9 +332,20 @@ export default function OrganizationPage() {
                 }}>
                     <TextField
                         label="Индекс"
-                        value={org.address?.addressIndex || ''}
-                        onChange={e =>
-                            handleAddressChange('addressIndex', e.target.value)}
+                        type="number"
+                        value={org.address?.addressIndex ?? ''}
+                        onChange={e => {
+                            const value = e.target.value;
+                            if (value === '' || /^\d+$/.test(value)) {
+                                handleAddressChange('addressIndex', value);
+                            }
+                        }}
+                        slotProps={{
+                            htmlInput: {
+                                min: 0,
+                                step: 1
+                            }
+                        }}
                         disabled={!isEditMode}
                     />
                     <TextField

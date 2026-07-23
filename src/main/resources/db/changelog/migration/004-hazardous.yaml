@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-hazardous
+      author: initial
+      changes:
+        - renameColumn:
+            tableName: hazardous_substance
+            oldColumnName: name_inst
+            newColumnName: name_short
+            columnDataType: varchar(255)
+
+        - modifyDataType:
+            tableName: hazardous_substance
+            columnName: name_short
+            newDataType: varchar(100)
+
+        - dropColumn:
+            tableName: hazardous_substance
+            columnName: name_gen

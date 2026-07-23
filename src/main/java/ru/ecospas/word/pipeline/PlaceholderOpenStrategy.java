@@ -17,18 +17,6 @@ public class PlaceholderOpenStrategy implements OpenStrategy {
     private final UnifiedBlockFactory blockFactory;
 
     @Override
-    public OpenResult open(byte[] templateBytes, int objectId) {
-        try {
-            WordprocessingMLPackage pkg = WordprocessingMLPackage.load(
-                    new ByteArrayInputStream(templateBytes));
-            List<Block> blocks = blockFactory.buildBlocks(objectId);
-            return new OpenResult(pkg, blocks);
-        } catch (Exception e) {
-            throw new RuntimeException("Placeholder Strategy failed", e);
-        }
-    }
-
-    @Override
     public OpenResult open(byte[] templateBytes, ObjectModel object) {
         try {
             WordprocessingMLPackage pkg = WordprocessingMLPackage.load(

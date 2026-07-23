@@ -9,6 +9,6 @@ export interface HazardousParamValue {
 export interface HazardousSubstanceFull {
     id: number
     name: string
-    nameGen: string
+    nameShort: string
     values: HazardousParamValue[]
 }

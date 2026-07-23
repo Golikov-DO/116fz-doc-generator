@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-hazardous
+      author: initial
+      changes:
+        - addColumn:
+            tableName: hazardous_substance
+            columns:
+              - column:
+                  name: name_inst
+                  type: varchar(255)

@@ -31,6 +31,10 @@ export default function Sidebar() {
         { to: "/organizations", label: "Организации" },
         { to: "/objects", label: "Объекты" },
         { to: "/asfs", label: "Список ПАСФ" },
+        ...(isAdmin
+                ? [{ to: "/documents", label: "Разработанные документы" }]
+                : []
+        ),
     ];
 
     const referenceChildren: MenuItem[] = [
@@ -66,7 +70,9 @@ export default function Sidebar() {
                     >
                         {link.label}
                     </NavLink>
+
                 ))}
+
 
                 {/* === СПРАВОЧНЫЕ ДАННЫЕ === */}
                 <div className="sidebar-group">

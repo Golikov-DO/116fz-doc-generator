@@ -13,7 +13,7 @@ import AccordionSection from '../../components/AccordionSection'
 const EMPTY_SUBSTANCE: HazardousSubstanceFull = {
     id: 0,
     name: '',
-    nameGen: '',
+    nameShort: '',
     values: []
 }
 
@@ -171,9 +171,9 @@ export default function HazardousSubstancePage() {
                             disabled={!isEditMode}
                         />
                         <TextField
-                            label="Наименование (род. падеж)"
-                            value={substance.nameGen}
-                            onChange={e => handleChange('nameGen', e.target.value)}
+                            label="Сокращённое Наименование"
+                            value={substance.nameShort}
+                            onChange={e => handleChange('nameShort', e.target.value)}
                             fullWidth
                             disabled={!isEditMode}
                         />
